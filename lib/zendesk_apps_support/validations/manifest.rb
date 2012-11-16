@@ -10,15 +10,15 @@ module ZendeskAppsSupport
         def call(package)
           manifest = package.files.find { |f| f.relative_path == 'manifest.json' }
 
-          return [ ValidationError.new(:missing_manifest) ] unless manifest
+          return [ ValidationError.new('txt.apps.admin.error.app_build.missing_manifest') ] unless manifest
 
           manifest = MultiJson.load(manifest.read)
           missing = missing_keys(manifest)
-          return [ ValidationError.new(:missing_manifest_keys, :missing_keys => missing.join(', '), :count => missing.length) ] if missing.any?
+          return [ ValidationError.new('txt.apps.admin.error.app_build.missing_manifest_keys', :missing_keys => missing.join(', '), :count => missing.length) ] if missing.any?
 
           []
         rescue MultiJson::DecodeError => e
-          return [ ValidationError.new(:manifest_not_json, :errors => e) ]
+          return [ ValidationError.new('txt.apps.admin.error.app_build.missing_manifest_keys', :errors => e) ]
         end
 
         private

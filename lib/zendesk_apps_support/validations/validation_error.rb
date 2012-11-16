@@ -3,13 +3,13 @@ module ZendeskAppsSupport
 
     class ValidationError
       attr_reader :key, :data
-
+      
       def initialize(key, data = nil)
         @key, @data = key, data || {}
       end
 
       def to_s
-        ZendeskAppsSupport::I18n.t("errors.#{key}", data)
+        ZendeskAppsSupport::I18n.t(key.to_s, data)
       end
     end
 
@@ -19,7 +19,7 @@ module ZendeskAppsSupport
       def initialize(filename, jshint_errors)
         errors = jshint_errors.map { |err| "\n  L#{err['line']}: #{err['reason']}" }.join('')
         @filename = filename, @jshint_errors = jshint_errors
-        super(:jshint_errors, {
+        super('txt.apps.admin.error.app_build.jshint_error', {
           :file => filename,
           :errors => errors,
           :count => jshint_errors.length

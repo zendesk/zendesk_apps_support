@@ -24,7 +24,7 @@ module ZendeskAppsSupport
         def call(package)
           source = package.files.find { |f| f.relative_path == 'app.js' }
 
-          return [ ValidationError.new(:missing_source) ] unless source
+          return [ ValidationError.new('txt.apps.admin.error.app_build.invalid_app') ] unless source
 
           jshint_errors = linter.lint(source.read)
           if jshint_errors.any?

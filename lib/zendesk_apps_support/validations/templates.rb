@@ -7,7 +7,7 @@ module ZendeskAppsSupport
           package.template_files.each_with_object([]) do |template, errors|
             contents = template.read
             if contents =~ /<\s*style\b/
-              errors << ValidationError.new(:style_in_template, :template => template.relative_path)
+              errors << ValidationError.new('txt.apps.admin.error.app_build.style_in_template', :template => template.relative_path)
             end
           end
         end
