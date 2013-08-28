@@ -3,22 +3,22 @@
 
         var source = <%= source %>;
 
-        ZendeskApps[<%= name.to_json %>] = ZendeskApps.defineApp(source)
-                .reopenClass({ location: <%= location.to_json %> })
+        ZendeskApps[<%= name %>] = ZendeskApps.defineApp(source)
+                .reopenClass({ location: <%= location %> })
                 .reopen({
-                    assetUrlPrefix: <%= asset_url_prefix.to_json %>,
-                    appClassName: <%= app_class_name.to_json %>,
+                    assetUrlPrefix: <%= asset_url_prefix %>,
+                    appClassName: <%= app_class_name %>,
                     author: {
-                        name: <%= author[:name].to_json %>,
-                        email: <%= author[:email].to_json %>
+                        name: <%= author_name %>,
+                        email: <%= author_email %>
                     },
-                    translations: <%= translations.to_json %>,
-                    templates: <%= templates.to_json %>,
-                    frameworkVersion: <%= framework_version.to_json %>
+                    translations: <%= translations %>,
+                    templates: <%= templates %>,
+                    frameworkVersion: <%= framework_version %>
                 });
 
     }
 
-    ZendeskApps[<%= name.to_json %>].install({"id": <%= app_id %>, "app_id": <%= app_id %>, "settings": <%= settings.to_json %>});
+    ZendeskApps[<%= name %>].install({"id": <%= app_id %>, "app_id": <%= app_id %>, "settings": <%= settings %>});
 
 }());
