@@ -1,6 +1,6 @@
 require 'pathname'
 require 'erubis'
-require 'json'
+require 'multi_json'
 
 module ZendeskAppsSupport
   class Package
@@ -37,7 +37,7 @@ module ZendeskAppsSupport
     end
 
     def manifest_json
-      JSON.parse(File.read(File.join(root, "manifest.json")), :symbolize_names => true)
+      MultiJson.decode(File.read(File.join(root, "manifest.json")), :symbolize_names => true)
     end
 
     def readified_js(app_name, app_id, asset_url_prefix, settings={})
@@ -47,23 +47,24 @@ module ZendeskAppsSupport
       location = manifest[:location]
       app_class_name = "app-#{app_id}"
       author = manifest[:author]
-      translations = JSON.parse(File.read(File.join(root, "translations/en.json")))
+      translations = MultiJson.decode(File.read(File.join(root, "translations/en.json")))
       framework_version = manifest[:frameworkVersion]
       templates = manifest[:noTemplate] ? {} : compiled_templates(app_id, asset_url_prefix)
 
       settings["title"] = name
 
       SRC_TEMPLATE.result(
-          :name => name,
+          :name => as_json(name),
           :source => source,
-          :location => location,
-          :asset_url_prefix => asset_url_prefix,
-          :app_class_name => app_class_name,
-          :author => author,
-          :translations => translations,
-          :framework_version => framework_version,
-          :templates => templates,
-          :settings => settings,
+          :location => as_json(location),
+          :asset_url_prefix => as_json(asset_url_prefix),
+          :app_class_name => as_json(app_class_name),
+          :author_name => as_json(author[:name]),
+          :author_email => as_json(author[:email]),
+          :translations => as_json(translations),
+          :framework_version => as_json(framework_version),
+          :templates => as_json(templates),
+          :settings => as_json(settings),
           :app_id => app_id
       )
     end
@@ -104,5 +105,10 @@ module ZendeskAppsSupport
       end
       files
     end
+
+    def as_json(object)
+      MultiJson.encode object
+    end
+
   end
 end

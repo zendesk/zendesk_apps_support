@@ -18,7 +18,7 @@ describe ZendeskAppsSupport::AppVersion do
     it { should_not == ZendeskAppsSupport::AppVersion.new('0.2') }
 
     its(:to_s) { should == ZendeskAppsSupport::AppVersion::CURRENT }
-    its(:to_json) { should == ZendeskAppsSupport::AppVersion::CURRENT.to_json }
+    its(:to_json) { should == MultiJson.encode(ZendeskAppsSupport::AppVersion::CURRENT) }
   end
 
   describe 'the deprecated version' do
@@ -37,7 +37,7 @@ describe ZendeskAppsSupport::AppVersion do
     it { should_not == ZendeskAppsSupport::AppVersion.new('0.2') }
 
     its(:to_s) { should == ZendeskAppsSupport::AppVersion::DEPRECATED }
-    its(:to_json) { should == ZendeskAppsSupport::AppVersion::DEPRECATED.to_json }
+    its(:to_json) { should == MultiJson.encode(ZendeskAppsSupport::AppVersion::DEPRECATED) }
   end
 
   describe 'a really old version' do
@@ -56,6 +56,6 @@ describe ZendeskAppsSupport::AppVersion do
     it { should_not == ZendeskAppsSupport::AppVersion.new('0.2') }
 
     its(:to_s) { should == '0.1' }
-    its(:to_json) { should == '0.1'.to_json }
+    its(:to_json) { should == MultiJson.encode('0.1') }
   end
 end
