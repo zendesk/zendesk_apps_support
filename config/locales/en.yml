@@ -7,42 +7,43 @@ en:
         error:
           app_build:
             jshint:
-              one: 'JSHint error in %{file}: %{errors}'
-              other: 'JSHint errors in %{file}: %{errors}'
+              one: ! 'JSHint error in %{file}: %{errors}'
+              other: ! 'JSHint errors in %{file}: %{errors}'
             manifest_not_json: manifest is not proper JSON. %{errors}
             missing_manifest: Could not find manifest.json
             manifest_keys:
               missing:
-                one: 'Missing required field in manifest: %{missing_keys}'
-                other: 'Missing required fields in manifest: %{missing_keys}'
+                one: ! 'Missing required field in manifest: %{missing_keys}'
+                other: ! 'Missing required fields in manifest: %{missing_keys}'
             oauth_keys:
               missing:
-                one: 'Missing required oauth field in manifest: %{missing_keys}'
-                other: 'Missing required oauth fields in manifest: %{missing_keys}'
+                one: ! 'Missing required oauth field in manifest: %{missing_keys}'
+                other: ! 'Missing required oauth fields in manifest: %{missing_keys}'
             missing_source: Could not find app.js
             style_in_template: <style> tag in %{template}. Use an app.css file instead.
-            invalid_default_locale: '%{defaultLocale} is not a valid default locale.'
-            missing_translation_file: 'Missing translation file for locale ''%{defaultLocale}''.
+            invalid_default_locale: ! '%{defaultLocale} is not a valid default locale.'
+            missing_translation_file: ! 'Missing translation file for locale ''%{defaultLocale}''.
               Please read: http://developer.zendesk.com/documentation/apps/i18n.html'
             invalid_location:
-              one: '%{invalid_locations} is an invalid location.'
-              other: '%{invalid_locations} are invalid locations.'
+              one: ! '%{invalid_locations} is an invalid location.'
+              other: ! '%{invalid_locations} are invalid locations.'
             name_as_parameter_name: Can't call a parameter 'name'
             invalid_hidden_parameter:
-              one: '%{invalid_params} is set to hidden and cannot be required.'
-              other: '%{invalid_params} are set to hidden and cannot be required.'
-            invalid_version: '%{target_version} is not a valid framework version.
+              one: ! '%{invalid_params} is set to hidden and cannot be required.'
+              other: ! '%{invalid_params} are set to hidden and cannot be required.'
+            invalid_version: ! '%{target_version} is not a valid framework version.
               Available versions are: %{available_versions}.'
             parameters_not_an_array: App parameters must be an array.
-            duplicate_parameters: 'Duplicate app parameters defined: %{duplicate_parameters}'
+            duplicate_parameters: ! 'Duplicate app parameters defined: %{duplicate_parameters}'
             translation:
-              invalid_locale: '%{file} is not a valid locale.'
-              not_json: '%{file} is not valid JSON. %{errors}'
-              not_json_object: '%{file} is not a JSON object.'
-            stylesheet_error: 'Sass error: %{sass_error}'
+              invalid_locale: ! '%{file} is not a valid locale.'
+              invalid_format: ! '%{field} is invalid for translation.'
+              not_json: ! '%{file} is not valid JSON. %{errors}'
+              not_json_object: ! '%{file} is not a JSON object.'
+            stylesheet_error: ! 'Sass error: %{sass_error}'
             invalid_type_parameter:
-              one: '%{invalid_types} is an invalid parameter type.'
-              other: '%{invalid_types} are invalid parameter types.'
+              one: ! '%{invalid_types} is an invalid parameter type.'
+              other: ! '%{invalid_types} are invalid parameter types.'
         warning:
           app_build:
             deprecated_version: You are targeting a deprecated version of the framework.
