@@ -3,10 +3,12 @@ module ZendeskAppsSupport
   class AppFile
 
     attr_reader :relative_path
+    attr_reader :absolute_path
 
     def initialize(package, relative_path)
       @relative_path = relative_path
       @file = File.new(package.root.join(relative_path))
+      @absolute_path = File.absolute_path @file.path
     end
 
     def read
