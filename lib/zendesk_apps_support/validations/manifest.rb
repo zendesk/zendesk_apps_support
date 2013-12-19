@@ -26,6 +26,7 @@ module ZendeskAppsSupport
             errors << parameters_error(manifest)
             errors << invalid_hidden_parameter_error(manifest)
             errors << invalid_type_error(manifest)
+            errors << name_as_parameter_name_error(manifest)
             errors.compact!
           end
         rescue MultiJson::DecodeError => e
@@ -99,6 +100,14 @@ module ZendeskAppsSupport
 
           unless valid_to_serve.include?(target_version)
             return ValidationError.new(:invalid_version, :target_version => target_version, :available_versions => valid_to_serve.join(', '))
+          end
+        end
+
+        def name_as_parameter_name_error(manifest)
+          if manifest['parameters'].kind_of?(Array)
+            if manifest['parameters'].any? { |p| p['name'] == 'name' }
+              ValidationError.new(:name_as_parameter_name)
+            end
           end
         end
 
