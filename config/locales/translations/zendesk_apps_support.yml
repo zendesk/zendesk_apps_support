@@ -64,6 +64,10 @@ parts:
       title: "App builder job: invalid locations"
       value: "%{invalid_locations} are invalid locations."
   - translation:
+      key: "txt.apps.admin.error.app_build.name_as_parameter_name"
+      title: "App builder job: error message when developer names a parameter 'name'"
+      value: "Can't call a parameter 'name'"
+  - translation:
       key: "txt.apps.admin.error.app_build.invalid_hidden_parameter.one"
       title: "App builder job: hidden parameters set to required"
       value: "%{invalid_params} is set to hidden and cannot be required."

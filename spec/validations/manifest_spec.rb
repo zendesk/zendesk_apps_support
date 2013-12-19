@@ -129,6 +129,18 @@ describe ZendeskAppsSupport::Validations::Manifest do
       errors.map(&:to_s).should == ['App parameters must be an array.']
     end
 
+    it 'has an error when there is a parameter called "name"' do
+      parameter_hash = {
+          'parameters' => [{
+              'name' => 'name',
+              'type' => 'text'
+          }]
+      }
+
+      errors = ZendeskAppsSupport::Validations::Manifest.call(create_package(parameter_hash))
+      errors.map(&:to_s).should == ["Can't call a parameter 'name'"]
+    end
+
     it "doesn't have an error with an array of app parameters" do
       parameter_hash = {
           'parameters' => [{
