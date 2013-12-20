@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    zendesk_apps_support (1.9.0)
+    zendesk_apps_support (1.10.0)
       erubis
       i18n
       jshintrb (= 0.2.4)
