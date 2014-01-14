@@ -93,7 +93,7 @@ module ZendeskAppsSupport
 
         def duplicate_location_error(manifest)
           locations           = *manifest['location']
-          duplicate_locations = *locations.detect { |location| locations.count(location) > 1 }
+          duplicate_locations = *locations.select { |location| locations.count(location) > 1 }.uniq
 
           unless duplicate_locations.empty?
             ValidationError.new(:duplicate_location, :duplicate_locations => duplicate_locations.join(', '), :count => duplicate_locations.length)
