@@ -64,6 +64,14 @@ parts:
       title: "App builder job: invalid locations"
       value: "%{invalid_locations} are invalid locations."
   - translation:
+      key: "txt.apps.admin.error.app_build.duplicate_location.one"
+      title: "App builder job: duplicate locations"
+      value: "%{duplicate_locations} is a duplicate location."
+  - translation:
+      key: "txt.apps.admin.error.app_build.duplicate_location.other"
+      title: "App builder job: duplicate locations"
+      value: "%{duplicate_locations} are duplicate locations."
+  - translation:
       key: "txt.apps.admin.error.app_build.name_as_parameter_name"
       title: "App builder job: error message when developer names a parameter 'name'"
       value: "Can't call a parameter 'name'"
