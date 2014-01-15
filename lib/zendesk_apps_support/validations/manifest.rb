@@ -21,6 +21,7 @@ module ZendeskAppsSupport
             errors << missing_keys_error(manifest)
             errors << default_locale_error(manifest, package)
             errors << invalid_location_error(manifest)
+            errors << duplicate_location_error(manifest)
             errors << invalid_version_error(manifest, package)
             errors << oauth_error(manifest)
             errors << parameters_error(manifest)
@@ -87,6 +88,15 @@ module ZendeskAppsSupport
           invalid_locations = [*manifest['location']] - LOCATIONS_AVAILABLE
           unless invalid_locations.empty?
             ValidationError.new(:invalid_location, :invalid_locations => invalid_locations.join(', '), :count => invalid_locations.length)
+          end
+        end
+
+        def duplicate_location_error(manifest)
+          locations           = *manifest['location']
+          duplicate_locations = *locations.select { |location| locations.count(location) > 1 }.uniq
+
+          unless duplicate_locations.empty?
+            ValidationError.new(:duplicate_location, :duplicate_locations => duplicate_locations.join(', '), :count => duplicate_locations.length)
           end
         end
 

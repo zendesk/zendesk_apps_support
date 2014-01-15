@@ -27,6 +27,9 @@ en:
             invalid_location:
               one: '%{invalid_locations} is an invalid location.'
               other: '%{invalid_locations} are invalid locations.'
+            duplicate_location:
+              one: '%{duplicate_locations} is a duplicate location.'
+              other: '%{duplicate_locations} are duplicate locations.'
             name_as_parameter_name: Can't call a parameter 'name'
             invalid_hidden_parameter:
               one: '%{invalid_params} is set to hidden and cannot be required.'
