@@ -5,6 +5,7 @@ title: "Apps Support"
 packages:
   - default
   - apps_support
+  - classic
 
 parts:
   - translation:
