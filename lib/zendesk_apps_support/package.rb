@@ -8,7 +8,7 @@ module ZendeskAppsSupport
 
     DEFAULT_LAYOUT = Erubis::Eruby.new( File.read(File.expand_path('../assets/default_template.html.erb', __FILE__)) )
     DEFAULT_SCSS   = File.read(File.expand_path('../assets/default_styles.scss', __FILE__))
-    SRC_TEMPLATE = Erubis::Eruby.new( File.read(File.expand_path('../assets/src.js.erb', __FILE__)) )
+    SRC_TEMPLATE   = Erubis::Eruby.new( File.read(File.expand_path('../assets/src.js.erb', __FILE__)) )
 
     attr_reader :root, :warnings
 
@@ -18,11 +18,12 @@ module ZendeskAppsSupport
     end
 
     def validate
-      Validations::Manifest.call(self) +
-        Validations::Source.call(self) +
-        Validations::Templates.call(self) +
-        Validations::Translations.call(self) +
-        Validations::Stylesheets.call(self)
+      Validations::Manifest.call(self)     +
+      Validations::Source.call(self)       +
+      Validations::Templates.call(self)    +
+      Validations::Translations.call(self) +
+      Validations::Stylesheets.call(self)  +
+      Validations::Requirements.call(self)
     end
 
     def files
