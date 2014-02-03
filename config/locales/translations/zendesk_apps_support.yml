@@ -16,7 +16,7 @@ parts:
       title: "App builder job: JSHint error messages"
       value: "JSHint errors in %{file}: %{errors}"
   - translation:
-      key: "txt.apps.admin.error.app_build.package.missing_location_and_requirements"
+      key: "txt.apps.admin.error.app_build.missing_location_and_requirements"
       title: "App builder job: missing location and requirements error"
       value: "Missing app location and requirements"
   - translation:

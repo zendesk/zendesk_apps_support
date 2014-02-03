@@ -14,7 +14,7 @@ module ZendeskAppsSupport
 
         def has_location_or_requirements(package)
           if !package.has_location? && !package.has_requirements?
-            ValidationError.new('package.missing_location_and_requirements')
+            ValidationError.new('missing_location_and_requirements')
           end
         end
 
