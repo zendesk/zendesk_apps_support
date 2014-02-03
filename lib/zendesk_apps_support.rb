@@ -12,11 +12,13 @@ module ZendeskAppsSupport
 
   module Validations
     autoload :ValidationError,       'zendesk_apps_support/validations/validation_error'
+    autoload :Package,               'zendesk_apps_support/validations/package'
     autoload :Manifest,              'zendesk_apps_support/validations/manifest'
     autoload :Source,                'zendesk_apps_support/validations/source'
     autoload :Templates,             'zendesk_apps_support/validations/templates'
     autoload :Translations,          'zendesk_apps_support/validations/translations'
     autoload :JSHintValidationError, 'zendesk_apps_support/validations/validation_error'
     autoload :Stylesheets,           'zendesk_apps_support/validations/stylesheets'
+    autoload :Requirements,          'zendesk_apps_support/validations/requirements'
   end
 end
