@@ -18,12 +18,24 @@ module ZendeskAppsSupport
     end
 
     def validate
-      Validations::Manifest.call(self)     +
-      Validations::Source.call(self)       +
-      Validations::Templates.call(self)    +
-      Validations::Translations.call(self) +
-      Validations::Stylesheets.call(self)  +
-      Validations::Requirements.call(self)
+      [].tap do |errors|
+
+        errors << Validations::Package.call(self)
+        errors << Validations::Manifest.call(self)
+        errors << Validations::Translations.call(self)
+
+        if has_location?
+          errors << Validations::Source.call(self)
+          errors << Validations::Templates.call(self)
+          errors << Validations::Stylesheets.call(self)
+        end
+
+        if has_requirements?
+          errors << Validations::Requirements.call(self)
+        end
+
+        errors.flatten!
+      end
     end
 
     def files
