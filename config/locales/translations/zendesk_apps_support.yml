@@ -16,6 +16,10 @@ parts:
       title: "App builder job: JSHint error messages"
       value: "JSHint errors in %{file}: %{errors}"
   - translation:
+      key: "txt.apps.admin.error.app_build.package.missing_location_and_requirements"
+      title: "App builder job: missing location and requirements error"
+      value: "Missing app location and requirements"
+  - translation:
       key: "txt.apps.admin.error.app_build.manifest_not_json"
       title: "App builder job: manifest is invalid JSON error"
       value: "manifest is not proper JSON. %{errors}"
@@ -23,6 +27,10 @@ parts:
       key: "txt.apps.admin.error.app_build.missing_manifest"
       title: "App builder job: missing manifest error"
       value: "Could not find manifest.json"
+  - translation:
+      key: "txt.apps.admin.error.app_build.missing_requirements"
+      title: "App builder job: missing requirements error"
+      value: "Could not find requirements.json"
   - translation:
       key: "txt.apps.admin.error.app_build.manifest_keys.missing.one"
       title: "App builder job: missing manifest fields error"
