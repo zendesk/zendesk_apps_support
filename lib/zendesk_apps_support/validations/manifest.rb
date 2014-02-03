@@ -4,7 +4,7 @@ module ZendeskAppsSupport
   module Validations
     module Manifest
 
-      REQUIRED_MANIFEST_FIELDS = %w( author defaultLocale location frameworkVersion ).freeze
+      REQUIRED_MANIFEST_FIELDS = %w( author defaultLocale frameworkVersion ).freeze
       OAUTH_REQUIRED_FIELDS    = %w( client_id client_secret authorize_uri access_token_uri ).freeze
       LOCATIONS_AVAILABLE      = %w( top_bar nav_bar ticket_sidebar new_ticket_sidebar user_sidebar ).freeze
       TYPES_AVAILABLE          = %W( text password checkbox url number multiline hidden ).freeze
@@ -16,18 +16,20 @@ module ZendeskAppsSupport
           return [ValidationError.new(:missing_manifest)] unless manifest
 
           manifest = MultiJson.load(manifest.read)
-
           [].tap do |errors|
             errors << missing_keys_error(manifest)
             errors << default_locale_error(manifest, package)
-            errors << invalid_location_error(manifest)
-            errors << duplicate_location_error(manifest)
             errors << invalid_version_error(manifest, package)
             errors << oauth_error(manifest)
             errors << parameters_error(manifest)
             errors << invalid_hidden_parameter_error(manifest)
             errors << invalid_type_error(manifest)
             errors << name_as_parameter_name_error(manifest)
+
+            if package.has_location?
+              errors << invalid_location_error(manifest)
+              errors << duplicate_location_error(manifest)
+            end
             errors.compact!
           end
         rescue MultiJson::DecodeError => e
