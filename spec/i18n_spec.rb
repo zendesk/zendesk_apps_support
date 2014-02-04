@@ -1,5 +1,4 @@
-require 'zendesk_apps_support'
-require 'pathname'
+require 'spec_helper'
 
 describe ZendeskAppsSupport::I18n do
 

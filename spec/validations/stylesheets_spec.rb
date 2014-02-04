@@ -1,4 +1,4 @@
-require 'zendesk_apps_support'
+require 'spec_helper'
 
 describe ZendeskAppsSupport::Validations::Stylesheets do
   it 'does not return errors if there is no custom css' do

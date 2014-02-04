@@ -1,4 +1,4 @@
-require 'zendesk_apps_support'
+require 'spec_helper'
 
 describe ZendeskAppsSupport::Validations::Templates do
 

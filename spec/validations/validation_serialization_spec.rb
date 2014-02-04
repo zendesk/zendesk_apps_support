@@ -1,5 +1,4 @@
-require 'zendesk_apps_support'
-require 'json'
+require 'spec_helper'
 
 describe ZendeskAppsSupport::Validations::ValidationError do
 
@@ -14,14 +13,14 @@ describe ZendeskAppsSupport::Validations::ValidationError do
     let(:key)   { 'foo.bar' }
     let(:data)  { { 'baz' => 'quux' } }
     let(:error) { ValidationError.new(key, data) }
-    subject     { error.to_json }
+    subject     { MultiJson.dump(error) }
 
     it do
-      should == {
-                  'class' => error.class.to_s,
-                  'key'   => error.key,
-                  'data'  => error.data
-                }.to_json
+      should == MultiJson.dump(
+        'class' => error.class.to_s,
+        'key'   => error.key,
+        'data'  => error.data
+      )
     end
   end
 
