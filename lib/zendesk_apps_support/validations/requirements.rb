@@ -22,9 +22,9 @@ module ZendeskAppsSupport
 
         def valid_json? json
           MultiJson.load(json)
-          return true
+          true
         rescue MultiJson::DecodeError
-          return false
+          false
         end
 
       end
