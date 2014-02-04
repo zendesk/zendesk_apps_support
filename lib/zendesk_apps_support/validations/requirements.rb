@@ -17,7 +17,6 @@ module ZendeskAppsSupport
           errors
         end
 
-
         private
 
         def valid_json? json
