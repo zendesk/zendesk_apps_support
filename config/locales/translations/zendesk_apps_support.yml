@@ -18,7 +18,7 @@ parts:
   - translation:
       key: "txt.apps.admin.error.app_build.missing_location_and_requirements"
       title: "App builder job: missing location and requirements error"
-      value: "Missing app location and requirements"
+      value: "Missing app location or requirements"
   - translation:
       key: "txt.apps.admin.error.app_build.manifest_not_json"
       title: "App builder job: manifest is invalid JSON error"
