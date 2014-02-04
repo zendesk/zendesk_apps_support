@@ -5,6 +5,7 @@ title: "Apps Support"
 packages:
   - default
   - apps_support
+  - classic
 
 parts:
   - translation:
@@ -16,6 +17,10 @@ parts:
       title: "App builder job: JSHint error messages"
       value: "JSHint errors in %{file}: %{errors}"
   - translation:
+      key: "txt.apps.admin.error.app_build.missing_location_and_requirements"
+      title: "App builder job: missing location and requirements error"
+      value: "Missing app location or requirements"
+  - translation:
       key: "txt.apps.admin.error.app_build.manifest_not_json"
       title: "App builder job: manifest is invalid JSON error"
       value: "manifest is not proper JSON. %{errors}"
@@ -24,6 +29,10 @@ parts:
       title: "App builder job: missing manifest error"
       value: "Could not find manifest.json"
   - translation:
+      key: "txt.apps.admin.error.app_build.missing_requirements"
+      title: "App builder job: missing requirements error"
+      value: "Could not find requirements.json"
+  - translation:
       key: "txt.apps.admin.error.app_build.manifest_keys.missing.one"
       title: "App builder job: missing manifest fields error"
       value: "Missing required field in manifest: %{missing_keys}"
@@ -31,6 +40,10 @@ parts:
       key: "txt.apps.admin.error.app_build.manifest_keys.missing.other"
       title: "App builder job: missing manifest fields error"
       value: "Missing required fields in manifest: %{missing_keys}"
+  - translation:
+      key: "txt.apps.admin.error.app_build.requirements_not_json"
+      title: "App builder job: requirements file is invalid JSON error"
+      value: "requirements.json is not proper JSON. %{errors}"
   - translation:
       key: "txt.apps.admin.error.app_build.oauth_keys.missing.one"
       title: "App builder job: missing oauth fields error"
