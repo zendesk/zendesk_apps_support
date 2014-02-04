@@ -1,9 +1,7 @@
 require 'zendesk_apps_support'
+require 'spec_helper'
 require 'json'
 
-def read_fixture_file(file)
-  File.read("#{File.dirname(__FILE__)}/fixture/#{file}")
-end
 
 describe ZendeskAppsSupport::Validations::Translations do
 

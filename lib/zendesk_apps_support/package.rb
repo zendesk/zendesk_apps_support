@@ -8,7 +8,7 @@ module ZendeskAppsSupport
 
     DEFAULT_LAYOUT = Erubis::Eruby.new( File.read(File.expand_path('../assets/default_template.html.erb', __FILE__)) )
     DEFAULT_SCSS   = File.read(File.expand_path('../assets/default_styles.scss', __FILE__))
-    SRC_TEMPLATE = Erubis::Eruby.new( File.read(File.expand_path('../assets/src.js.erb', __FILE__)) )
+    SRC_TEMPLATE   = Erubis::Eruby.new( File.read(File.expand_path('../assets/src.js.erb', __FILE__)) )
 
     attr_reader :root, :warnings
 
@@ -18,11 +18,24 @@ module ZendeskAppsSupport
     end
 
     def validate
-      Validations::Manifest.call(self) +
-        Validations::Source.call(self) +
-        Validations::Templates.call(self) +
-        Validations::Translations.call(self) +
-        Validations::Stylesheets.call(self)
+      [].tap do |errors|
+
+        errors << Validations::Package.call(self)
+        errors << Validations::Manifest.call(self)
+        errors << Validations::Translations.call(self)
+
+        if has_location?
+          errors << Validations::Source.call(self)
+          errors << Validations::Templates.call(self)
+          errors << Validations::Stylesheets.call(self)
+        end
+
+        if has_requirements?
+          errors << Validations::Requirements.call(self)
+        end
+
+        errors.flatten!
+      end
     end
 
     def files
@@ -38,11 +51,15 @@ module ZendeskAppsSupport
     end
 
     def manifest_json
-      JSON.parse(File.read(File.join(root, "manifest.json")), :symbolize_names => true)
+      read_json("manifest.json")
+    end
+
+    def requirements_json
+      read_json("requirements.json")
     end
 
     def translations
-      JSON.parse(File.read(File.join(root, "translations/en.json")))
+      read_json("translations/en.json", false)
     end
 
     def app_translations
@@ -51,7 +68,7 @@ module ZendeskAppsSupport
 
     def readified_js(app_name, app_id, asset_url_prefix, settings={})
       manifest = manifest_json
-      source = File.read(File.join(root, "app.js"))
+      source = read_file("app.js")
       name = app_name || manifest[:name] || 'Local App'
       location = manifest[:location]
       app_class_name = "app-#{app_id}"
@@ -79,6 +96,18 @@ module ZendeskAppsSupport
     def customer_css
       css_file = File.join(root, 'app.css')
       customer_css = File.exist?(css_file) ? File.read(css_file) : ""
+    end
+
+    def has_location?
+      manifest_json[:location]
+    end
+
+    def has_requirements?
+      !requirements_json.nil?
+    end
+
+    def is_requirements_only?
+      has_requirements? && !has_location?
     end
 
     private
@@ -111,6 +140,18 @@ module ZendeskAppsSupport
         files << AppFile.new(self, relative_file_name)
       end
       files
+    end
+
+    def read_file(path)
+      file_path = File.join(root, path)
+      File.read(File.join(root, path))
+    end
+
+    def read_json(path, symbolize_names = true)
+      file = read_file(path)
+      unless file.nil?
+        JSON.parse(read_file(path), :symbolize_names => symbolize_names)
+      end
     end
   end
 end
