@@ -144,9 +144,7 @@ module ZendeskAppsSupport
 
     def read_file(path)
       file_path = File.join(root, path)
-      if File.exist?(file_path)
-        File.read(File.join(root, path))
-      end
+      File.read(File.join(root, path))
     end
 
     def read_json(path, symbolize_names = true)
