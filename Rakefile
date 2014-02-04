@@ -1,9 +1,8 @@
+require 'bundler/setup'
 require 'rspec/core/rake_task'
 require 'bump/tasks'
 
 RSpec::Core::RakeTask.new(:spec)
-task :spec
-
 task :default => :spec
 
 def array_to_nested_hash(array)

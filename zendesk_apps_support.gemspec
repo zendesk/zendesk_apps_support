@@ -1,7 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = "zendesk_apps_support"
   s.version     = "1.12.0"
-  s.platform    = Gem::Platform::RUBY
   s.license     = "Apache License Version 2.0"
   s.authors     = ["James A. Rosen", "Likun Liu", "Sean Caffery", "Daniel Ribeiro"]
   s.email       = ["dev@zendesk.com"]
@@ -22,6 +21,4 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'bump', '~> 0.4.0'
 
   s.files        = Dir.glob("{lib,config}/**/*") + %w(README.md LICENSE)
-  s.test_files   = Dir.glob("spec/**/*")
-  s.require_path = 'lib'
 end
