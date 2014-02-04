@@ -8,7 +8,23 @@ module ZendeskAppsSupport
         def call(package)
           requirements = package.files.find { |f| f.relative_path == 'requirements.json' }
 
-          return [ValidationError.new(:missing_requirements)] unless requirements
+          errors = []
+
+          if requirements && !valid_json?(requirements)
+            errors << ValidationError.new(:requirements_not_json)
+          end
+
+          errors
+        end
+
+
+        private
+
+        def valid_json? json
+          MultiJson.load(json)
+          return true
+        rescue MultiJson::DecodeError
+          return false
         end
 
       end

@@ -40,6 +40,10 @@ parts:
       title: "App builder job: missing manifest fields error"
       value: "Missing required fields in manifest: %{missing_keys}"
   - translation:
+      key: "txt.apps.admin.error.app_build.requirements_not_json"
+      title: "App builder job: requirements file is invalid JSON error"
+      value: "requirements.json is not proper JSON. %{errors}"
+  - translation:
       key: "txt.apps.admin.error.app_build.oauth_keys.missing.one"
       title: "App builder job: missing oauth fields error"
       value: "Missing required oauth field in manifest: %{missing_keys}"
