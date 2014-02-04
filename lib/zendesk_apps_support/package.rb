@@ -99,7 +99,7 @@ module ZendeskAppsSupport
     end
 
     def has_location?
-      !manifest_json[:location].nil?
+      manifest_json[:location]
     end
 
     def has_requirements?
