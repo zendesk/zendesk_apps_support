@@ -1,7 +1,4 @@
-require 'zendesk_apps_support'
 require 'spec_helper'
-require 'json'
-
 
 describe ZendeskAppsSupport::Validations::Translations do
 

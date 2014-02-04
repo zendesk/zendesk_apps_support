@@ -1,7 +1,6 @@
-require 'zendesk_apps_support'
+require 'spec_helper'
 
 describe ZendeskAppsSupport::Package do
-
   before do
     @package = ZendeskAppsSupport::Package.new('spec/app')
   end

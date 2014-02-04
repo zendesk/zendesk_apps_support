@@ -1,7 +1,7 @@
-require 'zendesk_apps_support'
-include ZendeskAppsSupport::BuildTranslation
+require 'spec_helper'
 
 describe ZendeskAppsSupport::BuildTranslation do
+  include ZendeskAppsSupport::BuildTranslation
 
   let(:en_json) {
     {
@@ -52,7 +52,7 @@ describe ZendeskAppsSupport::BuildTranslation do
             "a.b.b1"  => "value of b1"
           }
 
-          to_flattened_namespaced_hash(en_json, I18N_VALUE_KEY).should == expected
+          to_flattened_namespaced_hash(en_json, ZendeskAppsSupport::BuildTranslation::I18N_VALUE_KEY).should == expected
         end
       end
 
@@ -64,7 +64,7 @@ describe ZendeskAppsSupport::BuildTranslation do
             "a.b.b1"  => "description for b1 field"
           }
 
-          to_flattened_namespaced_hash(en_json, I18N_TITLE_KEY).should == expected
+          to_flattened_namespaced_hash(en_json, ZendeskAppsSupport::BuildTranslation::I18N_TITLE_KEY).should == expected
         end
       end
     end
