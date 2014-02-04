@@ -9,15 +9,12 @@ en:
             jshint:
               one: 'JSHint error in %{file}: %{errors}'
               other: 'JSHint errors in %{file}: %{errors}'
-            missing_location_and_requirements: Missing app location or requirements
             manifest_not_json: manifest is not proper JSON. %{errors}
             missing_manifest: Could not find manifest.json
-            missing_requirements: Could not find requirements.json
             manifest_keys:
               missing:
                 one: 'Missing required field in manifest: %{missing_keys}'
                 other: 'Missing required fields in manifest: %{missing_keys}'
-            requirements_not_json: requirements.json is not proper JSON. %{errors}
             oauth_keys:
               missing:
                 one: 'Missing required oauth field in manifest: %{missing_keys}'
