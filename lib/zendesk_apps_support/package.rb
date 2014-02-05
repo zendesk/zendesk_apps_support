@@ -103,7 +103,7 @@ module ZendeskAppsSupport
     end
 
     def has_requirements?
-      !requirements_json.nil?
+      File.exist?(File.join(root, "requirements.json"))
     end
 
     def is_requirements_only?
