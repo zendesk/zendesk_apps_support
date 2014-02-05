@@ -36,7 +36,7 @@ module ZendeskAppsSupport
 
     # If Ruby 1.9
     def respond_to_missing?(sym, include_private = false)
-      @file.respond_to_missing?(sym, include_private) || super
+      @file.send(:respond_to_missing?, sym, include_private) || super
     end
 
   end
