@@ -9,6 +9,13 @@ describe ZendeskAppsSupport::Package do
     it 'should return all the files within the app folder excluding files in tmp folder' do
       @package.files.map(&:relative_path).should =~ %w(app.css app.js assets/logo-small.png assets/logo.png manifest.json templates/layout.hdbs translations/en.json)
     end
+
+    it 'should error out when manifest is missing' do
+     @package = ZendeskAppsSupport::Package.new('spec/app_nomanifest')
+     err =  @package.validate
+     err.first.class.should == ZendeskAppsSupport::Validations::ValidationError
+     err.first.to_s.should == 'Could not find manifest.json'
+    end
   end
 
   describe 'template_files' do

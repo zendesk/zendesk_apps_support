@@ -20,18 +20,21 @@ module ZendeskAppsSupport
     def validate
       [].tap do |errors|
 
-        errors << Validations::Package.call(self)
         errors << Validations::Manifest.call(self)
-        errors << Validations::Translations.call(self)
 
-        if has_location?
-          errors << Validations::Source.call(self)
-          errors << Validations::Templates.call(self)
-          errors << Validations::Stylesheets.call(self)
-        end
+        if has_manifest?
+          errors << Validations::Package.call(self)
+          errors << Validations::Translations.call(self)
 
-        if has_requirements?
-          errors << Validations::Requirements.call(self)
+          if has_location?
+            errors << Validations::Source.call(self)
+            errors << Validations::Templates.call(self)
+            errors << Validations::Stylesheets.call(self)
+          end
+
+          if has_requirements?
+            errors << Validations::Requirements.call(self)
+          end
         end
 
         errors.flatten!
@@ -96,6 +99,10 @@ module ZendeskAppsSupport
     def customer_css
       css_file = File.join(root, 'app.css')
       customer_css = File.exist?(css_file) ? File.read(css_file) : ""
+    end
+
+    def has_manifest?
+      File.exist?(File.join(root, "manifest.json"))
     end
 
     def has_location?
