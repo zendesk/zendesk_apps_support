@@ -30,7 +30,7 @@ describe ZendeskAppsSupport::Validations::Manifest do
     package = mock('Package', :files => [manifest], :has_location? => true)
     errors = ZendeskAppsSupport::Validations::Manifest.call(package)
 
-    errors.first().to_s.should eql 'Missing required fields in manifest: author, defaultLocale, frameworkVersion'
+    errors.first().to_s.should eql 'Missing required fields in manifest: author, defaultLocale'
   end
 
   it 'should have an error when the defaultLocale is invalid' do
