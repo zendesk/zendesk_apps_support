@@ -4,6 +4,7 @@ module ZendeskAppsSupport
   module Validations
     module Manifest
 
+      FRAMEWORK_VERSION_FIELD  = 'frameworkVersion'.freeze
       REQUIRED_MANIFEST_FIELDS = %w( author defaultLocale ).freeze
       OAUTH_REQUIRED_FIELDS    = %w( client_id client_secret authorize_uri access_token_uri ).freeze
       LOCATIONS_AVAILABLE      = %w( top_bar nav_bar ticket_sidebar new_ticket_sidebar user_sidebar ).freeze
@@ -28,6 +29,7 @@ module ZendeskAppsSupport
             if package.has_location?
               errors << invalid_location_error(manifest)
               errors << duplicate_location_error(manifest)
+              errors << missing_framework_version(manifest)
               errors << invalid_version_error(manifest, package)
             end
             errors.compact!
@@ -70,9 +72,7 @@ module ZendeskAppsSupport
             manifest[key].nil?
           end
 
-          if missing.any?
-            ValidationError.new('manifest_keys.missing', :missing_keys => missing.join(', '), :count => missing.length)
-          end
+          missing_keys_validation_error(missing) if missing.any?
         end
 
         def default_locale_error(manifest, package)
@@ -100,6 +100,10 @@ module ZendeskAppsSupport
           unless duplicate_locations.empty?
             ValidationError.new(:duplicate_location, :duplicate_locations => duplicate_locations.join(', '), :count => duplicate_locations.length)
           end
+        end
+
+        def missing_framework_version(manifest)
+          missing_keys_validation_error([ FRAMEWORK_VERSION_FIELD ]) if manifest['frameworkVersion'].nil?
         end
 
         def invalid_version_error(manifest, package)
@@ -149,6 +153,12 @@ module ZendeskAppsSupport
           if invalid_types.any?
             ValidationError.new(:invalid_type_parameter, :invalid_types => invalid_types.join(', '), :count => invalid_types.length)
           end
+        end
+
+        private
+
+        def missing_keys_validation_error(missing_keys)
+          ValidationError.new('manifest_keys.missing', :missing_keys => missing_keys.join(', '), :count => missing_keys.length)
         end
 
       end
