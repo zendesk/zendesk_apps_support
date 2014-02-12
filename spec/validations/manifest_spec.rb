@@ -33,6 +33,14 @@ describe ZendeskAppsSupport::Validations::Manifest do
     errors.map(&:to_s).should include 'Missing required fields in manifest: author, defaultLocale'
   end
 
+  it 'should have an error when location is missing without requirements' do
+    manifest = mock('AppFile', :relative_path => 'manifest.json', :read => "{}")
+    package  = mock('Package', :files => [manifest], :has_location? => false, :has_js? => true)
+    errors   = ZendeskAppsSupport::Validations::Manifest.call(package)
+
+    errors.map(&:to_s).should include 'Missing required field in manifest: location'
+  end
+
   it 'should have an error when frameworkVersion is missing without requirements' do
     manifest = mock('AppFile', :relative_path => 'manifest.json', :read => "{}")
     package  = mock('Package', :files => [manifest], :has_location? => true, :has_js? => true)
