@@ -102,7 +102,7 @@ module ZendeskAppsSupport
     end
 
     def has_manifest?
-      File.exist?(File.join(root, "manifest.json"))
+      file_exists?("manifest.json")
     end
 
     def has_location?
@@ -110,7 +110,7 @@ module ZendeskAppsSupport
     end
 
     def has_requirements?
-      File.exist?(File.join(root, "requirements.json"))
+      file_exists?("requirements.json")
     end
 
     def is_requirements_only?
@@ -147,6 +147,10 @@ module ZendeskAppsSupport
         files << AppFile.new(self, relative_file_name)
       end
       files
+    end
+
+    def file_exists?(path)
+      File.exist?(File.join(root, path))
     end
 
     def read_file(path)
