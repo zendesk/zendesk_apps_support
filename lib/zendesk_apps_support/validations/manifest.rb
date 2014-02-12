@@ -4,7 +4,6 @@ module ZendeskAppsSupport
   module Validations
     module Manifest
 
-      FRAMEWORK_VERSION_FIELD  = 'frameworkVersion'.freeze
       REQUIRED_MANIFEST_FIELDS = %w( author defaultLocale ).freeze
       OAUTH_REQUIRED_FIELDS    = %w( client_id client_secret authorize_uri access_token_uri ).freeze
       LOCATIONS_AVAILABLE      = %w( top_bar nav_bar ticket_sidebar new_ticket_sidebar user_sidebar ).freeze
@@ -103,7 +102,7 @@ module ZendeskAppsSupport
         end
 
         def missing_framework_version(manifest)
-          missing_keys_validation_error([ FRAMEWORK_VERSION_FIELD ]) if manifest['frameworkVersion'].nil?
+          missing_keys_validation_error([ 'frameworkVersion' ]) if manifest['frameworkVersion'].nil?
         end
 
         def invalid_version_error(manifest, package)
