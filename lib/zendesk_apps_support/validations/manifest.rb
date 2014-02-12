@@ -26,6 +26,7 @@ module ZendeskAppsSupport
             errors << name_as_parameter_name_error(manifest)
 
             if package.has_location?
+              errors << missing_location_error(package)
               errors << invalid_location_error(manifest)
               errors << duplicate_location_error(manifest)
               errors << missing_framework_version(manifest)
@@ -83,6 +84,10 @@ module ZendeskAppsSupport
               ValidationError.new(:missing_translation_file, :defaultLocale => default_locale)
             end
           end
+        end
+
+        def missing_location_error(package)
+          ValidationError.new(:missing_location) unless package.has_location?
         end
 
         def invalid_location_error(manifest)
