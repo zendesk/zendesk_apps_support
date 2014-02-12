@@ -87,7 +87,7 @@ module ZendeskAppsSupport
         end
 
         def missing_location_error(package)
-          ValidationError.new(:missing_location) unless package.has_location?
+          missing_keys_validation_error(['location']) unless package.has_location?
         end
 
         def invalid_location_error(manifest)
