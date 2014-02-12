@@ -4,7 +4,7 @@ module ZendeskAppsSupport
   module Validations
     module Manifest
 
-      REQUIRED_MANIFEST_FIELDS = %w( author defaultLocale frameworkVersion ).freeze
+      REQUIRED_MANIFEST_FIELDS = %w( author defaultLocale ).freeze
       OAUTH_REQUIRED_FIELDS    = %w( client_id client_secret authorize_uri access_token_uri ).freeze
       LOCATIONS_AVAILABLE      = %w( top_bar nav_bar ticket_sidebar new_ticket_sidebar user_sidebar ).freeze
       TYPES_AVAILABLE          = %W( text password checkbox url number multiline hidden ).freeze
@@ -19,16 +19,18 @@ module ZendeskAppsSupport
           [].tap do |errors|
             errors << missing_keys_error(manifest)
             errors << default_locale_error(manifest, package)
-            errors << invalid_version_error(manifest, package)
             errors << oauth_error(manifest)
             errors << parameters_error(manifest)
             errors << invalid_hidden_parameter_error(manifest)
             errors << invalid_type_error(manifest)
             errors << name_as_parameter_name_error(manifest)
 
-            if package.has_location?
+            if package.has_js?
+              errors << missing_location_error(package)
               errors << invalid_location_error(manifest)
               errors << duplicate_location_error(manifest)
+              errors << missing_framework_version(manifest)
+              errors << invalid_version_error(manifest, package)
             end
             errors.compact!
           end
@@ -70,9 +72,7 @@ module ZendeskAppsSupport
             manifest[key].nil?
           end
 
-          if missing.any?
-            ValidationError.new('manifest_keys.missing', :missing_keys => missing.join(', '), :count => missing.length)
-          end
+          missing_keys_validation_error(missing) if missing.any?
         end
 
         def default_locale_error(manifest, package)
@@ -84,6 +84,10 @@ module ZendeskAppsSupport
               ValidationError.new(:missing_translation_file, :defaultLocale => default_locale)
             end
           end
+        end
+
+        def missing_location_error(package)
+          missing_keys_validation_error(['location']) unless package.has_location?
         end
 
         def invalid_location_error(manifest)
@@ -100,6 +104,10 @@ module ZendeskAppsSupport
           unless duplicate_locations.empty?
             ValidationError.new(:duplicate_location, :duplicate_locations => duplicate_locations.join(', '), :count => duplicate_locations.length)
           end
+        end
+
+        def missing_framework_version(manifest)
+          missing_keys_validation_error(['frameworkVersion']) if manifest['frameworkVersion'].nil?
         end
 
         def invalid_version_error(manifest, package)
@@ -149,6 +157,12 @@ module ZendeskAppsSupport
           if invalid_types.any?
             ValidationError.new(:invalid_type_parameter, :invalid_types => invalid_types.join(', '), :count => invalid_types.length)
           end
+        end
+
+        private
+
+        def missing_keys_validation_error(missing_keys)
+          ValidationError.new('manifest_keys.missing', :missing_keys => missing_keys.join(', '), :count => missing_keys.length)
         end
 
       end
