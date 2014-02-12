@@ -107,7 +107,7 @@ module ZendeskAppsSupport
         end
 
         def missing_framework_version(manifest)
-          missing_keys_validation_error([ 'frameworkVersion' ]) if manifest['frameworkVersion'].nil?
+          missing_keys_validation_error(['frameworkVersion']) if manifest['frameworkVersion'].nil?
         end
 
         def invalid_version_error(manifest, package)
