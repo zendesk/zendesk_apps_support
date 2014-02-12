@@ -25,7 +25,7 @@ module ZendeskAppsSupport
             errors << invalid_type_error(manifest)
             errors << name_as_parameter_name_error(manifest)
 
-            if package.has_location?
+            if package.has_js?
               errors << missing_location_error(package)
               errors << invalid_location_error(manifest)
               errors << duplicate_location_error(manifest)

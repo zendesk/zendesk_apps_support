@@ -26,7 +26,7 @@ module ZendeskAppsSupport
           errors << Validations::Package.call(self)
           errors << Validations::Translations.call(self)
 
-          if has_location?
+          if has_js?
             errors << Validations::Source.call(self)
             errors << Validations::Templates.call(self)
             errors << Validations::Stylesheets.call(self)
@@ -99,6 +99,10 @@ module ZendeskAppsSupport
     def customer_css
       css_file = File.join(root, 'app.css')
       customer_css = File.exist?(css_file) ? File.read(css_file) : ""
+    end
+
+    def has_js?
+      file_exists?("app.js")
     end
 
     def has_manifest?
