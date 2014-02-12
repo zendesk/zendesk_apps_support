@@ -14,7 +14,7 @@ describe ZendeskAppsSupport::Validations::Manifest do
   def create_package(parameter_hash)
     params = default_required_params(parameter_hash)
     manifest = mock('AppFile', :relative_path => 'manifest.json', :read => MultiJson.dump(params))
-    mock('Package', :files => [manifest], :has_location? => true)
+    mock('Package', :files => [manifest], :has_location? => true, :has_js? => true)
   end
 
   it 'should have an error when manifest.json is missing' do
@@ -27,7 +27,7 @@ describe ZendeskAppsSupport::Validations::Manifest do
 
   it 'should have an error when required field is missing' do
     manifest = mock('AppFile', :relative_path => 'manifest.json', :read => "{}")
-    package = mock('Package', :files => [manifest], :has_location? => true)
+    package = mock('Package', :files => [manifest], :has_location? => true, :has_js? => true)
     errors = ZendeskAppsSupport::Validations::Manifest.call(package)
 
     errors.map(&:to_s).should include 'Missing required fields in manifest: author, defaultLocale'
@@ -35,7 +35,7 @@ describe ZendeskAppsSupport::Validations::Manifest do
 
   it 'should have an error when frameworkVersion is missing without requirements' do
     manifest = mock('AppFile', :relative_path => 'manifest.json', :read => "{}")
-    package  = mock('Package', :files => [manifest], :has_location? => true)
+    package  = mock('Package', :files => [manifest], :has_location? => true, :has_js? => true)
     errors   = ZendeskAppsSupport::Validations::Manifest.call(package)
 
     errors.map(&:to_s).should include 'Missing required field in manifest: frameworkVersion'
@@ -43,7 +43,7 @@ describe ZendeskAppsSupport::Validations::Manifest do
 
   it 'should not have an error when frameworkVersion is missing with requirements' do
     manifest = mock('AppFile', :relative_path => 'manifest.json', :read => "{}")
-    package  = mock('Package', :files => [manifest], :has_location? => false)
+    package  = mock('Package', :files => [manifest], :has_location? => false, :has_js? => false)
     errors   = ZendeskAppsSupport::Validations::Manifest.call(package)
 
     errors.map(&:to_s).should_not include 'Missing required field in manifest: frameworkVersion'
@@ -52,7 +52,7 @@ describe ZendeskAppsSupport::Validations::Manifest do
   it 'should have an error when the defaultLocale is invalid' do
     manifest = { 'defaultLocale' => 'pt-BR-1' }
     manifest_file = mock('AppFile', :relative_path => 'manifest.json', :read => MultiJson.dump(manifest))
-    package = mock('Package', :files => [manifest_file], :has_location? => true)
+    package = mock('Package', :files => [manifest_file], :has_location? => true, :has_js? => true)
     errors = ZendeskAppsSupport::Validations::Manifest.call(package)
 
     locale_error = errors.find { |e| e.to_s =~ /default locale/ }
@@ -63,7 +63,7 @@ describe ZendeskAppsSupport::Validations::Manifest do
     manifest = { 'defaultLocale' => 'pt' }
     manifest_file = mock('AppFile', :relative_path => 'manifest.json', :read => MultiJson.dump(manifest))
     translation_files = mock('AppFile', :relative_path => 'translations/en.json')
-    package = mock('Package', :files => [manifest_file], :has_location? => true, :translation_files => [translation_files])
+    package = mock('Package', :files => [manifest_file], :has_location? => true, :has_js? => true, :translation_files => [translation_files])
     errors = ZendeskAppsSupport::Validations::Manifest.call(package)
 
     locale_error = errors.find { |e| e.to_s =~ /Missing translation file/ }
@@ -73,7 +73,7 @@ describe ZendeskAppsSupport::Validations::Manifest do
   it 'should have an error when the location is invalid' do
     manifest = { 'location' => ['ticket_sidebar', 'a_invalid_location'] }
     manifest_file = mock('AppFile', :relative_path => 'manifest.json', :read => MultiJson.dump(manifest))
-    package = mock('Package', :files => [manifest_file], :has_location? => true)
+    package = mock('Package', :files => [manifest_file], :has_location? => true, :has_js? => true)
     errors = ZendeskAppsSupport::Validations::Manifest.call(package)
 
     locations_error = errors.find { |e| e.to_s =~ /invalid location/ }
@@ -83,7 +83,7 @@ describe ZendeskAppsSupport::Validations::Manifest do
   it 'should have an error when there are duplicate locations' do
     manifest = { 'location' => ['ticket_sidebar', 'ticket_sidebar'] }
     manifest_file = mock('AppFile', :relative_path => 'manifest.json', :read => MultiJson.dump(manifest))
-    package = mock('Package', :files => [manifest_file], :has_location? => true)
+    package = mock('Package', :files => [manifest_file], :has_location? => true, :has_js? => true)
     errors = ZendeskAppsSupport::Validations::Manifest.call(package)
 
     locations_error = errors.find { |e| e.to_s =~ /duplicate/ }
@@ -93,7 +93,7 @@ describe ZendeskAppsSupport::Validations::Manifest do
   it 'should have an error when the version is not supported' do
     manifest = { 'frameworkVersion' => '0.7' }
     manifest_file = mock('AppFile', :relative_path => 'manifest.json', :read => MultiJson.dump(manifest))
-    package = mock('Package', :files => [manifest_file], :has_location? => true)
+    package = mock('Package', :files => [manifest_file], :has_location? => true, :has_js? => true)
     errors = ZendeskAppsSupport::Validations::Manifest.call(package)
 
     version_error = errors.find { |e| e.to_s =~ /not a valid framework version/ }
@@ -110,7 +110,7 @@ describe ZendeskAppsSupport::Validations::Manifest do
     }
 
     manifest_file = mock('AppFile', :relative_path => 'manifest.json', :read => MultiJson.dump(manifest))
-    package = mock('Package', :files => [manifest_file], :has_location? => true)
+    package = mock('Package', :files => [manifest_file], :has_location? => true, :has_js? => true)
     errors = ZendeskAppsSupport::Validations::Manifest.call(package)
 
     hidden_params_error = errors.find { |e| e.to_s =~ /set to hidden and cannot be required/ }
@@ -119,7 +119,7 @@ describe ZendeskAppsSupport::Validations::Manifest do
 
   it 'should have an error when manifest is not a valid json' do
     manifest = mock('AppFile', :relative_path => 'manifest.json', :read => "}")
-    package = mock('Package', :files => [manifest], :has_location? => true)
+    package = mock('Package', :files => [manifest], :has_location? => true, :has_js? => true)
     errors = ZendeskAppsSupport::Validations::Manifest.call(package)
 
     errors.first().to_s.should =~ /^manifest is not proper JSON/
