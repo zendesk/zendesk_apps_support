@@ -19,4 +19,22 @@ describe ZendeskAppsSupport::Validations::Requirements do
     expect(errors).to be_empty
   end
 
+  it "creates an error if there are invalid requirement types" do
+    requirements = mock('AppFile', :relative_path => 'requirements.json',
+                                   :read => '{ "i_am_not_a_valid_type": {}}')
+    package = mock('Package', :files => [requirements])
+    errors = ZendeskAppsSupport::Validations::Requirements.call(package)
+
+    errors.first.key.should == :invalid_requirements_types
+  end
+
+  it "creates an error if there are duplicate requirements types" do
+    requirements = mock('AppFile', :relative_path => 'requirements.json',
+                                   :read => '{ "a": { "b": 1, "b": 2 }}')
+    package = mock('Package', :files => [requirements])
+    errors = ZendeskAppsSupport::Validations::Requirements.call(package)
+
+    errors.first.key.should == :duplicate_requirements
+  end
+
 end
