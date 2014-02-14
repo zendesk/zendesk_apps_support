@@ -18,6 +18,12 @@ en:
                 one: 'Missing required field in manifest: %{missing_keys}'
                 other: 'Missing required fields in manifest: %{missing_keys}'
             requirements_not_json: requirements.json is not proper JSON. %{errors}
+            duplicate_requirements:
+              one: 'requirements.json contains a duplicate key: %{duplicate_keys}'
+              other: 'requirements.json contains duplicate keys: %{duplicate_keys}'
+            invalid_requirements_types:
+              one: 'requirements.json contains an invalid type: %{invalid_types}'
+              other: 'requirements.json contains invalid types: %{invalid_types}'
             oauth_keys:
               missing:
                 one: 'Missing required oauth field in manifest: %{missing_keys}'

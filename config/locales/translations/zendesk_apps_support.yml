@@ -45,6 +45,22 @@ parts:
       title: "App builder job: requirements file is invalid JSON error"
       value: "requirements.json is not proper JSON. %{errors}"
   - translation:
+      key: "txt.apps.admin.error.app_build.duplicate_requirements.one"
+      title: "App builder job: requirements file contains duplicate key error"
+      value: "requirements.json contains a duplicate key: %{duplicate_keys}"
+  - translation:
+      key: "txt.apps.admin.error.app_build.duplicate_requirements.other"
+      title: "App builder job: requirements file contains duplicate keys error"
+      value: "requirements.json contains duplicate keys: %{duplicate_keys}"
+  - translation:
+      key: "txt.apps.admin.error.app_build.invalid_requirements_types.one"
+      title: "App builder job: requirements file contains invalid type error"
+      value: "requirements.json contains an invalid type: %{invalid_types}"
+  - translation:
+      key: "txt.apps.admin.error.app_build.invalid_requirements_types.other"
+      title: "App builder job: requirements file contains invalid types error"
+      value: "requirements.json contains invalid types: %{invalid_types}"
+  - translation:
       key: "txt.apps.admin.error.app_build.oauth_keys.missing.one"
       title: "App builder job: missing oauth fields error"
       value: "Missing required oauth field in manifest: %{missing_keys}"
