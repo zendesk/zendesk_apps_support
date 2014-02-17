@@ -1,29 +1,55 @@
 require 'multi_json'
+require 'json/stream'
+require 'pp'
 
 module ZendeskAppsSupport
   module Validations
     module Requirements
 
+      REQUIREMENTS_TYPES = %w(automations macros targets ticket_fields triggers user_fields).freeze
+
       class <<self
         def call(package)
-          requirements = package.files.find { |f| f.relative_path == 'requirements.json' }
+          requirements_file = package.files.find { |f| f.relative_path == 'requirements.json' }
 
-          errors = []
+          return [ValidationError.new(:missing_requirements)] unless requirements_file
 
-          if requirements && !valid_json?(requirements)
-            errors << ValidationError.new(:requirements_not_json)
+          requirements_stream = requirements_file.read
+          duplicates = non_unique_type_keys(requirements_stream)
+          unless duplicates.empty?
+            return [ValidationError.new(:duplicate_requirements, :duplicate_keys => duplicates.join(', '), :count => duplicates.length)]
           end
 
-          errors
+          requirements = MultiJson.load(requirements_stream)
+          [].tap do |errors|
+            errors << invalid_requirements_types(requirements)
+            errors.compact!
+          end
+        rescue MultiJson::DecodeError => e
+          return [ValidationError.new(:requirements_not_json, :errors => e)]
         end
 
         private
 
-        def valid_json? json
-          MultiJson.load(json)
-          true
-        rescue MultiJson::DecodeError
-          false
+        def invalid_requirements_types(requirements)
+          invalid_types = requirements.keys - REQUIREMENTS_TYPES
+
+          unless invalid_types.empty?
+            ValidationError.new(:invalid_requirements_types, :invalid_types => invalid_types.join(', '), :count => invalid_types.length)
+          end
+        end
+
+        def non_unique_type_keys(requirements)
+          keys = []
+          duplicates = []
+          parser = JSON::Stream::Parser.new do
+            start_object { keys.push({}) }
+            end_object { keys.pop }
+            key { |k| duplicates.push(k) if keys.last.include? k; keys.last[k] = nil }
+          end
+          parser << requirements
+
+          duplicates
         end
 
       end
