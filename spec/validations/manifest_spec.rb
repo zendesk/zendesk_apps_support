@@ -44,7 +44,7 @@ describe ZendeskAppsSupport::Validations::Manifest do
   it 'should have an error when location is missing and requirementsOnly is false' do
     manifest = mock('AppFile', :relative_path => 'manifest.json', :read => "{}")
     package  = mock('Package', :files => [manifest], :has_location? => false, :has_js? => true,
-                               :requirements_only? => false)
+                               :is_requirements_only? => false)
     errors   = ZendeskAppsSupport::Validations::Manifest.call(package)
 
     errors.map(&:to_s).should include 'Missing required field in manifest: location'
@@ -53,7 +53,7 @@ describe ZendeskAppsSupport::Validations::Manifest do
   it 'should not have an error when location is missing but requirementsOnly is true' do
     manifest = mock('AppFile', :relative_path => 'manifest.json', :read => "{}")
     package  = mock('Package', :files => [manifest], :has_location? => false, :has_js? => true,
-                               :requirements_only? => true)
+                               :is_requirements_only? => true)
     errors   = ZendeskAppsSupport::Validations::Manifest.call(package)
 
     errors.map(&:to_s).should_not include 'Missing required field in manifest: location'

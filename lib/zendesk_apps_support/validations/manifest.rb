@@ -26,7 +26,7 @@ module ZendeskAppsSupport
             errors << name_as_parameter_name_error(manifest)
 
             if package.has_js?
-              unless package.requirements_only?
+              unless package.is_requirements_only?
                 errors << missing_location_error(package)
               end
 
