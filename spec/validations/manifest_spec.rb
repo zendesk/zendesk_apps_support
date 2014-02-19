@@ -43,7 +43,7 @@ describe ZendeskAppsSupport::Validations::Manifest do
     manifest_error(@package).should include 'Missing required field in manifest: location'
   end
 
-  it 'should not have an error when location is missing but requirementsOnly is true' do
+  it 'should not have an error when location is missing but requirements only is true' do
     @package.stub(:has_location? => false, :is_requirements_only? => true)
     manifest_error(@package).should_not include 'Missing required field in manifest: location'
   end
