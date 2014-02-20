@@ -44,7 +44,7 @@ describe ZendeskAppsSupport::Validations::Manifest do
   before do
     @manifest = mock('AppFile', :relative_path => 'manifest.json', :read => "{}")
     @package = mock('Package', :files => [@manifest],
-      :has_location? => true, :has_js? => true, :is_requirements_only? => false, :requirements_only= => nil)
+      :has_location? => true, :has_js? => true, :requirements_only => false, :requirements_only= => nil)
   end
 
   it 'should have an error when required field is missing' do

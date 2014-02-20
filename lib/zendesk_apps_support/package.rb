@@ -119,10 +119,6 @@ module ZendeskAppsSupport
       file_exists?("requirements.json")
     end
 
-    def is_requirements_only?
-      !@requirements_only.nil?
-    end
-
     private
 
     def compiled_templates(app_id, asset_url_prefix)
