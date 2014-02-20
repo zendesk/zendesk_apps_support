@@ -27,7 +27,7 @@ module ZendeskAppsSupport
             errors << name_as_parameter_name_error(manifest)
 
             if manifest['requirementsOnly']
-              package.flag_requirements_only
+              package.requirements_only = true
 
               errors << ban_location(manifest)
               errors << ban_framework_version(manifest)

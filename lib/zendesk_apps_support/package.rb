@@ -11,6 +11,7 @@ module ZendeskAppsSupport
     SRC_TEMPLATE   = Erubis::Eruby.new( File.read(File.expand_path('../assets/src.js.erb', __FILE__)) )
 
     attr_reader :root, :warnings
+    attr_accessor :requirements_only
 
     def initialize(dir)
       @root = Pathname.new(File.expand_path(dir))
@@ -115,10 +116,6 @@ module ZendeskAppsSupport
 
     def has_requirements?
       file_exists?("requirements.json")
-    end
-
-    def flag_requirements_only
-      @requirements_only = true
     end
 
     def is_requirements_only?

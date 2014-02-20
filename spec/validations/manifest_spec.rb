@@ -26,54 +26,62 @@ describe ZendeskAppsSupport::Validations::Manifest do
   it 'should have an error when manifest.json is missing' do
     files = [mock('AppFile', :relative_path => 'abc.json')]
     package = mock('Package', :files => files)
-    manifest_error(package).should include 'Could not find manifest.json'
+    manifest_error(package).should have_error 'Could not find manifest.json'
   end
 
   before do
     @manifest = mock('AppFile', :relative_path => 'manifest.json', :read => "{}")
     @package = mock('Package', :files => [@manifest],
-      :has_location? => true, :has_js? => true, :is_requirements_only? => false, :flag_requirements_only => nil)
+      :has_location? => true, :has_js? => true, :is_requirements_only? => false, :requirements_only= => nil)
+  end
+
+  subject { manifest_error(@package) }
+
+  RSpec::Matchers.define :have_error do |error|
+    match do |errors|
+      errors.include? error
+    end
   end
 
   it 'should have an error when required field is missing' do
-    manifest_error(@package).should include 'Missing required fields in manifest: author, defaultLocale'
+    subject.should have_error 'Missing required fields in manifest: author, defaultLocale'
   end
 
   it 'should have an error when location is missing without requirements' do
     @package.stub(:has_location? => false)
-    manifest_error(@package).should include 'Missing required field in manifest: location'
+    subject.should have_error 'Missing required field in manifest: location'
   end
 
   it 'should have an error when location is defined but requirements only is true' do
     @manifest.stub(:read => MultiJson.dump(:requirementsOnly => true, :location => 1))
-    manifest_error(@package).should include 'Having location defined while requirements only is true'
+    subject.should have_error 'Having location defined while requirements only is true'
   end
 
   it 'should not have an error when location is missing but requirements only is true' do
     @manifest.stub(:read => MultiJson.dump(:requirementsOnly => true))
     @package.stub(:has_location? => false)
-    manifest_error(@package).should_not include 'Missing required field in manifest: location'
+    subject.should_not have_error 'Missing required field in manifest: location'
   end
 
   it 'should have an error when frameworkVersion is missing without requirements' do
-    manifest_error(@package).should include 'Missing required field in manifest: frameworkVersion'
+    subject.should have_error 'Missing required field in manifest: frameworkVersion'
   end
 
   it 'should have an error when frameworkVersion is defined but requirements only is true' do
     @manifest.stub(:read => MultiJson.dump(:requirementsOnly => true, :frameworkVersion => 1))
-    manifest_error(@package).should include 'Having framework version defined while requirements only is true'
+    subject.should have_error 'Having framework version defined while requirements only is true'
   end
 
   it 'should not have an error when frameworkVersion is missing with requirements' do
     @manifest.stub(:read => MultiJson.dump(:requirementsOnly => true))
-    manifest_error(@package).should_not include 'Missing required field in manifest: frameworkVersion'
+    subject.should_not have_error 'Missing required field in manifest: frameworkVersion'
   end
 
   it 'should have an error when the defaultLocale is invalid' do
     manifest = { 'defaultLocale' => 'pt-BR-1' }
     @manifest.stub(:read => MultiJson.dump(manifest))
 
-    manifest_error(@package).find { |e| e =~ /default locale/ }.should_not be_nil
+    subject.find { |e| e =~ /default locale/ }.should_not be_nil
   end
 
   it 'should have an error when the translation file is missing for the defaultLocale' do
@@ -82,28 +90,28 @@ describe ZendeskAppsSupport::Validations::Manifest do
     translation_files = mock('AppFile', :relative_path => 'translations/en.json')
     @package.stub(:translation_files => [translation_files])
 
-    manifest_error(@package).find { |e| e =~ /Missing translation file/ }.should_not be_nil
+    subject.find { |e| e =~ /Missing translation file/ }.should_not be_nil
   end
 
   it 'should have an error when the location is invalid' do
     manifest = { 'location' => ['ticket_sidebar', 'a_invalid_location'] }
     @manifest.stub(:read => MultiJson.dump(manifest))
 
-    manifest_error(@package).find { |e| e =~ /invalid location/ }.should_not be_nil
+    subject.find { |e| e =~ /invalid location/ }.should_not be_nil
   end
 
   it 'should have an error when there are duplicate locations' do
     manifest = { 'location' => ['ticket_sidebar', 'ticket_sidebar'] }
     @manifest.stub(:read => MultiJson.dump(manifest))
 
-    manifest_error(@package).find { |e| e =~ /duplicate/ }.should_not be_nil
+    subject.find { |e| e =~ /duplicate/ }.should_not be_nil
   end
 
   it 'should have an error when the version is not supported' do
     manifest = { 'frameworkVersion' => '0.7' }
     @manifest.stub(:read => MultiJson.dump(manifest))
 
-    manifest_error(@package).find { |e| e =~ /not a valid framework version/ }.should_not be_nil
+    subject.find { |e| e =~ /not a valid framework version/ }.should_not be_nil
   end
 
   it 'should have an error when a hidden parameter is set to required' do
@@ -154,7 +162,7 @@ describe ZendeskAppsSupport::Validations::Manifest do
       }
 
       errors = ZendeskAppsSupport::Validations::Manifest.call(create_package(parameter_hash))
-      errors.map(&:to_s).should include 'App parameters must be an array.'
+      errors.map(&:to_s).should have_error 'App parameters must be an array.'
     end
 
     it 'has an error when there is a parameter called "name"' do
@@ -166,7 +174,7 @@ describe ZendeskAppsSupport::Validations::Manifest do
       }
 
       errors = ZendeskAppsSupport::Validations::Manifest.call(create_package(parameter_hash))
-      errors.map(&:to_s).should include "Can't call a parameter 'name'"
+      errors.map(&:to_s).should have_error "Can't call a parameter 'name'"
     end
 
     it "doesn't have an error with an array of app parameters" do
@@ -201,7 +209,7 @@ describe ZendeskAppsSupport::Validations::Manifest do
       }
 
       errors = ZendeskAppsSupport::Validations::Manifest.call(create_package(parameter_hash))
-      errors.map(&:to_s).should include 'Duplicate app parameters defined: ["url"]'
+      errors.map(&:to_s).should have_error 'Duplicate app parameters defined: ["url"]'
     end
 
     it 'has an error when the parameter type is not valid' do
