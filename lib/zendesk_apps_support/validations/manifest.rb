@@ -48,11 +48,11 @@ module ZendeskAppsSupport
         private
 
         def ban_location(manifest)
-          ValidationError.new(:ban_location) if !manifest['location'].nil?
+          ValidationError.new(:ban_location) unless manifest['location'].nil?
         end
 
         def ban_framework_version(manifest)
-          ValidationError.new(:ban_framework_version) if !manifest['frameworkVersion'].nil?
+          ValidationError.new(:ban_framework_version) unless manifest['frameworkVersion'].nil?
         end
 
         def oauth_error(manifest)
