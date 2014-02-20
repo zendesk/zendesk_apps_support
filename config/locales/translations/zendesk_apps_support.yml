@@ -21,6 +21,18 @@ parts:
       title: "App builder job: missing location and requirements error"
       value: "Missing app location or requirements"
   - translation:
+      key: "txt.apps.admin.error.app_build.ban_location"
+      title: "App builder job: ban location while requirements only"
+      value: "Having location defined while requirements only is true"
+  - translation:
+      key: "txt.apps.admin.error.app_build.ban_framework_version"
+      title: "App builder job: ban framework version while requirements only"
+      value: "Having framework version defined while requirements only is true"
+  - translation:
+      key: "txt.apps.admin.error.app_build.ban_app_js"
+      title: "App builder job: ban app.js while requirements only"
+      value: "Having app.js present while requirements only is true"
+  - translation:
       key: "txt.apps.admin.error.app_build.manifest_not_json"
       title: "App builder job: manifest is invalid JSON error"
       value: "manifest is not proper JSON. %{errors}"

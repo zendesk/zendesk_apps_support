@@ -26,13 +26,13 @@ module ZendeskAppsSupport
           errors << Validations::Package.call(self)
           errors << Validations::Translations.call(self)
 
-          if has_js?
-            errors << Validations::Source.call(self)
+          errors << Validations::Source.call(self)
+
+          if @requirements_only
             errors << Validations::Templates.call(self)
             errors << Validations::Stylesheets.call(self)
-          end
-
-          if has_requirements?
+            errors << Validations::Requirements.call(self)
+          elsif has_requirements?
             errors << Validations::Requirements.call(self)
           end
         end
@@ -117,8 +117,12 @@ module ZendeskAppsSupport
       file_exists?("requirements.json")
     end
 
+    def flag_requirements_only
+      @requirements_only = true
+    end
+
     def is_requirements_only?
-      has_requirements? && !has_location?
+      !@requirements_only.nil?
     end
 
     private

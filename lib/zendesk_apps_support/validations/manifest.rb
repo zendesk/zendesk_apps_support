@@ -16,6 +16,7 @@ module ZendeskAppsSupport
           return [ValidationError.new(:missing_manifest)] unless manifest
 
           manifest = MultiJson.load(manifest.read)
+
           [].tap do |errors|
             errors << missing_keys_error(manifest)
             errors << default_locale_error(manifest, package)
@@ -25,16 +26,19 @@ module ZendeskAppsSupport
             errors << invalid_type_error(manifest)
             errors << name_as_parameter_name_error(manifest)
 
-            if package.has_js?
-              unless package.is_requirements_only?
-                errors << missing_location_error(package)
-              end
+            if manifest['requirementsOnly']
+              package.flag_requirements_only
 
+              errors << ban_location(manifest)
+              errors << ban_framework_version(manifest)
+            else
+              errors << missing_location_error(package)
               errors << invalid_location_error(manifest)
               errors << duplicate_location_error(manifest)
               errors << missing_framework_version(manifest)
               errors << invalid_version_error(manifest, package)
             end
+
             errors.compact!
           end
         rescue MultiJson::DecodeError => e
@@ -42,6 +46,14 @@ module ZendeskAppsSupport
         end
 
         private
+
+        def ban_location(manifest)
+          ValidationError.new(:ban_location) if !manifest['location'].nil?
+        end
+
+        def ban_framework_version(manifest)
+          ValidationError.new(:ban_framework_version) if !manifest['frameworkVersion'].nil?
+        end
 
         def oauth_error(manifest)
           return unless manifest['oauth']
@@ -161,8 +173,6 @@ module ZendeskAppsSupport
             ValidationError.new(:invalid_type_parameter, :invalid_types => invalid_types.join(', '), :count => invalid_types.length)
           end
         end
-
-        private
 
         def missing_keys_validation_error(missing_keys)
           ValidationError.new('manifest_keys.missing', :missing_keys => missing_keys.join(', '), :count => missing_keys.length)

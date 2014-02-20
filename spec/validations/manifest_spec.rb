@@ -31,7 +31,8 @@ describe ZendeskAppsSupport::Validations::Manifest do
 
   before do
     @manifest = mock('AppFile', :relative_path => 'manifest.json', :read => "{}")
-    @package = mock('Package', :files => [@manifest], :has_location? => true, :has_js? => true, :is_requirements_only? => false)
+    @package = mock('Package', :files => [@manifest],
+      :has_location? => true, :has_js? => true, :is_requirements_only? => false, :flag_requirements_only => nil)
   end
 
   it 'should have an error when required field is missing' do
@@ -43,8 +44,14 @@ describe ZendeskAppsSupport::Validations::Manifest do
     manifest_error(@package).should include 'Missing required field in manifest: location'
   end
 
+  it 'should have an error when location is defined but requirements only is true' do
+    @manifest.stub(:read => MultiJson.dump(:requirementsOnly => true, :location => 1))
+    manifest_error(@package).should include 'Having location defined while requirements only is true'
+  end
+
   it 'should not have an error when location is missing but requirements only is true' do
-    @package.stub(:has_location? => false, :is_requirements_only? => true)
+    @manifest.stub(:read => MultiJson.dump(:requirementsOnly => true))
+    @package.stub(:has_location? => false)
     manifest_error(@package).should_not include 'Missing required field in manifest: location'
   end
 
@@ -52,8 +59,13 @@ describe ZendeskAppsSupport::Validations::Manifest do
     manifest_error(@package).should include 'Missing required field in manifest: frameworkVersion'
   end
 
+  it 'should have an error when frameworkVersion is defined but requirements only is true' do
+    @manifest.stub(:read => MultiJson.dump(:requirementsOnly => true, :frameworkVersion => 1))
+    manifest_error(@package).should include 'Having framework version defined while requirements only is true'
+  end
+
   it 'should not have an error when frameworkVersion is missing with requirements' do
-    @package.stub(:has_location? => false, :has_js? => false)
+    @manifest.stub(:read => MultiJson.dump(:requirementsOnly => true))
     manifest_error(@package).should_not include 'Missing required field in manifest: frameworkVersion'
   end
 
