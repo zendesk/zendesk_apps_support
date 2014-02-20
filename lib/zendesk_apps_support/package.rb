@@ -29,11 +29,12 @@ module ZendeskAppsSupport
 
           errors << Validations::Source.call(self)
 
-          if @requirements_only
+          unless @requirements_only
             errors << Validations::Templates.call(self)
             errors << Validations::Stylesheets.call(self)
-            errors << Validations::Requirements.call(self)
-          elsif has_requirements?
+          end
+
+          if has_requirements?
             errors << Validations::Requirements.call(self)
           end
         end
