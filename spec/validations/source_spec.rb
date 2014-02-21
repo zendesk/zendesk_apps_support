@@ -8,7 +8,7 @@ describe ZendeskAppsSupport::Validations::Source do
       package = mock('Package', :files => files, :requirements_only => true)
       errors = ZendeskAppsSupport::Validations::Source.call(package)
 
-      errors.first.to_s.should eql 'Having app.js present while requirements only is true'
+      errors.first.key.should eql :no_app_js_required
     end
   end
 

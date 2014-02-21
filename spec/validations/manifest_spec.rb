@@ -57,7 +57,7 @@ describe ZendeskAppsSupport::Validations::Manifest do
 
   it 'should have an error when location is defined but requirements only is true' do
     @manifest.stub(:read => MultiJson.dump(:requirementsOnly => true, :location => 1))
-    @package.should have_error 'Having location defined while requirements only is true'
+    @package.should have_error :no_location_required
   end
 
   it 'should not have an error when location is missing but requirements only is true' do
@@ -72,7 +72,7 @@ describe ZendeskAppsSupport::Validations::Manifest do
 
   it 'should have an error when frameworkVersion is defined but requirements only is true' do
     @manifest.stub(:read => MultiJson.dump(:requirementsOnly => true, :frameworkVersion => 1))
-    @package.should have_error 'Having framework version defined while requirements only is true'
+    @package.should have_error :no_framework_version_required
   end
 
   it 'should not have an error when frameworkVersion is missing with requirements' do
