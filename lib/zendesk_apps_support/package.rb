@@ -16,6 +16,7 @@ module ZendeskAppsSupport
     def initialize(dir)
       @root = Pathname.new(File.expand_path(dir))
       @warnings = []
+      @requirements_only = false
     end
 
     def validate
