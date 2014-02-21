@@ -10,6 +10,14 @@ describe ZendeskAppsSupport::Validations::Source do
 
       errors.first.key.should eql :no_app_js_required
     end
+
+    it 'should not have an error when app.js is not present' do
+      files = [mock('AppFile', :relative_path => nil)]
+      package = mock('Package', :files => files, :requirements_only => true)
+      errors = ZendeskAppsSupport::Validations::Source.call(package)
+
+      errors.should be_empty
+    end
   end
 
   context 'when not requirements only' do
