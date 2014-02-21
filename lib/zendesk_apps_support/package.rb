@@ -11,10 +11,12 @@ module ZendeskAppsSupport
     SRC_TEMPLATE   = Erubis::Eruby.new( File.read(File.expand_path('../assets/src.js.erb', __FILE__)) )
 
     attr_reader :root, :warnings
+    attr_accessor :requirements_only
 
     def initialize(dir)
       @root = Pathname.new(File.expand_path(dir))
       @warnings = []
+      @requirements_only = false
     end
 
     def validate
@@ -26,8 +28,9 @@ module ZendeskAppsSupport
           errors << Validations::Package.call(self)
           errors << Validations::Translations.call(self)
 
-          if has_js?
-            errors << Validations::Source.call(self)
+          errors << Validations::Source.call(self)
+
+          unless @requirements_only
             errors << Validations::Templates.call(self)
             errors << Validations::Stylesheets.call(self)
           end
@@ -115,10 +118,6 @@ module ZendeskAppsSupport
 
     def has_requirements?
       file_exists?("requirements.json")
-    end
-
-    def is_requirements_only?
-      has_requirements? && !has_location?
     end
 
     private
