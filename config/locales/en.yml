@@ -10,6 +10,11 @@ en:
               one: 'JSHint error in %{file}: %{errors}'
               other: 'JSHint errors in %{file}: %{errors}'
             missing_location_and_requirements: Missing app location or requirements
+            no_location_required: Having location defined while requirements only
+              is true
+            no_framework_version_required: Having framework version defined while
+              requirements only is true
+            no_app_js_required: Having app.js present while requirements only is true
             manifest_not_json: manifest is not proper JSON. %{errors}
             missing_manifest: Could not find manifest.json
             missing_requirements: Could not find requirements.json
