@@ -17,17 +17,16 @@ describe ZendeskAppsSupport::Validations::Manifest do
     @package
   end
 
-  def manifest_error(package)
-    errors = ZendeskAppsSupport::Validations::Manifest.call(package)
-
-    errors.map(&:to_s)
-  end
-
   RSpec::Matchers.define :have_error do |error|
     match do |package|
-      errors = manifest_error(package)
+      errors = ZendeskAppsSupport::Validations::Manifest.call(package)
+      errors.map!(&:to_s) unless error.is_a? Symbol
+
       error ||= /.+?/
-      if error.is_a? String
+
+      if error.is_a? Symbol
+        errors.find { |e| e.key == error }
+      elsif error.is_a? String
         errors.include? error
       elsif error.is_a? Regexp
         errors.find { |e| e =~ error }

@@ -10,10 +10,6 @@ en:
               one: 'JSHint error in %{file}: %{errors}'
               other: 'JSHint errors in %{file}: %{errors}'
             missing_location_and_requirements: Missing app location or requirements
-            ban_location: Having location defined while requirements only is true
-            ban_framework_version: Having framework version defined while requirements
-              only is true
-            ban_app_js: Having app.js present while requirements only is true
             manifest_not_json: manifest is not proper JSON. %{errors}
             missing_manifest: Could not find manifest.json
             missing_requirements: Could not find requirements.json
