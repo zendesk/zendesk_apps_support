@@ -12,7 +12,6 @@ module ZendeskAppsSupport
 
   module Validations
     autoload :ValidationError,       'zendesk_apps_support/validations/validation_error'
-    autoload :Package,               'zendesk_apps_support/validations/package'
     autoload :Manifest,              'zendesk_apps_support/validations/manifest'
     autoload :Source,                'zendesk_apps_support/validations/source'
     autoload :Templates,             'zendesk_apps_support/validations/templates'
