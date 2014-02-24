@@ -9,7 +9,6 @@ en:
             jshint:
               one: 'JSHint error in %{file}: %{errors}'
               other: 'JSHint errors in %{file}: %{errors}'
-            missing_location_and_requirements: Missing app location or requirements
             no_location_required: Locations can't be defined when you specify requirements
               only
             no_framework_version_required: Framework versions can't be set when you

@@ -17,10 +17,6 @@ parts:
       title: "App builder job: JSHint error messages"
       value: "JSHint errors in %{file}: %{errors}"
   - translation:
-      key: "txt.apps.admin.error.app_build.missing_location_and_requirements"
-      title: "App builder job: missing location and requirements error"
-      value: "Missing app location or requirements"
-  - translation:
       key: "txt.apps.admin.error.app_build.no_location_required"
       title: "App builder job: ban location while requirements only"
       value: "Locations can't be defined when you specify requirements only"
