@@ -23,15 +23,15 @@ parts:
   - translation:
       key: "txt.apps.admin.error.app_build.no_location_required"
       title: "App builder job: ban location while requirements only"
-      value: "Having location defined while requirements only is true"
+      value: "Locations can't be defined when you specify requirements only"
   - translation:
       key: "txt.apps.admin.error.app_build.no_framework_version_required"
       title: "App builder job: ban framework version while requirements only"
-      value: "Having framework version defined while requirements only is true"
+      value: "Framework versions can't be set when you specify requirements only"
   - translation:
       key: "txt.apps.admin.error.app_build.no_app_js_required"
       title: "App builder job: ban app.js while requirements only"
-      value: "Having app.js present while requirements only is true"
+      value: "Do not set your app to requirements only if you need app.js"
   - translation:
       key: "txt.apps.admin.error.app_build.manifest_not_json"
       title: "App builder job: manifest is invalid JSON error"
