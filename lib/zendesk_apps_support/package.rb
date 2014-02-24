@@ -25,10 +25,8 @@ module ZendeskAppsSupport
         errors << Validations::Manifest.call(self)
 
         if has_manifest?
-          errors << Validations::Package.call(self)
-          errors << Validations::Translations.call(self)
-
           errors << Validations::Source.call(self)
+          errors << Validations::Translations.call(self)
 
           unless @requirements_only
             errors << Validations::Templates.call(self)
