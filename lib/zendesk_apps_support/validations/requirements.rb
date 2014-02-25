@@ -6,8 +6,6 @@ module ZendeskAppsSupport
   module Validations
     module Requirements
 
-      REQUIREMENTS_TYPES = %w(automations macros targets ticket_fields triggers user_fields).freeze
-
       class <<self
         def call(package)
           requirements_file = package.files.find { |f| f.relative_path == 'requirements.json' }
@@ -32,7 +30,7 @@ module ZendeskAppsSupport
         private
 
         def invalid_requirements_types(requirements)
-          invalid_types = requirements.keys - REQUIREMENTS_TYPES
+          invalid_types = requirements.keys - ZendeskAppsSupport::AppRequirement::TYPES
 
           unless invalid_types.empty?
             ValidationError.new(:invalid_requirements_types, :invalid_types => invalid_types.join(', '), :count => invalid_types.length)
