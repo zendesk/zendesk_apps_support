@@ -14,7 +14,7 @@ module ZendeskAppsSupport
         :laxcomma => true,
 
         # predefined globals:
-        :predef => %w(_ console services helpers alert JSON Base64 clearInterval clearTimeout setInterval setTimeout)
+        :predef => %w(_ console services helpers alert JSON Base64 clearInterval clearTimeout setInterval setTimeout require module)
       }.freeze
 
       class <<self
@@ -27,12 +27,18 @@ module ZendeskAppsSupport
 
           return [ ValidationError.new(:missing_source) ] unless source
 
-          jshint_errors = linter.lint(source.read)
-          if jshint_errors.any?
-            [ JSHintValidationError.new(source.relative_path, jshint_errors) ]
-          else
-            []
+          jshint_errors = []
+          app_js_errors = linter.lint(source.read)
+          if app_js_errors.any?
+            jshint_errors += [ JSHintValidationError.new(source.relative_path, app_js_errors) ]
           end
+          Dir["#{package.root}/lib/*.js"].each do |file|
+            lib_js_errors = linter.lint(File.read(file))
+            if lib_js_errors.any?
+              jshint_errors += [ JSHintValidationError.new(file, lib_js_errors) ]
+            end
+          end
+          jshint_errors
         end
 
         private

@@ -1,0 +1,28 @@
+var require = (function() {
+  var modules = {}, cache = {};
+
+  var require = function(path) {
+    var module = cache[path];
+    if (module) {
+      return module;
+    } else if (modules[path]) {
+      module = {exports: {}};
+      modules[path].call(null, require, module);
+      cache[path] = module.exports;
+      return cache[path];
+    } else {
+      throw 'module ' + path + ' not found';
+    }
+  };
+
+  modules = {
+    <% modules.each do |path, content| %>
+    '<%= path %>': function(require, module) {
+<%= content %>
+    },
+    <% end %>
+    eom: undefined
+  };
+
+  return require;
+})();

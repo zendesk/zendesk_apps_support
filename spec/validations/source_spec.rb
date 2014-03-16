@@ -32,7 +32,7 @@ describe ZendeskAppsSupport::Validations::Source do
 
   it 'should have a jslint error when missing semicolon' do
     source = mock('AppFile', :relative_path => 'app.js', :read => "var a = 1")
-    package = mock('Package', :files => [source], :requirements_only => false)
+    package = mock('Package', :root => '.', :files => [source], :requirements_only => false)
     errors = ZendeskAppsSupport::Validations::Source.call(package)
 
     errors.first.to_s.should eql "JSHint error in app.js: \n  L1: Missing semicolon."
