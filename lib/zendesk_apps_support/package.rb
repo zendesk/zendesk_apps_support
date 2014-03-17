@@ -56,7 +56,7 @@ module ZendeskAppsSupport
       insert = MODULES_TEMPLATE.result(:modules => modules)
       original = read_file("app.js")
 
-      original.sub(/^\s*\(\s*function\s*\(\s*\)\s*\{/, "(function() {\n#{insert}\n")
+      original.sub(/^\s*\(\s*function\s*\(\s*\)\s*\{/, "(function() {\n#{insert}")
     end
 
     def files
