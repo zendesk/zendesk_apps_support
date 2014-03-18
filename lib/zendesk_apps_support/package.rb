@@ -47,10 +47,11 @@ module ZendeskAppsSupport
       return read_file("app.js") unless has_lib_js?
 
       modules = {}
-      Dir["#{@root}/lib/*.js"].each do |file|
-        name = File.basename(file)
-        content = File.read(file)
-        modules["lib/#{name}"] = content
+      Dir["#{@root}/lib/**/*.js"].each do |file|
+        next if File.symlink?(file)
+        name          = Pathname.new(file).relative_path_from(@root)
+        content       = File.read(file)
+        modules[name] = content
       end
 
       insert = MODULES_TEMPLATE.result(:modules => modules)
