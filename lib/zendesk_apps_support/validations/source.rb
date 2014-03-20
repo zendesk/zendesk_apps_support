@@ -32,7 +32,7 @@ module ZendeskAppsSupport
           if app_js_errors.any?
             jshint_errors += [ JSHintValidationError.new(source.relative_path, app_js_errors) ]
           end
-          Dir["#{package.root}/lib/*.js"].each do |file|
+          Dir["#{package.root}/lib/**/*.js"].each do |file|
             lib_js_errors = linter.lint(File.read(file))
             if lib_js_errors.any?
               jshint_errors += [ JSHintValidationError.new(file, lib_js_errors) ]

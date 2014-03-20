@@ -47,8 +47,7 @@ module ZendeskAppsSupport
       return read_file("app.js") unless has_lib_js?
 
       modules = {}
-      Dir["#{@root}/lib/**/*.js"].each do |file|
-        next if File.symlink?(file)
+      lib_files.each do |file|
         name          = Pathname.new(file).relative_path_from(@root)
         content       = File.read(file)
         modules[name] = content
@@ -62,6 +61,10 @@ module ZendeskAppsSupport
 
     def files
       non_tmp_files
+    end
+
+    def lib_files
+      @lib_files ||= Dir["#{@root}/lib/**/*.js"]
     end
 
     def template_files
@@ -125,7 +128,7 @@ module ZendeskAppsSupport
     end
 
     def has_lib_js?
-      Dir["#{@root}/lib/*.js"].any?
+      lib_files.any?
     end
 
     def has_manifest?
