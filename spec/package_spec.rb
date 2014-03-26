@@ -54,18 +54,44 @@ describe ZendeskAppsSupport::Package do
 var require = (function() {
   var modules = {}, cache = {};
 
-  var require = function(path) {
-    var module = cache[path];
+  var require = function(name, root) {
+    var path = expand(root, name), indexPath = expand(path, './index'), module, fn;
+    module   = cache[path] || cache[indexPath];
     if (module) {
       return module;
-    } else if (modules[path]) {
-      module = {exports: {}};
-      modules[path].call(null, require, module);
+    } else if (fn = modules[path] || modules[path = indexPath]) {
+      module = {id: path, exports: {}};
       cache[path] = module.exports;
-      return cache[path];
+      fn(module.exports, function(name) {
+        return require(name, dirname(path));
+      }, module);
+      return cache[path] = module.exports;
     } else {
-      throw 'module ' + path + ' not found';
+      throw 'module ' + name + ' not found';
     }
+  };
+
+  var expand = function(root, name) {
+    var results = [], parts, part;
+    // If path is relative
+    if (/^\\.\\.?(\\/|$)/.test(name)) {
+      parts = [root, name].join('/').split('/');
+    } else {
+      parts = name.split('/');
+    }
+    for (var i = 0, length = parts.length; i < length; i++) {
+      part = parts[i];
+      if (part == '..') {
+        results.pop();
+      } else if (part != '.' && part != '') {
+        results.push(part);
+      }
+    }
+    return results.join('/');
+  };
+
+  var dirname = function(path) {
+    return path.split('/').slice(0, -1).join('/');
   };
 
   modules = {
