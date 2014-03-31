@@ -22,3 +22,5 @@
     ZendeskApps[<%= name.to_json %>].install({"id": <%= app_id %>, "app_id": <%= app_id %>, "settings": <%= settings.to_json %>});
 
 }());
+
+ZendeskApps.trigger && ZendeskApps.trigger('ready');

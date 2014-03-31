@@ -83,6 +83,8 @@ describe ZendeskAppsSupport::Package do
     ZendeskApps["ABC"].install({"id": 0, "app_id": 0, "settings": {\"title\":\"ABC\"}});
 
 }());
+
+ZendeskApps.trigger && ZendeskApps.trigger('ready');
 HERE
       js.should == expected
     end
