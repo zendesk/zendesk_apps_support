@@ -7,7 +7,7 @@ describe ZendeskAppsSupport::Package do
 
   describe 'files' do
     it 'should return all the files within the app folder excluding files in tmp folder' do
-      @package.files.map(&:relative_path).should =~ %w(app.css app.js assets/logo-small.png assets/logo.png manifest.json templates/layout.hdbs translations/en.json)
+      @package.files.map(&:relative_path).should =~ %w(app.css app.js assets/logo-small.png assets/logo.png lib/a.js manifest.json templates/layout.hdbs translations/en.json)
     end
 
     it 'should error out when manifest is missing' do
@@ -51,13 +51,74 @@ describe ZendeskAppsSupport::Package do
     with( require('apps/framework/app_scope') ) {
 
         var source = (function() {
+var require = (function() {
+  var modules = {}, cache = {};
+
+  var require = function(name, root) {
+    var path = expand(root, name), indexPath = expand(path, './index'), module, fn;
+    module   = cache[path] || cache[indexPath];
+    if (module) {
+      return module;
+    } else if (fn = modules[path] || modules[path = indexPath]) {
+      module = {id: path, exports: {}};
+      cache[path] = module.exports;
+      fn(module.exports, function(name) {
+        return require(name, dirname(path));
+      }, module);
+      return cache[path] = module.exports;
+    } else {
+      throw 'module ' + name + ' not found';
+    }
+  };
+
+  var expand = function(root, name) {
+    var results = [], parts, part;
+    // If path is relative
+    if (/^\\.\\.?(\\/|$)/.test(name)) {
+      parts = [root, name].join('/').split('/');
+    } else {
+      parts = name.split('/');
+    }
+    for (var i = 0, length = parts.length; i < length; i++) {
+      part = parts[i];
+      if (part == '..') {
+        results.pop();
+      } else if (part != '.' && part != '') {
+        results.push(part);
+      }
+    }
+    return results.join('/');
+  };
+
+  var dirname = function(path) {
+    return path.split('/').slice(0, -1).join('/');
+  };
+
+  modules = {
+    'lib/a.js': function(require, module) {
+var a = {
+  name: 'This is A'
+};
+
+module.exports = a;
+
+    },
+    eom: undefined
+  };
+
+  return require;
+})();
+
 
   return {
+    a: require('lib/a.js'),
+
     events: {
       'app.activated':'doSomething'
     },
 
     doSomething: function() {
+      console.log(a.name);
     }
   };
 
