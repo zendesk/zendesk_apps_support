@@ -22,7 +22,10 @@ module ZendeskAppsSupport
           requirements = MultiJson.load(requirements_stream)
           [].tap do |errors|
             errors << invalid_requirements_types(requirements)
-            errors.flatten!.compact!
+            errors << excessive_requirements(requirements)
+            errors << missing_required_fields(requirements)
+            errors.flatten!
+            errors.compact!
           end
         rescue MultiJson::DecodeError => e
           return [ValidationError.new(:requirements_not_json, :errors => e)]
@@ -32,16 +35,18 @@ module ZendeskAppsSupport
 
         def missing_required_fields(requirements)
           [].tap do |errors|
-            requirements.values.each.each do |identifier, fields|
-              next if fields.include? 'title'
-              errors << ValidationError.new(:missing_required_fields, :field => 'title', :identifier => identifier)
+            requirements.values.each do |requirement|
+              requirement.each do |identifier, fields|
+                next if fields.include? 'title'
+                errors << ValidationError.new(:missing_required_fields, :field => 'title', :identifier => identifier)
+              end
             end
 
-            if user_fields = requirements['user_fields']
-              user_fields.reject! { |identifier, fields| fields.include?('key') }
-              errors += user_fields.map do |identifier, _|
-                ValidationError.new(:missing_required_fields, :field => 'key', identifier => identifier)
-              end
+            break unless requirements['user_fields']
+
+            requirements['user_fields'].each do |identifier, fields|
+              next if fields.include? 'key'
+              errors << ValidationError.new(:missing_required_fields, :field => 'key', :identifier => identifier)
             end
           end
         end
