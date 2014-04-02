@@ -1,10 +1,11 @@
 require 'multi_json'
 require 'json/stream'
-require 'pp'
 
 module ZendeskAppsSupport
   module Validations
     module Requirements
+
+      MAX_REQUIREMENTS = 10
 
       class <<self
         def call(package)
@@ -21,13 +22,35 @@ module ZendeskAppsSupport
           requirements = MultiJson.load(requirements_stream)
           [].tap do |errors|
             errors << invalid_requirements_types(requirements)
-            errors.compact!
+            errors.flatten!.compact!
           end
         rescue MultiJson::DecodeError => e
           return [ValidationError.new(:requirements_not_json, :errors => e)]
         end
 
         private
+
+        def missing_required_fields(requirements)
+          [].tap do |errors|
+            requirements.values.each.each do |identifier, fields|
+              next if fields.include? 'title'
+              errors << ValidationError.new(:missing_required_fields, :field => 'title', :identifier => identifier)
+            end
+
+            if user_fields = requirements['user_fields']
+              user_fields.reject! { |identifier, fields| fields.include?('key') }
+              errors += user_fields.map do |identifier, _|
+                ValidationError.new(:missing_required_fields, :field => 'key', identifier => identifier)
+              end
+            end
+          end
+        end
+
+        def excessive_requirements(requirements)
+          if requirements.values.map(&:values).flatten.size > MAX_REQUIREMENTS
+            ValidationError.new(:excessive_requirements, :max => MAX_REQUIREMENTS)
+          end
+        end
 
         def invalid_requirements_types(requirements)
           invalid_types = requirements.keys - ZendeskAppsSupport::AppRequirement::TYPES
