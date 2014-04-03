@@ -32,7 +32,7 @@ describe ZendeskAppsSupport::Validations::Requirements do
     errors.first.key.should == :excessive_requirements
   end
 
-  it 'creates an errror for every requirement that is lacking required fields' do
+  it 'creates an errror for any requirement that is lacking required fields' do
     requirements_content = { 'targets' => { 'abc' => {} } }
     requirements = mock('AppFile', :relative_path => 'requirements.json',
                                    :read => JSON.generate(requirements_content))
@@ -40,6 +40,16 @@ describe ZendeskAppsSupport::Validations::Requirements do
     errors = ZendeskAppsSupport::Validations::Requirements.call(package)
 
     errors.first.key.should == :missing_required_fields
+  end
+
+  it 'creates an errror for every requirement that is lacking required fields' do
+    requirements_content = { 'targets' => { 'abc' => {}, 'xyz' => {} } }
+    requirements = mock('AppFile', :relative_path => 'requirements.json',
+                                   :read => JSON.generate(requirements_content))
+    package = mock('Package', :files => [requirements])
+    errors = ZendeskAppsSupport::Validations::Requirements.call(package)
+
+    errors.size.should == 2
   end
 
   it 'creates an error if there are invalid requirement types' do
