@@ -22,9 +22,11 @@ describe ZendeskAppsSupport::Validations::Requirements do
 
   it 'creates an error if there are more than 10 requirements' do
     requirements_content = {}
+    max = ZendeskAppsSupport::Validations::Requirements::MAX_REQUIREMENTS
+
     ZendeskAppsSupport::AppRequirement::TYPES.each do |type|
       requirements_content[type] = {}
-      3.times { |n| requirements_content[type]["target#{n}"] = { 'title' => "#{type}#{n}"} }
+      (max - 1).times { |n| requirements_content[type]["#{type}#{n}"] = { 'title' => "#{type}#{n}"} }
     end
 
     requirements = mock('AppFile', :relative_path => 'requirements.json',
