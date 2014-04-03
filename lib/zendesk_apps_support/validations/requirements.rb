@@ -42,11 +42,11 @@ module ZendeskAppsSupport
               end
             end
 
-            break unless requirements['user_fields']
-
-            requirements['user_fields'].each do |identifier, fields|
-              next if fields.include? 'key'
-              errors << ValidationError.new(:missing_required_fields, :field => 'key', :identifier => identifier)
+            unless requirements['user_fields'].nil?
+              requirements['user_fields'].each do |identifier, fields|
+                next if fields.include? 'key'
+                errors << ValidationError.new(:missing_required_fields, :field => 'key', :identifier => identifier)
+              end
             end
           end
         end
