@@ -52,6 +52,14 @@ parts:
       title: "App builder job: requirements file is invalid JSON error"
       value: "requirements.json is not proper JSON. %{errors}"
   - translation:
+      key: "txt.apps.admin.error.app_build.excessive_requirements"
+      title: "App builder job: requirements file contains too many requirements"
+      value: "requirements.json contains too many requirements, it is currently limited to %{max} requirements"
+  - translation:
+      key: "txt.apps.admin.error.app_build.missing_required_fields"
+      title: "App builder job: required key missing in requirements"
+      value: "Missing required fields in requirements.json: \"%{field}\" is required in \"%{identifier}\""
+  - translation:
       key: "txt.apps.admin.error.app_build.duplicate_requirements.one"
       title: "App builder job: requirements file contains duplicate key error"
       value: "requirements.json contains a duplicate key: %{duplicate_keys}"
