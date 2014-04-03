@@ -58,7 +58,7 @@ parts:
   - translation:
       key: "txt.apps.admin.error.app_build.missing_required_fields"
       title: "App builder job: required key missing in requirements"
-      value: "Missing required fields in requirements.json: '%{field}' is required in '%{identifier}'"
+      value: "Missing required fields in requirements.json: \"%{field}\" is required in \"%{identifier}\""
   - translation:
       key: "txt.apps.admin.error.app_build.duplicate_requirements.one"
       title: "App builder job: requirements file contains duplicate key error"
