@@ -98,7 +98,7 @@ module ZendeskAppsSupport
     end
 
     def customer_css
-      css_file = File.join(root, 'app.css')
+      css_file = file_path('app.css')
       customer_css = File.exist?(css_file) ? File.read(css_file) : ""
     end
 
@@ -116,6 +116,10 @@ module ZendeskAppsSupport
 
     def has_requirements?
       file_exists?("requirements.json")
+    end
+
+    def file_path(path)
+      File.join(root, path)
     end
 
     private
@@ -151,12 +155,11 @@ module ZendeskAppsSupport
     end
 
     def file_exists?(path)
-      File.exist?(File.join(root, path))
+      File.exist?(file_path(path))
     end
 
     def read_file(path)
-      file_path = File.join(root, path)
-      File.read(File.join(root, path))
+      File.read(file_path(path))
     end
 
     def read_json(path, symbolize_names = true)
