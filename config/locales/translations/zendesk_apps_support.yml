@@ -57,7 +57,7 @@ parts:
       value: "requirements.json contains too many requirements, it is currently limited to %{max} requirements"
   - translation:
       key: "txt.apps.admin.error.app_build.missing_required_fields"
-      title: "App builder job: required key missing in requirements"
+      title: "App builder job: required key missing in requirements, e.g. \"title\" is required in \"my_custom_email_target\""
       value: "Missing required fields in requirements.json: \"%{field}\" is required in \"%{identifier}\""
   - translation:
       key: "txt.apps.admin.error.app_build.duplicate_requirements.one"
