@@ -2,7 +2,8 @@
   "name": "ABC",
   "author": {
     "name": "John Smith",
-    "email": "john@example.com"
+    "email": "john@example.com",
+    "url": "http://myapp.com"
   },
   "defaultLocale": "en",
   "private": true,

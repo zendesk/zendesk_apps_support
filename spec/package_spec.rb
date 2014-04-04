@@ -36,6 +36,7 @@ describe ZendeskAppsSupport::Package do
       manifest[:name].should == 'ABC'
       manifest[:author][:name].should == 'John Smith'
       manifest[:author][:email].should == 'john@example.com'
+      manifest[:author][:url].should == 'http://myapp.com'
       manifest[:defaultLocale].should == 'en'
       manifest[:private].should == true
       manifest[:location].should == 'ticket_sidebar'
@@ -71,7 +72,8 @@ describe ZendeskAppsSupport::Package do
                     appClassName: "app-0",
                     author: {
                         name: "John Smith",
-                        email: "john@example.com"
+                        email: "john@example.com",
+                        url: "http://myapp.com"
                     },
                     translations: {"app":{\"name\":\"Buddha Machine\"}},
                     templates: {"layout":"<style>\\n.app-0 header .logo {\\n  background-image: url(\\"http://localhost:4567/logo-small.png\\"); }\\n.app-0 h1 {\\n  color: red; }\\n  .app-0 h1 span {\\n    color: green; }\\n</style>\\n<header>\\n  <span class=\\"logo\\"/>\\n  <h3>{{setting \\"name\\"}}</h3>\\n</header>\\n<section data-main/>\\n<footer>\\n  <a href=\\"mailto:{{author.email}}\\">\\n    {{author.name}}\\n  </a>\\n</footer>\\n</div>"},
