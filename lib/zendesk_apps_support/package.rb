@@ -38,6 +38,10 @@ module ZendeskAppsSupport
           end
         end
 
+        if has_banner?
+          errors << Validations::Banner.call(self)
+        end
+
         errors.flatten!
       end
     end
@@ -116,6 +120,10 @@ module ZendeskAppsSupport
 
     def has_requirements?
       file_exists?("requirements.json")
+    end
+
+    def has_banner?
+      file_exists?("assets/banner.png")
     end
 
     def file_path(path)
