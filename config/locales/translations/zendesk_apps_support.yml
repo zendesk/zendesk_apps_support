@@ -54,7 +54,7 @@ parts:
   - translation:
       key: "txt.apps.admin.error.app_build.excessive_requirements"
       title: "App builder job: requirements file contains too many requirements"
-      value: "requirements.json contains too many requirements, it is currently limited to %{max} requirements"
+      value: "The requirements.json file contains too many requirements. The current limit is %{max} requirements."
   - translation:
       key: "txt.apps.admin.error.app_build.missing_required_fields"
       title: "App builder job: required key missing in requirements, e.g. \"title\" is required in \"my_custom_email_target\""
