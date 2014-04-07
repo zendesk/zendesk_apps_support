@@ -23,8 +23,8 @@ en:
                 one: 'Missing required field in manifest: %{missing_keys}'
                 other: 'Missing required fields in manifest: %{missing_keys}'
             requirements_not_json: requirements.json is not proper JSON. %{errors}
-            excessive_requirements: requirements.json contains too many requirements,
-              it is currently limited to %{max} requirements
+            excessive_requirements: The requirements.json file contains too many requirements.
+              The current limit is %{max} requirements.
             missing_required_fields: 'Missing required fields in requirements.json:
               "%{field}" is required in "%{identifier}"'
             duplicate_requirements:
