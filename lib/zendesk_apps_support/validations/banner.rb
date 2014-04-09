@@ -3,8 +3,8 @@ require 'image_size'
 module ZendeskAppsSupport
   module Validations
     module Banner
-      BANNER_WIDTH = 912
-      BANNER_HEIGHT = 205
+      BANNER_WIDTH = 830
+      BANNER_HEIGHT = 200
 
       class <<self
         def call(package)
