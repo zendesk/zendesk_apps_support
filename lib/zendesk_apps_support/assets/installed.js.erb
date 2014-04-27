@@ -1,0 +1,7 @@
+(function() {
+    <% apps.each do |app| %>
+        <%= app %>
+    <% end %>
+}());
+
+ZendeskApps.trigger && ZendeskApps.trigger('ready');

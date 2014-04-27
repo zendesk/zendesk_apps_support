@@ -9,6 +9,7 @@ module ZendeskAppsSupport
     DEFAULT_LAYOUT = Erubis::Eruby.new( File.read(File.expand_path('../assets/default_template.html.erb', __FILE__)) )
     DEFAULT_SCSS   = File.read(File.expand_path('../assets/default_styles.scss', __FILE__))
     SRC_TEMPLATE   = Erubis::Eruby.new( File.read(File.expand_path('../assets/src.js.erb', __FILE__)) )
+    INSTALLED_TEMPLATE = Erubis::Eruby.new( File.read(File.expand_path('../assets/installed.js.erb', __FILE__)) )
 
     attr_reader :root, :warnings
     attr_accessor :requirements_only
@@ -16,7 +17,13 @@ module ZendeskAppsSupport
     def initialize(dir)
       @root = Pathname.new(File.expand_path(dir))
       @warnings = []
+      @apps = []
       @requirements_only = false
+    end
+
+    def change_dir(dir)
+      @root = Pathname.new(File.expand_path(dir))
+      self
     end
 
     def validate
@@ -86,7 +93,7 @@ module ZendeskAppsSupport
 
       settings["title"] = name
 
-      SRC_TEMPLATE.result(
+      @apps << SRC_TEMPLATE.result(
           :name => name,
           :source => source,
           :location => location,
@@ -98,6 +105,12 @@ module ZendeskAppsSupport
           :templates => templates,
           :settings => settings,
           :app_id => app_id
+      )
+    end
+
+    def get_installed()
+      INSTALLED_TEMPLATE.result(
+          :apps => @apps
       )
     end
 
