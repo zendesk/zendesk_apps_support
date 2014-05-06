@@ -14,7 +14,9 @@ module ZendeskAppsSupport
         :laxcomma => true,
 
         # predefined globals:
-        :predef => %w(_ console services helpers alert JSON Base64 clearInterval clearTimeout setInterval setTimeout require module)
+        :predef => %w(_ console services helpers alert window document self
+                      JSON Base64 clearInterval clearTimeout setInterval setTimeout
+                      require module)
       }.freeze
 
       class <<self

@@ -20,5 +20,6 @@ module ZendeskAppsSupport
     autoload :JSHintValidationError, 'zendesk_apps_support/validations/validation_error'
     autoload :Stylesheets,           'zendesk_apps_support/validations/stylesheets'
     autoload :Requirements,          'zendesk_apps_support/validations/requirements'
+    autoload :Banner,                'zendesk_apps_support/validations/banner'
   end
 end

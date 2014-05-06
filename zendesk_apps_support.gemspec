@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = "zendesk_apps_support"
-  s.version     = "1.14.3"
+  s.version     = "1.14.4"
   s.license     = "Apache License Version 2.0"
   s.authors     = ["James A. Rosen", "Likun Liu", "Sean Caffery", "Daniel Ribeiro"]
   s.email       = ["dev@zendesk.com"]
@@ -15,6 +15,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'sass'
   s.add_runtime_dependency 'json'
   s.add_runtime_dependency 'json-stream'
+  s.add_runtime_dependency 'image_size'
   s.add_runtime_dependency 'erubis'
   s.add_runtime_dependency 'jshintrb',    '0.2.4'
 

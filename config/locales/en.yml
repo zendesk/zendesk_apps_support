@@ -23,12 +23,19 @@ en:
                 one: 'Missing required field in manifest: %{missing_keys}'
                 other: 'Missing required fields in manifest: %{missing_keys}'
             requirements_not_json: requirements.json is not proper JSON. %{errors}
+            excessive_requirements: The requirements.json file contains too many requirements.
+              The current limit is %{max} requirements.
+            missing_required_fields: 'Missing required fields in requirements.json:
+              "%{field}" is required in "%{identifier}"'
             duplicate_requirements:
               one: 'requirements.json contains a duplicate key: %{duplicate_keys}'
               other: 'requirements.json contains duplicate keys: %{duplicate_keys}'
             invalid_requirements_types:
               one: 'requirements.json contains an invalid type: %{invalid_types}'
               other: 'requirements.json contains invalid types: %{invalid_types}'
+            banner:
+              invalid_format: 'Banner image must be a PNG file'
+              invalid_size: 'Invalid banner image dimensions. Must be %{required_banner_width}x%{required_banner_height}px'
             oauth_keys:
               missing:
                 one: 'Missing required oauth field in manifest: %{missing_keys}'

@@ -5,7 +5,6 @@ title: "Apps Support"
 packages:
   - default
   - apps_support
-  - classic
 
 parts:
   - translation:
@@ -52,6 +51,14 @@ parts:
       key: "txt.apps.admin.error.app_build.requirements_not_json"
       title: "App builder job: requirements file is invalid JSON error"
       value: "requirements.json is not proper JSON. %{errors}"
+  - translation:
+      key: "txt.apps.admin.error.app_build.excessive_requirements"
+      title: "App builder job: requirements file contains too many requirements"
+      value: "The requirements.json file contains too many requirements. The current limit is %{max} requirements."
+  - translation:
+      key: "txt.apps.admin.error.app_build.missing_required_fields"
+      title: "App builder job: required key missing in requirements, e.g. \"title\" is required in \"my_custom_email_target\""
+      value: "Missing required fields in requirements.json: \"%{field}\" is required in \"%{identifier}\""
   - translation:
       key: "txt.apps.admin.error.app_build.duplicate_requirements.one"
       title: "App builder job: requirements file contains duplicate key error"
