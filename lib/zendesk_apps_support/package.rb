@@ -9,13 +9,13 @@ module ZendeskAppsSupport
     DEFAULT_LAYOUT = Erubis::Eruby.new( File.read(File.expand_path('../assets/default_template.html.erb', __FILE__)) )
     DEFAULT_SCSS   = File.read(File.expand_path('../assets/default_styles.scss', __FILE__))
     SRC_TEMPLATE   = Erubis::Eruby.new( File.read(File.expand_path('../assets/src.js.erb', __FILE__)) )
-    MODULES_TEMPLATE   = Erubis::Eruby.new( File.read(File.expand_path('../assets/require.js.erb', __FILE__)) )
 
-    attr_reader :root, :warnings
+    attr_reader :lib_root, :root, :warnings
     attr_accessor :requirements_only
 
     def initialize(dir)
       @root = Pathname.new(File.expand_path(dir))
+      @lib_root = Pathname.new(File.join(@root, 'lib'))
       @warnings = []
       @requirements_only = false
     end
@@ -48,19 +48,19 @@ module ZendeskAppsSupport
     end
 
     def compiled_js
-      return read_file("app.js") unless has_lib_js?
+      return read_file("app.js")
+    end
+
+    def modules_js
+      return unless has_lib_js?
 
       modules = {}
       lib_files.each do |file|
-        name          = Pathname.new(file).relative_path_from(@root)
+        name          = Pathname.new(file).relative_path_from(@lib_root)
         content       = File.read(file)
         modules[name] = content
       end
-
-      insert = MODULES_TEMPLATE.result(:modules => modules)
-      original = read_file("app.js")
-
-      original.sub(/^\s*\(\s*function\s*\(\s*\)\s*\{/, "(function() {\n#{insert}")
+      modules
     end
 
     def files
@@ -68,7 +68,7 @@ module ZendeskAppsSupport
     end
 
     def lib_files
-      @lib_files ||= Dir["#{@root}/lib/**/*.js"]
+      @lib_files ||= Dir["#{@lib_root}/**/*.js"]
     end
 
     def template_files
@@ -118,7 +118,8 @@ module ZendeskAppsSupport
           :framework_version => framework_version,
           :templates => templates,
           :settings => settings,
-          :app_id => app_id
+          :app_id => app_id,
+          :modules => modules_js
       )
     end
 
