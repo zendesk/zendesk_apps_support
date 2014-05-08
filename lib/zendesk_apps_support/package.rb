@@ -53,7 +53,7 @@ module ZendeskAppsSupport
 
     def modules_js
       return unless has_lib_js?
-return nil
+
       lib_files.each_with_object({}) do |file, modules|
         name          = Pathname.new(file).relative_path_from(@lib_root)
         content       = File.read(file)
