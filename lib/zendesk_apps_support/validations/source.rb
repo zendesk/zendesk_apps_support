@@ -21,29 +21,33 @@ module ZendeskAppsSupport
 
       class <<self
         def call(package)
-          source = package.files.find { |f| f.relative_path == 'app.js' }
+          app   = package.files.find   { |file| file.relative_path == 'app.js' }
+          libs  = package.files.select { |file| file.relative_path.start_with?('lib/') }
+          files = libs << app
 
           if package.requirements_only
-            return source ? [ ValidationError.new(:no_app_js_required) ] : []
+            return app ? [ ValidationError.new(:no_app_js_required) ] : []
           end
 
-          return [ ValidationError.new(:missing_source) ] unless source
+          return [ ValidationError.new(:missing_source) ] unless app
 
-          jshint_errors = []
-          app_js_errors = linter.lint(source.read)
-          if app_js_errors.any?
-            jshint_errors += [ JSHintValidationError.new(source.relative_path, app_js_errors) ]
-          end
-          Dir["#{package.root}/lib/**/*.js"].each do |file|
-            lib_js_errors = linter.lint(File.read(file))
-            if lib_js_errors.any?
-              jshint_errors += [ JSHintValidationError.new(Pathname.new(file).relative_path_from(package.root), lib_js_errors) ]
-            end
-          end
-          jshint_errors
+          jshint_files(files)
         end
 
         private
+
+        def jshint_file(file)
+          errors = linter.lint(file.read)
+          [ JSHintValidationError.new(file.relative_path, errors) ] if errors.any?
+        end
+
+        def jshint_files(files)
+          jshint_errors = []
+          files.each do |file|
+            jshint_errors << jshint_file(file)
+          end
+          jshint_errors
+        end
 
         def linter
           Jshintrb::Lint.new(LINTER_OPTIONS)
