@@ -1,5 +1,6 @@
 (function() {
   with( ZendeskApps.AppScope.create() ) {
+    <% unless modules.nil? %>
     require.modules = {
       <% modules.each do |path, content| %>
         '<%= path %>': function(exports, require, module) {
@@ -8,6 +9,7 @@
       <% end %>
       eom: undefined
     };
+    <% end %>
 
     var source  = <%= source %>;
     var app     = ZendeskApps.defineApp(source)
