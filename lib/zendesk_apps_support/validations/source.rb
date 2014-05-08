@@ -31,22 +31,20 @@ module ZendeskAppsSupport
 
           return [ ValidationError.new(:missing_source) ] unless app
 
-          jshint_files(files)
+          jshint_errors(files)
         end
 
         private
 
-        def jshint_file(file)
+        def jshint_error(file)
           errors = linter.lint(file.read)
           [ JSHintValidationError.new(file.relative_path, errors) ] if errors.any?
         end
 
-        def jshint_files(files)
-          jshint_errors = []
-          files.each do |file|
-            jshint_errors << jshint_file(file)
+        def jshint_errors(files)
+          files.each_with_object([]) do |file, errors|
+            errors << jshint_error(file)
           end
-          jshint_errors
         end
 
         def linter
