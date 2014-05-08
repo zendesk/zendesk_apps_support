@@ -48,7 +48,7 @@ module ZendeskAppsSupport
     end
 
     def compiled_js
-      return read_file("app.js")
+      read_file("app.js")
     end
 
     def modules_js
