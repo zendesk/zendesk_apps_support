@@ -12,6 +12,7 @@
     <% end %>
 
     var source  = <%= source %>;
+
     var app     = ZendeskApps.defineApp(source)
       .reopenClass({ location: <%= location.to_json %> })
       .reopen({
