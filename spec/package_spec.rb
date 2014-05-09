@@ -62,7 +62,6 @@ describe ZendeskAppsSupport::Package do
     it 'should generate js ready for installation' do
       js = @package.readified_js(nil, 0, 'http://localhost:4567/')
 
-      # require 'byebug'; byebug;
       expected =<<HERE
 (function() {
   with( ZendeskApps.AppScope.create() ) {
