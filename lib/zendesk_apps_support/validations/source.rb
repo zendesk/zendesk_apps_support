@@ -42,7 +42,8 @@ module ZendeskAppsSupport
 
         def jshint_errors(files)
           files.each_with_object([]) do |file, errors|
-            errors << jshint_error(file)
+            error = jshint_error(file)
+            errors << error unless error.nil?
           end
         end
 
