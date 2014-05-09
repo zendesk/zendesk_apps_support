@@ -22,8 +22,7 @@ module ZendeskAppsSupport
       class <<self
         def call(package)
           app   = package.files.find   { |file| file.relative_path == 'app.js' }
-          libs  = package.files.select { |file| file.relative_path.start_with?('lib/') }
-          files = libs << app
+          files = package.lib_files << app
 
           if package.requirements_only
             return app ? [ ValidationError.new(:no_app_js_required) ] : []

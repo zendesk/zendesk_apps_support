@@ -51,12 +51,12 @@ module ZendeskAppsSupport
       read_file("app.js")
     end
 
-    def modules_js
+    def commonjs_modules
       return unless has_lib_js?
 
       lib_files.each_with_object({}) do |file, modules|
-        name          = Pathname.new(file).relative_path_from(@lib_root)
-        content       = File.read(file)
+        name          = file.relative_path
+        content       = file.read
         modules[name] = content
       end
     end
@@ -66,7 +66,7 @@ module ZendeskAppsSupport
     end
 
     def lib_files
-      @lib_files ||= Dir["#{@lib_root}/**/*.js"]
+      @lib_files ||= files.select { |f| f =~ /^lib\/.*\.js$/ }
     end
 
     def template_files
@@ -117,7 +117,7 @@ module ZendeskAppsSupport
           :templates => templates,
           :settings => settings,
           :app_id => app_id,
-          :modules => modules_js
+          :modules => commonjs_modules
       )
     end
 
