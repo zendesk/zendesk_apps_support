@@ -15,28 +15,37 @@ module ZendeskAppsSupport
 
         # predefined globals:
         :predef => %w(_ console services helpers alert window document self
-                      JSON Base64 clearInterval clearTimeout setInterval setTimeout)
+                      JSON Base64 clearInterval clearTimeout setInterval setTimeout
+                      require module exports top frames parent)
       }.freeze
 
       class <<self
         def call(package)
-          source = package.files.find { |f| f.relative_path == 'app.js' }
+          app   = package.files.find { |file| file.relative_path == 'app.js' }
+          files = package.lib_files << app
 
           if package.requirements_only
-            return source ? [ ValidationError.new(:no_app_js_required) ] : []
+            return app ? [ ValidationError.new(:no_app_js_required) ] : []
           end
 
-          return [ ValidationError.new(:missing_source) ] unless source
+          return [ ValidationError.new(:missing_source) ] unless app
 
-          jshint_errors = linter.lint(source.read)
-          if jshint_errors.any?
-            [ JSHintValidationError.new(source.relative_path, jshint_errors) ]
-          else
-            []
-          end
+          jshint_errors(files).flatten!
         end
 
         private
+
+        def jshint_error(file)
+          errors = linter.lint(file.read)
+          [ JSHintValidationError.new(file.relative_path, errors) ] if errors.any?
+        end
+
+        def jshint_errors(files)
+          files.each_with_object([]) do |file, errors|
+            error = jshint_error(file)
+            errors << error unless error.nil?
+          end
+        end
 
         def linter
           Jshintrb::Lint.new(LINTER_OPTIONS)

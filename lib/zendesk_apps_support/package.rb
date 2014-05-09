@@ -10,11 +10,12 @@ module ZendeskAppsSupport
     DEFAULT_SCSS   = File.read(File.expand_path('../assets/default_styles.scss', __FILE__))
     SRC_TEMPLATE   = Erubis::Eruby.new( File.read(File.expand_path('../assets/src.js.erb', __FILE__)) )
 
-    attr_reader :root, :warnings
+    attr_reader :lib_root, :root, :warnings
     attr_accessor :requirements_only
 
     def initialize(dir)
       @root = Pathname.new(File.expand_path(dir))
+      @lib_root = Pathname.new(File.join(@root, 'lib'))
       @warnings = []
       @requirements_only = false
     end
@@ -46,8 +47,26 @@ module ZendeskAppsSupport
       end
     end
 
+    def app_js
+      read_file("app.js")
+    end
+
+    def commonjs_modules
+      return unless has_lib_js?
+
+      lib_files.each_with_object({}) do |file, modules|
+        name          = file.relative_path.gsub!(/^lib\//, '')
+        content       = file.read
+        modules[name] = content
+      end
+    end
+
     def files
       non_tmp_files
+    end
+
+    def lib_files
+      @lib_files ||= files.select { |f| f =~ /^lib\/.*\.js$/ }
     end
 
     def template_files
@@ -76,7 +95,7 @@ module ZendeskAppsSupport
 
     def readified_js(app_name, app_id, asset_url_prefix, settings={})
       manifest = manifest_json
-      source = read_file("app.js")
+      source = app_js
       name = app_name || manifest[:name] || 'Local App'
       location = manifest[:location]
       app_class_name = "app-#{app_id}"
@@ -97,7 +116,8 @@ module ZendeskAppsSupport
           :framework_version => framework_version,
           :templates => templates,
           :settings => settings,
-          :app_id => app_id
+          :app_id => app_id,
+          :modules => commonjs_modules
       )
     end
 
@@ -108,6 +128,10 @@ module ZendeskAppsSupport
 
     def has_js?
       file_exists?("app.js")
+    end
+
+    def has_lib_js?
+      lib_files.any?
     end
 
     def has_manifest?
