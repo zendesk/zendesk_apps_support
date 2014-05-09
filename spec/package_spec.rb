@@ -7,7 +7,7 @@ describe ZendeskAppsSupport::Package do
 
   describe 'files' do
     it 'should return all the files within the app folder excluding files in tmp folder' do
-      @package.files.map(&:relative_path).should =~ %w(app.css app.js assets/logo-small.png assets/logo.png lib/a.js manifest.json templates/layout.hdbs translations/en.json)
+      @package.files.map(&:relative_path).should =~ %w(app.css app.js assets/logo-small.png assets/logo.png lib/a.js lib/a.txt lib/nested/b.js manifest.json templates/layout.hdbs translations/en.json)
     end
 
     it 'should error out when manifest is missing' do
@@ -30,6 +30,21 @@ describe ZendeskAppsSupport::Package do
     end
   end
 
+  describe 'lib_files' do
+    it 'should return all the javascript files in the lib folder within the app folder' do
+      @package.lib_files.map(&:relative_path).should == %w(lib/a.js lib/nested/b.js)
+    end
+  end
+
+  describe 'commonjs_modules' do
+    it 'should return an object with name value pairs containing the path and code' do
+      @package.commonjs_modules.should == {
+        "lib/a.js"=>"var a = {\n  name: 'This is A'\n};\n\nmodule.exports = a;\n",
+        "lib/nested/b.js"=>"var b = {\n  name: 'This is B'\n};\n\nmodule.exports = b;\n"
+      }
+    end
+  end
+
   describe 'manifest_json' do
     it 'should return manifest json' do
       manifest = @package.manifest_json
@@ -46,69 +61,32 @@ describe ZendeskAppsSupport::Package do
   describe 'readified_js' do
     it 'should generate js ready for installation' do
       js = @package.readified_js(nil, 0, 'http://localhost:4567/')
+
+      # require 'byebug'; byebug;
       expected =<<HERE
 (function() {
-    with( require('apps/framework/app_scope') ) {
-
-        var source = (function() {
-var require = (function() {
-  var modules = {}, cache = {};
-
-  var require = function(name, root) {
-    var path = expand(root, name), indexPath = expand(path, './index'), module, fn;
-    module   = cache[path] || cache[indexPath];
-    if (module) {
-      return module;
-    } else if (fn = modules[path] || modules[path = indexPath]) {
-      module = {id: path, exports: {}};
-      cache[path] = module.exports;
-      fn(module.exports, function(name) {
-        return require(name, dirname(path));
-      }, module);
-      return cache[path] = module.exports;
-    } else {
-      throw 'module ' + name + ' not found';
-    }
-  };
-
-  var expand = function(root, name) {
-    var results = [], parts, part;
-    // If path is relative
-    if (/^\\.\\.?(\\/|$)/.test(name)) {
-      parts = [root, name].join('/').split('/');
-    } else {
-      parts = name.split('/');
-    }
-    for (var i = 0, length = parts.length; i < length; i++) {
-      part = parts[i];
-      if (part == '..') {
-        results.pop();
-      } else if (part != '.' && part != '') {
-        results.push(part);
-      }
-    }
-    return results.join('/');
-  };
-
-  var dirname = function(path) {
-    return path.split('/').slice(0, -1).join('/');
-  };
-
-  modules = {
-    'lib/a.js': function(require, module) {
-var a = {
+  with( ZendeskApps.AppScope.create() ) {
+    require.modules = {
+        'lib/a.js': function(exports, require, module) {
+          var a = {
   name: 'This is A'
 };
 
 module.exports = a;
 
-    },
-    eom: undefined
-  };
+        },
+        'lib/nested/b.js': function(exports, require, module) {
+          var b = {
+  name: 'This is B'
+};
 
-  return require;
-})();
+module.exports = b;
 
+        },
+      eom: undefined
+    };
+
+    var source = (function() {
 
   return {
     a: require('lib/a.js'),
@@ -125,24 +103,24 @@ module.exports = a;
 }());
 ;
 
-        ZendeskApps["ABC"] = ZendeskApps.defineApp(source)
-                .reopenClass({ location: "ticket_sidebar" })
-                .reopen({
-                    assetUrlPrefix: "http://localhost:4567/",
-                    appClassName: "app-0",
-                    author: {
-                        name: "John Smith",
-                        email: "john@example.com"
-                    },
-                    translations: {"app":{\"name\":\"Buddha Machine\"}},
-                    templates: {"layout":"<style>\\n.app-0 header .logo {\\n  background-image: url(\\"http://localhost:4567/logo-small.png\\"); }\\n.app-0 h1 {\\n  color: red; }\\n  .app-0 h1 span {\\n    color: green; }\\n</style>\\n<header>\\n  <span class=\\"logo\\"/>\\n  <h3>{{setting \\"name\\"}}</h3>\\n</header>\\n<section data-main/>\\n<footer>\\n  <a href=\\"mailto:{{author.email}}\\">\\n    {{author.name}}\\n  </a>\\n</footer>\\n</div>"},
-                    frameworkVersion: "0.5"
-                });
+    var app = ZendeskApps.defineApp(source)
+      .reopenClass({ location: "ticket_sidebar" })
+      .reopen({
+        assetUrlPrefix: "http://localhost:4567/",
+        appClassName: "app-0",
+        author: {
+          name: "John Smith",
+          email: "john@example.com"
+        },
+        translations: {"app":{"name":"Buddha Machine"}},
+        templates: {"layout":"<style>\\n.app-0 header .logo {\\n  background-image: url(\\"http://localhost:4567/logo-small.png\\"); }\\n.app-0 h1 {\\n  color: red; }\\n  .app-0 h1 span {\\n    color: green; }\\n</style>\\n<header>\\n  <span class=\\"logo\\"/>\\n  <h3>{{setting \\"name\\"}}</h3>\\n</header>\\n<section data-main/>\\n<footer>\\n  <a href=\\"mailto:{{author.email}}\\">\\n    {{author.name}}\\n  </a>\\n</footer>\\n</div>"},
+        frameworkVersion: "0.5",
+      });
 
-    }
+    ZendeskApps["ABC"] = app;
+  }
 
-    ZendeskApps["ABC"].install({"id": 0, "app_id": 0, "settings": {\"title\":\"ABC\"}});
-
+  ZendeskApps["ABC"].install({"id": 0, "app_id": 0, "settings": {"title":"ABC"}});
 }());
 
 ZendeskApps.trigger && ZendeskApps.trigger('ready');
