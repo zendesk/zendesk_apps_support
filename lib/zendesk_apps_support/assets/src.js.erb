@@ -11,9 +11,9 @@
     };
     <% end %>
 
-    var source  = <%= source %>;
+    var source = <%= source %>;
 
-    var app     = ZendeskApps.defineApp(source)
+    var app = ZendeskApps.defineApp(source)
       .reopenClass({ location: <%= location.to_json %> })
       .reopen({
         assetUrlPrefix: <%= asset_url_prefix.to_json %>,
