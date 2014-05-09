@@ -47,7 +47,7 @@ module ZendeskAppsSupport
       end
     end
 
-    def compiled_js
+    def app_js
       read_file("app.js")
     end
 
@@ -95,7 +95,7 @@ module ZendeskAppsSupport
 
     def readified_js(app_name, app_id, asset_url_prefix, settings={})
       manifest = manifest_json
-      source = compiled_js
+      source = app_js
       name = app_name || manifest[:name] || 'Local App'
       location = manifest[:location]
       app_class_name = "app-#{app_id}"
