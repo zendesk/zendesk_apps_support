@@ -21,7 +21,7 @@ module ZendeskAppsSupport
 
       class <<self
         def call(package)
-          app   = package.files.find   { |file| file.relative_path == 'app.js' }
+          app   = package.files.find { |file| file.relative_path == 'app.js' }
           files = package.lib_files << app
 
           if package.requirements_only
@@ -30,7 +30,7 @@ module ZendeskAppsSupport
 
           return [ ValidationError.new(:missing_source) ] unless app
 
-          jshint_errors(files)
+          jshint_errors(files).flatten!
         end
 
         private
