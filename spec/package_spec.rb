@@ -39,8 +39,8 @@ describe ZendeskAppsSupport::Package do
   describe 'commonjs_modules' do
     it 'should return an object with name value pairs containing the path and code' do
       @package.commonjs_modules.should == {
-        "lib/a.js"=>"var a = {\n  name: 'This is A'\n};\n\nmodule.exports = a;\n",
-        "lib/nested/b.js"=>"var b = {\n  name: 'This is B'\n};\n\nmodule.exports = b;\n"
+        "a.js"=>"var a = {\n  name: 'This is A'\n};\n\nmodule.exports = a;\n",
+        "nested/b.js"=>"var b = {\n  name: 'This is B'\n};\n\nmodule.exports = b;\n"
       }
     end
   end
@@ -67,7 +67,7 @@ describe ZendeskAppsSupport::Package do
 (function() {
   with( ZendeskApps.AppScope.create() ) {
     require.modules = {
-        'lib/a.js': function(exports, require, module) {
+        'a.js': function(exports, require, module) {
           var a = {
   name: 'This is A'
 };
@@ -75,7 +75,7 @@ describe ZendeskAppsSupport::Package do
 module.exports = a;
 
         },
-        'lib/nested/b.js': function(exports, require, module) {
+        'nested/b.js': function(exports, require, module) {
           var b = {
   name: 'This is B'
 };
@@ -89,7 +89,7 @@ module.exports = b;
     var source = (function() {
 
   return {
-    a: require('lib/a.js'),
+    a: require('a.js'),
 
     events: {
       'app.activated':'doSomething'

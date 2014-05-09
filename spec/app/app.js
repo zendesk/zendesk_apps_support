@@ -1,7 +1,7 @@
 (function() {
 
   return {
-    a: require('lib/a.js'),
+    a: require('a.js'),
 
     events: {
       'app.activated':'doSomething'

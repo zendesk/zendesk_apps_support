@@ -55,7 +55,7 @@ module ZendeskAppsSupport
       return unless has_lib_js?
 
       lib_files.each_with_object({}) do |file, modules|
-        name          = file.relative_path
+        name          = file.relative_path.gsub!(/^lib\//, '')
         content       = file.read
         modules[name] = content
       end
