@@ -3,13 +3,26 @@ require 'erubis'
 require 'json'
 
 module ZendeskAppsSupport
+  class Packages
+    INSTALLED_TEMPLATE = Erubis::Eruby.new( File.read(File.expand_path('../assets/installed.js.erb', __FILE__)) )
+
+    def initialize(packages)
+      @packages = packages
+    end
+
+    def get_installed
+      INSTALLED_TEMPLATE.result(
+          :apps => @packages
+      )
+    end
+  end
+
   class Package
     include ZendeskAppsSupport::BuildTranslation
 
     DEFAULT_LAYOUT = Erubis::Eruby.new( File.read(File.expand_path('../assets/default_template.html.erb', __FILE__)) )
     DEFAULT_SCSS   = File.read(File.expand_path('../assets/default_styles.scss', __FILE__))
     SRC_TEMPLATE   = Erubis::Eruby.new( File.read(File.expand_path('../assets/src.js.erb', __FILE__)) )
-    INSTALLED_TEMPLATE = Erubis::Eruby.new( File.read(File.expand_path('../assets/installed.js.erb', __FILE__)) )
 
     attr_reader :root, :warnings
     attr_accessor :requirements_only
@@ -21,10 +34,10 @@ module ZendeskAppsSupport
       @requirements_only = false
     end
 
-    def change_dir(dir)
-      @root = Pathname.new(File.expand_path(dir))
-      self
-    end
+    # def change_dir(dir)
+    #   @root = Pathname.new(File.expand_path(dir))
+    #   self
+    # end
 
     def validate
       [].tap do |errors|
@@ -93,7 +106,7 @@ module ZendeskAppsSupport
 
       settings["title"] = name
 
-      @apps << SRC_TEMPLATE.result(
+      SRC_TEMPLATE.result(
           :name => name,
           :source => source,
           :location => location,
@@ -105,12 +118,6 @@ module ZendeskAppsSupport
           :templates => templates,
           :settings => settings,
           :app_id => app_id
-      )
-    end
-
-    def get_installed()
-      INSTALLED_TEMPLATE.result(
-          :apps => @apps
       )
     end
 
