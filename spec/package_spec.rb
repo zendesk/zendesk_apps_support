@@ -63,7 +63,6 @@ describe ZendeskAppsSupport::Package do
       js = @package.readified_js(nil, 0, 'http://localhost:4567/')
 
       expected =<<HERE
-(function() {
   with( ZendeskApps.AppScope.create() ) {
     require.modules = {
         'a.js': function(exports, require, module) {
@@ -120,9 +119,6 @@ module.exports = b;
   }
 
   ZendeskApps["ABC"].install({"id": 0, "app_id": 0, "settings": {"title":"ABC"}});
-}());
-
-ZendeskApps.trigger && ZendeskApps.trigger('ready');
 HERE
       js.should == expected
     end
