@@ -35,11 +35,6 @@ module ZendeskAppsSupport
       @requirements_only = false
     end
 
-    # def change_dir(dir)
-    #   @root = Pathname.new(File.expand_path(dir))
-    #   self
-    # end
-
     def validate
       [].tap do |errors|
 
