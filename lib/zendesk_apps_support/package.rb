@@ -86,7 +86,7 @@ module ZendeskAppsSupport
     end
 
     def lib_files
-      @lib_files ||= files.select { |f| f =~ /^lib\/.*\.js$/ }
+      @lib_files ||= files.select { |f| f =~ /^lib\/.*\.js$/ }.sort{ |x,y| x.relative_path <=> y.relative_path }
     end
 
     def template_files
