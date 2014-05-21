@@ -3,6 +3,11 @@ require 'spec_helper'
 describe ZendeskAppsSupport::Package do
   before do
     @package = ZendeskAppsSupport::Package.new('spec/app')
+
+    lib_files_original_method = @package.method(:lib_files)
+    @package.stub(:lib_files) do |*args, &block|
+      lib_files_original_method.call(*args, &block).sort_by { |f| f.relative_path }
+    end
   end
 
   describe 'files' do
