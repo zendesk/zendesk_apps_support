@@ -33,7 +33,7 @@ module ZendeskAppsSupport
     attr_reader :lib_root, :root, :warnings
     attr_accessor :requirements_only
 
-    def initialize(dir, parameters)
+    def initialize(dir, parameters = {})
       @root = Pathname.new(File.expand_path(dir))
       @lib_root = Pathname.new(File.join(@root, 'lib'))
       @warnings = []
