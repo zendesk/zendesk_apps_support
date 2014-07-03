@@ -9,6 +9,7 @@ module ZendeskAppsSupport
   autoload :Package,                'zendesk_apps_support/package'
   autoload :AppRequirement,         'zendesk_apps_support/app_requirement'
   autoload :AppVersion,             'zendesk_apps_support/app_version'
+  autoload :FrameworkVersion,       'zendesk_apps_support/framework_version'
   autoload :StylesheetCompiler,     'zendesk_apps_support/stylesheet_compiler'
 
   module Validations
