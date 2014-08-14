@@ -12,6 +12,7 @@ module ZendeskAppsSupport
         # relaxing options:
         :eqnull => true,
         :laxcomma => true,
+        :sub => true,
 
         # predefined globals:
         :predef => %w(_ console services helpers alert window document self
