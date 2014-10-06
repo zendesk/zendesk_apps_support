@@ -5,7 +5,7 @@ module ZendeskAppsSupport
   module Validations
     module Requirements
 
-      MAX_REQUIREMENTS = 10
+      MAX_REQUIREMENTS = 5000
 
       class <<self
         def call(package)
