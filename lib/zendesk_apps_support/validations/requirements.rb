@@ -52,8 +52,9 @@ module ZendeskAppsSupport
         end
 
         def excessive_requirements(requirements)
-          if requirements.values.map(&:values).flatten.size > MAX_REQUIREMENTS
-            ValidationError.new(:excessive_requirements, :max => MAX_REQUIREMENTS)
+          requirement_count = requirements.values.map(&:values).flatten.size
+          if requirement_count > MAX_REQUIREMENTS
+            ValidationError.new(:excessive_requirements, :max => MAX_REQUIREMENTS, :count => requirement_count)
           end
         end
 
