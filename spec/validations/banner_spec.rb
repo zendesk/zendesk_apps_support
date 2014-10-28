@@ -2,8 +2,8 @@ require 'spec_helper'
 
 describe ZendeskAppsSupport::Validations::Banner do
   let(:banner_file) { 'banner.png'}
-  let(:banner) { mock('AppFile', :relative_path => 'assets/banner.png') }
-  let(:package) { mock('Package', :files => [banner]) }
+  let(:banner) { double('AppFile', :relative_path => 'assets/banner.png') }
+  let(:package) { double('Package', :files => [banner]) }
 
   before do
     package.stub(:file_path).and_return(fixture_path(banner_file))

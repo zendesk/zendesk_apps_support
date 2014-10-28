@@ -3,7 +3,7 @@ require 'spec_helper'
 describe ZendeskAppsSupport::Validations::Stylesheets do
   it 'does not return errors if there is no custom css' do
 
-    package = stub(:customer_css => "")
+    package = double(:customer_css => "")
     ZendeskAppsSupport::Validations::Stylesheets.call(package).should be_empty
   end
 
@@ -13,7 +13,7 @@ describe ZendeskAppsSupport::Validations::Stylesheets do
   border: solid 1px black;
 }
     CSS
-    package = stub(:customer_css => valid_css)
+    package = double(:customer_css => valid_css)
 
     errors = ZendeskAppsSupport::Validations::Stylesheets.call(package)
     errors.should be_empty
@@ -25,7 +25,7 @@ describe ZendeskAppsSupport::Validations::Stylesheets do
   border: }
 }
     CSS
-    package = stub(:customer_css => invalid_css)
+    package = double(:customer_css => invalid_css)
 
     errors = ZendeskAppsSupport::Validations::Stylesheets.call(package)
     errors.count.should == 1
