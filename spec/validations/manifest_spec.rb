@@ -35,14 +35,14 @@ describe ZendeskAppsSupport::Validations::Manifest do
   end
 
   it 'should have an error when manifest.json is missing' do
-    files = [mock('AppFile', :relative_path => 'abc.json')]
-    package = mock('Package', :files => files)
+    files = [double('AppFile', :relative_path => 'abc.json')]
+    package = double('Package', :files => files)
     package.should have_error 'Could not find manifest.json'
   end
 
   before do
-    @manifest = mock('AppFile', :relative_path => 'manifest.json', :read => "{}")
-    @package = mock('Package', :files => [@manifest],
+    @manifest = double('AppFile', :relative_path => 'manifest.json', :read => "{}")
+    @package = double('Package', :files => [@manifest],
       :has_location? => true, :has_js? => true, :requirements_only => false, :requirements_only= => nil)
   end
 
@@ -90,7 +90,7 @@ describe ZendeskAppsSupport::Validations::Manifest do
   it 'should have an error when the translation file is missing for the defaultLocale' do
     manifest = { 'defaultLocale' => 'pt' }
     @manifest.stub(:read => MultiJson.dump(manifest))
-    translation_files = mock('AppFile', :relative_path => 'translations/en.json')
+    translation_files = double('AppFile', :relative_path => 'translations/en.json')
     @package.stub(:translation_files => [translation_files])
 
     @package.should have_error /Missing translation file/
@@ -132,7 +132,7 @@ describe ZendeskAppsSupport::Validations::Manifest do
   end
 
   it 'should have an error when manifest is not a valid json' do
-    manifest = mock('AppFile', :relative_path => 'manifest.json', :read => "}")
+    manifest = double('AppFile', :relative_path => 'manifest.json', :read => "}")
     @package.stub(:files => [manifest])
 
     @package.should have_error /^manifest is not proper JSON/

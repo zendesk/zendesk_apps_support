@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe ZendeskAppsSupport::Validations::Translations do
 
-  let(:package) { mock('Package', :files => translation_files) }
+  let(:package) { double('Package', :files => translation_files) }
   subject { ZendeskAppsSupport::Validations::Translations.call(package) }
 
   context 'when there are no translation files' do
@@ -14,7 +14,7 @@ describe ZendeskAppsSupport::Validations::Translations do
 
   context 'when there is file with invalid JSON' do
     let(:translation_files) do
-      [mock('AppFile', :relative_path => 'translations/en.json', :read => '}')]
+      [double('AppFile', :relative_path => 'translations/en.json', :read => '}')]
     end
 
     it 'should report the error' do
@@ -25,7 +25,7 @@ describe ZendeskAppsSupport::Validations::Translations do
 
   context 'when there is file with JSON representing a non-Object' do
     let(:translation_files) do
-      [mock('AppFile', :relative_path => 'translations/en.json', :read => '"foo bar"')]
+      [double('AppFile', :relative_path => 'translations/en.json', :read => '"foo bar"')]
     end
 
     it 'should report the error' do
@@ -36,7 +36,7 @@ describe ZendeskAppsSupport::Validations::Translations do
 
   context 'when there is a file with an invalid locale for a name' do
     let(:translation_files) do
-      [mock('AppFile', :relative_path => 'translations/en-US-1.json', :read => '{}')]
+      [double('AppFile', :relative_path => 'translations/en-US-1.json', :read => '{}')]
     end
 
     it 'should report the error' do
@@ -47,7 +47,7 @@ describe ZendeskAppsSupport::Validations::Translations do
 
   context 'when there is a file with a valid locale containing valid JSON' do
     let(:translation_files) do
-      [mock('AppFile', :relative_path => 'translations/en-US.json', :read => '{}')]
+      [double('AppFile', :relative_path => 'translations/en-US.json', :read => '{}')]
     end
 
     it 'should be valid' do
@@ -58,7 +58,7 @@ describe ZendeskAppsSupport::Validations::Translations do
   context 'validate translation format when "package" is defined inside "app"' do
     context 'all the leaf nodes have defined "title" and "value"' do
       let(:translation_files) do
-        [mock('AppFile', :relative_path => 'translations/en-US.json', :read => read_fixture_file("valid_en.json"))]
+        [double('AppFile', :relative_path => 'translations/en-US.json', :read => read_fixture_file("valid_en.json"))]
       end
 
       it 'should be valid' do
@@ -68,7 +68,7 @@ describe ZendeskAppsSupport::Validations::Translations do
 
     context 'when the "title" field is not defined on one leaf node' do
       let(:translation_files) do
-        [mock('AppFile', :relative_path => 'translations/en-US.json', :read => read_fixture_file("invalid_en.json"))]
+        [double('AppFile', :relative_path => 'translations/en-US.json', :read => read_fixture_file("invalid_en.json"))]
       end
 
       it 'should be invalid' do
