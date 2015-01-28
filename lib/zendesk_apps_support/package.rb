@@ -101,14 +101,22 @@ module ZendeskAppsSupport
       app_class_name = "app-#{app_id}"
       author = manifest[:author]
       framework_version = manifest[:frameworkVersion]
-      templates = manifest[:noTemplate] ? {} : compiled_templates(app_id, asset_url_prefix)
+      single_install = manifest[:singleInstall] || false
+      no_template = manifest[:noTemplate]
+      templates = no_template ? {} : compiled_templates(app_id, asset_url_prefix)
 
       settings["title"] = name
+
+      app_settings = {
+        :location => location,
+        :noTemplate => no_template,
+        :singleInstall => single_install
+      }.keep_if { |k,v| !v.nil? }
 
       SRC_TEMPLATE.result(
           :name => name,
           :source => source,
-          :location => location,
+          :app_settings => app_settings,
           :asset_url_prefix => asset_url_prefix,
           :app_class_name => app_class_name,
           :author => author,

@@ -14,11 +14,7 @@
     var source = <%= source %>;
 
     var app = ZendeskApps.defineApp(source)
-      .reopenClass({
-        location: <%= location.to_json %>,
-        noTemplate: <%= no_template.to_json %>
-        singleInstall: <%= single_install.to_json %>
-      })
+      .reopenClass(<%= app_settings.to_json %>)
       .reopen({
         assetUrlPrefix: <%= asset_url_prefix.to_json %>,
         appClassName: <%= app_class_name.to_json %>,
