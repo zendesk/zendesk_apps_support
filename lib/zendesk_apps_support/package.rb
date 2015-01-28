@@ -111,7 +111,7 @@ module ZendeskAppsSupport
         :location => location,
         :noTemplate => no_template,
         :singleInstall => single_install
-      }.keep_if { |k,v| !v.nil? }
+      }.select { |k,v| !v.nil? }
 
       SRC_TEMPLATE.result(
           :name => name,
