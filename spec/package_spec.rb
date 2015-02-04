@@ -108,7 +108,7 @@ module.exports = b;
 ;
 
     var app = ZendeskApps.defineApp(source)
-      .reopenClass({ location: "ticket_sidebar" })
+      .reopenClass({"location":"ticket_sidebar","singleInstall":false})
       .reopen({
         assetUrlPrefix: "http://localhost:4567/",
         appClassName: "app-0",
