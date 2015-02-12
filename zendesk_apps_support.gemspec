@@ -19,7 +19,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'erubis'
   s.add_runtime_dependency 'jshintrb', '~> 0.2.4'
 
-  s.add_development_dependency 'rspec', '~> 2.14.0'
+  s.add_development_dependency 'rspec', '~> 3.1.0'
   s.add_development_dependency 'bump', '~> 0.5.1'
 
   s.files = Dir.glob("{lib,config}/**/*") + %w(README.md LICENSE)
