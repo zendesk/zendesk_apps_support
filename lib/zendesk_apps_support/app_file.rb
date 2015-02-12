@@ -1,7 +1,5 @@
 module ZendeskAppsSupport
-
   class AppFile
-
     attr_reader :relative_path
     attr_reader :absolute_path
 
@@ -42,7 +40,5 @@ module ZendeskAppsSupport
     def respond_to_missing?(sym, include_private = false)
       @file.send(:respond_to_missing?, sym, include_private) || super
     end
-
   end
-
 end

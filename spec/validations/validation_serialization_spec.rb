@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe ZendeskAppsSupport::Validations::ValidationError do
-
   ValidationError = ZendeskAppsSupport::Validations::ValidationError
 
   it 'symbolizes the keys in its data' do
@@ -25,7 +24,6 @@ describe ZendeskAppsSupport::Validations::ValidationError do
   end
 
   describe '.from_hash' do
-
     subject { ValidationError.from_hash(hash) }
 
     context 'for a generic error' do
@@ -46,7 +44,7 @@ describe ZendeskAppsSupport::Validations::ValidationError do
 
       describe '#data' do
         subject { super().data }
-        it { is_expected.to eq({ :quux => 'yargle' }) }
+        it { is_expected.to eq(quux: 'yargle') }
       end
     end
 
@@ -55,7 +53,7 @@ describe ZendeskAppsSupport::Validations::ValidationError do
         {
           'class'         => 'ZendeskAppsSupport::Validations::JSHintValidationError',
           'file'          => 'foo.js',
-          'jshint_errors' => [ { 'line' => 55, 'reason' => 'Yuck' } ]
+          'jshint_errors' => [{ 'line' => 55, 'reason' => 'Yuck' }]
         }
       end
 
@@ -69,15 +67,15 @@ describe ZendeskAppsSupport::Validations::ValidationError do
       describe '#jshint_errors' do
         subject { super().jshint_errors }
         it do
-        is_expected.to eq([ { 'line' => 55, 'reason' => 'Yuck' } ])
-      end
+          is_expected.to eq([{ 'line' => 55, 'reason' => 'Yuck' }])
+        end
       end
     end
 
     context 'for a non-ValidationError hash' do
       let(:hash) do
         {
-          :foo => 'bar'
+          foo: 'bar'
         }
       end
 
@@ -85,22 +83,18 @@ describe ZendeskAppsSupport::Validations::ValidationError do
         expect { subject }.to raise_error(ValidationError::DeserializationError)
       end
     end
-
   end
 
   describe '.from_json' do
-
     it 'decodes a JSON hash and passes it to .from_hash' do
       expect(ValidationError).to receive(:from_hash).with('foo' => 'bar')
-      ValidationError.from_json(MultiJson.encode({ 'foo' => 'bar' }))
+      ValidationError.from_json(MultiJson.encode('foo' => 'bar'))
     end
 
     it 'raises a DeserializationError when passed non-JSON' do
-      expect {
+      expect do
         ValidationError.from_json('}}}')
-      }.to raise_error(ValidationError::DeserializationError)
+      end.to raise_error(ValidationError::DeserializationError)
     end
-
   end
-
 end

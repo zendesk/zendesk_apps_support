@@ -1,5 +1,4 @@
 module ZendeskAppsSupport
-
   require 'zendesk_apps_support/sass_functions'
   require 'zendesk_apps_support/engine'
 

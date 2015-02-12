@@ -2,7 +2,6 @@ require 'multi_json'
 
 module ZendeskAppsSupport
   module Validations
-
     class ValidationError
       KEY_PREFIX = 'txt.apps.admin.error.app_build.'.freeze
 
@@ -13,20 +12,19 @@ module ZendeskAppsSupport
       end
 
       class << self
-
         # Turn a JSON string into a ValidationError.
         def from_json(json)
           hash = MultiJson.decode(json)
-          raise DeserializationError.new(json) unless hash.is_a?(Hash)
+          fail DeserializationError.new(json) unless hash.is_a?(Hash)
           from_hash(hash)
         rescue MultiJson::DecodeError, NameError
           raise DeserializationError.new(json)
         end
 
         def from_hash(hash)
-          raise DeserializationError.new(hash) unless hash['class']
+          fail DeserializationError.new(hash) unless hash['class']
           klass = constantize(hash['class'])
-          raise DeserializationError.new(hash) unless klass <= self
+          fail DeserializationError.new(hash) unless klass <= self
           klass.vivify(hash)
         end
 
@@ -38,7 +36,7 @@ module ZendeskAppsSupport
         private
 
         def constantize(klass)
-          klass.to_s.split('::').inject(Object) { |klass, part| klass = klass.const_get(part) }
+          klass.to_s.split('::').inject(Object) { |klass, part| klass.const_get(part) }
         end
       end
 
@@ -52,11 +50,11 @@ module ZendeskAppsSupport
         ZendeskAppsSupport::I18n.t("#{KEY_PREFIX}#{key}", data)
       end
 
-      def to_json(*options)
+      def to_json(*)
         MultiJson.encode(as_json)
       end
 
-      def as_json(*options)
+      def as_json(*)
         {
           'class' => self.class.to_s,
           'key'   => key,
@@ -85,13 +83,13 @@ module ZendeskAppsSupport
         errors = jshint_errors.compact.map { |err| "\n  L#{err['line']}: #{err['reason']}" }.join('')
         @filename = filename, @jshint_errors = jshint_errors
         super(:jshint, {
-          :file => filename,
-          :errors => errors,
-          :count => jshint_errors.length
+          file: filename,
+          errors: errors,
+          count: jshint_errors.length
         })
       end
 
-      def as_json(*options)
+      def as_json(*)
         {
           'class' => self.class.to_s,
           'filename' => filename,

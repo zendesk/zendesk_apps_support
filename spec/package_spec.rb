@@ -6,20 +6,22 @@ describe ZendeskAppsSupport::Package do
 
     lib_files_original_method = @package.method(:lib_files)
     allow(@package).to receive(:lib_files) do |*args, &block|
-      lib_files_original_method.call(*args, &block).sort_by { |f| f.relative_path }
+      lib_files_original_method.call(*args, &block).sort_by(&:relative_path)
     end
   end
 
   describe 'files' do
     it 'should return all the files within the app folder excluding files in tmp folder' do
-      expect(@package.files.map(&:relative_path)).to match_array(%w(app.css app.js assets/logo-small.png assets/logo.png lib/a.js lib/a.txt lib/nested/b.js manifest.json templates/layout.hdbs translations/en.json))
+      files = %w(app.css app.js assets/logo-small.png assets/logo.png lib/a.js lib/a.txt
+                 lib/nested/b.js manifest.json templates/layout.hdbs translations/en.json)
+      expect(@package.files.map(&:relative_path)).to match_array(files)
     end
 
     it 'should error out when manifest is missing' do
-     @package = ZendeskAppsSupport::Package.new('spec/app_nomanifest')
-     err =  @package.validate
-     expect(err.first.class).to eq(ZendeskAppsSupport::Validations::ValidationError)
-     expect(err.first.to_s).to eq('Could not find manifest.json')
+      @package = ZendeskAppsSupport::Package.new('spec/app_nomanifest')
+      err = @package.validate
+      expect(err.first.class).to eq(ZendeskAppsSupport::Validations::ValidationError)
+      expect(err.first.to_s).to eq('Could not find manifest.json')
     end
   end
 
@@ -43,10 +45,10 @@ describe ZendeskAppsSupport::Package do
 
   describe 'commonjs_modules' do
     it 'should return an object with name value pairs containing the path and code' do
-      expect(@package.commonjs_modules).to eq({
-        "a.js"=>"var a = {\n  name: 'This is A'\n};\n\nmodule.exports = a;\n",
-        "nested/b.js"=>"var b = {\n  name: 'This is B'\n};\n\nmodule.exports = b;\n"
-      })
+      expect(@package.commonjs_modules).to eq(
+        'a.js' => "var a = {\n  name: 'This is A'\n};\n\nmodule.exports = a;\n",
+        'nested/b.js' => "var b = {\n  name: 'This is B'\n};\n\nmodule.exports = b;\n"
+      )
     end
   end
 
@@ -67,7 +69,7 @@ describe ZendeskAppsSupport::Package do
     it 'should generate js ready for installation' do
       js = @package.readified_js(nil, 0, 'http://localhost:4567/')
 
-      expected =<<HERE
+      expected = <<HERE
 (function() {
   with( ZendeskApps.AppScope.create() ) {
     require.modules = {

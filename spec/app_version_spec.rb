@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe ZendeskAppsSupport::AppVersion do
-
   describe 'the current version' do
     subject do
       ZendeskAppsSupport::AppVersion.new(ZendeskAppsSupport::AppVersion::CURRENT)

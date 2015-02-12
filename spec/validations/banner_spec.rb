@@ -1,9 +1,9 @@
 require 'spec_helper'
 
 describe ZendeskAppsSupport::Validations::Banner do
-  let(:banner_file) { 'banner.png'}
-  let(:banner) { double('AppFile', :relative_path => 'assets/banner.png') }
-  let(:package) { double('Package', :files => [banner]) }
+  let(:banner_file) { 'banner.png' }
+  let(:banner) { double('AppFile', relative_path: 'assets/banner.png') }
+  let(:package) { double('Package', files: [banner]) }
 
   before do
     allow(package).to receive(:file_path).and_return(fixture_path(banner_file))
@@ -50,10 +50,10 @@ describe ZendeskAppsSupport::Validations::Banner do
       errors = ZendeskAppsSupport::Validations::Banner.call(package)
       expect(errors.size).to eq(1)
       expect(errors[0].key).to eq('banner.invalid_size')
-      expect(errors[0].data).to eq({
-        :required_banner_width => ZendeskAppsSupport::Validations::Banner::BANNER_WIDTH,
-        :required_banner_height => ZendeskAppsSupport::Validations::Banner::BANNER_HEIGHT
-      })
+      expect(errors[0].data).to eq(
+        required_banner_width: ZendeskAppsSupport::Validations::Banner::BANNER_WIDTH,
+        required_banner_height: ZendeskAppsSupport::Validations::Banner::BANNER_HEIGHT
+      )
     end
   end
 end
