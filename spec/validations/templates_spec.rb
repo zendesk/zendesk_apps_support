@@ -7,7 +7,7 @@ describe ZendeskAppsSupport::Validations::Templates do
     package = double('Package', :template_files => [template])
     errors = ZendeskAppsSupport::Validations::Templates.call(package)
 
-    errors.first().to_s.should eql "<style> tag in layout.hdbs. Use an app.css file instead."
+    expect(errors.first().to_s).to eql "<style> tag in layout.hdbs. Use an app.css file instead."
   end
 
 end

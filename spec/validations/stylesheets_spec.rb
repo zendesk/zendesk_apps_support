@@ -4,7 +4,7 @@ describe ZendeskAppsSupport::Validations::Stylesheets do
   it 'does not return errors if there is no custom css' do
 
     package = double(:customer_css => "")
-    ZendeskAppsSupport::Validations::Stylesheets.call(package).should be_empty
+    expect(ZendeskAppsSupport::Validations::Stylesheets.call(package)).to be_empty
   end
 
   it 'does not return errors for valid css' do
@@ -16,7 +16,7 @@ describe ZendeskAppsSupport::Validations::Stylesheets do
     package = double(:customer_css => valid_css)
 
     errors = ZendeskAppsSupport::Validations::Stylesheets.call(package)
-    errors.should be_empty
+    expect(errors).to be_empty
   end
 
   it 'returns style sheet validation error for invalid css' do
@@ -28,7 +28,7 @@ describe ZendeskAppsSupport::Validations::Stylesheets do
     package = double(:customer_css => invalid_css)
 
     errors = ZendeskAppsSupport::Validations::Stylesheets.call(package)
-    errors.count.should == 1
-    errors.first.to_s.should match /Sass error: Invalid CSS after.*/
+    expect(errors.count).to eq(1)
+    expect(errors.first.to_s).to match /Sass error: Invalid CSS after.*/
   end
 end

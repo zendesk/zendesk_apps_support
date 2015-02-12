@@ -8,7 +8,7 @@ describe ZendeskAppsSupport::Validations::Translations do
   context 'when there are no translation files' do
     let(:translation_files) { [] }
     it 'should be valid' do
-      subject.should be_empty
+      expect(subject).to be_empty
     end
   end
 
@@ -18,8 +18,8 @@ describe ZendeskAppsSupport::Validations::Translations do
     end
 
     it 'should report the error' do
-      subject.length.should == 1
-      subject[0].to_s.should =~ /JSON/
+      expect(subject.length).to eq(1)
+      expect(subject[0].to_s).to match(/JSON/)
     end
   end
 
@@ -29,8 +29,8 @@ describe ZendeskAppsSupport::Validations::Translations do
     end
 
     it 'should report the error' do
-      subject.length.should == 1
-      subject[0].to_s.should =~ /JSON/
+      expect(subject.length).to eq(1)
+      expect(subject[0].to_s).to match(/JSON/)
     end
   end
 
@@ -40,8 +40,8 @@ describe ZendeskAppsSupport::Validations::Translations do
     end
 
     it 'should report the error' do
-      subject.length.should == 1
-      subject[0].to_s.should =~ /locale/
+      expect(subject.length).to eq(1)
+      expect(subject[0].to_s).to match(/locale/)
     end
   end
 
@@ -51,7 +51,7 @@ describe ZendeskAppsSupport::Validations::Translations do
     end
 
     it 'should be valid' do
-      subject.length.should == 0
+      expect(subject.length).to eq(0)
     end
   end
 
@@ -62,7 +62,7 @@ describe ZendeskAppsSupport::Validations::Translations do
       end
 
       it 'should be valid' do
-        subject.length.should == 0
+        expect(subject.length).to eq(0)
       end
     end
 
@@ -72,8 +72,8 @@ describe ZendeskAppsSupport::Validations::Translations do
       end
 
       it 'should be invalid' do
-        subject.length.should == 1
-        subject[0].to_s.should =~ /is invalid for translation/
+        expect(subject.length).to eq(1)
+        expect(subject[0].to_s).to match(/is invalid for translation/)
       end
     end
   end

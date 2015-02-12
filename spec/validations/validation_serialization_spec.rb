@@ -6,7 +6,7 @@ describe ZendeskAppsSupport::Validations::ValidationError do
 
   it 'symbolizes the keys in its data' do
     error = ValidationError.new(:foo, 'bar' => 'baz')
-    error.data[:bar].should == 'baz'
+    expect(error.data[:bar]).to eq('baz')
   end
 
   describe '#to_json' do
@@ -16,11 +16,11 @@ describe ZendeskAppsSupport::Validations::ValidationError do
     subject     { MultiJson.dump(error) }
 
     it do
-      should == MultiJson.dump(
+      is_expected.to eq(MultiJson.dump(
         'class' => error.class.to_s,
         'key'   => error.key,
         'data'  => error.data
-      )
+      ))
     end
   end
 
@@ -37,12 +37,17 @@ describe ZendeskAppsSupport::Validations::ValidationError do
         }
       end
 
-      it { should be_a(ValidationError) }
+      it { is_expected.to be_a(ValidationError) }
 
-      its(:key) { should == 'foo.bar.baz' }
+      describe '#key' do
+        subject { super().key }
+        it { is_expected.to eq('foo.bar.baz') }
+      end
 
-      its(:data) { should == { :quux => 'yargle' } }
-      its(:data) { should}
+      describe '#data' do
+        subject { super().data }
+        it { is_expected.to eq({ :quux => 'yargle' }) }
+      end
     end
 
     context 'for a JSHint error' do
@@ -54,12 +59,18 @@ describe ZendeskAppsSupport::Validations::ValidationError do
         }
       end
 
-      it { should be_a(ZendeskAppsSupport::Validations::JSHintValidationError) }
+      it { is_expected.to be_a(ZendeskAppsSupport::Validations::JSHintValidationError) }
 
-      its(:key) { should == :jshint }
+      describe '#key' do
+        subject { super().key }
+        it { is_expected.to eq(:jshint) }
+      end
 
-      its(:jshint_errors) do
-        should == [ { 'line' => 55, 'reason' => 'Yuck' } ]
+      describe '#jshint_errors' do
+        subject { super().jshint_errors }
+        it do
+        is_expected.to eq([ { 'line' => 55, 'reason' => 'Yuck' } ])
+      end
       end
     end
 
@@ -71,7 +82,7 @@ describe ZendeskAppsSupport::Validations::ValidationError do
       end
 
       it 'raises a DeserializationError' do
-        lambda { subject }.should raise_error(ValidationError::DeserializationError)
+        expect { subject }.to raise_error(ValidationError::DeserializationError)
       end
     end
 
@@ -80,14 +91,14 @@ describe ZendeskAppsSupport::Validations::ValidationError do
   describe '.from_json' do
 
     it 'decodes a JSON hash and passes it to .from_hash' do
-      ValidationError.should_receive(:from_hash).with('foo' => 'bar')
+      expect(ValidationError).to receive(:from_hash).with('foo' => 'bar')
       ValidationError.from_json(MultiJson.encode({ 'foo' => 'bar' }))
     end
 
     it 'raises a DeserializationError when passed non-JSON' do
-      lambda {
+      expect {
         ValidationError.from_json('}}}')
-      }.should raise_error(ValidationError::DeserializationError)
+      }.to raise_error(ValidationError::DeserializationError)
     end
 
   end

@@ -5,61 +5,61 @@ describe ZendeskAppsSupport::Package do
     @package = ZendeskAppsSupport::Package.new('spec/app')
 
     lib_files_original_method = @package.method(:lib_files)
-    @package.stub(:lib_files) do |*args, &block|
+    allow(@package).to receive(:lib_files) do |*args, &block|
       lib_files_original_method.call(*args, &block).sort_by { |f| f.relative_path }
     end
   end
 
   describe 'files' do
     it 'should return all the files within the app folder excluding files in tmp folder' do
-      @package.files.map(&:relative_path).should =~ %w(app.css app.js assets/logo-small.png assets/logo.png lib/a.js lib/a.txt lib/nested/b.js manifest.json templates/layout.hdbs translations/en.json)
+      expect(@package.files.map(&:relative_path)).to match_array(%w(app.css app.js assets/logo-small.png assets/logo.png lib/a.js lib/a.txt lib/nested/b.js manifest.json templates/layout.hdbs translations/en.json))
     end
 
     it 'should error out when manifest is missing' do
      @package = ZendeskAppsSupport::Package.new('spec/app_nomanifest')
      err =  @package.validate
-     err.first.class.should == ZendeskAppsSupport::Validations::ValidationError
-     err.first.to_s.should == 'Could not find manifest.json'
+     expect(err.first.class).to eq(ZendeskAppsSupport::Validations::ValidationError)
+     expect(err.first.to_s).to eq('Could not find manifest.json')
     end
   end
 
   describe 'template_files' do
     it 'should return all the files in the templates folder within the app folder' do
-      @package.template_files.map(&:relative_path).should == %w(templates/layout.hdbs)
+      expect(@package.template_files.map(&:relative_path)).to eq(%w(templates/layout.hdbs))
     end
   end
 
   describe 'translation_files' do
     it 'should return all the files in the translations folder within the app folder' do
-      @package.translation_files.map(&:relative_path).should == %w(translations/en.json)
+      expect(@package.translation_files.map(&:relative_path)).to eq(%w(translations/en.json))
     end
   end
 
   describe 'lib_files' do
     it 'should return all the javascript files in the lib folder within the app folder' do
-      @package.lib_files.map(&:relative_path).should == %w(lib/a.js lib/nested/b.js)
+      expect(@package.lib_files.map(&:relative_path)).to eq(%w(lib/a.js lib/nested/b.js))
     end
   end
 
   describe 'commonjs_modules' do
     it 'should return an object with name value pairs containing the path and code' do
-      @package.commonjs_modules.should == {
+      expect(@package.commonjs_modules).to eq({
         "a.js"=>"var a = {\n  name: 'This is A'\n};\n\nmodule.exports = a;\n",
         "nested/b.js"=>"var b = {\n  name: 'This is B'\n};\n\nmodule.exports = b;\n"
-      }
+      })
     end
   end
 
   describe 'manifest_json' do
     it 'should return manifest json' do
       manifest = @package.manifest_json
-      manifest[:name].should == 'ABC'
-      manifest[:author][:name].should == 'John Smith'
-      manifest[:author][:email].should == 'john@example.com'
-      manifest[:defaultLocale].should == 'en'
-      manifest[:private].should == true
-      manifest[:location].should == 'ticket_sidebar'
-      manifest[:frameworkVersion].should == '0.5'
+      expect(manifest[:name]).to eq('ABC')
+      expect(manifest[:author][:name]).to eq('John Smith')
+      expect(manifest[:author][:email]).to eq('john@example.com')
+      expect(manifest[:defaultLocale]).to eq('en')
+      expect(manifest[:private]).to eq(true)
+      expect(manifest[:location]).to eq('ticket_sidebar')
+      expect(manifest[:frameworkVersion]).to eq('0.5')
     end
   end
 
@@ -129,7 +129,7 @@ module.exports = b;
 
 ZendeskApps.trigger && ZendeskApps.trigger('ready');
 HERE
-      js.should == expected
+      expect(js).to eq(expected)
     end
   end
 end

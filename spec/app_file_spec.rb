@@ -8,20 +8,20 @@ describe ZendeskAppsSupport::AppFile do
   end
 
   describe '=~' do
-    it 'should test against the relative path of the file' do
-      @file.should =~ /layout/
+    it 'tests against the relative path of the file' do
+      expect(@file =~ /layout/).to be_truthy
     end
   end
 
   describe 'read' do
-    it 'should read file content' do
-      @file.read.should =~ /<header>/
+    it 'reads file content' do
+      expect(@file.read).to match(/<header>/)
     end
   end
 
   describe 'to_s' do
-    it 'should return file name' do
-      @file.to_s.should == 'layout.hdbs'
+    it 'returns file name' do
+      expect(@file.to_s).to eq('layout.hdbs')
     end
   end
 end
