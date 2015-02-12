@@ -1,11 +1,11 @@
 PATH
   remote: .
   specs:
-    zendesk_apps_support (1.16.2)
+    zendesk_apps_support (1.17.0)
       erubis
       i18n
       image_size
-      jshintrb
+      jshintrb (~> 0.2.4)
       json
       json-stream
       multi_json
