@@ -1,6 +1,5 @@
 module ZendeskAppsSupport
   module BuildTranslation
-
     I18N_TITLE_KEY = 'title'
     I18N_VALUE_KEY = 'value'
     I18N_KEYS      = [I18N_TITLE_KEY, I18N_VALUE_KEY]
@@ -8,7 +7,7 @@ module ZendeskAppsSupport
     def to_flattened_namespaced_hash(hash, target_key = nil, prefix = nil)
       hash.inject({}) do |result, (key, value)|
         key = [prefix, key].compact.join('.')
-        if value.kind_of?(Hash)
+        if value.is_a?(Hash)
           if target_key && is_translation_hash?(value)
             result[key] = value[target_key]
           else
@@ -22,7 +21,6 @@ module ZendeskAppsSupport
     end
 
     def remove_zendesk_keys(scope, translations = {})
-
       scope.each_key do |key|
         context = scope[key]
 
@@ -48,6 +46,5 @@ module ZendeskAppsSupport
     def is_translation_hash?(hash)
       hash.keys.sort == I18N_KEYS
     end
-
   end
 end

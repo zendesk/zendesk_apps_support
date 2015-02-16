@@ -23,35 +23,35 @@ module ZendeskAppsSupport
 
         def locale_error(file, locale)
           return nil if VALID_LOCALE =~ locale
-          ValidationError.new('translation.invalid_locale', :file => file.relative_path)
+          ValidationError.new('translation.invalid_locale', file: file.relative_path)
         end
 
         def json_error(file)
           json = MultiJson.load(file.read)
-          if json.kind_of?(Hash)
-            if json["app"] && json["app"]["package"]
-              json["app"].delete("package")
+          if json.is_a?(Hash)
+            if json['app'] && json['app']['package']
+              json['app'].delete('package')
               begin
                 validate_translation_format(json)
                 return
               rescue TranslationFormatError => e
-                ValidationError.new('translation.invalid_format', :field => e.message)
+                ValidationError.new('translation.invalid_format', field: e.message)
               end
             end
           else
-            ValidationError.new('translation.not_json_object', :file => file.relative_path)
+            ValidationError.new('translation.not_json_object', file: file.relative_path)
           end
         rescue MultiJson::DecodeError => e
-          ValidationError.new('translation.not_json', :file => file.relative_path, :errors => e)
+          ValidationError.new('translation.not_json', file: file.relative_path, errors: e)
         end
 
         def validate_translation_format(json)
           json.keys.each do |key|
-            raise TranslationFormatError.new("'#{key}': '#{json[key]}'") unless json[key].kind_of? Hash
+            fail TranslationFormatError.new("'#{key}': '#{json[key]}'") unless json[key].is_a? Hash
 
             if json[key].keys.sort == BuildTranslation::I18N_KEYS &&
-              json[key][BuildTranslation::I18N_TITLE_KEY].class == String &&
-              json[key][BuildTranslation::I18N_VALUE_KEY].class == String
+               json[key][BuildTranslation::I18N_TITLE_KEY].class == String &&
+               json[key][BuildTranslation::I18N_VALUE_KEY].class == String
               next
             else
               validate_translation_format(json[key])

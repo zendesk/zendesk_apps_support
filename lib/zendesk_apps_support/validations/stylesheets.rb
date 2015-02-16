@@ -3,9 +3,7 @@ require 'zendesk_apps_support/stylesheet_compiler'
 module ZendeskAppsSupport
   module Validations
     module Stylesheets
-
       class << self
-
         def call(package)
           if css_error = validate_styles(package.customer_css)
             [css_error]
@@ -21,11 +19,10 @@ module ZendeskAppsSupport
           begin
             compiler.compile
           rescue Sass::SyntaxError => e
-            return ValidationError.new(:stylesheet_error, :sass_error => e.message)
+            return ValidationError.new(:stylesheet_error, sass_error: e.message)
           end
           nil
         end
-
       end
     end
   end

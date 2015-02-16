@@ -17,11 +17,11 @@ module ZendeskAppsSupport
               end
 
               unless (image.width == BANNER_WIDTH && image.height == BANNER_HEIGHT) ||
-                     (image.width == 2*BANNER_WIDTH && image.height == 2*BANNER_HEIGHT)
-                return [ValidationError.new('banner.invalid_size', :required_banner_width => BANNER_WIDTH,
-                                                                   :required_banner_height => BANNER_HEIGHT)]
+                     (image.width == 2 * BANNER_WIDTH && image.height == 2 * BANNER_HEIGHT)
+                return [ValidationError.new('banner.invalid_size', required_banner_width: BANNER_WIDTH,
+                                                                   required_banner_height: BANNER_HEIGHT)]
               end
-            rescue => e
+            rescue
               return [ValidationError.new('banner.invalid_format')]
             end
           end

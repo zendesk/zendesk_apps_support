@@ -1,11 +1,10 @@
 require 'sass'
 
 module Sass::Script::Functions
-
   module AppAssetUrl
     def app_asset_url(name)
       assert_type name, :String
-      result = %Q{url("#{app_asset_url_helper(name)}")}
+      result = %{url("#{app_asset_url_helper(name)}")}
       Sass::Script::String.new(result)
     end
 
@@ -18,5 +17,4 @@ module Sass::Script::Functions
   end
 
   include AppAssetUrl
-
 end

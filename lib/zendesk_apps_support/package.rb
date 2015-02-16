@@ -6,9 +6,9 @@ module ZendeskAppsSupport
   class Package
     include ZendeskAppsSupport::BuildTranslation
 
-    DEFAULT_LAYOUT = Erubis::Eruby.new( File.read(File.expand_path('../assets/default_template.html.erb', __FILE__)) )
+    DEFAULT_LAYOUT = Erubis::Eruby.new(File.read(File.expand_path('../assets/default_template.html.erb', __FILE__)))
     DEFAULT_SCSS   = File.read(File.expand_path('../assets/default_styles.scss', __FILE__))
-    SRC_TEMPLATE   = Erubis::Eruby.new( File.read(File.expand_path('../assets/src.js.erb', __FILE__)) )
+    SRC_TEMPLATE   = Erubis::Eruby.new(File.read(File.expand_path('../assets/src.js.erb', __FILE__)))
 
     attr_reader :lib_root, :root, :warnings
     attr_accessor :requirements_only
@@ -22,7 +22,6 @@ module ZendeskAppsSupport
 
     def validate
       [].tap do |errors|
-
         errors << Validations::Manifest.call(self)
 
         if has_manifest?
@@ -48,7 +47,7 @@ module ZendeskAppsSupport
     end
 
     def app_js
-      read_file("app.js")
+      read_file('app.js')
     end
 
     def commonjs_modules
@@ -78,22 +77,22 @@ module ZendeskAppsSupport
     end
 
     def manifest_json
-      read_json("manifest.json")
+      read_json('manifest.json')
     end
 
     def requirements_json
-      read_json("requirements.json")
+      read_json('requirements.json')
     end
 
     def translations
-      read_json("translations/en.json", false)
+      read_json('translations/en.json', false)
     end
 
     def app_translations
       remove_zendesk_keys(translations)
     end
 
-    def readified_js(app_name, app_id, asset_url_prefix, settings={})
+    def readified_js(app_name, app_id, asset_url_prefix, settings = {})
       manifest = manifest_json
       source = app_js
       name = app_name || manifest[:name] || 'Local App'
@@ -105,37 +104,37 @@ module ZendeskAppsSupport
       no_template = manifest[:noTemplate]
       templates = no_template ? {} : compiled_templates(app_id, asset_url_prefix)
 
-      settings["title"] = name
+      settings['title'] = name
 
       app_settings = {
-        :location => location,
-        :noTemplate => no_template,
-        :singleInstall => single_install
-      }.select { |k,v| !v.nil? }
+        location: location,
+        noTemplate: no_template,
+        singleInstall: single_install
+      }.select { |_k, v| !v.nil? }
 
       SRC_TEMPLATE.result(
-          :name => name,
-          :source => source,
-          :app_settings => app_settings,
-          :asset_url_prefix => asset_url_prefix,
-          :app_class_name => app_class_name,
-          :author => author,
-          :translations => app_translations,
-          :framework_version => framework_version,
-          :templates => templates,
-          :settings => settings,
-          :app_id => app_id,
-          :modules => commonjs_modules
+          name: name,
+          source: source,
+          app_settings: app_settings,
+          asset_url_prefix: asset_url_prefix,
+          app_class_name: app_class_name,
+          author: author,
+          translations: app_translations,
+          framework_version: framework_version,
+          templates: templates,
+          settings: settings,
+          app_id: app_id,
+          modules: commonjs_modules
       )
     end
 
     def customer_css
       css_file = file_path('app.css')
-      customer_css = File.exist?(css_file) ? File.read(css_file) : ""
+      File.exist?(css_file) ? File.read(css_file) : ''
     end
 
     def has_js?
-      file_exists?("app.js")
+      file_exists?('app.js')
     end
 
     def has_lib_js?
@@ -143,7 +142,7 @@ module ZendeskAppsSupport
     end
 
     def has_manifest?
-      file_exists?("manifest.json")
+      file_exists?('manifest.json')
     end
 
     def has_location?
@@ -151,11 +150,11 @@ module ZendeskAppsSupport
     end
 
     def has_requirements?
-      file_exists?("requirements.json")
+      file_exists?('requirements.json')
     end
 
     def has_banner?
-      file_exists?("assets/banner.png")
+      file_exists?('assets/banner.png')
     end
 
     def file_path(path)
@@ -168,7 +167,7 @@ module ZendeskAppsSupport
       compiled_css = ZendeskAppsSupport::StylesheetCompiler.new(DEFAULT_SCSS + customer_css, app_id, asset_url_prefix).compile
 
       templates = begin
-        Dir["#{root.to_s}/templates/*.hdbs"].inject({}) do |h, file|
+        Dir["#{root}/templates/*.hdbs"].inject({}) do |h, file|
           str = File.read(file)
           str.chomp!
           h[File.basename(file, File.extname(file))] = str
@@ -185,7 +184,7 @@ module ZendeskAppsSupport
 
     def non_tmp_files
       files = []
-      Dir[ root.join('**/**') ].each do |f|
+      Dir[root.join('**/**')].each do |f|
         next unless File.file?(f)
         relative_file_name = f.sub(/#{root}\/?/, '')
         next if relative_file_name =~ /^tmp\//
@@ -205,7 +204,7 @@ module ZendeskAppsSupport
     def read_json(path, symbolize_names = true)
       file = read_file(path)
       unless file.nil?
-        JSON.parse(read_file(path), :symbolize_names => symbolize_names)
+        JSON.parse(read_file(path), symbolize_names: symbolize_names)
       end
     end
   end

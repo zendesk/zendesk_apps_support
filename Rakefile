@@ -4,7 +4,7 @@ require 'rspec/core/rake_task'
 require 'bump/tasks'
 
 RSpec::Core::RakeTask.new(:spec)
-task :default => :spec
+task default: :spec
 
 def array_to_nested_hash(array)
   array.inject({}) do |result, item|
@@ -26,15 +26,13 @@ standard_i18n_file = project_root.join('config/locales/en.yml')
 
 file standard_i18n_file => zendesk_i18n_file do |task|
   header = "# This is a generated file. Please do not edit it.\n"
-  input = YAML.load( File.read(task.prerequisites.first) )
+  input = YAML.load(File.read(task.prerequisites.first))
   translations = input['parts'].map { |part| part['translation'] }
-  yaml = YAML.dump( { 'en' => array_to_nested_hash(translations) } )
+  yaml = YAML.dump('en' => array_to_nested_hash(translations))
   File.open(task.name, 'w') { |f| f << header + yaml }
 end
 
 namespace :i18n do
-
   desc 'Generate the standard I18n file'
-  task :standardize => standard_i18n_file
-
+  task standardize: standard_i18n_file
 end
