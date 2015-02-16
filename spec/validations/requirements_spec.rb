@@ -8,7 +8,7 @@ describe ZendeskAppsSupport::Validations::Requirements do
     package = double('Package', :files => [requirements])
     errors = ZendeskAppsSupport::Validations::Requirements.call(package)
 
-    errors.first.key.should == :requirements_not_json
+    expect(errors.first.key).to eq(:requirements_not_json)
   end
 
   it 'creates no error when the file is valid JSON' do
@@ -34,7 +34,7 @@ describe ZendeskAppsSupport::Validations::Requirements do
     package = double('Package', :files => [requirements])
     errors = ZendeskAppsSupport::Validations::Requirements.call(package)
 
-    errors.first.key.should == :excessive_requirements
+    expect(errors.first.key).to eq(:excessive_requirements)
   end
 
   it 'creates an errror for any requirement that is lacking required fields' do
@@ -44,7 +44,7 @@ describe ZendeskAppsSupport::Validations::Requirements do
     package = double('Package', :files => [requirements])
     errors = ZendeskAppsSupport::Validations::Requirements.call(package)
 
-    errors.first.key.should == :missing_required_fields
+    expect(errors.first.key).to eq(:missing_required_fields)
   end
 
   it 'creates an errror for every requirement that is lacking required fields' do
@@ -54,7 +54,7 @@ describe ZendeskAppsSupport::Validations::Requirements do
     package = double('Package', :files => [requirements])
     errors = ZendeskAppsSupport::Validations::Requirements.call(package)
 
-    errors.size.should == 2
+    expect(errors.size).to eq(2)
   end
 
   it 'creates an error if there are invalid requirement types' do
@@ -63,7 +63,7 @@ describe ZendeskAppsSupport::Validations::Requirements do
     package = double('Package', :files => [requirements])
     errors = ZendeskAppsSupport::Validations::Requirements.call(package)
 
-    errors.first.key.should == :invalid_requirements_types
+    expect(errors.first.key).to eq(:invalid_requirements_types)
   end
 
   it 'creates an error if there are duplicate requirements types' do
@@ -72,7 +72,7 @@ describe ZendeskAppsSupport::Validations::Requirements do
     package = double('Package', :files => [requirements])
     errors = ZendeskAppsSupport::Validations::Requirements.call(package)
 
-    errors.first.key.should == :duplicate_requirements
+    expect(errors.first.key).to eq(:duplicate_requirements)
   end
 
 end

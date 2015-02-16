@@ -10,7 +10,7 @@ describe ZendeskAppsSupport::Validations::JSHintValidationError do
     let(:error) { ZendeskAppsSupport::Validations::JSHintValidationError.new(filename, errors) }
 
     it 'ignores nil errors' do
-      error.to_s.should =~ /eval is evil/
+      expect(error.to_s).to match(/eval is evil/)
     end
   end
 

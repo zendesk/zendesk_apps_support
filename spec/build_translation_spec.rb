@@ -39,7 +39,7 @@ describe ZendeskAppsSupport::BuildTranslation do
           "a.b.b1.value"  => "value of b1"
         }
 
-        to_flattened_namespaced_hash(en_json).should == expected
+        expect(to_flattened_namespaced_hash(en_json)).to eq(expected)
       end
     end
 
@@ -52,7 +52,7 @@ describe ZendeskAppsSupport::BuildTranslation do
             "a.b.b1"  => "value of b1"
           }
 
-          to_flattened_namespaced_hash(en_json, ZendeskAppsSupport::BuildTranslation::I18N_VALUE_KEY).should == expected
+          expect(to_flattened_namespaced_hash(en_json, ZendeskAppsSupport::BuildTranslation::I18N_VALUE_KEY)).to eq(expected)
         end
       end
 
@@ -64,7 +64,7 @@ describe ZendeskAppsSupport::BuildTranslation do
             "a.b.b1"  => "description for b1 field"
           }
 
-          to_flattened_namespaced_hash(en_json, ZendeskAppsSupport::BuildTranslation::I18N_TITLE_KEY).should == expected
+          expect(to_flattened_namespaced_hash(en_json, ZendeskAppsSupport::BuildTranslation::I18N_TITLE_KEY)).to eq(expected)
         end
       end
     end
@@ -84,7 +84,7 @@ describe ZendeskAppsSupport::BuildTranslation do
           }
         }
       }
-      remove_zendesk_keys(en_json).should == expected
+      expect(remove_zendesk_keys(en_json)).to eq(expected)
     end
   end
 end

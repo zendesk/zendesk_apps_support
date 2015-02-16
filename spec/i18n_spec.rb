@@ -4,7 +4,7 @@ describe ZendeskAppsSupport::I18n do
 
   it 'should translate error messages' do
     key_prefix = ZendeskAppsSupport::Validations::ValidationError::KEY_PREFIX
-    ZendeskAppsSupport::I18n.t("#{key_prefix}.missing_manifest").should == 'Could not find manifest.json'
+    expect(ZendeskAppsSupport::I18n.t("#{key_prefix}.missing_manifest")).to eq('Could not find manifest.json')
   end
 
 end
@@ -15,7 +15,7 @@ describe 'translations' do
     project_root = Pathname.new(File.expand_path('../../', __FILE__))
     zendesk_version  = project_root.join('config/locales/translations/zendesk_apps_support.yml')
     standard_version = project_root.join('config/locales/en.yml')
-    File.mtime(zendesk_version).to_i.should be <= File.mtime(standard_version).to_i
+    expect(File.mtime(zendesk_version).to_i).to be <= File.mtime(standard_version).to_i
   end
 
 end

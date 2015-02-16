@@ -16,7 +16,11 @@ module ZendeskAppsSupport
     end
 
     def =~(regex)
-      @relative_path =~ regex
+      relative_path =~ regex
+    end
+
+    def match(regex)
+      self =~ regex
     end
 
     alias_method :to_s, :relative_path

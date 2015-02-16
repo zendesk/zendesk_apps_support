@@ -7,18 +7,25 @@ describe ZendeskAppsSupport::AppVersion do
       ZendeskAppsSupport::AppVersion.new(ZendeskAppsSupport::AppVersion::CURRENT)
     end
 
-    it { should be_frozen }
-    it { should be_present }
-    it { should be_servable }
-    it { should be_valid_for_update }
-    it { should_not be_blank }
-    it { should_not be_deprecated }
-    it { should_not be_obsolete }
-    it { should == ZendeskAppsSupport::AppVersion.new(ZendeskAppsSupport::AppVersion::CURRENT) }
-    it { should_not == ZendeskAppsSupport::AppVersion.new('0.2') }
+    it { is_expected.to be_frozen }
+    it { is_expected.to be_present }
+    it { is_expected.to be_servable }
+    it { is_expected.to be_valid_for_update }
+    it { is_expected.not_to be_blank }
+    it { is_expected.not_to be_deprecated }
+    it { is_expected.not_to be_obsolete }
+    it { is_expected.to eq(ZendeskAppsSupport::AppVersion.new(ZendeskAppsSupport::AppVersion::CURRENT)) }
+    it { is_expected.not_to eq(ZendeskAppsSupport::AppVersion.new('0.2')) }
 
-    its(:to_s) { should == ZendeskAppsSupport::AppVersion::CURRENT }
-    its(:to_json) { should == ZendeskAppsSupport::AppVersion::CURRENT.to_json }
+    describe '#to_s' do
+      subject { super().to_s }
+      it { is_expected.to eq(ZendeskAppsSupport::AppVersion::CURRENT) }
+    end
+
+    describe '#to_json' do
+      subject { super().to_json }
+      it { is_expected.to eq(ZendeskAppsSupport::AppVersion::CURRENT.to_json) }
+    end
   end
 
   describe 'the deprecated version' do
@@ -26,18 +33,25 @@ describe ZendeskAppsSupport::AppVersion do
       ZendeskAppsSupport::AppVersion.new(ZendeskAppsSupport::AppVersion::DEPRECATED)
     end
 
-    it { should be_frozen }
-    it { should be_present }
-    it { should be_servable }
-    it { should_not be_valid_for_update }
-    it { should_not be_blank }
-    it { should be_deprecated }
-    it { should_not be_obsolete }
-    it { should == ZendeskAppsSupport::AppVersion.new(ZendeskAppsSupport::AppVersion::DEPRECATED) }
-    it { should_not == ZendeskAppsSupport::AppVersion.new('0.2') }
+    it { is_expected.to be_frozen }
+    it { is_expected.to be_present }
+    it { is_expected.to be_servable }
+    it { is_expected.not_to be_valid_for_update }
+    it { is_expected.not_to be_blank }
+    it { is_expected.to be_deprecated }
+    it { is_expected.not_to be_obsolete }
+    it { is_expected.to eq(ZendeskAppsSupport::AppVersion.new(ZendeskAppsSupport::AppVersion::DEPRECATED)) }
+    it { is_expected.not_to eq(ZendeskAppsSupport::AppVersion.new('0.2')) }
 
-    its(:to_s) { should == ZendeskAppsSupport::AppVersion::DEPRECATED }
-    its(:to_json) { should == ZendeskAppsSupport::AppVersion::DEPRECATED.to_json }
+    describe '#to_s' do
+      subject { super().to_s }
+      it { is_expected.to eq(ZendeskAppsSupport::AppVersion::DEPRECATED) }
+    end
+
+    describe '#to_json' do
+      subject { super().to_json }
+      it { is_expected.to eq(ZendeskAppsSupport::AppVersion::DEPRECATED.to_json) }
+    end
   end
 
   describe 'a really old version' do
@@ -45,17 +59,24 @@ describe ZendeskAppsSupport::AppVersion do
       ZendeskAppsSupport::AppVersion.new('0.1')
     end
 
-    it { should be_frozen }
-    it { should be_present }
-    it { should_not be_servable }
-    it { should_not be_valid_for_update }
-    it { should_not be_blank }
-    it { should_not be_deprecated }
-    it { should be_obsolete }
-    it { should == ZendeskAppsSupport::AppVersion.new('0.1') }
-    it { should_not == ZendeskAppsSupport::AppVersion.new('0.2') }
+    it { is_expected.to be_frozen }
+    it { is_expected.to be_present }
+    it { is_expected.not_to be_servable }
+    it { is_expected.not_to be_valid_for_update }
+    it { is_expected.not_to be_blank }
+    it { is_expected.not_to be_deprecated }
+    it { is_expected.to be_obsolete }
+    it { is_expected.to eq(ZendeskAppsSupport::AppVersion.new('0.1')) }
+    it { is_expected.not_to eq(ZendeskAppsSupport::AppVersion.new('0.2')) }
 
-    its(:to_s) { should == '0.1' }
-    its(:to_json) { should == '0.1'.to_json }
+    describe '#to_s' do
+      subject { super().to_s }
+      it { is_expected.to eq('0.1') }
+    end
+
+    describe '#to_json' do
+      subject { super().to_json }
+      it { is_expected.to eq('0.1'.to_json) }
+    end
   end
 end
