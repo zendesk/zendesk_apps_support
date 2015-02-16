@@ -19,6 +19,10 @@ module ZendeskAppsSupport
       relative_path =~ regex
     end
 
+    def match(regex)
+      self =~ regex
+    end
+
     alias_method :to_s, :relative_path
 
     def method_missing(sym, *args, &block)

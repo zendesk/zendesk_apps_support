@@ -9,7 +9,7 @@ describe ZendeskAppsSupport::AppFile do
 
   describe '=~' do
     it 'tests against the relative path of the file' do
-      expect(@file =~ /layout/).to be_truthy
+      expect(@file).to match(/layout/)
     end
   end
 

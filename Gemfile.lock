@@ -5,7 +5,7 @@ PATH
       erubis
       i18n
       image_size
-      jshintrb
+      jshintrb (~> 0.2.4)
       json
       json-stream
       multi_json
