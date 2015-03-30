@@ -1,4 +1,4 @@
-require 'multi_json'
+require 'json'
 
 module ZendeskAppsSupport
   # At any point in time, we support up to three versions:
@@ -52,7 +52,7 @@ module ZendeskAppsSupport
     end
 
     def to_json(*)
-      MultiJson.encode(@version)
+      @version.inspect
     end
 
     def ==(other)

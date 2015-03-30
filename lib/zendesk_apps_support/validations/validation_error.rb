@@ -1,4 +1,4 @@
-require 'multi_json'
+require 'json'
 
 module ZendeskAppsSupport
   module Validations
@@ -14,10 +14,10 @@ module ZendeskAppsSupport
       class << self
         # Turn a JSON string into a ValidationError.
         def from_json(json)
-          hash = MultiJson.decode(json)
+          hash = JSON.load(json)
           fail DeserializationError.new(json) unless hash.is_a?(Hash)
           from_hash(hash)
-        rescue MultiJson::DecodeError, NameError
+        rescue JSON::ParserError, NameError
           raise DeserializationError.new(json)
         end
 
@@ -51,7 +51,7 @@ module ZendeskAppsSupport
       end
 
       def to_json(*)
-        MultiJson.encode(as_json)
+        JSON.generate(as_json)
       end
 
       def as_json(*)

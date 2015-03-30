@@ -12,10 +12,10 @@ describe ZendeskAppsSupport::Validations::ValidationError do
     let(:key)   { 'foo.bar' }
     let(:data)  { { 'baz' => 'quux' } }
     let(:error) { ValidationError.new(key, data) }
-    subject     { MultiJson.dump(error) }
+    subject     { JSON.generate(error) }
 
     it do
-      is_expected.to eq(MultiJson.dump(
+      is_expected.to eq(JSON.generate(
         'class' => error.class.to_s,
         'key'   => error.key,
         'data'  => error.data
@@ -88,7 +88,7 @@ describe ZendeskAppsSupport::Validations::ValidationError do
   describe '.from_json' do
     it 'decodes a JSON hash and passes it to .from_hash' do
       expect(ValidationError).to receive(:from_hash).with('foo' => 'bar')
-      ValidationError.from_json(MultiJson.encode('foo' => 'bar'))
+      ValidationError.from_json(JSON.generate('foo' => 'bar'))
     end
 
     it 'raises a DeserializationError when passed non-JSON' do

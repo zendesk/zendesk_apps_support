@@ -1,4 +1,4 @@
-require 'multi_json'
+require 'json'
 require 'json/stream'
 
 module ZendeskAppsSupport
@@ -18,7 +18,7 @@ module ZendeskAppsSupport
             return [ValidationError.new(:duplicate_requirements, duplicate_keys: duplicates.join(', '), count: duplicates.length)]
           end
 
-          requirements = MultiJson.load(requirements_stream)
+          requirements = JSON.load(requirements_stream)
           [].tap do |errors|
             errors << invalid_requirements_types(requirements)
             errors << excessive_requirements(requirements)
@@ -26,7 +26,7 @@ module ZendeskAppsSupport
             errors.flatten!
             errors.compact!
           end
-        rescue MultiJson::DecodeError => e
+        rescue JSON::ParserError => e
           return [ValidationError.new(:requirements_not_json, errors: e)]
         end
 

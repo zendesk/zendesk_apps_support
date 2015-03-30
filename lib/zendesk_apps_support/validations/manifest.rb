@@ -1,4 +1,4 @@
-require 'multi_json'
+require 'json'
 
 module ZendeskAppsSupport
   module Validations
@@ -14,7 +14,7 @@ module ZendeskAppsSupport
 
           return [ValidationError.new(:missing_manifest)] unless manifest
 
-          manifest = MultiJson.load(manifest.read)
+          manifest = JSON.load(manifest.read)
 
           [].tap do |errors|
             errors << missing_keys_error(manifest)
@@ -40,7 +40,7 @@ module ZendeskAppsSupport
 
             errors.compact!
           end
-        rescue MultiJson::DecodeError => e
+        rescue JSON::ParserError => e
           return [ValidationError.new(:manifest_not_json, errors: e)]
         end
 
