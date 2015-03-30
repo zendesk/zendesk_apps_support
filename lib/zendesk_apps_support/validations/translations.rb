@@ -1,4 +1,5 @@
 require 'jshintrb'
+require 'json'
 
 module ZendeskAppsSupport
   module Validations
@@ -27,7 +28,7 @@ module ZendeskAppsSupport
         end
 
         def json_error(file)
-          json = MultiJson.load(file.read)
+          json = JSON.load(file.read)
           if json.is_a?(Hash)
             if json['app'] && json['app']['package']
               json['app'].delete('package')
@@ -41,7 +42,7 @@ module ZendeskAppsSupport
           else
             ValidationError.new('translation.not_json_object', file: file.relative_path)
           end
-        rescue MultiJson::DecodeError => e
+        rescue JSON::ParserError => e
           ValidationError.new('translation.not_json', file: file.relative_path, errors: e)
         end
 

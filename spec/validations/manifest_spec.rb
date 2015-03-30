@@ -12,7 +12,7 @@ describe ZendeskAppsSupport::Validations::Manifest do
 
   def create_package(parameter_hash)
     params = default_required_params(parameter_hash)
-    allow(@manifest).to receive_messages(read: MultiJson.dump(params))
+    allow(@manifest).to receive_messages(read: JSON.generate(params))
     @package
   end
 
@@ -55,12 +55,12 @@ describe ZendeskAppsSupport::Validations::Manifest do
   end
 
   it 'should have an error when location is defined but requirements only is true' do
-    allow(@manifest).to receive_messages(read: MultiJson.dump(requirementsOnly: true, location: 1))
+    allow(@manifest).to receive_messages(read: JSON.generate(requirementsOnly: true, location: 1))
     expect(@package).to have_error :no_location_required
   end
 
   it 'should not have an error when location is missing but requirements only is true' do
-    allow(@manifest).to receive_messages(read: MultiJson.dump(requirementsOnly: true))
+    allow(@manifest).to receive_messages(read: JSON.generate(requirementsOnly: true))
     allow(@package).to receive_messages(:has_location? => false)
     expect(@package).not_to have_error 'Missing required field in manifest: location'
   end
@@ -70,25 +70,25 @@ describe ZendeskAppsSupport::Validations::Manifest do
   end
 
   it 'should have an error when frameworkVersion is defined but requirements only is true' do
-    allow(@manifest).to receive_messages(read: MultiJson.dump(requirementsOnly: true, frameworkVersion: 1))
+    allow(@manifest).to receive_messages(read: JSON.generate(requirementsOnly: true, frameworkVersion: 1))
     expect(@package).to have_error :no_framework_version_required
   end
 
   it 'should not have an error when frameworkVersion is missing with requirements' do
-    allow(@manifest).to receive_messages(read: MultiJson.dump(requirementsOnly: true))
+    allow(@manifest).to receive_messages(read: JSON.generate(requirementsOnly: true))
     expect(@package).not_to have_error 'Missing required field in manifest: frameworkVersion'
   end
 
   it 'should have an error when the defaultLocale is invalid' do
     manifest = { 'defaultLocale' => 'pt-BR-1' }
-    allow(@manifest).to receive_messages(read: MultiJson.dump(manifest))
+    allow(@manifest).to receive_messages(read: JSON.generate(manifest))
 
     expect(@package).to have_error(/default locale/)
   end
 
   it 'should have an error when the translation file is missing for the defaultLocale' do
     manifest = { 'defaultLocale' => 'pt' }
-    allow(@manifest).to receive_messages(read: MultiJson.dump(manifest))
+    allow(@manifest).to receive_messages(read: JSON.generate(manifest))
     translation_files = double('AppFile', relative_path: 'translations/en.json')
     allow(@package).to receive_messages(translation_files: [translation_files])
 
@@ -97,21 +97,21 @@ describe ZendeskAppsSupport::Validations::Manifest do
 
   it 'should have an error when the location is invalid' do
     manifest = { 'location' => %w(ticket_sidebar a_invalid_location) }
-    allow(@manifest).to receive_messages(read: MultiJson.dump(manifest))
+    allow(@manifest).to receive_messages(read: JSON.generate(manifest))
 
     expect(@package).to have_error(/invalid location/)
   end
 
   it 'should have an error when there are duplicate locations' do
     manifest = { 'location' => %w(ticket_sidebar ticket_sidebar) }
-    allow(@manifest).to receive_messages(read: MultiJson.dump(manifest))
+    allow(@manifest).to receive_messages(read: JSON.generate(manifest))
 
     expect(@package).to have_error(/duplicate/)
   end
 
   it 'should have an error when the version is not supported' do
     manifest = { 'frameworkVersion' => '0.7' }
-    allow(@manifest).to receive_messages(read: MultiJson.dump(manifest))
+    allow(@manifest).to receive_messages(read: JSON.generate(manifest))
 
     expect(@package).to have_error(/not a valid framework version/)
   end
@@ -125,7 +125,7 @@ describe ZendeskAppsSupport::Validations::Manifest do
       ]
     }
 
-    allow(@manifest).to receive_messages(read: MultiJson.dump(manifest))
+    allow(@manifest).to receive_messages(read: JSON.generate(manifest))
 
     expect(@package).to have_error(/set to hidden and cannot be required/)
   end
