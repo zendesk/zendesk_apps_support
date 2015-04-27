@@ -84,12 +84,13 @@ module ZendeskAppsSupport
       read_json('requirements.json')
     end
 
-    def translations
-      read_json('translations/en.json', false)
+    def translations(locale)
+      locale ||= "en"
+      read_json("translations/#{locale}.json", false)
     end
 
-    def app_translations
-      remove_zendesk_keys(translations)
+    def app_translations(locale)
+      remove_zendesk_keys(translations(locale))
     end
 
     def readified_js(app_name, app_id, asset_url_prefix, settings = {})
@@ -112,6 +113,7 @@ module ZendeskAppsSupport
         singleInstall: single_install
       }.select { |_k, v| !v.nil? }
 
+
       SRC_TEMPLATE.result(
           name: name,
           source: source,
@@ -119,7 +121,7 @@ module ZendeskAppsSupport
           asset_url_prefix: asset_url_prefix,
           app_class_name: app_class_name,
           author: author,
-          translations: app_translations,
+          translations: app_translations(settings[:locale]),
           framework_version: framework_version,
           templates: templates,
           settings: settings,
