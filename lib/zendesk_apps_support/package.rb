@@ -85,8 +85,9 @@ module ZendeskAppsSupport
     end
 
     def translations(locale)
-      locale ||= "en"
-      read_json("translations/#{locale}.json", false)
+      file_path = "translations/#{locale}.json"
+      file_path = "translations/en.json" unless file_exists?(file_path)
+      read_json(file_path, false)
     end
 
     def app_translations(locale)
@@ -112,7 +113,6 @@ module ZendeskAppsSupport
         noTemplate: no_template,
         singleInstall: single_install
       }.select { |_k, v| !v.nil? }
-
 
       SRC_TEMPLATE.result(
           name: name,
