@@ -94,7 +94,7 @@ module ZendeskAppsSupport
       remove_zendesk_keys(translations(locale))
     end
 
-    def readified_js(app_name, app_id, asset_url_prefix, settings = {})
+    def readified_js(app_name, app_id, asset_url_prefix, settings = {}, locale = 'en')
       manifest = manifest_json
       source = app_js
       name = app_name || manifest[:name] || 'Local App'
@@ -121,7 +121,7 @@ module ZendeskAppsSupport
           asset_url_prefix: asset_url_prefix,
           app_class_name: app_class_name,
           author: author,
-          translations: app_translations(settings[:locale]),
+          translations: app_translations(locale),
           framework_version: framework_version,
           templates: templates,
           settings: settings,
