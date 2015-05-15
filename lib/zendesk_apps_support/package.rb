@@ -84,15 +84,17 @@ module ZendeskAppsSupport
       read_json('requirements.json')
     end
 
-    def translations
-      read_json('translations/en.json', false)
+    def translations(locale)
+      file_path = "translations/#{locale}.json"
+      file_path = "translations/en.json" unless file_exists?(file_path)
+      read_json(file_path, false)
     end
 
-    def app_translations
-      remove_zendesk_keys(translations)
+    def app_translations(locale)
+      remove_zendesk_keys(translations(locale))
     end
 
-    def readified_js(app_name, app_id, asset_url_prefix, settings = {})
+    def readified_js(app_name, app_id, asset_url_prefix, settings = {}, locale = 'en')
       manifest = manifest_json
       source = app_js
       name = app_name || manifest[:name] || 'Local App'
@@ -119,7 +121,7 @@ module ZendeskAppsSupport
           asset_url_prefix: asset_url_prefix,
           app_class_name: app_class_name,
           author: author,
-          translations: app_translations,
+          translations: app_translations(locale),
           framework_version: framework_version,
           templates: templates,
           settings: settings,
