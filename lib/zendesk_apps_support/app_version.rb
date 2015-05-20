@@ -10,9 +10,9 @@ module ZendeskAppsSupport
   #                  newly created or updates apps MAY target it, but it
   #                  may change without notice
   class AppVersion
-    DEPRECATED = '0.4'.freeze
-    CURRENT    = '0.5'.freeze
-    FUTURE     = '1.0'.freeze
+    DEPRECATED = '0.5'.freeze
+    CURRENT    = '1.0'.freeze
+    FUTURE     = '2.0'.freeze
 
     TO_BE_SERVED     = [DEPRECATED, CURRENT, FUTURE].compact.freeze
     VALID_FOR_UPDATE = [CURRENT, FUTURE].compact.freeze
