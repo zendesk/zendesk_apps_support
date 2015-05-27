@@ -3,6 +3,7 @@ PATH
   specs:
     zendesk_apps_support (1.18.0)
       erubis
+      execjs
       i18n
       image_size
       jshintrb (~> 0.2.4)

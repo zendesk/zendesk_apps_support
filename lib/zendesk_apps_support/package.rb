@@ -180,8 +180,17 @@ module ZendeskAppsSupport
       layout = templates['layout'] || DEFAULT_LAYOUT.result
 
       templates.tap do |templates|
-        templates['layout'] = "<style>\n#{compiled_css}</style>\n#{layout}"
+        templates['layout'] = precompile_handlebars("<style>\n#{compiled_css}</style>\n#{layout}")
       end
+    end
+
+    def precompile_handlebars(template)
+      @jscontext ||= begin
+        require 'execjs'
+        handlebars_js = File.read("../assets/handlebars.js")
+        Execjs.compile(handlebars_js)
+      end
+      @jscontext.call("Handlebars.precompile", template)
     end
 
     def non_tmp_files
