@@ -1,0 +1,8 @@
+<% unless templates.nil? %>
+{
+  <% templates.each do |name, fn| %>
+  <%= name %>: <%= fn %>,
+  <% end %>
+  eom: undefined
+}
+<% end %>

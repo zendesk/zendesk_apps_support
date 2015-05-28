@@ -9,6 +9,7 @@ module ZendeskAppsSupport
     DEFAULT_LAYOUT = Erubis::Eruby.new(File.read(File.expand_path('../assets/default_template.html.erb', __FILE__)))
     DEFAULT_SCSS   = File.read(File.expand_path('../assets/default_styles.scss', __FILE__))
     SRC_TEMPLATE   = Erubis::Eruby.new(File.read(File.expand_path('../assets/src.js.erb', __FILE__)))
+    TEMPLATES      = Erubis::Eruby.new(File.read(File.expand_path('../assets/templates.js.erb', __FILE__)))
 
     attr_reader :lib_root, :root, :warnings
     attr_accessor :requirements_only
@@ -114,6 +115,8 @@ module ZendeskAppsSupport
         singleInstall: single_install
       }.select { |_k, v| !v.nil? }
 
+      templates = TEMPLATES.result(templates: templates) unless no_template
+
       SRC_TEMPLATE.result(
           name: name,
           source: source,
@@ -172,7 +175,10 @@ module ZendeskAppsSupport
         Dir["#{root}/templates/*.hdbs"].inject({}) do |h, file|
           str = File.read(file)
           str.chomp!
-          h[File.basename(file, File.extname(file))] = str
+          name = template_name(file)
+          # layout will be precompiled later with css
+          str = precompile_handlebars(str) unless name == "layout"
+          h[name] = str
           h
         end
       end
@@ -184,11 +190,15 @@ module ZendeskAppsSupport
       end
     end
 
+    def template_name(file)
+      File.basename(file, File.extname(file))
+    end
+
     def precompile_handlebars(template)
       @jscontext ||= begin
         require 'execjs'
-        handlebars_js = File.read("../assets/handlebars.js")
-        Execjs.compile(handlebars_js)
+        handlebars_js = File.read(File.expand_path('../assets/handlebars.js', __FILE__))
+        ExecJS.compile(handlebars_js)
       end
       @jscontext.call("Handlebars.precompile", template)
     end
