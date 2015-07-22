@@ -14,7 +14,7 @@ module ZendeskAppsSupport
         sub: true,
 
         # predefined globals:
-        predef: %w(_ console services helpers alert window document self
+        predef: %w(_ console services helpers alert confirm window document self
                    JSON Base64 clearInterval clearTimeout setInterval setTimeout
                    require module exports top frames parent moment)
       }.freeze
