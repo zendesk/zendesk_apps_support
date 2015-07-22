@@ -16,6 +16,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'json-stream'
   s.add_runtime_dependency 'image_size'
   s.add_runtime_dependency 'erubis'
+  s.add_runtime_dependency 'execjs'
   s.add_runtime_dependency 'jshintrb', '~> 0.2.4'
 
   s.add_development_dependency 'rspec', '~> 3.1.0'

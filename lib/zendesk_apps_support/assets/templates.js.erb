@@ -1,0 +1,8 @@
+<% unless templates.nil? %>
+{
+  <% templates.each do |name, fn| %>
+  <%= name %>: Handlebars.template(<%= fn %>),
+  <% end %>
+  eom: undefined
+}
+<% end %>
