@@ -99,6 +99,7 @@ module ZendeskAppsSupport
       source = app_js
       name = app_name || manifest[:name] || 'Local App'
       location = manifest[:location]
+      version = manifest[:version]
       app_class_name = "app-#{app_id}"
       author = manifest[:author]
       framework_version = manifest[:frameworkVersion]
@@ -116,6 +117,7 @@ module ZendeskAppsSupport
 
       SRC_TEMPLATE.result(
           name: name,
+          version: version,
           source: source,
           app_settings: app_settings,
           asset_url_prefix: asset_url_prefix,
