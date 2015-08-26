@@ -32,7 +32,7 @@
     ZendeskApps[<%= name.to_json %>] = app;
   }
 
-  ZendeskApps[<%= name.to_json %>].install({"id": <%= app_id %>, "app_id": <%= app_id %>, "name": <%= name.to_json %>, "settings": <%= settings.to_json %>});
+  ZendeskApps[<%= name.to_json %>].install({"id": <%= app_id %>, "app_id": <%= app_id %>, "settings": <%= settings.to_json %>});
 }());
 
 ZendeskApps.trigger && ZendeskApps.trigger('ready');
