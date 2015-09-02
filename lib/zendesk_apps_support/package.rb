@@ -3,6 +3,26 @@ require 'erubis'
 require 'json'
 
 module ZendeskAppsSupport
+  class Packages
+    INSTALLED_TEMPLATE = Erubis::Eruby.new( File.read(File.expand_path('../assets/installed.js.erb', __FILE__)) )
+
+    def initialize(packages, settings)
+      @packages = packages
+      @settings = settings
+    end
+
+    def get_installed
+      appsjs = []
+      @packages.each_with_index do |package, index|
+        appsjs << package.readified_js(nil, index, "http://localhost:#{@settings.port}/#{index}/", package.parameters)
+      end
+
+      INSTALLED_TEMPLATE.result(
+          :apps => appsjs
+      )
+    end
+  end
+
   class Package
     include ZendeskAppsSupport::BuildTranslation
 
@@ -13,10 +33,12 @@ module ZendeskAppsSupport
     attr_reader :lib_root, :root, :warnings
     attr_accessor :requirements_only
 
-    def initialize(dir)
+    def initialize(dir, parameters = {})
       @root = Pathname.new(File.expand_path(dir))
       @lib_root = Pathname.new(File.join(@root, 'lib'))
       @warnings = []
+      @apps = []
+      @parameters = parameters
       @requirements_only = false
     end
 
@@ -62,6 +84,10 @@ module ZendeskAppsSupport
 
     def files
       non_tmp_files
+    end
+
+    def parameters
+      @parameters
     end
 
     def lib_files
