@@ -72,6 +72,15 @@ module ZendeskAppsSupport
       files.select { |f| f =~ /^templates\/.*\.hdbs$/ }
     end
 
+    def no_template
+      manifest = manifest_json
+      if manifest['noTemplate'].is_a?(Array)
+        false
+      else
+        !!manifest['noTemplate']
+      end
+    end
+
     def translation_files
       files.select { |f| f =~ /^translations\// }
     end
@@ -103,7 +112,6 @@ module ZendeskAppsSupport
       author = manifest[:author]
       framework_version = manifest[:frameworkVersion]
       single_install = manifest[:singleInstall] || false
-      no_template = manifest[:noTemplate]
       templates = no_template ? {} : compiled_templates(app_id, asset_url_prefix)
 
       settings['title'] = name
