@@ -30,7 +30,7 @@ module ZendeskAppsSupport
     DEFAULT_SCSS   = File.read(File.expand_path('../assets/default_styles.scss', __FILE__))
     SRC_TEMPLATE   = Erubis::Eruby.new(File.read(File.expand_path('../assets/src.js.erb', __FILE__)))
 
-    attr_reader :lib_root, :root, :warnings
+    attr_reader :lib_root, :root, :warnings, :parameters
     attr_accessor :requirements_only
 
     def initialize(dir, parameters = {})
@@ -84,10 +84,6 @@ module ZendeskAppsSupport
 
     def files
       non_tmp_files
-    end
-
-    def parameters
-      @parameters
     end
 
     def lib_files
