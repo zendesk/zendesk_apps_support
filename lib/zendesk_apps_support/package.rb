@@ -14,7 +14,8 @@ module ZendeskAppsSupport
     def get_installed
       appsjs = []
       @packages.each_with_index do |package, index|
-        appsjs << package.readified_js(nil, index, "http://localhost:#{@settings.port}/#{index}/", package.parameters)
+        app_id = -(index+1);
+        appsjs << package.readified_js(nil, app_id, "http://localhost:#{@settings.port}/#{app_id}/", package.parameters)
       end
 
       INSTALLED_TEMPLATE.result(
