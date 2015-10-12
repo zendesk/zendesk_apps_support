@@ -1,13 +1,13 @@
 with( ZendeskApps.AppScope.create() ) {
   <% if modules.present? %>
-  require.modules = {
-    <% modules.each do |path, content| %>
-      '<%= path %>': function(exports, require, module) {
-        <%= content %>
-      },
-    <% end %>
-    eom: undefined
-  };
+    require.modules = {
+      <% modules.each do |path, content| %>
+        '<%= path %>': function(exports, require, module) {
+          <%= content %>
+        },
+      <% end %>
+      eom: undefined
+    };
   <% end %>
 
   var source = <%= source %>;
