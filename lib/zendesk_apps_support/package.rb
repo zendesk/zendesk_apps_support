@@ -10,15 +10,14 @@ module ZendeskAppsSupport
     DEFAULT_SCSS   = File.read(File.expand_path('../assets/default_styles.scss', __FILE__))
     SRC_TEMPLATE   = Erubis::Eruby.new(File.read(File.expand_path('../assets/src.js.erb', __FILE__)))
 
-    attr_reader :lib_root, :root, :warnings, :parameters
+    attr_reader :lib_root, :root, :warnings, :app_id
     attr_accessor :requirements_only
 
-    def initialize(dir, parameters = {})
+    def initialize(dir, app_id)
       @root = Pathname.new(File.expand_path(dir))
       @lib_root = Pathname.new(File.join(@root, 'lib'))
+      @app_id = app_id
       @warnings = []
-      @apps = []
-      @parameters = parameters
       @requirements_only = false
     end
 
@@ -83,6 +82,10 @@ module ZendeskAppsSupport
       end
     end
 
+    def name
+      manifest_json[:name] || 'Local App'
+    end
+
     def translation_files
       files.select { |f| f =~ /^translations\// }
     end
@@ -105,19 +108,17 @@ module ZendeskAppsSupport
       remove_zendesk_keys(translations(locale))
     end
 
-    def readified_js(app_name, app_id, asset_url_prefix, settings = {}, locale = 'en')
+    def readified_js(asset_url_prefix, locale = 'en')
       manifest = manifest_json
       source = app_js
-      name = app_name || manifest[:name] || 'Local App'
       location = manifest[:location]
       version = manifest[:version]
-      app_class_name = "app-#{app_id}"
+      app_class_name = "app-#{@app_id}"
+      asset_url_prefix = "#{asset_url_prefix}#{@app_id}/"
       author = manifest[:author]
       framework_version = manifest[:frameworkVersion]
       single_install = manifest[:singleInstall] || false
-      templates = no_template ? {} : compiled_templates(app_id, asset_url_prefix)
-
-      settings['title'] = name
+      templates = no_template ? {} : compiled_templates(asset_url_prefix)
 
       app_settings = {
         location: location,
@@ -175,8 +176,8 @@ module ZendeskAppsSupport
 
     private
 
-    def compiled_templates(app_id, asset_url_prefix)
-      compiled_css = ZendeskAppsSupport::StylesheetCompiler.new(DEFAULT_SCSS + customer_css, app_id, asset_url_prefix).compile
+    def compiled_templates(asset_url_prefix)
+      compiled_css = ZendeskAppsSupport::StylesheetCompiler.new(DEFAULT_SCSS + customer_css, @app_id, asset_url_prefix).compile
 
       templates = begin
         Dir["#{root}/templates/*.hdbs"].inject({}) do |h, file|

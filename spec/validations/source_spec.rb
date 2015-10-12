@@ -46,7 +46,7 @@ describe ZendeskAppsSupport::Validations::Source do
   end
 
   it 'should have a jslint error when missing semicolon in lib js file' do
-    package = ZendeskAppsSupport::Package.new('spec/invalid_app')
+    package = ZendeskAppsSupport::Package.new('spec/invalid_app', 0)
     errors  = ZendeskAppsSupport::Validations::Source.call(package)
 
     expect(errors.first.to_s).to eql "JSHint error in lib/invalid.js: \n  L1: Missing semicolon."

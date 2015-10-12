@@ -1,13 +1,13 @@
 (function() {
-  <% @apps.each do |app| %>
-    <%= app.assets.js(I18n.locale).html_safe %>
+  <% apps.each do | appjs | %>
+    <%= appjs %>
   <% end %>
 
-  <% @installations.each do |installation| %>
-    ZendeskApps[<%= installation.app.name.to_json.html_safe %>].install(<%= InstallationSerializer.new( installation, includes: [:requirements] ).to_json.html_safe %>);
+  <% installations.each do | installation | %>
+    ZendeskApps[<%= installation.app.name.to_json %>].install(<%= installation.readified_js %>);
   <% end %>
 
-  <% @installation_orders.each do |loc_name, installation_list| %>
+  <% installation_orders.each do |loc_name, installation_list| %>
     ZendeskApps.sortAppsForSite('<%= loc_name %>', <%= installation_list %>);
   <% end %>
 }());

@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe ZendeskAppsSupport::Package do
   before do
-    @package = ZendeskAppsSupport::Package.new('spec/app')
+    @package = ZendeskAppsSupport::Package.new('spec/app', 0)
 
     lib_files_original_method = @package.method(:lib_files)
     allow(@package).to receive(:lib_files) do |*args, &block|
@@ -18,7 +18,7 @@ describe ZendeskAppsSupport::Package do
     end
 
     it 'should error out when manifest is missing' do
-      @package = ZendeskAppsSupport::Package.new('spec/app_nomanifest')
+      @package = ZendeskAppsSupport::Package.new('spec/app_nomanifest', 0)
       err = @package.validate
       expect(err.first.class).to eq(ZendeskAppsSupport::Validations::ValidationError)
       expect(err.first.to_s).to eq('Could not find manifest.json')
@@ -67,7 +67,7 @@ describe ZendeskAppsSupport::Package do
 
   describe 'readified_js' do
     it 'should generate js ready for installation' do
-      js = @package.readified_js(nil, 0, 'http://localhost:4567/')
+      js = @package.readified_js('http://localhost:4567/')
 
       expected = <<HERE
 with( ZendeskApps.AppScope.create() ) {
@@ -113,14 +113,14 @@ module.exports = b;
     .reopen({
       appName: "ABC",
       appVersion: "1.0.0",
-      assetUrlPrefix: "http://localhost:4567/",
+      assetUrlPrefix: "http://localhost:4567/0/",
       appClassName: "app-0",
       author: {
         name: "John Smith",
         email: "john@example.com"
       },
       translations: {"app":{"name":"Buddha Machine"}},
-      templates: {"layout":"<style>\\n.app-0 header .logo {\\n  background-image: url(\\"http://localhost:4567/logo-small.png\\"); }\\n.app-0 h1 {\\n  color: red; }\\n  .app-0 h1 span {\\n    color: green; }\\n</style>\\n<header>\\n  <span class=\\"logo\\"></span>\\n  <h3>{{setting \\"name\\"}}</h3>\\n</header>\\n<section data-main></section>\\n<footer>\\n  <a href=\\"mailto:{{author.email}}\\">\\n    {{author.name}}\\n  </a>\\n</footer>\\n</div>"},
+      templates: {"layout":"<style>\\n.app-0 header .logo {\\n  background-image: url(\\"http://localhost:4567/0/logo-small.png\\"); }\\n.app-0 h1 {\\n  color: red; }\\n  .app-0 h1 span {\\n    color: green; }\\n</style>\\n<header>\\n  <span class=\\"logo\\"></span>\\n  <h3>{{setting \\"name\\"}}</h3>\\n</header>\\n<section data-main></section>\\n<footer>\\n  <a href=\\"mailto:{{author.email}}\\">\\n    {{author.name}}\\n  </a>\\n</footer>\\n</div>"},
       frameworkVersion: "0.5"
     });
 

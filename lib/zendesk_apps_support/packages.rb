@@ -4,20 +4,15 @@ module ZendeskAppsSupport
   class Packages
     INSTALLED_TEMPLATE = Erubis::Eruby.new( File.read(File.expand_path('../assets/installed.js.erb', __FILE__)) )
 
-    def initialize(packages, settings)
+    def initialize(packages)
       @packages = packages
-      @settings = settings
     end
 
-    def get_installed
-      appsjs = []
-      @packages.each_with_index do |package, index|
-        app_id = -(index+1);
-        appsjs << package.readified_js(nil, app_id, "http://localhost:#{@settings.port}/#{app_id}/", package.parameters)
-      end
-
+    def readified_js(installations, installation_order, asset_url_prefix, locale = 'en')
       INSTALLED_TEMPLATE.result(
-          :apps => appsjs
+        apps: @packages.map {|package| package.readified_js(asset_url_prefix, locale) },
+        installations: installations,
+        installation_orders: installation_order
       )
     end
   end
