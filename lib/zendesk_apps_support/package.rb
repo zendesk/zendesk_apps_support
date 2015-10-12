@@ -53,7 +53,7 @@ module ZendeskAppsSupport
     end
 
     def commonjs_modules
-      return unless has_lib_js?
+      return {} unless has_lib_js?
 
       lib_files.each_with_object({}) do |file, modules|
         name          = file.relative_path.gsub!(/^lib\//, '')
