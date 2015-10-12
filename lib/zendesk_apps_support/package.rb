@@ -136,8 +136,6 @@ module ZendeskAppsSupport
           translations: app_translations(locale),
           framework_version: framework_version,
           templates: templates,
-          settings: settings,
-          app_id: app_id,
           modules: commonjs_modules
       )
     end
