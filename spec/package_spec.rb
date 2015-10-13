@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe ZendeskAppsSupport::Package do
   before do
-    @package = ZendeskAppsSupport::Package.new('spec/app', 0)
+    @package = ZendeskAppsSupport::Package.new('spec/app')
 
     lib_files_original_method = @package.method(:lib_files)
     allow(@package).to receive(:lib_files) do |*args, &block|
@@ -18,7 +18,7 @@ describe ZendeskAppsSupport::Package do
     end
 
     it 'should error out when manifest is missing' do
-      @package = ZendeskAppsSupport::Package.new('spec/app_nomanifest', 0)
+      @package = ZendeskAppsSupport::Package.new('spec/app_nomanifest')
       err = @package.validate
       expect(err.first.class).to eq(ZendeskAppsSupport::Validations::ValidationError)
       expect(err.first.to_s).to eq('Could not find manifest.json')
@@ -67,7 +67,7 @@ describe ZendeskAppsSupport::Package do
 
   describe 'readified_js' do
     it 'should generate js ready for installation' do
-      js = @package.readified_js('http://localhost:4567/')
+      js = @package.readified_js(0, 'http://localhost:4567/')
 
       expected = <<HERE
 with( ZendeskApps.AppScope.create() ) {

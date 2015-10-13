@@ -1,10 +1,10 @@
 (function() {
-  <% apps.each do | appjs | %>
+  <% appsjs.each do | appjs | %>
     <%= appjs %>
   <% end %>
 
-  <% installations.each do | installation | %>
-    ZendeskApps[<%= installation.app.name.to_json %>].install(<%= installation.readified_js %>);
+  <% installationsjs.each do | installationjs | %>
+    installationjs
   <% end %>
 
   <% installation_orders.each do |loc_name, installation_list| %>
