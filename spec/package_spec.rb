@@ -67,7 +67,7 @@ describe ZendeskAppsSupport::Package do
 
   describe 'readified_js' do
     it 'should generate js ready for installation' do
-      js = @package.readified_js(0, 'http://localhost:4567/')
+      js = @package.readified_js(0, 'http://localhost:4567/0/')
 
       expected = <<HERE
 with( ZendeskApps.AppScope.create() ) {
