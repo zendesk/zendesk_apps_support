@@ -95,6 +95,21 @@ describe ZendeskAppsSupport::Validations::Manifest do
     expect(@package).to have_error(/Missing translation file/)
   end
 
+  it 'should not have an error when the app host is valid' do
+    manifest = { 'location' => { 'zopim' => ['chat_sidebar'] } }
+    allow(@manifest).to receive_messages(read: JSON.generate(manifest))
+
+    expect(@package).not_to have_error(/invalid host/)
+    expect(@package).not_to have_error(/invalid location/)
+  end
+
+  it 'should have an error when the app host is invalid' do
+    manifest = { 'location' => { 'freshdesk' => ['ticket_sidebar'] } }
+    allow(@manifest).to receive_messages(read: JSON.generate(manifest))
+
+    expect(@package).to have_error(/invalid host/)
+  end
+
   it 'should have an error when the location is invalid' do
     manifest = { 'location' => %w(ticket_sidebar a_invalid_location) }
     allow(@manifest).to receive_messages(read: JSON.generate(manifest))

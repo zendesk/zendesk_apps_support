@@ -5,8 +5,11 @@ module ZendeskAppsSupport
     module Manifest
       REQUIRED_MANIFEST_FIELDS = %w( author defaultLocale ).freeze
       OAUTH_REQUIRED_FIELDS    = %w( client_id client_secret authorize_uri access_token_uri ).freeze
-      LOCATIONS_AVAILABLE      = %w( top_bar nav_bar ticket_sidebar new_ticket_sidebar user_sidebar organization_sidebar ).freeze
       TYPES_AVAILABLE          = %w( text password checkbox url number multiline hidden ).freeze
+      LOCATIONS_AVAILABLE      = {
+        'zendesk' => %w( top_bar nav_bar ticket_sidebar new_ticket_sidebar user_sidebar organization_sidebar ),
+        'zopim' => %w( chat_sidebar )
+      }.freeze
 
       class <<self
         def call(package)
@@ -104,9 +107,14 @@ module ZendeskAppsSupport
         end
 
         def invalid_location_error(manifest)
-          invalid_locations = [*manifest['location']] - LOCATIONS_AVAILABLE
-          unless invalid_locations.empty?
-            ValidationError.new(:invalid_location, invalid_locations: invalid_locations.join(', '), count: invalid_locations.length)
+          manifest_location = manifest['location'].is_a?(Hash) ? manifest['location'] : { 'zendesk' => [*manifest['location']] }
+          manifest_location.find do |host, locations|
+            error = if !LOCATIONS_AVAILABLE.keys.include?(host)
+              ValidationError.new(:invalid_host, host_name: host)
+            elsif (invalid_locations = locations - LOCATIONS_AVAILABLE[host]).any?
+              ValidationError.new(:invalid_location, invalid_locations: invalid_locations.join(', '), host_name: host, count: invalid_locations.length)
+            end
+            break error if error
           end
         end
 

@@ -45,9 +45,10 @@ en:
             invalid_default_locale: '%{defaultLocale} is not a valid default locale.'
             missing_translation_file: 'Missing translation file for locale ''%{defaultLocale}''.
               Please read: http://developer.zendesk.com/documentation/apps/i18n.html'
+            invalid_host: '%{host_name} is an invalid host for apps.'
             invalid_location:
-              one: '%{invalid_locations} is an invalid location.'
-              other: '%{invalid_locations} are invalid locations.'
+              one: '%{invalid_locations} is an invalid location in %{host_name}.'
+              other: '%{invalid_locations} are invalid locations in %{host_name}.'
             duplicate_location:
               one: '%{duplicate_locations} is a duplicate location.'
               other: '%{duplicate_locations} are duplicate locations.'
