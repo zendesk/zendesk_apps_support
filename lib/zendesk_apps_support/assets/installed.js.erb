@@ -8,7 +8,7 @@
   <% end %>
 
   <% installation_orders.each do |loc_name, installation_list| %>
-    ZendeskApps.sortAppsForSite('<%= loc_name %>', <%= installation_list %>);
+    ZendeskApps.sortAppsForSite(<%= loc_name.to_json %>, <%= installation_list.to_json %>);
   <% end %>
 }());
 

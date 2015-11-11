@@ -60,9 +60,11 @@ module ZendeskAppsSupport
       end
     end
 
+    # This -production- function is used after unzipping the zip file in ZAM.
+    # Shouldn't be used for -dev-
     def validate!
       if Dir["#{@root}/**/{*,.*}"].any? { |f| File.symlink?(f) }
-        raise Zip::ZipError.new
+        raise ValidationError.new('Symlinks are not allowed in the zip file')
       end
 
       errors = self.validate
