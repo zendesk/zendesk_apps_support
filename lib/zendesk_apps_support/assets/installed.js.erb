@@ -3,8 +3,8 @@
     <%= appjs %>
   <% end %>
 
-  <% installationsjs.each do | installationjs | %>
-    <%= installationjs %>
+  <% installations.each do | installation | %>
+    ZendeskApps[<%= installation.app.name.to_json %>].install(<%= installation.to_json %>);
   <% end %>
 
   <% installation_orders.each do |loc_name, installation_list| %>
