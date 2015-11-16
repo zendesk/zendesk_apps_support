@@ -54,7 +54,7 @@ parts:
   - translation:
       key: "txt.apps.admin.error.app_build.excessive_requirements"
       title: "App builder job: requirements file contains too many requirements"
-      value: "The requirements.json file contains too many requirements. The current limit is %{max} requirements."
+      value: "The requirements.json file contains too many requirements. The current limit is %{max} requirements. This app has %{count} requirements."
   - translation:
       key: "txt.apps.admin.error.app_build.missing_required_fields"
       title: "App builder job: required key missing in requirements, e.g. \"title\" is required in \"my_custom_email_target\""
@@ -75,6 +75,14 @@ parts:
       key: "txt.apps.admin.error.app_build.invalid_requirements_types.other"
       title: "App builder job: requirements file contains invalid types error"
       value: "requirements.json contains invalid types: %{invalid_types}"
+  - translation:
+      key: "txt.apps.admin.error.app_build.banner.invalid_format"
+      title: "App builder job: Banner image invalid format error"
+      value: "Banner image must be a PNG file"
+  - translation:
+      key: "txt.apps.admin.error.app_build.banner.invalid_size"
+      title: "App builder job: Banner image invalid size error"
+      value: "Invalid banner image dimensions. Must be %{required_banner_width}x%{required_banner_height}px"
   - translation:
       key: "txt.apps.admin.error.app_build.oauth_keys.missing.one"
       title: "App builder job: missing oauth fields error"
@@ -100,13 +108,17 @@ parts:
       title: "App builder job: missing translation file"
       value: "Missing translation file for locale '%{defaultLocale}'. Please read: http://developer.zendesk.com/documentation/apps/i18n.html"
   - translation:
+      key: "txt.apps.admin.error.app_build.invalid_host"
+      title: "App builder job: invalid host application for apps"
+      value: "%{host_name} is an invalid host for apps."
+  - translation:
       key: "txt.apps.admin.error.app_build.invalid_location.one"
       title: "App builder job: invalid locations"
-      value: "%{invalid_locations} is an invalid location."
+      value: "%{invalid_locations} is an invalid location in %{host_name}."
   - translation:
       key: "txt.apps.admin.error.app_build.invalid_location.other"
       title: "App builder job: invalid locations"
-      value: "%{invalid_locations} are invalid locations."
+      value: "%{invalid_locations} are invalid locations in %{host_name}."
   - translation:
       key: "txt.apps.admin.error.app_build.duplicate_location.one"
       title: "App builder job: duplicate locations"
