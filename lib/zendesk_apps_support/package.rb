@@ -8,14 +8,6 @@ module ZendeskAppsSupport
 
     REQUIREMENTS_FILENAME = "requirements.json"
 
-    class ValidationError < StandardError
-      attr_reader :original_error
-      def initialize(original_error)
-        @original_error = original_error
-        super(original_error.to_s)
-      end
-    end
-
     DEFAULT_LAYOUT = Erubis::Eruby.new(File.read(File.expand_path('../assets/default_template.html.erb', __FILE__)))
     DEFAULT_SCSS   = File.read(File.expand_path('../assets/default_styles.scss', __FILE__))
     SRC_TEMPLATE   = Erubis::Eruby.new(File.read(File.expand_path('../assets/src.js.erb', __FILE__)))
@@ -64,11 +56,11 @@ module ZendeskAppsSupport
     # Shouldn't be used for -dev-
     def validate!
       if Dir["#{@root}/**/{*,.*}"].any? { |f| File.symlink?(f) }
-        raise ValidationError.new('Symlinks are not allowed in the zip file')
+        raise Validations::ValidationError.new('Symlinks are not allowed in the zip file')
       end
 
       errors = self.validate
-      raise ValidationError.new(errors.compact.first) if errors.any?
+      raise Validations::ValidationError.new(errors.compact.first) if errors.any?
       true
     end
 
