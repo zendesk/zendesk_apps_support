@@ -1,5 +1,5 @@
 with( ZendeskApps.AppScope.create() ) {
-  <% unless modules.empty? %>
+  <% if modules.present? %>
     require.modules = {
       <% modules.each do |path, content| %>
         '<%= path %>': function(exports, require, module) {
