@@ -1,9 +1,9 @@
 (function() {
-  <% appsjs.each do | appjs | %>
+  <% appsjs.each do |appjs| %>
     <%= appjs %>
   <% end %>
 
-  <% installations.each do | installation | %>
+  <% installations.each do |installation| %>
     ZendeskApps[<%= installation.app.name.to_json %>].install(<%= installation.to_json %>);
   <% end %>
 
