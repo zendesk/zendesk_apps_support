@@ -51,13 +51,14 @@ module ZendeskAppsSupport
           errors << Validations::Banner.call(self)
         end
 
-        errors.flatten!
+        errors.flatten!.compact!
       end
     end
 
     def validate!(marketplace: true)
-      errors = validate(marketplace)
-      Raise errors.first unless errors.empty?
+      errors = validate(marketplace: marketplace)
+      raise errors.first if errors.any?
+      true
     end
 
     def assets
