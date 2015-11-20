@@ -78,11 +78,11 @@ parts:
   - translation:
       key: "txt.apps.admin.error.app_build.banner.invalid_format"
       title: "App builder job: Banner image invalid format error"
-      value: "Banner image must be a PNG file"
+      value: "Banner image must be a PNG file."
   - translation:
       key: "txt.apps.admin.error.app_build.banner.invalid_size"
       title: "App builder job: Banner image invalid size error"
-      value: "Invalid banner image dimensions. Must be %{required_banner_width}x%{required_banner_height}px"
+      value: "Invalid banner image dimensions. Must be %{required_banner_width}x%{required_banner_height}px."
   - translation:
       key: "txt.apps.admin.error.app_build.oauth_keys.missing.one"
       title: "App builder job: missing oauth fields error"
