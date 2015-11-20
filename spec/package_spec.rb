@@ -45,7 +45,7 @@ describe ZendeskAppsSupport::Package do
 
   describe 'commonjs_modules' do
     it 'should return an object with name value pairs containing the path and code' do
-      expect(@package.commonjs_modules).to eq(
+      expect(@package.send(:commonjs_modules)).to eq(
         'a.js' => "var a = {\n  name: 'This is A'\n};\n\nmodule.exports = a;\n",
         'nested/b.js' => "var b = {\n  name: 'This is B'\n};\n\nmodule.exports = b;\n"
       )
@@ -55,19 +55,19 @@ describe ZendeskAppsSupport::Package do
   describe 'manifest_json' do
     it 'should return manifest json' do
       manifest = @package.manifest_json
-      expect(manifest[:name]).to eq('ABC')
-      expect(manifest[:author][:name]).to eq('John Smith')
-      expect(manifest[:author][:email]).to eq('john@example.com')
-      expect(manifest[:defaultLocale]).to eq('en')
-      expect(manifest[:private]).to eq(true)
-      expect(manifest[:location]).to eq('ticket_sidebar')
-      expect(manifest[:frameworkVersion]).to eq('0.5')
+      expect(manifest['name']).to eq('ABC')
+      expect(manifest['author']['name']).to eq('John Smith')
+      expect(manifest['author']['email']).to eq('john@example.com')
+      expect(manifest['defaultLocale']).to eq('en')
+      expect(manifest['private']).to eq(true)
+      expect(manifest['location']).to eq('ticket_sidebar')
+      expect(manifest['frameworkVersion']).to eq('0.5')
     end
   end
 
-  describe 'readified_js' do
+  describe 'compile_js' do
     it 'should generate js ready for installation' do
-      js = @package.readified_js(0, 'http://localhost:4567/0/')
+      js = @package.compile_js(0, 'http://localhost:4567/0/')
 
       expected = <<HERE
 with( ZendeskApps.AppScope.create() ) {
@@ -128,6 +128,32 @@ module.exports = b;
 }
 HERE
       expect(js).to eq(expected)
+    end
+  end
+
+  describe 'deep_hash_merge' do
+    it 'should merge a simple hash' do
+      hash_1   = {'id' => 1}
+      hash_2   = {'id' => 2}
+      expected = {'id' => 2}
+      expect( @package.send(:deep_hash_merge, hash_1, hash_2) ).to eq(expected)
+    end
+
+    it 'should merge 2 hashes recursively' do
+      hash_1   = {'id' => 1, 'nick' => { label: 'test', gender: 'yes'}}
+      hash_2   = {'id' => 2}
+      expected = {'id' => 2, 'nick' => { label: 'test', gender: 'yes'}}
+      expect( @package.send(:deep_hash_merge, hash_1, hash_2) ).to eq(expected)
+
+      hash_1   = {'id' => 1, 'nick' => { label: 'test', gender: 'yes'}}
+      hash_2   = {'id' => 2, 'nick' => 'test'}
+      expected = {'id' => 2, 'nick' => 'test'}
+      expect( @package.send(:deep_hash_merge, hash_1, hash_2) ).to eq(expected)
+
+      hash_1   = {'id' => 1, 'nick' => { label: { text: 'text', value: 'value'}}}
+      hash_2   = {'id' => 2, 'nick' => { label: { text: 'different', option: 3}}}
+      expected = {'id' => 2, 'nick' => { label: { text: 'different', value: 'value', option: 3}}}
+      expect( @package.send(:deep_hash_merge, hash_1, hash_2) ).to eq(expected)
     end
   end
 end

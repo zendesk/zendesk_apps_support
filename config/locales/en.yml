@@ -17,6 +17,7 @@ en:
               app.js
             manifest_not_json: manifest is not proper JSON. %{errors}
             missing_manifest: Could not find manifest.json
+            symlink_in_zip: Symlinks are not allowed in the zip file
             missing_requirements: Could not find requirements.json
             manifest_keys:
               missing:

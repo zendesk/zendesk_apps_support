@@ -1,5 +1,5 @@
 with( ZendeskApps.AppScope.create() ) {
-  <% if modules.present? %>
+  <% unless modules.empty? %>
     require.modules = {
       <% modules.each do |path, content| %>
         '<%= path %>': function(exports, require, module) {
@@ -20,8 +20,8 @@ with( ZendeskApps.AppScope.create() ) {
       assetUrlPrefix: <%= asset_url_prefix.to_json %>,
       appClassName: <%= app_class_name.to_json %>,
       author: {
-        name: <%= author[:name].to_json %>,
-        email: <%= author[:email].to_json %>
+        name: <%= author['name'].to_json %>,
+        email: <%= author['email'].to_json %>
       },
       translations: <%= translations.to_json %>,
       templates: <%= templates.to_json %>,
