@@ -67,7 +67,7 @@ describe ZendeskAppsSupport::Package do
 
   describe 'compile_js' do
     it 'should generate js ready for installation' do
-      js = @package.compile_js(0, 'http://localhost:4567/0/')
+      js = @package.compile_js(app_id: 0, assets_dir: 'http://localhost:4567/0/')
 
       expected = <<HERE
 with( ZendeskApps.AppScope.create() ) {

@@ -99,7 +99,16 @@ module ZendeskAppsSupport
       non_tmp_files.select { |f| f =~ /^translations\// }
     end
 
-    def compile_js(app_id, asset_url_prefix, locale = 'en')
+    def compile_js(options)
+      begin
+        app_id = options.fetch(:app_id)
+        asset_url_prefix = options.fetch(:assets_dir)
+      rescue KeyError => e
+        raise ArgumentError, e.message
+      end
+
+      locale = options.fetch(:locale, 'en')
+
       source = app_js
       location = manifest_json['location']
       version = manifest_json['version']

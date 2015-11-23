@@ -2,7 +2,7 @@ with( ZendeskApps.AppScope.create() ) {
   <% unless modules.empty? %>
     require.modules = {
       <% modules.each do |path, content| %>
-        '<%= path %>': function(exports, require, module) {
+        <%= path.to_json %>: function(exports, require, module) {
           <%= content %>
         },
       <% end %>
