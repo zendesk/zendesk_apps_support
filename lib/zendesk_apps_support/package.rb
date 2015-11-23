@@ -194,6 +194,10 @@ module ZendeskAppsSupport
       File.exist?(css_file) ? File.read(css_file) : ''
     end
 
+    def file_path(path)
+      File.join(root, path)
+    end
+
     private
 
     def templates
@@ -254,10 +258,6 @@ module ZendeskAppsSupport
 
     def has_banner?
       file_exists?('assets/banner.png')
-    end
-
-    def file_path(path)
-      File.join(root, path)
     end
 
     def app_js
