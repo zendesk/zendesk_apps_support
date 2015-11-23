@@ -72,7 +72,7 @@ describe ZendeskAppsSupport::Package do
       expected = <<HERE
 with( ZendeskApps.AppScope.create() ) {
     require.modules = {
-        'a.js': function(exports, require, module) {
+        "a.js": function(exports, require, module) {
           var a = {
   name: 'This is A'
 };
@@ -80,7 +80,7 @@ with( ZendeskApps.AppScope.create() ) {
 module.exports = a;
 
         },
-        'nested/b.js': function(exports, require, module) {
+        "nested/b.js": function(exports, require, module) {
           var b = {
   name: 'This is B'
 };
