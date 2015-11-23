@@ -9,8 +9,8 @@ module ZendeskAppsSupport
       @installations = installations
     end
 
-    def compile_js(options)
-      installation_order = options.fetch(:installation_orders, [])
+    def compile_js(options = {})
+      installation_order = options.fetch(:installation_orders, {})
 
       INSTALLED_TEMPLATE.result(
         appsjs: @appsjs,
