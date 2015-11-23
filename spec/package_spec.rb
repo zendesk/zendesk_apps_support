@@ -131,29 +131,29 @@ HERE
     end
   end
 
-  describe 'deep_hash_merge' do
+  describe 'deep_merge_hash' do
     it 'should merge a simple hash' do
       hash_1   = {'id' => 1}
       hash_2   = {'id' => 2}
       expected = {'id' => 2}
-      expect( @package.send(:deep_hash_merge, hash_1, hash_2) ).to eq(expected)
+      expect( @package.send(:deep_merge_hash, hash_1, hash_2) ).to eq(expected)
     end
 
     it 'should merge 2 hashes recursively' do
       hash_1   = {'id' => 1, 'nick' => { label: 'test', gender: 'yes'}}
       hash_2   = {'id' => 2}
       expected = {'id' => 2, 'nick' => { label: 'test', gender: 'yes'}}
-      expect( @package.send(:deep_hash_merge, hash_1, hash_2) ).to eq(expected)
+      expect( @package.send(:deep_merge_hash, hash_1, hash_2) ).to eq(expected)
 
       hash_1   = {'id' => 1, 'nick' => { label: 'test', gender: 'yes'}}
       hash_2   = {'id' => 2, 'nick' => 'test'}
       expected = {'id' => 2, 'nick' => 'test'}
-      expect( @package.send(:deep_hash_merge, hash_1, hash_2) ).to eq(expected)
+      expect( @package.send(:deep_merge_hash, hash_1, hash_2) ).to eq(expected)
 
       hash_1   = {'id' => 1, 'nick' => { label: { text: 'text', value: 'value'}}}
       hash_2   = {'id' => 2, 'nick' => { label: { text: 'different', option: 3}}}
       expected = {'id' => 2, 'nick' => { label: { text: 'different', value: 'value', option: 3}}}
-      expect( @package.send(:deep_hash_merge, hash_1, hash_2) ).to eq(expected)
+      expect( @package.send(:deep_merge_hash, hash_1, hash_2) ).to eq(expected)
     end
   end
 end

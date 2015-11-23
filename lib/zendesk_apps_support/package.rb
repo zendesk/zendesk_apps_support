@@ -165,15 +165,6 @@ module ZendeskAppsSupport
     def compiled_templates(app_id, asset_url_prefix)
       compiled_css = ZendeskAppsSupport::StylesheetCompiler.new(DEFAULT_SCSS + customer_css, app_id, asset_url_prefix).compile
 
-      templates = begin
-        Dir["#{root}/templates/*.hdbs"].inject({}) do |templates, file|
-          str = File.read(file)
-          str.chomp!
-          templates[File.basename(file, File.extname(file))] = str
-          templates
-        end
-      end
-
       layout = templates['layout'] || DEFAULT_LAYOUT.result
 
       templates.tap do |templates|
@@ -205,43 +196,33 @@ module ZendeskAppsSupport
 
     private
 
-    def css
-      @css ||= begin
-                 File.read(@css_path)
-               rescue Errno::ENOENT
-                 ''
-               end
-    end
-
     def templates
-      @templates ||= begin
-                       templates_dir = File.join(@root, 'templates')
-                       Dir["#{templates_dir}/*.hdbs"].inject({}) do |h, file|
-                         str = File.read(file)
-                         str.chomp!
-                         h[File.basename(file, File.extname(file))] = str
-                         h
-                       end
-                     end
+      templates_dir = File.join(@root, 'templates')
+      Dir["#{templates_dir}/*.hdbs"].inject({}) do |memo, file|
+        str = File.read(file)
+        str.chomp!
+        memo[File.basename(file, File.extname(file))] = str
+        memo
+      end
     end
 
     def translations
-      @translations ||= begin
-        translation_dir = File.join(@root, 'translations')
-        return {} unless File.directory?(translation_dir)
+      translation_dir = File.join(@root, 'translations')
+      return {} unless File.directory?(translation_dir)
 
-        locale_path = "#{translation_dir}/#{self.manifest_json['defaultLocale']}.json"
-        default_translations = process_translations(locale_path)
-        Dir["#{translation_dir}/*.json"].inject({}) do |h, tr|
-          locale              = File.basename(tr, File.extname(tr))
-          locale_translations = if locale == self.manifest_json['defaultLocale']
-                                  default_translations
-                                else
-                                  deep_hash_merge(default_translations, process_translations(tr))
-                                end
-          h[locale] = locale_translations
-          h
+      locale_path = "#{translation_dir}/#{self.manifest_json['defaultLocale']}.json"
+      default_translations = process_translations(locale_path)
+      Dir["#{translation_dir}/*.json"].inject({}) do |memo, translation|
+        locale = File.basename(translation, File.extname(translation))
+
+        locale_translations = if locale == self.manifest_json['defaultLocale']
+          default_translations
+        else
+          deep_merge_hash(default_translations, process_translations(tr))
         end
+
+        memo[locale] = locale_translations
+        memo
       end
     end
 
@@ -308,11 +289,11 @@ module ZendeskAppsSupport
       File.exist?(file_path(path))
     end
 
-    def deep_hash_merge(h, another_h)
+    def deep_merge_hash(h, another_h)
       result_h = h.dup
       another_h.each do |key, value|
         if h.has_key?(key) && h[key].is_a?(Hash) && value.is_a?(Hash)
-          result_h[key] = deep_hash_merge(h[key], value)
+          result_h[key] = deep_merge_hash(h[key], value)
         else
           result_h[key] = value
         end
