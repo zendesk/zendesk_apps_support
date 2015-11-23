@@ -157,7 +157,7 @@ describe ZendeskAppsSupport::Validations::Manifest do
       'oauth' => {}
     }
     expect(create_package(default_required_params.merge(oauth_hash))).to have_error \
-      'Missing required oauth fields in manifest: clientId, clientSecret, authorizeUri, accessTokenUri'
+      'Missing required oauth fields in manifest: client_id, client_secret, authorize_uri, access_token_uri'
   end
 
   context 'with invalid parameters' do
