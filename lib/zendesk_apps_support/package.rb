@@ -57,18 +57,16 @@ module ZendeskAppsSupport
 
     def validate!(marketplace: true)
       errors = validate(marketplace: marketplace)
-      raise errors.first if errors.any?
+      if errors.any?
+        raise Validations::ValidationError, errors.map(&:message).join("\n")
+      end
       true
     end
 
     def assets
-      @assets ||= begin
-                    pwd = Dir.pwd
-                    Dir.chdir(@root)
-                    assets = Dir["assets/**/*"].select { |f| File.file?(f) }
-                    Dir.chdir(pwd)
-                    assets
-                  end
+      @assets ||= Dir.chdir(@root) do
+        Dir["assets/**/*"].select { |f| File.file?(f) }
+      end
     end
 
     def path_to(file)
@@ -168,11 +166,11 @@ module ZendeskAppsSupport
       compiled_css = ZendeskAppsSupport::StylesheetCompiler.new(DEFAULT_SCSS + customer_css, app_id, asset_url_prefix).compile
 
       templates = begin
-        Dir["#{root}/templates/*.hdbs"].inject({}) do |h, file|
+        Dir["#{root}/templates/*.hdbs"].inject({}) do |templates, file|
           str = File.read(file)
           str.chomp!
-          h[File.basename(file, File.extname(file))] = str
-          h
+          templates[File.basename(file, File.extname(file))] = str
+          templates
         end
       end
 
