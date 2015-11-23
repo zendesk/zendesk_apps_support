@@ -17,6 +17,7 @@ en:
               app.js
             manifest_not_json: manifest is not proper JSON. %{errors}
             missing_manifest: Could not find manifest.json
+            symlink_in_zip: Symlinks are not allowed in the zip file
             missing_requirements: Could not find requirements.json
             manifest_keys:
               missing:
@@ -34,8 +35,8 @@ en:
               one: 'requirements.json contains an invalid type: %{invalid_types}'
               other: 'requirements.json contains invalid types: %{invalid_types}'
             banner:
-              invalid_format: Banner image must be a PNG file
-              invalid_size: Invalid banner image dimensions. Must be %{required_banner_width}x%{required_banner_height}px
+              invalid_format: Banner image must be a PNG file.
+              invalid_size: Invalid banner image dimensions. Must be %{required_banner_width}x%{required_banner_height}px.
             oauth_keys:
               missing:
                 one: 'Missing required oauth field in manifest: %{missing_keys}'
