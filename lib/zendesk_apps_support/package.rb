@@ -54,7 +54,7 @@ module ZendeskAppsSupport
     def validate!(marketplace: true)
       errors = validate(marketplace: marketplace)
       if errors.any?
-        raise Validations::ValidationError, errors.map(&:message).join("\n")
+        raise errors.first
       end
       true
     end
