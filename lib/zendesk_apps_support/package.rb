@@ -13,14 +13,14 @@ module ZendeskAppsSupport
     SRC_TEMPLATE   = Erubis::Eruby.new(File.read(File.expand_path('../assets/src.js.erb', __FILE__)))
 
     attr_reader :lib_root, :root, :warnings
-    attr_accessor :requirements_only
+    attr_accessor :cache
 
     def initialize(dir)
       @root     = Pathname.new(File.expand_path(dir))
       @lib_root = Pathname.new(File.join(@root, 'lib'))
 
+      @cache    = true #disabled by ZAT for development
       @warnings = []
-      @requirements_only = false
     end
 
     def validate(marketplace: false)
@@ -33,7 +33,7 @@ module ZendeskAppsSupport
           errors << Validations::Source.call(self)
           errors << Validations::Translations.call(self)
 
-          unless @requirements_only
+          unless manifest_json['requirementsOnly']
             errors << Validations::Templates.call(self)
             errors << Validations::Stylesheets.call(self)
           end
@@ -173,7 +173,7 @@ module ZendeskAppsSupport
     end
 
     def market_translations(locale)
-      result = translations[locale].fetch('app', {})
+      result = translations[locale].fetch('app', {}).dup
       result.delete('name')
       result.delete('description')
       result.delete('long_description')
@@ -206,23 +206,28 @@ module ZendeskAppsSupport
       end
     end
 
-    def translations
-      translation_dir = File.join(@root, 'translations')
-      return {} unless File.directory?(translation_dir)
+    def translations()
+      return @translations if @translations && @cache
 
-      locale_path = "#{translation_dir}/#{self.manifest_json['defaultLocale']}.json"
-      default_translations = process_translations(locale_path)
-      Dir["#{translation_dir}/*.json"].inject({}) do |memo, translation|
-        locale = File.basename(translation, File.extname(translation))
+      @translations = begin
+        translation_dir = File.join(@root, 'translations')
+        return {} unless File.directory?(translation_dir)
 
-        locale_translations = if locale == self.manifest_json['defaultLocale']
-          default_translations
-        else
-          deep_merge_hash(default_translations, process_translations(translation))
+        locale_path = "#{translation_dir}/#{self.manifest_json['defaultLocale']}.json"
+        default_translations = process_translations(locale_path)
+
+        Dir["#{translation_dir}/*.json"].inject({}) do |memo, path|
+          locale = File.basename(path, File.extname(path))
+
+          locale_translations = if locale == self.manifest_json['defaultLocale']
+            default_translations
+          else
+            deep_merge_hash(default_translations, process_translations(path))
+          end
+
+          memo[locale] = locale_translations
+          memo
         end
-
-        memo[locale] = locale_translations
-        memo
       end
     end
 
@@ -230,10 +235,6 @@ module ZendeskAppsSupport
       translations = File.exist?(locale_path) ? JSON.parse(File.read(locale_path)) : {}
       translations['app'].delete('package') if translations.has_key?('app')
       remove_zendesk_keys(translations)
-    end
-
-    def app_translations(locale)
-      remove_zendesk_keys(translations[locale])
     end
 
     def has_js?
@@ -275,7 +276,7 @@ module ZendeskAppsSupport
       return {} unless has_lib_js?
 
       lib_files.each_with_object({}) do |file, modules|
-        name          = file.relative_path.gsub!(/^lib\//, '')
+        name          = file.relative_path.gsub(/^lib\//, '')
         content       = file.read
         modules[name] = content
       end

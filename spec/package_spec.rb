@@ -14,7 +14,7 @@ describe ZendeskAppsSupport::Package do
   describe 'files' do
     it 'should return all the files within the app folder excluding files in tmp folder' do
       files = %w(app.css app.js assets/logo-small.png assets/logo.png lib/a.js lib/a.txt
-                 lib/nested/b.js manifest.json templates/layout.hdbs translations/en.json)
+                 lib/nested/b.js manifest.json templates/layout.hdbs translations/en.json translations/nl.json)
       expect(@package.files.map(&:relative_path)).to match_array(files)
     end
 
@@ -34,7 +34,7 @@ describe ZendeskAppsSupport::Package do
 
   describe 'translation_files' do
     it 'should return all the files in the translations folder within the app folder' do
-      expect(@package.translation_files.map(&:relative_path)).to eq(%w(translations/en.json))
+      expect(@package.translation_files.map(&:relative_path)).to eq(%w(translations/en.json translations/nl.json))
     end
   end
 
@@ -69,65 +69,11 @@ describe ZendeskAppsSupport::Package do
   describe 'compile_js' do
     it 'should generate js ready for installation' do
       js = @package.compile_js(app_id: 0, assets_dir: 'http://localhost:4567/0/')
+      expected = File.read('spec/fixtures/app_en.js')
+      expect(js).to eq(expected)
 
-      expected = <<HERE
-with( ZendeskApps.AppScope.create() ) {
-    require.modules = {
-        "a.js": function(exports, require, module) {
-          var a = {
-  name: 'This is A'
-};
-
-module.exports = a;
-
-        },
-        "nested/b.js": function(exports, require, module) {
-          var b = {
-  name: 'This is B'
-};
-
-module.exports = b;
-
-        },
-      eom: undefined
-    };
-
-  var source = (function() {
-
-  return {
-    a: require('a.js'),
-
-    events: {
-      'app.activated':'doSomething'
-    },
-
-    doSomething: function() {
-      console.log(a.name);
-    }
-  };
-
-}());
-;
-
-  var app = ZendeskApps.defineApp(source)
-    .reopenClass({"location":"ticket_sidebar","noTemplate":false,"singleInstall":false})
-    .reopen({
-      appName: "ABC",
-      appVersion: "1.0.0",
-      assetUrlPrefix: "http://localhost:4567/0/",
-      appClassName: "app-0",
-      author: {
-        name: "John Smith",
-        email: "john@example.com"
-      },
-      translations: {"app":{"name":"Buddha Machine"}},
-      templates: {"layout":"<style>\\n.app-0 header .logo {\\n  background-image: url(\\"http://localhost:4567/0/logo-small.png\\"); }\\n.app-0 h1 {\\n  color: red; }\\n  .app-0 h1 span {\\n    color: green; }\\n</style>\\n<header>\\n  <span class=\\"logo\\"></span>\\n  <h3>{{setting \\"name\\"}}</h3>\\n</header>\\n<section data-main></section>\\n<footer>\\n  <a href=\\"mailto:{{author.email}}\\">\\n    {{author.name}}\\n  </a>\\n</footer>\\n</div>"},
-      frameworkVersion: "0.5"
-    });
-
-  ZendeskApps["ABC"] = app;
-}
-HERE
+      js = @package.compile_js(app_id: 1, assets_dir: 'http://localhost:4567/2/', locale: 'nl')
+      expected = File.read('spec/fixtures/app_nl.js')
       expect(js).to eq(expected)
     end
   end
@@ -210,6 +156,20 @@ HERE
       manifest: manifest,
       additional_files: files
     })
+  end
+
+  describe 'test function works as expected' do
+    it 'builds an app' do
+      expect(package.manifest_json['author']['name']).to eq('Ned Stark')
+      expect(package.send(:translations)).to eq({"en"=>{"app"=>{"description"=>"Quickly access bookmarked tickets. Syncs with the iPad app."}, "custom1"=>"The first custom thing"}})
+      expect(package.send(:market_translations, 'en')).to eq({})
+      expect(package.send(:translations)).to eq({"en"=>{"app"=>{"description"=>"Quickly access bookmarked tickets. Syncs with the iPad app."}, "custom1"=>"The first custom thing"}})
+    end
+
+    it 'builds an app with changed manifest' do
+      manifest['author']['name'] = 'Olaf'
+      expect(package.manifest_json['author']['name']).to eq('Olaf')
+    end
   end
 
   describe 'Reading a manifest' do
