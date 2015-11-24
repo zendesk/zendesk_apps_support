@@ -13,13 +13,12 @@ module ZendeskAppsSupport
     SRC_TEMPLATE   = Erubis::Eruby.new(File.read(File.expand_path('../assets/src.js.erb', __FILE__)))
 
     attr_reader :lib_root, :root, :warnings
-    attr_accessor :cache
 
-    def initialize(dir)
+    def initialize(dir, cache = true)
       @root     = Pathname.new(File.expand_path(dir))
       @lib_root = Pathname.new(File.join(@root, 'lib'))
 
-      @cache    = true #disabled by ZAT for development
+      @cache    = cache #disabled by ZAT for development
       @warnings = []
     end
 
