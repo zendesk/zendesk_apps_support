@@ -205,7 +205,7 @@ module ZendeskAppsSupport
       end
     end
 
-    def translations()
+    def translations
       return @translations if @translations && @cache
 
       @translations = begin
