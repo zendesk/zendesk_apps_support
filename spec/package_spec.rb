@@ -162,8 +162,8 @@ describe ZendeskAppsSupport::Package do
     it 'builds an app' do
       expect(package.manifest_json['author']['name']).to eq('Ned Stark')
       expect(package.send(:translations)).to eq({"en"=>{"app"=>{"description"=>"Quickly access bookmarked tickets. Syncs with the iPad app."}, "custom1"=>"The first custom thing"}})
-      expect(package.send(:market_translations, 'en')).to eq({})
-      expect(package.send(:translations)).to eq({"en"=>{"app"=>{"description"=>"Quickly access bookmarked tickets. Syncs with the iPad app."}, "custom1"=>"The first custom thing"}})
+      expect(package.send(:market_translations!, 'en')).to eq({})
+      expect(package.send(:translations)).to eq({"en"=>{"app"=>{}, "custom1"=>"The first custom thing"}})
     end
 
     it 'builds an app with changed manifest' do
@@ -266,11 +266,11 @@ describe ZendeskAppsSupport::Package do
     end
   end
 
-  describe '#market_translations' do
+  describe '#market_translations!' do
     let(:translations) { { 'app' => { 'name' => 'Some App', 'description' => 'It does something.' } } }
     let(:source) { build_app_source(additional_files: { "translations/en.json" => translations.to_json }) }
 
-    subject { package.market_translations('en') }
+    subject { package.market_translations!('en') }
 
     it 'ignores "name"' do
       expect(subject['name']).to be nil
