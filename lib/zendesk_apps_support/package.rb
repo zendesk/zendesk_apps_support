@@ -19,10 +19,6 @@ module ZendeskAppsSupport
       @root     = Pathname.new(File.expand_path(dir))
       @lib_root = Pathname.new(File.join(@root, 'lib'))
 
-      @source_path   = File.join(@root, 'app.js')
-      @css_path      = File.join(@root, 'app.css')
-      @manifest_path = File.join(@root, 'manifest.json')
-
       @warnings = []
       @requirements_only = false
     end
@@ -177,7 +173,7 @@ module ZendeskAppsSupport
     end
 
     def market_translations(locale)
-      result = translations[locale].try(:[], 'app') || {}
+      result = translations[locale].fetch('app', {})
       result.delete('name')
       result.delete('description')
       result.delete('long_description')
@@ -222,7 +218,7 @@ module ZendeskAppsSupport
         locale_translations = if locale == self.manifest_json['defaultLocale']
           default_translations
         else
-          deep_merge_hash(default_translations, process_translations(tr))
+          deep_merge_hash(default_translations, process_translations(translation))
         end
 
         memo[locale] = locale_translations

@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'fileutils'
 
 describe ZendeskAppsSupport::Package do
   before do
@@ -154,6 +155,272 @@ HERE
       hash_2   = {'id' => 2, 'nick' => { label: { text: 'different', option: 3}}}
       expected = {'id' => 2, 'nick' => { label: { text: 'different', value: 'value', option: 3}}}
       expect( @package.send(:deep_merge_hash, hash_1, hash_2) ).to eq(expected)
+    end
+  end
+
+  let(:manifest) do
+    JSON.parse(File.read('spec/bookmarks_app/manifest.json'))
+  end
+
+  let(:root) { Dir.mktmpdir }
+
+  after do
+    FileUtils.rm_rf(root) if Dir.exists?(root)
+  end
+
+  def build_app_source(app)
+    app_js           = File.read('spec/bookmarks_app/app.js')
+    app_css          = File.read('spec/bookmarks_app/app.css')
+    main_template    = File.read('spec/bookmarks_app/templates/main.hdbs')
+    layout           = nil
+    en_json          = File.read('spec/bookmarks_app/translations/en.json')
+    logo             = File.read('spec/bookmarks_app/assets/logo.png')
+    logo_small       = File.read('spec/bookmarks_app/assets/logo-small.png')
+    manifest         = JSON.generate(app[:manifest] || { })
+    additional_files = app[:additional_files] || { }
+
+    FileUtils.rm_rf(root) if Dir.exists?(root)
+
+    {
+      'manifest.json'         => manifest,
+      'app.js'                => app_js,
+      'app.css'               => app_css,
+      'templates/layout.hdbs' => layout,
+      'templates/main.hdbs'   => main_template,
+      'translations/en.json'  => en_json,
+      'assets/logo.png'       => logo,
+      'assets/logo-small.png' => logo_small
+    }.merge(additional_files).each do |path, content|
+      unless content.nil?
+        path = File.join(root, path)
+        FileUtils.mkdir_p( File.dirname(path) )
+        File.open(path, 'w') { |f| f << content }
+      end
+    end
+
+    File.join(root)
+  end
+
+  let(:source) { build_app_source(manifest: manifest) }
+
+  let(:package) { ZendeskAppsSupport::Package.new(source) }
+
+  def build_app_source_with_files(files)
+    build_app_source({
+      manifest: manifest,
+      additional_files: files
+    })
+  end
+
+  describe 'Reading a manifest' do
+    it 'fetches data from the manifest' do
+      expect(package.manifest_json['location']).to eq('ticket_sidebar')
+      expect(package.manifest_json['defaultLocale']).to eq('en')
+      expect(package.manifest_json['version']).to eq('1.5')
+      expect(package.manifest_json['frameworkVersion']).to eq('0.5')
+      expect(package.manifest_json['remoteInstallationURL']).to eq('https://example.com/install')
+      expect(package.manifest_json['termsConditionsURL']).to eq('http://terms.com')
+
+      expect(package.manifest_json['author']).to eq({ 'name' => 'Ned Stark', 'email' => 'ned@winter.com', 'url' => 'http://www.zendesk.com/apps'})
+    end
+  end
+
+  describe '#translations' do
+    let(:description) { 'Quickly access bookmarked tickets. Syncs with the iPad app.' }
+    let(:custom1) { 'The first custom thing' }
+    context 'with default locale' do
+      it 'returns translations' do
+        expect(package.send(:translations)).to eq({ 'en'=>{ 'app' => { 'description'=>description }, 'custom1' => custom1 } })
+        expect(package.locales).to eq(['en'])
+      end
+
+      context 'with zh-cn.json' do
+        let (:source) do
+          build_app_source_with_files({
+            'translations/zh-cn.json' => File.read('spec/translations/zh-cn.json')
+          })
+        end
+
+        it 'includes en and zh-cn in translations' do
+          expect(package.locales).to match_array(['en', 'zh-cn'])
+        end
+
+        it 'includes zh-cn in translations' do
+          expect(package.send(:translations)['zh-cn'].except('custom1')).to eq(JSON.parse(File.read('spec/translations/zh-cn.json')))
+        end
+
+        it 'merges missing keys with the default locale'  do
+          expect(package.send(:translations)['zh-cn']['custom1']).to eq(custom1)
+        end
+      end
+
+      context 'with zh-cn_keyval.json' do
+        let (:source) do
+          build_app_source_with_files({
+            'translations/zh-cn.json' => File.read('spec/translations/zh-cn_keyval.json')
+          })
+        end
+
+        it 'includes en and zh-cn in translations' do
+          expect(package.locales).to match_array(['en', 'zh-cn'])
+        end
+
+        it 'removes zendesk-specific keys in translations' do
+          expect(package.send(:translations)['zh-cn'].except('custom1')).to eq(JSON.parse(File.read('spec/translations/zh-cn.json')))
+        end
+
+        it 'merges missing keys with the default locale'  do
+          expect(package.send(:translations)['zh-cn']['custom1']).to eq(custom1)
+        end
+
+        it 'removes app.package key' do
+          expect(package.send(:translations)['zh-cn']['app']['package']).to be_nil
+        end
+      end
+    end
+
+    context 'without a default locale' do
+      let(:manifest) { super().merge('defaultLocale' => nil) }
+
+      it 'returns translations' do
+        expect(package.send(:translations)).to eq({ 'en'=>{ 'app' => { 'description'=>description }, 'custom1'=>custom1 } })
+        expect(package.locales).to eq(['en'])
+      end
+    end
+
+  end
+
+  describe '#css' do
+    context 'for an app with an app.css' do
+      it 'returns the CSS' do
+        expect(package.customer_css).to eq(File.read('spec/bookmarks_app/app.css'))
+      end
+    end
+
+    context 'for an app without an app.css' do
+      let(:source) { build_app_source(additional_files: { "app.css" => nil }) }
+
+      it 'returns an empty string' do
+        expect(package.customer_css).to eq('')
+      end
+    end
+  end
+
+  describe '#market_translations' do
+    let(:translations) { { 'app' => { 'name' => 'Some App', 'description' => 'It does something.' } } }
+    let(:source) { build_app_source(additional_files: { "translations/en.json" => translations.to_json }) }
+
+    subject { package.market_translations('en') }
+
+    it 'ignores "name"' do
+      expect(subject['name']).to be nil
+    end
+
+    it 'ignores "description"' do
+      expect(subject['description']).to be nil
+    end
+  end
+
+  describe '#validate' do
+    it 'should not raise error when symlink exists inside the app for outside the marketplace' do
+      package = ZendeskAppsSupport::Package.new('spec/fixtures/symlinks')
+      expect { package.validate!(marketplace: false) }.to raise_error(ZendeskAppsSupport::Validations::ValidationError)
+    end
+
+    it 'should raise error when symlink exists inside the app for the marketplace' do
+      package = ZendeskAppsSupport::Package.new('spec/fixtures/symlinks')
+      expect { package.validate!(marketplace: true) }.to raise_error(ZendeskAppsSupport::Validations::ValidationError)
+    end
+
+    it 'should raise error when symlink exists inside the app for the marketplace' do
+      package = ZendeskAppsSupport::Package.new('spec/fixtures/symlinks')
+      expect { package.validate! }.to raise_error(ZendeskAppsSupport::Validations::ValidationError)
+    end
+  end
+
+  describe '#single_install' do
+    context 'when singleInstall is a boolean in the manifest' do
+      it 'returns true when singleInstall is true' do
+        manifest['singleInstall'] = true
+        expect(package.manifest_json['singleInstall']).to be_truthy
+      end
+
+      it 'returns false when singleInstall is false' do
+        manifest['singleInstall'] = false
+        expect(package.manifest_json['singleInstall']).to be_falsey
+      end
+    end
+
+    context 'when singleInstall is missing from the manifest' do
+      it 'returns false' do
+        expect(package.manifest_json['singleInstall']).to be_falsey
+      end
+    end
+  end
+
+  describe '#no_template' do
+    context 'when noTemplate is a boolean in the manifest' do
+      it 'returns true when noTemplate is true' do
+        manifest['noTemplate'] = true
+        expect(package.no_template).to be_truthy
+      end
+
+      it 'returns false when noTemplate is false' do
+        manifest['noTemplate'] = false
+        expect(package.no_template).to be_falsey
+      end
+    end
+    context 'when noTemplate is an array of locations' do
+      it 'returns false' do
+        manifest['noTemplate'] = ['new_ticket_sidebar', 'nav_bar']
+        expect(package.no_template).to be_falsey
+      end
+    end
+  end
+
+  describe '#no_template_locations' do
+    context 'when noTemplate is a boolean in the manifest' do
+      it 'returns true when noTemplate is true' do
+        manifest['noTemplate'] = true
+        expect(package.no_template_locations).to be_truthy
+      end
+
+      it 'returns false when noTemplate is false' do
+        manifest['noTemplate'] = false
+        expect(package.no_template_locations).to be_falsey
+      end
+    end
+    context 'when noTemplate is an array of locations' do
+      let(:no_template_locations) { ['new_ticket_sidebar', 'nav_bar'] }
+      it 'returns the array of locations' do
+        manifest['noTemplate'] = no_template_locations
+        expect(package.no_template_locations).to eq(no_template_locations)
+      end
+    end
+  end
+
+  describe '#commonjs_modules' do
+    let (:modules) { package.send(:commonjs_modules) }
+
+    context 'when there are js modules' do
+      let (:source) do
+        build_app_source_with_files({
+          'lib/a.js'     => File.read('spec/bookmarks_app/lib/a.js'),
+          'lib/foo/b.js' => File.read('spec/bookmarks_app/lib/foo/b.js')
+        })
+      end
+
+      it 'returns the contents of the file at lib/a.js' do
+        expect(modules["a.js"]).to eq(File.read('spec/bookmarks_app/lib/a.js'))
+      end
+
+      it 'returns the contents of the file in subfolder lib/foo/b.js' do
+        expect(modules["foo/b.js"]).to eq(File.read('spec/bookmarks_app/lib/foo/b.js'))
+      end
+    end
+
+    context 'when there are no js modules' do
+      it { expect(modules).not_to be nil }
     end
   end
 end

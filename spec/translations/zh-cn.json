@@ -1,0 +1,21 @@
+{
+  "app": {
+    "description": "从我们的 iPad 和 iPhone app 访问已添加书签的工单"
+  },
+  "fetch": {
+    "fail": "取回书签时出错",
+    "try_again": "请再试一次"
+  },
+  "add": {
+    "done": "已为工单 #{{id}} 添加书签",
+    "failed": "为工单 #{{id}} 添加书签失败"
+  },
+  "destroy": {
+    "done": "书签已删除",
+    "failed": "删除书签失败"
+  },
+  "bookmark_this_ticket": "为此工单添加书签",
+  "delete_bookmark": "删除书签",
+  "loading": "正在加载",
+  "none": "没有书签"
+}

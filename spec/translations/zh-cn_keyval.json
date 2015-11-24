@@ -1,0 +1,55 @@
+{
+  "app": {
+    "package": "bookmarks_app",
+    "description": {
+      "title": "app description",
+      "value": "从我们的 iPad 和 iPhone app 访问已添加书签的工单"
+    }
+  },
+  "fetch": {
+    "fail": {
+      "title": "Error message",
+      "value": "取回书签时出错"
+    },
+    "try_again": {
+      "title": "button to try again",
+      "value": "请再试一次"
+    }
+  },
+  "add": {
+    "done": {
+      "title": "Success message the placeholder in here displays a ticket number",
+      "value": "已为工单 #{{id}} 添加书签"
+    },
+    "failed": {
+      "title": "Error message the placeholder displays a ticket number",
+      "value": "为工单 #{{id}} 添加书签失败"
+    }
+  },
+  "destroy": {
+    "done": {
+      "title": "Success message",
+      "value": "书签已删除"
+    },
+    "failed": {
+      "title": "Error message",
+      "value": "删除书签失败"
+    }
+  },
+  "bookmark_this_ticket": {
+    "title": "Button to ask the user to bookmark the current viewed ticket",
+    "value": "为此工单添加书签"
+  },
+  "delete_bookmark": {
+    "title": "delete link to remove bookmarking",
+    "value": "删除书签"
+  },
+  "loading": {
+    "title": "loading text",
+    "value": "正在加载"
+  },
+  "none": {
+    "title": "text displayed when there is nothing",
+    "value": "没有书签"
+  }
+}
