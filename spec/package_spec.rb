@@ -34,7 +34,7 @@ describe ZendeskAppsSupport::Package do
 
   describe 'translation_files' do
     it 'should return all the files in the translations folder within the app folder' do
-      expect(@package.translation_files.map(&:relative_path)).to eq(%w(translations/en.json translations/nl.json))
+      expect(@package.translation_files.map(&:relative_path).sort).to eq(%w(translations/en.json translations/nl.json))
     end
   end
 
