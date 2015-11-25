@@ -236,10 +236,6 @@ module ZendeskAppsSupport
       remove_zendesk_keys(translations)
     end
 
-    def has_js?
-      file_exists?('app.js')
-    end
-
     def has_lib_js?
       lib_files.any?
     end
