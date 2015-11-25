@@ -167,10 +167,6 @@ module ZendeskAppsSupport
       end
     end
 
-    def name
-      manifest_json['name'] || 'Local App'
-    end
-
     def market_translations!(locale)
       result = translations[locale].fetch('app', {})
       result.delete('name')
