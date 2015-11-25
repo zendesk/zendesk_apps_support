@@ -39,7 +39,7 @@ module.exports = b;
   var app = ZendeskApps.defineApp(source)
     .reopenClass({"location":"ticket_sidebar","noTemplate":false,"singleInstall":false})
     .reopen({
-      appName: "ABC",
+      appName: "EFG",
       appVersion: "1.0.0",
       assetUrlPrefix: "http://localhost:4567/2/",
       appClassName: "app-1",
@@ -52,5 +52,5 @@ module.exports = b;
       frameworkVersion: "0.5"
     });
 
-  ZendeskApps["ABC"] = app;
+  ZendeskApps["EFG"] = app;
 }

@@ -101,6 +101,8 @@ module ZendeskAppsSupport
       end
 
       locale = options.fetch(:locale, 'en')
+      name = options.fetch(:app_name, manifest_json['name'])
+      raise :no_app_name unless name
 
       source = app_js
       location = manifest_json['location']

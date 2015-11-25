@@ -72,7 +72,7 @@ describe ZendeskAppsSupport::Package do
       expected = File.read('spec/fixtures/app_en.js')
       expect(js).to eq(expected)
 
-      js = @package.compile_js(app_id: 1, assets_dir: 'http://localhost:4567/2/', locale: 'nl')
+      js = @package.compile_js(app_name: "EFG", app_id: 1, assets_dir: 'http://localhost:4567/2/', locale: 'nl')
       expected = File.read('spec/fixtures/app_nl.js')
       expect(js).to eq(expected)
     end
