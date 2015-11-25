@@ -96,13 +96,12 @@ module ZendeskAppsSupport
       begin
         app_id = options.fetch(:app_id)
         asset_url_prefix = options.fetch(:assets_dir)
+        name = options.fetch(:app_name)
       rescue KeyError => e
         raise ArgumentError, e.message
       end
 
       locale = options.fetch(:locale, 'en')
-      name = options.fetch(:app_name, manifest_json['name'])
-      raise :no_app_name unless name
 
       source = app_js
       location = manifest_json['location']
