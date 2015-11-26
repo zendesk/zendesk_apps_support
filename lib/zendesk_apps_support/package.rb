@@ -14,11 +14,11 @@ module ZendeskAppsSupport
 
     attr_reader :lib_root, :root, :warnings
 
-    def initialize(dir, cache = true)
+    def initialize(dir, is_cached = true)
       @root     = Pathname.new(File.expand_path(dir))
       @lib_root = Pathname.new(File.join(@root, 'lib'))
 
-      @cache    = cache #disabled by ZAT for development
+      @is_cached    = is_cached #disabled by ZAT for development
       @warnings = []
     end
 
@@ -203,7 +203,7 @@ module ZendeskAppsSupport
     end
 
     def translations
-      return @translations if @translations && @cache
+      return @translations if @is_cached && @translations
 
       @translations = begin
         translation_dir = File.join(@root, 'translations')
