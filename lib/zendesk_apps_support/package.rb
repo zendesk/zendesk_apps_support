@@ -22,7 +22,7 @@ module ZendeskAppsSupport
       @warnings = []
     end
 
-    def validate(marketplace: false)
+    def validate(marketplace: true)
       [].tap do |errors|
         errors << Validations::Marketplace.call(self) if marketplace
 
