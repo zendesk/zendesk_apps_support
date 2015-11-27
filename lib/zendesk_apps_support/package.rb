@@ -126,7 +126,7 @@ module ZendeskAppsSupport
           asset_url_prefix: asset_url_prefix,
           app_class_name: app_class_name,
           author: author,
-          translations: translations[locale],
+          translations: any_translation(locale),
           framework_version: framework_version,
           templates: templates,
           modules: commonjs_modules
@@ -200,6 +200,12 @@ module ZendeskAppsSupport
         memo[File.basename(file, File.extname(file))] = str
         memo
       end
+    end
+
+    def any_translation(locale)
+      trans = translations
+      return trans[locale] if trans[locale]
+      trans[self.manifest_json['defaultLocale']]
     end
 
     def translations
