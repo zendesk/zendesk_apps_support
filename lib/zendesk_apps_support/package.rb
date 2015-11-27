@@ -126,7 +126,7 @@ module ZendeskAppsSupport
           asset_url_prefix: asset_url_prefix,
           app_class_name: app_class_name,
           author: author,
-          translations: any_translation(locale),
+          translations: translations_for(locale),
           framework_version: framework_version,
           templates: templates,
           modules: commonjs_modules
@@ -143,7 +143,11 @@ module ZendeskAppsSupport
     end
 
     def no_template
-      !!no_template_locations
+      if manifest_json['noTemplate'].is_a?(Array)
+        false
+      else
+        !!manifest_json['noTemplate']
+      end
     end
 
     def no_template_locations
@@ -198,7 +202,7 @@ module ZendeskAppsSupport
       end
     end
 
-    def any_translation(locale)
+    def translations_for(locale)
       trans = translations
       return trans[locale] if trans[locale]
       trans[self.manifest_json['defaultLocale']]
