@@ -158,7 +158,7 @@ describe ZendeskAppsSupport::Package do
     })
   end
 
-  describe 'test function works as expected' do
+  describe 'market_translations! works as expected' do
     it 'builds an app' do
       expect(package.manifest_json['author']['name']).to eq('Ned Stark')
       expect(package.send(:translations)).to eq({"en"=>{"app"=>{"description"=>"Quickly access bookmarked tickets. Syncs with the iPad app."}, "custom1"=>"The first custom thing"}})
