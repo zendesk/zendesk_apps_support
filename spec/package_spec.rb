@@ -253,7 +253,7 @@ describe ZendeskAppsSupport::Package do
   describe '#css' do
     context 'for an app with an app.css' do
       it 'returns the CSS' do
-        expect(package.customer_css).to eq(File.read('spec/bookmarks_app/app.css'))
+        expect(package.app_css).to eq(File.read('spec/bookmarks_app/app.css'))
       end
     end
 
@@ -261,7 +261,7 @@ describe ZendeskAppsSupport::Package do
       let(:source) { build_app_source(additional_files: { "app.css" => nil }) }
 
       it 'returns an empty string' do
-        expect(package.customer_css).to eq('')
+        expect(package.app_css).to eq('')
       end
     end
   end

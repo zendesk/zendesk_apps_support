@@ -159,7 +159,7 @@ module ZendeskAppsSupport
     end
 
     def compiled_templates(app_id, asset_url_prefix)
-      compiled_css = ZendeskAppsSupport::StylesheetCompiler.new(DEFAULT_SCSS + customer_css, app_id, asset_url_prefix).compile
+      compiled_css = ZendeskAppsSupport::StylesheetCompiler.new(DEFAULT_SCSS + app_css, app_id, asset_url_prefix).compile
 
       layout = templates['layout'] || DEFAULT_LAYOUT.result
 
@@ -181,7 +181,7 @@ module ZendeskAppsSupport
       manifest_json['location']
     end
 
-    def customer_css
+    def app_css
       css_file = file_path('app.css')
       File.exist?(css_file) ? File.read(css_file) : ''
     end
