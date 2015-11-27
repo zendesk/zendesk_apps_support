@@ -6,6 +6,8 @@ module ZendeskAppsSupport
   autoload :BuildTranslation,       'zendesk_apps_support/build_translation'
   autoload :I18n,                   'zendesk_apps_support/i18n'
   autoload :Package,                'zendesk_apps_support/package'
+  autoload :Installed,              'zendesk_apps_support/installed'
+  autoload :Installation,           'zendesk_apps_support/installation'
   autoload :AppRequirement,         'zendesk_apps_support/app_requirement'
   autoload :AppVersion,             'zendesk_apps_support/app_version'
   autoload :StylesheetCompiler,     'zendesk_apps_support/stylesheet_compiler'
@@ -13,6 +15,7 @@ module ZendeskAppsSupport
   module Validations
     autoload :ValidationError,       'zendesk_apps_support/validations/validation_error'
     autoload :Manifest,              'zendesk_apps_support/validations/manifest'
+    autoload :Marketplace,           'zendesk_apps_support/validations/marketplace'
     autoload :Source,                'zendesk_apps_support/validations/source'
     autoload :Templates,             'zendesk_apps_support/validations/templates'
     autoload :Translations,          'zendesk_apps_support/validations/translations'

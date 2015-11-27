@@ -5,7 +5,7 @@ module ZendeskAppsSupport
     module Stylesheets
       class << self
         def call(package)
-          if css_error = validate_styles(package.customer_css)
+          if css_error = validate_styles(package.app_css)
             [css_error]
           else
             []

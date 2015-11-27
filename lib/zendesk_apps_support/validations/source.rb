@@ -24,7 +24,7 @@ module ZendeskAppsSupport
           app   = package.files.find { |file| file.relative_path == 'app.js' }
           files = package.lib_files << app
 
-          if package.requirements_only
+          if package.manifest_json['requirementsOnly']
             return app ? [ValidationError.new(:no_app_js_required)] : []
           end
 

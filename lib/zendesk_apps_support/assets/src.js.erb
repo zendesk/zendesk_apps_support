@@ -1,38 +1,32 @@
-(function() {
-  with( ZendeskApps.AppScope.create() ) {
-    <% unless modules.nil? %>
+with( ZendeskApps.AppScope.create() ) {
+  <% unless modules.empty? %>
     require.modules = {
       <% modules.each do |path, content| %>
-        '<%= path %>': function(exports, require, module) {
+        <%= path.to_json %>: function(exports, require, module) {
           <%= content %>
         },
       <% end %>
       eom: undefined
     };
-    <% end %>
+  <% end %>
 
-    var source = <%= source %>;
+  var source = <%= source %>;
 
-    var app = ZendeskApps.defineApp(source)
-      .reopenClass(<%= app_settings.to_json %>)
-      .reopen({
-        appName: <%= name.to_json %>,
-        appVersion: <%= version.to_json %>,
-        assetUrlPrefix: <%= asset_url_prefix.to_json %>,
-        appClassName: <%= app_class_name.to_json %>,
-        author: {
-          name: <%= author[:name].to_json %>,
-          email: <%= author[:email].to_json %>
-        },
-        translations: <%= translations.to_json %>,
-        templates: <%= templates.to_json %>,
-        frameworkVersion: <%= framework_version.to_json %>,
-      });
+  var app = ZendeskApps.defineApp(source)
+    .reopenClass(<%= app_settings.to_json %>)
+    .reopen({
+      appName: <%= name.to_json %>,
+      appVersion: <%= version.to_json %>,
+      assetUrlPrefix: <%= asset_url_prefix.to_json %>,
+      appClassName: <%= app_class_name.to_json %>,
+      author: {
+        name: <%= author['name'].to_json %>,
+        email: <%= author['email'].to_json %>
+      },
+      translations: <%= translations.to_json %>,
+      templates: <%= templates.to_json %>,
+      frameworkVersion: <%= framework_version.to_json %>
+    });
 
-    ZendeskApps[<%= name.to_json %>] = app;
-  }
-
-  ZendeskApps[<%= name.to_json %>].install({"id": <%= app_id %>, "app_id": <%= app_id %>, "settings": <%= settings.to_json %>});
-}());
-
-ZendeskApps.trigger && ZendeskApps.trigger('ready');
+  ZendeskApps[<%= name.to_json %>] = app;
+}

@@ -6,29 +6,33 @@ module ZendeskAppsSupport
   class Package
     include ZendeskAppsSupport::BuildTranslation
 
+    REQUIREMENTS_FILENAME = "requirements.json"
+
     DEFAULT_LAYOUT = Erubis::Eruby.new(File.read(File.expand_path('../assets/default_template.html.erb', __FILE__)))
     DEFAULT_SCSS   = File.read(File.expand_path('../assets/default_styles.scss', __FILE__))
     SRC_TEMPLATE   = Erubis::Eruby.new(File.read(File.expand_path('../assets/src.js.erb', __FILE__)))
 
     attr_reader :lib_root, :root, :warnings
-    attr_accessor :requirements_only
 
-    def initialize(dir)
-      @root = Pathname.new(File.expand_path(dir))
+    def initialize(dir, is_cached = true)
+      @root     = Pathname.new(File.expand_path(dir))
       @lib_root = Pathname.new(File.join(@root, 'lib'))
+
+      @is_cached    = is_cached #disabled by ZAT for development
       @warnings = []
-      @requirements_only = false
     end
 
-    def validate
+    def validate(marketplace: true)
       [].tap do |errors|
+        errors << Validations::Marketplace.call(self) if marketplace
+
         errors << Validations::Manifest.call(self)
 
         if has_manifest?
           errors << Validations::Source.call(self)
           errors << Validations::Translations.call(self)
 
-          unless @requirements_only
+          unless manifest_json['requirementsOnly']
             errors << Validations::Templates.call(self)
             errors << Validations::Stylesheets.call(self)
           end
@@ -42,22 +46,34 @@ module ZendeskAppsSupport
           errors << Validations::Banner.call(self)
         end
 
-        errors.flatten!
+        errors.flatten!.compact!
       end
     end
 
-    def app_js
-      read_file('app.js')
+    def validate!(marketplace: true)
+      errors = validate(marketplace: marketplace)
+      if errors.any?
+        raise errors.first
+      end
+      true
     end
 
-    def commonjs_modules
-      return unless has_lib_js?
-
-      lib_files.each_with_object({}) do |file, modules|
-        name          = file.relative_path.gsub!(/^lib\//, '')
-        content       = file.read
-        modules[name] = content
+    def assets
+      @assets ||= Dir.chdir(@root) do
+        Dir["assets/**/*"].select { |f| File.file?(f) }
       end
+    end
+
+    def path_to(file)
+      File.join(@root, file)
+    end
+
+    def requirements_path
+      path_to(REQUIREMENTS_FILENAME)
+    end
+
+    def locales
+      translations.keys
     end
 
     def files
@@ -65,61 +81,40 @@ module ZendeskAppsSupport
     end
 
     def lib_files
-      @lib_files ||= files.select { |f| f =~ /^lib\/.*\.js$/ }
+      @lib_files ||= non_tmp_files.select { |f| f =~ /^lib\/.*\.js$/ }
     end
 
     def template_files
       files.select { |f| f =~ /^templates\/.*\.hdbs$/ }
     end
 
-    def no_template
-      manifest = manifest_json
-      if manifest['noTemplate'].is_a?(Array)
-        false
-      else
-        !!manifest['noTemplate']
-      end
-    end
-
     def translation_files
-      files.select { |f| f =~ /^translations\// }
+      non_tmp_files.select { |f| f =~ /^translations\// }
     end
 
-    def manifest_json
-      read_json('manifest.json')
-    end
+    def compile_js(options)
+      begin
+        app_id = options.fetch(:app_id)
+        asset_url_prefix = options.fetch(:assets_dir)
+        name = options.fetch(:app_name)
+      rescue KeyError => e
+        raise ArgumentError, e.message
+      end
 
-    def requirements_json
-      read_json('requirements.json')
-    end
+      locale = options.fetch(:locale, 'en')
 
-    def translations(locale)
-      file_path = "translations/#{locale}.json"
-      file_path = "translations/en.json" unless file_exists?(file_path)
-      read_json(file_path, false)
-    end
-
-    def app_translations(locale)
-      remove_zendesk_keys(translations(locale))
-    end
-
-    def readified_js(app_name, app_id, asset_url_prefix, settings = {}, locale = 'en')
-      manifest = manifest_json
       source = app_js
-      name = app_name || manifest[:name] || 'Local App'
-      location = manifest[:location]
-      version = manifest[:version]
+      location = manifest_json['location']
+      version = manifest_json['version']
       app_class_name = "app-#{app_id}"
-      author = manifest[:author]
-      framework_version = manifest[:frameworkVersion]
-      single_install = manifest[:singleInstall] || false
-      templates = no_template ? {} : compiled_templates(app_id, asset_url_prefix)
-
-      settings['title'] = name
+      author = manifest_json['author']
+      framework_version = manifest_json['frameworkVersion']
+      single_install = manifest_json['singleInstall'] || false
+      templates = is_no_template ? {} : compiled_templates(app_id, asset_url_prefix)
 
       app_settings = {
         location: location,
-        noTemplate: no_template,
+        noTemplate: is_no_template,
         singleInstall: single_install
       }.select { |_k, v| !v.nil? }
 
@@ -131,22 +126,117 @@ module ZendeskAppsSupport
           asset_url_prefix: asset_url_prefix,
           app_class_name: app_class_name,
           author: author,
-          translations: app_translations(locale),
+          translations: translations_for(locale),
           framework_version: framework_version,
           templates: templates,
-          settings: settings,
-          app_id: app_id,
           modules: commonjs_modules
       )
     end
 
-    def customer_css
+    def manifest_json
+      @manifest ||= read_json('manifest.json')
+    end
+
+    def requirements_json
+      return nil unless has_requirements?
+      @requirements ||= read_json('requirements.json')
+    end
+
+    def is_no_template
+      if manifest_json['noTemplate'].is_a?(Array)
+        false
+      else
+        !!manifest_json['noTemplate']
+      end
+    end
+
+    def no_template_locations
+      if manifest_json['noTemplate'].is_a?(Array)
+        manifest_json['noTemplate']
+      else
+        !!manifest_json['noTemplate']
+      end
+    end
+
+    def compiled_templates(app_id, asset_url_prefix)
+      compiled_css = ZendeskAppsSupport::StylesheetCompiler.new(DEFAULT_SCSS + app_css, app_id, asset_url_prefix).compile
+
+      layout = templates['layout'] || DEFAULT_LAYOUT.result
+
+      templates.tap do |templates|
+        templates['layout'] = "<style>\n#{compiled_css}</style>\n#{layout}"
+      end
+    end
+
+    def market_translations!(locale)
+      result = translations[locale].fetch('app', {})
+      result.delete('name')
+      result.delete('description')
+      result.delete('long_description')
+      result.delete('installation_instructions')
+      result
+    end
+
+    def has_location?
+      manifest_json['location']
+    end
+
+    def app_css
       css_file = file_path('app.css')
       File.exist?(css_file) ? File.read(css_file) : ''
     end
 
-    def has_js?
-      file_exists?('app.js')
+    def file_path(path)
+      File.join(root, path)
+    end
+
+    private
+
+    def templates
+      templates_dir = File.join(@root, 'templates')
+      Dir["#{templates_dir}/*.hdbs"].inject({}) do |memo, file|
+        str = File.read(file)
+        str.chomp!
+        memo[File.basename(file, File.extname(file))] = str
+        memo
+      end
+    end
+
+    def translations_for(locale)
+      trans = translations
+      return trans[locale] if trans[locale]
+      trans[self.manifest_json['defaultLocale']]
+    end
+
+    def translations
+      return @translations if @is_cached && @translations
+
+      @translations = begin
+        translation_dir = File.join(@root, 'translations')
+        return {} unless File.directory?(translation_dir)
+
+        locale_path = "#{translation_dir}/#{self.manifest_json['defaultLocale']}.json"
+        default_translations = process_translations(locale_path)
+
+        Dir["#{translation_dir}/*.json"].inject({}) do |memo, path|
+          locale = File.basename(path, File.extname(path))
+
+          locale_translations = if locale == self.manifest_json['defaultLocale']
+            default_translations
+          else
+            deep_merge_hash(default_translations, process_translations(path))
+          end
+
+          memo[locale] = locale_translations
+          memo
+        end
+      end
+    end
+
+    def process_translations(locale_path)
+      translations = File.exist?(locale_path) ? JSON.parse(File.read(locale_path)) : {}
+      translations['app'].delete('package') if translations.has_key?('app')
+      remove_zendesk_keys(translations)
     end
 
     def has_lib_js?
@@ -157,10 +247,6 @@ module ZendeskAppsSupport
       file_exists?('manifest.json')
     end
 
-    def has_location?
-      manifest_json[:location]
-    end
-
     def has_requirements?
       file_exists?('requirements.json')
     end
@@ -169,29 +255,8 @@ module ZendeskAppsSupport
       file_exists?('assets/banner.png')
     end
 
-    def file_path(path)
-      File.join(root, path)
-    end
-
-    private
-
-    def compiled_templates(app_id, asset_url_prefix)
-      compiled_css = ZendeskAppsSupport::StylesheetCompiler.new(DEFAULT_SCSS + customer_css, app_id, asset_url_prefix).compile
-
-      templates = begin
-        Dir["#{root}/templates/*.hdbs"].inject({}) do |h, file|
-          str = File.read(file)
-          str.chomp!
-          h[File.basename(file, File.extname(file))] = str
-          h
-        end
-      end
-
-      layout = templates['layout'] || DEFAULT_LAYOUT.result
-
-      templates.tap do |templates|
-        templates['layout'] = "<style>\n#{compiled_css}</style>\n#{layout}"
-      end
+    def app_js
+      read_file('app.js')
     end
 
     def non_tmp_files
@@ -205,18 +270,40 @@ module ZendeskAppsSupport
       files
     end
 
+    def commonjs_modules
+      return {} unless has_lib_js?
+
+      lib_files.each_with_object({}) do |file, modules|
+        name          = file.relative_path.gsub(/^lib\//, '')
+        content       = file.read
+        modules[name] = content
+      end
+    end
+
     def file_exists?(path)
       File.exist?(file_path(path))
+    end
+
+    def deep_merge_hash(h, another_h)
+      result_h = h.dup
+      another_h.each do |key, value|
+        if h.has_key?(key) && h[key].is_a?(Hash) && value.is_a?(Hash)
+          result_h[key] = deep_merge_hash(h[key], value)
+        else
+          result_h[key] = value
+        end
+      end
+      result_h
     end
 
     def read_file(path)
       File.read(file_path(path))
     end
 
-    def read_json(path, symbolize_names = true)
+    def read_json(path)
       file = read_file(path)
       unless file.nil?
-        JSON.parse(read_file(path), symbolize_names: symbolize_names)
+        JSON.parse(read_file(path))
       end
     end
   end

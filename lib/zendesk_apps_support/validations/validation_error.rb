@@ -2,7 +2,7 @@ require 'json'
 
 module ZendeskAppsSupport
   module Validations
-    class ValidationError
+    class ValidationError < StandardError
       KEY_PREFIX = 'txt.apps.admin.error.app_build.'.freeze
 
       class DeserializationError < StandardError
