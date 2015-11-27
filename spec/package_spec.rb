@@ -318,22 +318,22 @@ describe ZendeskAppsSupport::Package do
     end
   end
 
-  describe '#no_template' do
+  describe '#is_no_template' do
     context 'when noTemplate is a boolean in the manifest' do
       it 'returns true when noTemplate is true' do
         manifest['noTemplate'] = true
-        expect(package.no_template).to be_truthy
+        expect(package.is_no_template).to be_truthy
       end
 
       it 'returns false when noTemplate is false' do
         manifest['noTemplate'] = false
-        expect(package.no_template).to be_falsey
+        expect(package.is_no_template).to be_falsey
       end
     end
     context 'when noTemplate is an array of locations' do
       it 'returns false' do
         manifest['noTemplate'] = ['new_ticket_sidebar', 'nav_bar']
-        expect(package.no_template).to be_falsey
+        expect(package.is_no_template).to be_falsey
       end
     end
   end

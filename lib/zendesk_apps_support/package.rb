@@ -110,11 +110,11 @@ module ZendeskAppsSupport
       author = manifest_json['author']
       framework_version = manifest_json['frameworkVersion']
       single_install = manifest_json['singleInstall'] || false
-      templates = no_template ? {} : compiled_templates(app_id, asset_url_prefix)
+      templates = is_no_template ? {} : compiled_templates(app_id, asset_url_prefix)
 
       app_settings = {
         location: location,
-        noTemplate: no_template,
+        noTemplate: is_no_template,
         singleInstall: single_install
       }.select { |_k, v| !v.nil? }
 
@@ -142,7 +142,7 @@ module ZendeskAppsSupport
       @requirements ||= read_json('requirements.json')
     end
 
-    def no_template
+    def is_no_template
       if manifest_json['noTemplate'].is_a?(Array)
         false
       else
