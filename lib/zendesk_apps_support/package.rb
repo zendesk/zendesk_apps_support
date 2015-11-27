@@ -143,11 +143,7 @@ module ZendeskAppsSupport
     end
 
     def no_template
-      if manifest_json['noTemplate'].is_a?(Array)
-        false
-      else
-        !!manifest_json['noTemplate']
-      end
+      !!no_template_locations
     end
 
     def no_template_locations
