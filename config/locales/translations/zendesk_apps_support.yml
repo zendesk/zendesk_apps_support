@@ -37,7 +37,7 @@ parts:
       value: "Could not find manifest.json"
   - translation:
       key: "txt.apps.admin.error.app_build.symlink_in_zip"
-      title: "App builder job: symlinks not allowed"
+      title: "App builder job: symlinks not allowed. https://en.wikipedia.org/wiki/Symbolic_link"
       value: "Symlinks are not allowed in the zip file"
   - translation:
       key: "txt.apps.admin.error.app_build.missing_requirements"
