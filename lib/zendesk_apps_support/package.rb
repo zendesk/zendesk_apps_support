@@ -64,6 +64,12 @@ module ZendeskAppsSupport
       end
     end
 
+    def location
+      locations = manifest_json['location']
+      locations = [ locations ] if locations.is_a?(String)
+      locations.is_a?(Hash) ? locations : { zendesk: locations }
+    end
+
     def path_to(file)
       File.join(@root, file)
     end
@@ -104,7 +110,6 @@ module ZendeskAppsSupport
       locale = options.fetch(:locale, 'en')
 
       source = app_js
-      location = manifest_json['location']
       version = manifest_json['version']
       app_class_name = "app-#{app_id}"
       author = manifest_json['author']

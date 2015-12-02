@@ -37,7 +37,7 @@ module.exports = b;
 ;
 
   var app = ZendeskApps.defineApp(source)
-    .reopenClass({"location":"ticket_sidebar","noTemplate":false,"singleInstall":false})
+    .reopenClass({"location":{"zendesk":["ticket_sidebar"]},"noTemplate":false,"singleInstall":false})
     .reopen({
       appName: "EFG",
       appVersion: "1.0.0",
