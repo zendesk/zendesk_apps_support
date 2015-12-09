@@ -1,17 +1,35 @@
 <% unless iframe_only %>
 with( ZendeskApps.AppScope.create() ) {
-  <% unless modules.empty? %>
   require.modules = {
-      <% modules.each do |path, content| %>
+    <% modules.each do |path, content| %>
       <%= path.to_json %>: function(exports, require, module) {
         <%= content %>
       },
-      <% end %>
-    eom: undefined
+    <% end %>
+    'app.js': function(exports, require, module) {
+      <%= source %>
+    }
   };
-  <% end %>
 
-  var source = <%= source %>;
+  var source = require('app');
+
+  var app = ZendeskApps.defineApp(source)
+    .reopenClass(<%= app_settings.to_json %>)
+    .reopen({
+      appName: <%= name.to_json %>,
+      appVersion: <%= version.to_json %>,
+      assetUrlPrefix: <%= asset_url_prefix.to_json %>,
+      appClassName: <%= app_class_name.to_json %>,
+      author: {
+        name: <%= author['name'].to_json %>,
+        email: <%= author['email'].to_json %>
+      },
+      translations: <%= translations.to_json %>,
+      templates: <%= templates.to_json %>,
+      frameworkVersion: <%= framework_version.to_json %>
+    });
+
+  ZendeskApps[<%= name.to_json %>] = app;
 }
 <% end %>
 var app = ZendeskApps.defineApp(<%= iframe_only ? 'null' : 'source' %>)

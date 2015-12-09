@@ -1,6 +1,7 @@
 require 'pathname'
 require 'erubis'
 require 'json'
+require 'babel/transpiler'
 
 module ZendeskAppsSupport
   class Package
@@ -289,7 +290,11 @@ module ZendeskAppsSupport
     end
 
     def app_js
-      read_file('app.js')
+      to_es6(read_file('app.js'))
+    end
+
+    def to_es6(code)
+      Babel::Transpiler.transform(code)['code']
     end
 
     def commonjs_modules
@@ -298,7 +303,7 @@ module ZendeskAppsSupport
       lib_files.each_with_object({}) do |file, modules|
         name          = file.relative_path.gsub(/^lib\//, '')
         content       = file.read
-        modules[name] = content
+        modules[name] = to_es6(content)
       end
     end
 
