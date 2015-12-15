@@ -6,12 +6,16 @@ with( ZendeskApps.AppScope.create() ) {
         <%= content %>
       },
     <% end %>
-    '_root.js': function(exports, require, module) {
-      <%= source %>
-    }
+    <% if is_es2015 %>
+      '_root.js': function(exports, require, module) {
+        <%= source %>
+      }
+    <% else %>
+      eom: undefined
+    <% end %>
   };
 
-  var source = require('_root');
+  var source = <% if is_es2015 %> require('_root'); <% else %> <%= source %>; <% end %>
 
   var app = ZendeskApps.defineApp(source)
     .reopenClass(<%= app_settings.to_json %>)

@@ -134,6 +134,7 @@ module ZendeskAppsSupport
       SRC_TEMPLATE.result(
         name: name,
         version: version,
+        is_es2015: !!manifest_json['es2015'],
         source: source,
         app_settings: app_settings,
         asset_url_prefix: asset_url_prefix,
@@ -294,7 +295,7 @@ module ZendeskAppsSupport
     end
 
     def transpile(code)
-      Babel::Transpiler.transform(code)['code']
+      manifest_json['es2015'] ? Babel::Transpiler.transform(code)['code'] : code
     end
 
     def commonjs_modules
