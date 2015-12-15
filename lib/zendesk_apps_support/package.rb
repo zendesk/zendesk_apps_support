@@ -301,6 +301,7 @@ module ZendeskAppsSupport
       return {} unless has_lib_js?
 
       lib_files.each_with_object({}) do |file, modules|
+        raise Validations::ValidationError.new('reserved_filename') if file.relative_path == 'lib/_root.js'
         name          = file.relative_path.gsub(/^lib\//, '')
         content       = file.read
         modules[name] = to_es6(content)

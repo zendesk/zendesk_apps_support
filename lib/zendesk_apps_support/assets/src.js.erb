@@ -6,12 +6,12 @@ with( ZendeskApps.AppScope.create() ) {
         <%= content %>
       },
     <% end %>
-    'app.js': function(exports, require, module) {
+    '_root.js': function(exports, require, module) {
       <%= source %>
     }
   };
 
-  var source = require('app');
+  var source = require('_root');
 
   var app = ZendeskApps.defineApp(source)
     .reopenClass(<%= app_settings.to_json %>)

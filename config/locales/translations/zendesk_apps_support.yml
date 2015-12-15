@@ -45,6 +45,10 @@ parts:
       title: "App builder job: missing requirements error"
       value: "Could not find requirements.json"
   - translation:
+      key: "txt.apps.admin.error.app_build.reserved_filename"
+      title: "App builder job: reserved file name '_root.js' in lib folder"
+      value: "reserved file name '_root.js' in lib folder"
+  - translation:
       key: "txt.apps.admin.error.app_build.manifest_keys.missing.one"
       title: "App builder job: missing manifest fields error"
       value: "Missing required field in manifest: %{missing_keys}"
