@@ -290,10 +290,10 @@ module ZendeskAppsSupport
     end
 
     def app_js
-      to_es6(read_file('app.js'))
+      transpile(read_file('app.js'))
     end
 
-    def to_es6(code)
+    def transpile(code)
       Babel::Transpiler.transform(code)['code']
     end
 
@@ -304,7 +304,7 @@ module ZendeskAppsSupport
         raise Validations::ValidationError.new('reserved_filename') if file.relative_path == 'lib/_root.js'
         name          = file.relative_path.gsub(/^lib\//, '')
         content       = file.read
-        modules[name] = to_es6(content)
+        modules[name] = transpile(content)
       end
     end
 
