@@ -2,7 +2,6 @@ module ZendeskAppsSupport
   require 'zendesk_apps_support/sass_functions'
   require 'zendesk_apps_support/engine'
   require 'execjs'
-  require 'therubyracer'
 
   autoload :AppFile,                'zendesk_apps_support/app_file'
   autoload :BuildTranslation,       'zendesk_apps_support/build_translation'
@@ -15,8 +14,6 @@ module ZendeskAppsSupport
   autoload :AppRequirement,         'zendesk_apps_support/app_requirement'
   autoload :AppVersion,             'zendesk_apps_support/app_version'
   autoload :StylesheetCompiler,     'zendesk_apps_support/stylesheet_compiler'
-
-  ExecJS.runtime = ExecJS::Runtimes::RubyRacer
 
   module Validations
     autoload :ValidationError,       'zendesk_apps_support/validations/validation_error'
