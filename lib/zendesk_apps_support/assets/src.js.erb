@@ -15,7 +15,7 @@ with( ZendeskApps.AppScope.create() ) {
     <% end %>
   };
 
-  var source = <% if is_es2015 %> require('_root'); <% else %> <%= source %>; <% end %>
+  var source =<% if is_es2015 %>require('_root')<% else %> <%= source %><% end %>;
 
   var app = ZendeskApps.defineApp(source)
     .reopenClass(<%= app_settings.to_json %>)
