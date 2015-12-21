@@ -1,20 +1,22 @@
-require 'jshintrb'
+require 'eslintrb'
 
 module ZendeskAppsSupport
   module Validations
     module Source
       LINTER_OPTIONS = {
-        # enforcing options:
-        noarg: true,
-        undef: true,
+        rules: {
+          semi: 2
+          # enforcing options:
+          #noarg: 2,
+          #undef: 2,
 
-        # relaxing options:
-        eqnull: true,
-        laxcomma: true,
-        sub: true,
-
+          # relaxing options:
+          #eqnull: 2,
+          #laxcomma: 2,
+          #sub: 2,
+        },
         # predefined globals:
-        predef: %w(_ console services helpers alert confirm window document self
+        globals: %w(_ console services helpers alert confirm window document self
                    JSON Base64 clearInterval clearTimeout setInterval setTimeout
                    require module exports top frames parent moment),
 
@@ -48,7 +50,7 @@ module ZendeskAppsSupport
         end
 
         def jshint_error(file)
-          errors = linter.lint(file.read)
+          errors = Eslintrb.lint(file.read, LINTER_OPTIONS)
           [JSHintValidationError.new(file.relative_path, errors)] if errors.any?
         end
 
@@ -57,10 +59,6 @@ module ZendeskAppsSupport
             error = jshint_error(file)
             errors << error unless error.nil?
           end
-        end
-
-        def linter
-          Jshintrb::Lint.new(LINTER_OPTIONS)
         end
       end
     end

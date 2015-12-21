@@ -80,7 +80,7 @@ module ZendeskAppsSupport
       end
 
       def initialize(filename, jshint_errors)
-        errors = jshint_errors.compact.map { |err| "\n  L#{err['line']}: #{err['reason']}" }.join('')
+        errors = jshint_errors.compact.map { |err| "\n  L#{err['line']}: #{err['message']}" }.join('')
         @filename = filename, @jshint_errors = jshint_errors
         super(:jshint, {
           file: filename,
