@@ -77,11 +77,22 @@ module ZendeskAppsSupport
     end
 
     def files
-      non_tmp_files
+      files = []
+      Dir[root.join('**/**')].each do |f|
+        next unless File.file?(f)
+        relative_file_name = f.sub(/#{root}\/?/, '')
+        next if relative_file_name =~ /^tmp\//
+        files << AppFile.new(self, relative_file_name)
+      end
+      files
+    end
+
+    def js_files
+      @js_files ||= files.select { |f| f =~ /\.js$/ }
     end
 
     def lib_files
-      @lib_files ||= non_tmp_files.select { |f| f =~ /^lib\/.*\.js$/ }
+      @lib_files ||= js_files.select { |f| f =~ /^lib\// }
     end
 
     def template_files
@@ -89,7 +100,7 @@ module ZendeskAppsSupport
     end
 
     def translation_files
-      non_tmp_files.select { |f| f =~ /^translations\// }
+      files.select { |f| f =~ /^translations\// }
     end
 
     def compile_js(options)
@@ -257,17 +268,6 @@ module ZendeskAppsSupport
 
     def app_js
       read_file('app.js')
-    end
-
-    def non_tmp_files
-      files = []
-      Dir[root.join('**/**')].each do |f|
-        next unless File.file?(f)
-        relative_file_name = f.sub(/#{root}\/?/, '')
-        next if relative_file_name =~ /^tmp\//
-        files << AppFile.new(self, relative_file_name)
-      end
-      files
     end
 
     def commonjs_modules
