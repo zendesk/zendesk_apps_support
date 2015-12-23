@@ -7,7 +7,7 @@ module ZendeskAppsSupport
       OAUTH_REQUIRED_FIELDS    = %w( client_id client_secret authorize_uri access_token_uri ).freeze
       TYPES_AVAILABLE          = %w( text password checkbox url number multiline hidden ).freeze
       LOCATIONS_AVAILABLE      = {
-        'zendesk' => %w( top_bar nav_bar ticket_sidebar new_ticket_sidebar user_sidebar organization_sidebar ),
+        'zendesk' => %w( top_bar nav_bar ticket_sidebar new_ticket_sidebar user_sidebar organization_sidebar background ),
         'zopim' => %w( chat_sidebar )
       }.freeze
 
