@@ -92,7 +92,7 @@ module ZendeskAppsSupport
     end
 
     def lib_files
-      @lib_files ||= js_files.select { |f| f =~ /^lib\/.*\.js$/ }
+      @lib_files ||= js_files.select { |f| f =~ /^lib\// }
     end
 
     def template_files
