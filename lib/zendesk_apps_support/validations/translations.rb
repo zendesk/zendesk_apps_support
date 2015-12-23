@@ -1,4 +1,3 @@
-require 'jshintrb'
 require 'json'
 
 module ZendeskAppsSupport
