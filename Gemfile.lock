@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    zendesk_apps_support (1.20.0)
+    zendesk_apps_support (1.21.0)
       erubis
       i18n
       image_size
