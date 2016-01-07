@@ -7,17 +7,6 @@ module ZendeskAppsSupport
       REQUIRED_MANIFEST_FIELDS = %w( author defaultLocale ).freeze
       OAUTH_REQUIRED_FIELDS    = %w( client_id client_secret authorize_uri access_token_uri ).freeze
       TYPES_AVAILABLE          = %w( text password checkbox url number multiline hidden ).freeze
-      LOCATIONS_AVAILABLE      = {
-        'zendesk' => %w( top_bar
-                         nav_bar
-                         ticket_sidebar
-                         new_ticket_sidebar
-                         user_sidebar
-                         organization_sidebar
-                         background
-                     ),
-        'zopim' => %w( chat_sidebar )
-      }.freeze
 
       class <<self
         def call(package)
@@ -123,10 +112,13 @@ module ZendeskAppsSupport
           errors = []
           manifest_locations = package.locations
           manifest_locations.find do |host, locations|
-            error = if !LOCATIONS_AVAILABLE.keys.include?(host)
+            error = if !Location.hosts.include?(host)
               ValidationError.new(:invalid_host, host_name: host)
-            elsif (invalid_locations = locations.keys - LOCATIONS_AVAILABLE[host]).any?
-              ValidationError.new(:invalid_location, invalid_locations: invalid_locations.join(', '), host_name: host, count: invalid_locations.length)
+            elsif (invalid_locations = locations.keys - Location.for(host)).any?
+              ValidationError.new(:invalid_location,
+                                  invalid_locations: invalid_locations.join(', '),
+                                  host_name: host,
+                                  count: invalid_locations.length)
             end
 
             # abort early for invalid host or location name
@@ -136,7 +128,7 @@ module ZendeskAppsSupport
             end
 
             locations.values.each do |path|
-               errors << invalid_location_uri_error(package, path)
+              errors << invalid_location_uri_error(package, path)
             end
           end
           errors
