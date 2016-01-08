@@ -1,4 +1,5 @@
 require 'json'
+require 'uri'
 
 module ZendeskAppsSupport
   module Validations
@@ -19,28 +20,27 @@ module ZendeskAppsSupport
 
           manifest = JSON.load(manifest.read)
 
-          [].tap do |errors|
-            errors << missing_keys_error(manifest)
-            errors << default_locale_error(manifest, package)
-            errors << oauth_error(manifest)
-            errors << parameters_error(manifest)
-            errors << invalid_hidden_parameter_error(manifest)
-            errors << invalid_type_error(manifest)
-            errors << name_as_parameter_name_error(manifest)
+          errors = []
+          errors << missing_keys_error(manifest)
+          errors << default_locale_error(manifest, package)
+          errors << oauth_error(manifest)
+          errors << parameters_error(manifest)
+          errors << invalid_hidden_parameter_error(manifest)
+          errors << invalid_type_error(manifest)
+          errors << name_as_parameter_name_error(manifest)
 
-            if manifest['requirementsOnly']
-              errors << ban_location(manifest)
-              errors << ban_framework_version(manifest)
-            else
-              errors << missing_location_error(package)
-              errors << invalid_location_error(manifest)
-              errors << duplicate_location_error(manifest)
-              errors << missing_framework_version(manifest)
-              errors << invalid_version_error(manifest, package)
-            end
-
-            errors.compact!
+          if manifest['requirementsOnly']
+            errors << ban_location(manifest)
+            errors << ban_framework_version(manifest)
+          else
+            errors << missing_location_error(package)
+            errors << invalid_location_error(package)
+            errors << duplicate_location_error(manifest)
+            errors << missing_framework_version(manifest)
+            errors << invalid_version_error(manifest, package)
           end
+
+          errors.flatten.compact
         rescue JSON::ParserError => e
           return [ValidationError.new(:manifest_not_json, errors: e)]
         end
@@ -104,16 +104,38 @@ module ZendeskAppsSupport
           missing_keys_validation_error(['location']) unless package.has_location?
         end
 
-        def invalid_location_error(manifest)
-          manifest_location = manifest['location'].is_a?(Hash) ? manifest['location'] : { 'zendesk' => [*manifest['location']] }
-          manifest_location.find do |host, locations|
+        def invalid_location_error(package)
+          errors = []
+          manifest_locations = package.location
+          manifest_locations.find do |host, locations|
             error = if !LOCATIONS_AVAILABLE.keys.include?(host)
               ValidationError.new(:invalid_host, host_name: host)
-            elsif (invalid_locations = locations - LOCATIONS_AVAILABLE[host]).any?
+            elsif (invalid_locations = locations.keys - LOCATIONS_AVAILABLE[host]).any?
               ValidationError.new(:invalid_location, invalid_locations: invalid_locations.join(', '), host_name: host, count: invalid_locations.length)
             end
-            break error if error
+
+            # abort early for invalid host or location name
+            if error
+              errors << error
+              break
+            end
+
+            locations.values.each do |path|
+               errors << invalid_location_uri_error(package, path)
+            end
           end
+          errors
+        end
+
+        def invalid_location_uri_error(package, path)
+          return nil if path == '_legacy'
+          validation_error = ValidationError.new(:invalid_location_uri, uri: path)
+          uri = URI.parse(path)
+          if uri.absolute? ? uri.scheme != 'https' : !(uri.path.start_with?('assets/') && package.has_file?(uri.path))
+            validation_error
+          end
+        rescue URI::InvalidURIError => e
+          validation_error
         end
 
         def duplicate_location_error(manifest)
