@@ -8,7 +8,7 @@ module ZendeskAppsSupport
 
       class <<self
         def call(package)
-          File.open(package.file_path('assets/banner.png'), 'rb') do |fh|
+          File.open(package.path_to('assets/banner.png'), 'rb') do |fh|
             begin
               image = ImageSize.new(fh)
 

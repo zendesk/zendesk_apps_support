@@ -6,7 +6,7 @@ describe ZendeskAppsSupport::Validations::Banner do
   let(:package) { double('Package', files: [banner]) }
 
   before do
-    allow(package).to receive(:file_path).and_return(fixture_path(banner_file))
+    allow(package).to receive(:path_to).and_return(fixture_path(banner_file))
   end
 
   it 'creates no error on a valid banner' do

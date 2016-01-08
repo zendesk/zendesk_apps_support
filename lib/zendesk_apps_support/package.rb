@@ -65,7 +65,7 @@ module ZendeskAppsSupport
     end
 
     def path_to(file)
-      File.join(@root, file)
+      File.join(root, file)
     end
 
     def requirements_path
@@ -192,8 +192,12 @@ module ZendeskAppsSupport
       manifest_json['location']
     end
 
+    def has_file?(path)
+      File.exist?(path_to(path))
+    end
+
     def app_css
-      css_file = file_path('app.css')
+      css_file = path_to('app.css')
       File.exist?(css_file) ? File.read(css_file) : ''
     end
 
@@ -255,15 +259,15 @@ module ZendeskAppsSupport
     end
 
     def has_manifest?
-      file_exists?('manifest.json')
+      has_file?('manifest.json')
     end
 
     def has_requirements?
-      file_exists?('requirements.json')
+      has_file?('requirements.json')
     end
 
     def has_banner?
-      file_exists?('assets/banner.png')
+      has_file?('assets/banner.png')
     end
 
     def app_js
@@ -280,10 +284,6 @@ module ZendeskAppsSupport
       end
     end
 
-    def file_exists?(path)
-      File.exist?(file_path(path))
-    end
-
     def deep_merge_hash(h, another_h)
       result_h = h.dup
       another_h.each do |key, value|
@@ -297,7 +297,7 @@ module ZendeskAppsSupport
     end
 
     def read_file(path)
-      File.read(file_path(path))
+      File.read(path_to(path))
     end
 
     def read_json(path)
