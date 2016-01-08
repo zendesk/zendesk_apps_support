@@ -1,5 +1,5 @@
 require 'spec_helper'
-require 'fileutils'
+require 'tmpdir'
 
 describe ZendeskAppsSupport::Package do
   before do
@@ -381,6 +381,25 @@ describe ZendeskAppsSupport::Package do
 
     context 'when there are no js modules' do
       it { expect(modules).not_to be nil }
+    end
+  end
+
+  describe "#location" do
+    it "supports strings" do
+      location_object = @package.send(:location)
+      expect(location_object).to eq({"zendesk"=>{"ticket_sidebar"=>"_legacy"}})
+    end
+
+    it "supports arrays" do
+      @package.manifest_json['location'] = %w[🔔 🃏]
+      location_object = @package.send(:location)
+      expect(location_object).to eq({"zendesk"=>{"🃏"=>"_legacy", "🔔"=>"_legacy"}})
+    end
+
+    it "supports objects" do
+      @package.manifest_json['location'] = { 'zopim' => {'chat_sidebar' => 'http://www.zopim.com'} }
+      location_object = @package.send(:location)
+      expect(location_object).to be @package.manifest_json['location']
     end
   end
 end

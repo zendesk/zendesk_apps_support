@@ -115,7 +115,6 @@ module ZendeskAppsSupport
       locale = options.fetch(:locale, 'en')
 
       source = app_js
-      location = manifest_json['location']
       version = manifest_json['version']
       app_class_name = "app-#{app_id}"
       author = manifest_json['author']
@@ -201,8 +200,15 @@ module ZendeskAppsSupport
       File.exist?(css_file) ? File.read(css_file) : ''
     end
 
-    def file_path(path)
-      File.join(root, path)
+    def location
+      locations = manifest_json['location']
+      if locations.is_a?(Hash)
+        locations
+      elsif locations.is_a?(Array)
+        { 'zendesk' => locations.map { |location| [ location, '_legacy' ] }.to_h }
+      else # String
+        { 'zendesk' => { locations => '_legacy' } }
+      end
     end
 
     private

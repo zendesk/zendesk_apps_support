@@ -50,6 +50,7 @@ en:
             invalid_location:
               one: "%{invalid_locations} is an invalid location in %{host_name}."
               other: "%{invalid_locations} are invalid locations in %{host_name}."
+            invalid_location_uri: "%{uri} is either an invalid location URI or does not use HTTPS."
             duplicate_location:
               one: "%{duplicate_locations} is a duplicate location."
               other: "%{duplicate_locations} are duplicate locations."
