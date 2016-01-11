@@ -5,6 +5,7 @@ require 'json'
 module ZendeskAppsSupport
   class Package
     include ZendeskAppsSupport::BuildTranslation
+    include ZendeskAppsSupport::FileLocations
 
     REQUIREMENTS_FILENAME = "requirements.json"
 
@@ -58,12 +59,6 @@ module ZendeskAppsSupport
       true
     end
 
-    def assets
-      @assets ||= Dir.chdir(@root) do
-        Dir["assets/**/*"].select { |f| File.file?(f) }
-      end
-    end
-
     def path_to(file)
       File.join(root, file)
     end
@@ -76,32 +71,7 @@ module ZendeskAppsSupport
       translations.keys
     end
 
-    def files
-      files = []
-      Dir[root.join('**/**')].each do |f|
-        next unless File.file?(f)
-        relative_file_name = f.sub(/#{root}\/?/, '')
-        next if relative_file_name =~ /^tmp\//
-        files << AppFile.new(self, relative_file_name)
-      end
-      files
-    end
 
-    def js_files
-      @js_files ||= files.select { |f| f.to_s == 'app.js' || ( f.to_s.start_with?('lib/') && f.to_s.end_with?('.js') ) }
-    end
-
-    def lib_files
-      @lib_files ||= js_files.select { |f| f =~ /^lib\// }
-    end
-
-    def template_files
-      files.select { |f| f =~ /^templates\/.*\.hdbs$/ }
-    end
-
-    def translation_files
-      files.select { |f| f =~ /^translations\// }
-    end
 
     def compile_js(options)
       begin

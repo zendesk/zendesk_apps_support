@@ -5,6 +5,7 @@ module ZendeskAppsSupport
   autoload :AppFile,                'zendesk_apps_support/app_file'
   autoload :BuildTranslation,       'zendesk_apps_support/build_translation'
   autoload :I18n,                   'zendesk_apps_support/i18n'
+  autoload :FileLocations,          'zendesk_apps_support/file_locations'
   autoload :Package,                'zendesk_apps_support/package'
   autoload :Installed,              'zendesk_apps_support/installed'
   autoload :Installation,           'zendesk_apps_support/installation'
