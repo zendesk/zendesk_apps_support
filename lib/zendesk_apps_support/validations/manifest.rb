@@ -131,11 +131,19 @@ module ZendeskAppsSupport
           return nil if path == '_legacy'
           validation_error = ValidationError.new(:invalid_location_uri, uri: path)
           uri = URI.parse(path)
-          if uri.absolute? ? uri.scheme != 'https' : !(uri.path.start_with?('assets/') && package.has_file?(uri.path))
+          unless uri.absolute? ? valid_absolute_uri?(uri) : valid_relative_uri?(package, uri)
             validation_error
           end
         rescue URI::InvalidURIError => e
           validation_error
+        end
+
+        def valid_absolute_uri?(uri)
+          uri.scheme == 'https' || uri.host == 'localhost'
+        end
+
+        def valid_relative_uri?(package, uri)
+          uri.path.start_with?('assets/') && package.has_file?(uri.path)
         end
 
         def duplicate_location_error(manifest)
