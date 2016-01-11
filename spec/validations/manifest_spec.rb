@@ -131,6 +131,14 @@ describe ZendeskAppsSupport::Validations::Manifest do
     end
   end
 
+  context 'location is localhost' do
+    let(:location) { { 'zendesk' =>  { 'ticket_sidebar' => 'http://localhost:9999/' } } }
+
+    it 'should not have an error' do
+      expect(@package).not_to have_error(/invalid location/)
+    end
+  end
+
   context 'location uri is not HTTPS' do
     let(:location) { { 'zendesk' =>  { 'ticket_sidebar' => 'http://mysite.com/zendesk_iframe' } } }
 
@@ -151,7 +159,7 @@ describe ZendeskAppsSupport::Validations::Manifest do
     let(:location) { { 'zendesk' =>  { 'ticket_sidebar' => 'https://mysite.com/zendesk_iframe' } } }
 
     it 'should not have an error' do
-      expect(@package).not_to have_error(/invalid location URI/)
+      expect(@package).not_to have_error(/invalid location/)
     end
   end
 
