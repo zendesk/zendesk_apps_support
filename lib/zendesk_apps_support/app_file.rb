@@ -5,7 +5,7 @@ module ZendeskAppsSupport
 
     def initialize(package, relative_path)
       @relative_path = relative_path
-      @file = File.new(package.root.join(relative_path))
+      @file = File.new(package.path_to(relative_path))
       @absolute_path = File.absolute_path @file.path
     end
 
@@ -31,12 +31,6 @@ module ZendeskAppsSupport
       end
     end
 
-    # Unless Ruby 1.9
-    def respond_to?(sym, include_private = false)
-      @file.respond_to?(sym, include_private) || super
-    end
-
-    # If Ruby 1.9
     def respond_to_missing?(sym, include_private = false)
       @file.send(:respond_to_missing?, sym, include_private) || super
     end

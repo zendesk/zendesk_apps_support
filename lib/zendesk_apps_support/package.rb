@@ -18,7 +18,7 @@ module ZendeskAppsSupport
       @root     = Pathname.new(File.expand_path(dir))
       @lib_root = Pathname.new(File.join(@root, 'lib'))
 
-      @is_cached    = is_cached #disabled by ZAT for development
+      @is_cached = is_cached # disabled by ZAT for development
       @warnings = []
     end
 
