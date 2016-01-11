@@ -12,6 +12,8 @@ module ZendeskAppsSupport
     DEFAULT_SCSS   = File.read(File.expand_path('../assets/default_styles.scss', __FILE__))
     SRC_TEMPLATE   = Erubis::Eruby.new(File.read(File.expand_path('../assets/src.js.erb', __FILE__)))
 
+    LEGACY_URI_STUB = '_legacy'
+
     attr_reader :lib_root, :root, :warnings
 
     def initialize(dir, is_cached = true)
@@ -123,7 +125,7 @@ module ZendeskAppsSupport
       templates = is_no_template ? {} : compiled_templates(app_id, asset_url_prefix)
 
       app_settings = {
-        location: location,
+        location: locations,
         noTemplate: is_no_template,
         singleInstall: single_install
       }.select { |_k, v| !v.nil? }
@@ -139,7 +141,8 @@ module ZendeskAppsSupport
           translations: translations_for(locale),
           framework_version: framework_version,
           templates: templates,
-          modules: commonjs_modules
+          modules: commonjs_modules,
+          iframe_only: iframe_only?
       )
     end
 
@@ -200,18 +203,30 @@ module ZendeskAppsSupport
       File.exist?(css_file) ? File.read(css_file) : ''
     end
 
-    def location
+    def locations
       locations = manifest_json['location']
       if locations.is_a?(Hash)
         locations
       elsif locations.is_a?(Array)
-        { 'zendesk' => locations.map { |location| [ location, '_legacy' ] }.to_h }
+        { 'zendesk' => locations.map { |location| [ location, LEGACY_URI_STUB ] }.to_h }
       else # String
-        { 'zendesk' => { locations => '_legacy' } }
+        { 'zendesk' => { locations => LEGACY_URI_STUB } }
       end
     end
 
     private
+
+    def iframe_only?
+      !legacy_non_iframe_app?
+    end
+
+    def legacy_non_iframe_app?
+      @non_iframe ||= locations.values.any? do |host_locations|
+        host_locations.values.any? do |value|
+          value == LEGACY_URI_STUB
+        end
+      end
+    end
 
     def templates
       templates_dir = File.join(@root, 'templates')

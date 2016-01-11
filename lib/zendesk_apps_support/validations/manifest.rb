@@ -128,7 +128,7 @@ module ZendeskAppsSupport
         end
 
         def invalid_location_uri_error(package, path)
-          return nil if path == '_legacy'
+          return nil if path == Package::LEGACY_URI_STUB
           validation_error = ValidationError.new(:invalid_location_uri, uri: path)
           uri = URI.parse(path)
           unless uri.absolute? ? valid_absolute_uri?(uri) : valid_relative_uri?(package, uri)

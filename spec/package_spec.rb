@@ -76,6 +76,13 @@ describe ZendeskAppsSupport::Package do
       expected = File.read('spec/fixtures/app_nl.js')
       expect(js).to eq(expected)
     end
+
+    it 'should generate js for iframe app installations' do
+      @package.manifest_json['location'] = { 'zopim' => { 'chat_sidebar' => 'http://apps.zopim.com/time-tracking/' } }
+      js = @package.compile_js(app_name: "ABC", app_id: 0, assets_dir: 'http://localhost:4567/0/')
+      expected = File.read('spec/fixtures/iframe_app.js')
+      expect(js).to eq(expected)
+    end
   end
 
   describe 'deep_merge_hash' do
@@ -384,22 +391,36 @@ describe ZendeskAppsSupport::Package do
     end
   end
 
-  describe "#location" do
+  describe "#locations" do
     it "supports strings" do
-      location_object = @package.send(:location)
+      location_object = @package.send(:locations)
       expect(location_object).to eq({"zendesk"=>{"ticket_sidebar"=>"_legacy"}})
     end
 
     it "supports arrays" do
       @package.manifest_json['location'] = %w[🔔 🃏]
-      location_object = @package.send(:location)
+      location_object = @package.send(:locations)
       expect(location_object).to eq({"zendesk"=>{"🃏"=>"_legacy", "🔔"=>"_legacy"}})
     end
 
     it "supports objects" do
       @package.manifest_json['location'] = { 'zopim' => {'chat_sidebar' => 'http://www.zopim.com'} }
-      location_object = @package.send(:location)
+      location_object = @package.send(:locations)
       expect(location_object).to be @package.manifest_json['location']
+    end
+  end
+
+
+  describe '#legacy_non_iframe_app' do
+    it 'should return true for an app that doesn\'t define any iframe uris' do
+      legacy_uri_stub = ZendeskAppsSupport::Package::LEGACY_URI_STUB
+      @package.manifest_json['location'] = { 'zopim' => { 'chat_sidebar' => legacy_uri_stub } }
+      expect(@package.send(:legacy_non_iframe_app?)).to be_truthy
+    end
+
+    it 'should return false for an app that defines any iframe uris' do
+      @package.manifest_json['location'] = { 'zopim' => { 'chat_sidebar' => 'http://zopim.com' } }
+      expect(@package.send(:legacy_non_iframe_app?)).to be_falsey
     end
   end
 end
