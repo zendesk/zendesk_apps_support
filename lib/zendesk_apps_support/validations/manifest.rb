@@ -106,7 +106,7 @@ module ZendeskAppsSupport
 
         def invalid_location_error(package)
           errors = []
-          manifest_locations = package.location
+          manifest_locations = package.locations
           manifest_locations.find do |host, locations|
             error = if !LOCATIONS_AVAILABLE.keys.include?(host)
               ValidationError.new(:invalid_host, host_name: host)
