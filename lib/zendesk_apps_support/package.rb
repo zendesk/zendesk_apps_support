@@ -18,7 +18,7 @@ module ZendeskAppsSupport
 
     def initialize(dir, is_cached = true)
       @root     = Pathname.new(File.expand_path(dir))
-      @lib_root = Pathname.new(File.join(@root, 'lib'))
+      @lib_root = Pathname.new(File.join(root, 'lib'))
 
       @is_cached = is_cached # disabled by ZAT for development
       @warnings = []
@@ -61,8 +61,8 @@ module ZendeskAppsSupport
     end
 
     def assets
-      @assets ||= Dir.chdir(@root) do
-        Dir["assets/**/*"].select { |f| File.file?(f) }
+      @assets ||= Dir.chdir(root) do
+        Dir['assets/**/*'].select { |f| File.file?(f) }
       end
     end
 
@@ -229,7 +229,7 @@ module ZendeskAppsSupport
     end
 
     def templates
-      templates_dir = File.join(@root, 'templates')
+      templates_dir = File.join(root, 'templates')
       Dir["#{templates_dir}/*.hdbs"].inject({}) do |memo, file|
         str = File.read(file)
         str.chomp!
@@ -248,7 +248,7 @@ module ZendeskAppsSupport
       return @translations if @is_cached && @translations
 
       @translations = begin
-        translation_dir = File.join(@root, 'translations')
+        translation_dir = File.join(root, 'translations')
         return {} unless File.directory?(translation_dir)
 
         locale_path = "#{translation_dir}/#{self.manifest_json['defaultLocale']}.json"
