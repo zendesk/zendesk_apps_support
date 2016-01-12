@@ -49,6 +49,13 @@ describe ZendeskAppsSupport::Validations::Source do
     package = ZendeskAppsSupport::Package.new('spec/invalid_app')
     errors  = ZendeskAppsSupport::Validations::Source.call(package)
 
-    expect(errors.first.to_s).to eql "JSHint error in lib/invalid.js: \n  L1: Missing semicolon."
+    expect(errors.first.to_s).to eql "JSHint errors in lib/invalid.js: 
+  L4: Expected an assignment or function call and instead saw an expression.
+  L4: Missing semicolon.
+  L6: Avoid arguments.caller.
+  L7: Avoid arguments.callee.
+  L13: 'y' is already defined.
+  L15: Missing semicolon.
+  L9: 'bla' is not defined."
   end
 end
