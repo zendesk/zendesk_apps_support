@@ -6,6 +6,7 @@ module ZendeskAppsSupport
       LINTER_OPTIONS = {
         rules: {
           # enforcing options:
+          'semi' => 2,
           'no-caller' => 2,
           'no-undef' => 2,
 
@@ -18,9 +19,9 @@ module ZendeskAppsSupport
           'browser' => true
         },
         # predefined globals:
-        globals: %w(_ console services helpers alert confirm window document self
-                   JSON Base64 clearInterval clearTimeout setInterval setTimeout
-                   require module exports top frames parent moment)
+        globals: Hash[
+          %w(_ services helpers require module exports moment)
+        .map { |x| [x, 'true'] }]
       }.freeze
 
       class <<self
