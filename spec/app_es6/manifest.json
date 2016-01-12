@@ -9,5 +9,5 @@
   "defaultLocale": "en",
   "private": true,
   "location": "ticket_sidebar",
-  "frameworkVersion": "0.5"
+  "frameworkVersion": "1.0"
 }

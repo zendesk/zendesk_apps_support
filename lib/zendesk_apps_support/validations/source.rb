@@ -7,6 +7,7 @@ module ZendeskAppsSupport
         # enforcing options:
         noarg: true,
         undef: true,
+        esnext: true,
 
         # relaxing options:
         eqnull: true,
