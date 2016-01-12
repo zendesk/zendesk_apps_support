@@ -11,6 +11,8 @@ module ZendeskAppsSupport
           'no-undef' => 2,
 
           # relaxing options:
+          'no-unused-expressions' => 2,
+          'no-redeclare' => 2,
           'no-eq-null' => 0,
           'comma-dangle' => 0,
           'dot-notation' => 0
