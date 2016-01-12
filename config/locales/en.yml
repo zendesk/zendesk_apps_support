@@ -42,6 +42,7 @@ en:
                 one: 'Missing required oauth field in manifest: %{missing_keys}'
                 other: 'Missing required oauth fields in manifest: %{missing_keys}'
             missing_source: Could not find app.js
+            no_code_required_for_iframe_only: Javascript files are not allowed when an iframe URI is specified
             style_in_template: "<style> tag in %{template}. Use an app.css file instead."
             invalid_default_locale: "%{defaultLocale} is not a valid default locale."
             missing_translation_file: 'Missing translation file for locale ''%{defaultLocale}''.

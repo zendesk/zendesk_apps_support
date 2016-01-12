@@ -8,7 +8,14 @@ module ZendeskAppsSupport
       OAUTH_REQUIRED_FIELDS    = %w( client_id client_secret authorize_uri access_token_uri ).freeze
       TYPES_AVAILABLE          = %w( text password checkbox url number multiline hidden ).freeze
       LOCATIONS_AVAILABLE      = {
-        'zendesk' => %w( top_bar nav_bar ticket_sidebar new_ticket_sidebar user_sidebar organization_sidebar background ),
+        'zendesk' => %w( top_bar
+                         nav_bar
+                         ticket_sidebar
+                         new_ticket_sidebar
+                         user_sidebar
+                         organization_sidebar
+                         background
+                     ),
         'zopim' => %w( chat_sidebar )
       }.freeze
 
@@ -40,6 +47,8 @@ module ZendeskAppsSupport
             errors << invalid_version_error(manifest, package)
           end
 
+          errors << ban_code(package) if package.iframe_only?
+
           errors.flatten.compact
         rescue JSON::ParserError => e
           return [ValidationError.new(:manifest_not_json, errors: e)]
@@ -53,6 +62,10 @@ module ZendeskAppsSupport
 
         def ban_framework_version(manifest)
           ValidationError.new(:no_framework_version_required) unless manifest['frameworkVersion'].nil?
+        end
+
+        def ban_code(package)
+          ValidationError.new(:no_code_required_for_iframe_only) unless package.js_files.empty?
         end
 
         def oauth_error(manifest)

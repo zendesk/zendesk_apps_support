@@ -131,18 +131,18 @@ module ZendeskAppsSupport
       }.select { |_k, v| !v.nil? }
 
       SRC_TEMPLATE.result(
-          name: name,
-          version: version,
-          source: source,
-          app_settings: app_settings,
-          asset_url_prefix: asset_url_prefix,
-          app_class_name: app_class_name,
-          author: author,
-          translations: translations_for(locale),
-          framework_version: framework_version,
-          templates: templates,
-          modules: commonjs_modules,
-          iframe_only: iframe_only?
+        name: name,
+        version: version,
+        source: source,
+        app_settings: app_settings,
+        asset_url_prefix: asset_url_prefix,
+        app_class_name: app_class_name,
+        author: author,
+        translations: translations_for(locale),
+        framework_version: framework_version,
+        templates: templates,
+        modules: commonjs_modules,
+        iframe_only: iframe_only?
       )
     end
 
@@ -214,11 +214,11 @@ module ZendeskAppsSupport
       end
     end
 
-    private
-
     def iframe_only?
       !legacy_non_iframe_app?
     end
+
+    private
 
     def legacy_non_iframe_app?
       @non_iframe ||= locations.values.any? do |host_locations|

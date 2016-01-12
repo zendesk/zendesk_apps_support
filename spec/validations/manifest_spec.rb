@@ -158,8 +158,28 @@ describe ZendeskAppsSupport::Validations::Manifest do
   context 'location references a correct URI' do
     let(:location) { { 'zendesk' =>  { 'ticket_sidebar' => 'https://mysite.com/zendesk_iframe' } } }
 
-    it 'should not have an error' do
+    it 'should not have a location error' do
       expect(@package).not_to have_error(/invalid location/)
+    end
+
+    context 'when the package includes app.js' do
+      before do
+        allow(@package).to receive(:js_files) { [ 'app.js' ] }
+      end
+
+      it 'should have an error' do
+        expect(@package).to have_error('Javascript files are not allowed when an iframe URI is specified')
+      end
+    end
+
+    context 'when the package includes a library' do
+      before do
+        allow(@package).to receive(:js_files) { [ 'lib/slapp.js' ] }
+      end
+
+      it 'should have an error' do
+        expect(@package).to have_error('Javascript files are not allowed when an iframe URI is specified')
+      end
     end
   end
 
