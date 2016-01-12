@@ -35,7 +35,7 @@ module ZendeskAppsSupport
             return (package_has_code?(package) ? [ ValidationError.new(:no_code_for_ifo_notemplate) ] : [])
           end
 
-          jshint_errors(files).flatten!
+          return app ? eslint_errors(files).flatten! : [ValidationError.new(:missing_source)]
         end
 
         private
@@ -50,14 +50,14 @@ module ZendeskAppsSupport
           true
         end
 
-        def jshint_error(file)
+        def eslint_error(file)
           errors = Eslintrb.lint(file.read, LINTER_OPTIONS)
-          [JSHintValidationError.new(file.relative_path, errors)] if errors.any?
+          [ESLintValidationError.new(file.relative_path, errors)] if errors.any?
         end
 
-        def jshint_errors(files)
+        def eslint_errors(files)
           files.each_with_object([]) do |file, errors|
-            error = jshint_error(file)
+            error = eslint_error(file)
             errors << error unless error.nil?
           end
         end

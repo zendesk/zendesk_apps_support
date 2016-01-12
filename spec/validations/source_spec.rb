@@ -96,7 +96,7 @@ describe ZendeskAppsSupport::Validations::Source do
     allow(package).to receive(:js_files) { [source] }
     errors = ZendeskAppsSupport::Validations::Source.call(package)
 
-    expect(errors.first.to_s).to eql "JSHint error in app.js: \n  L1: Missing semicolon."
+    expect(errors.first.to_s).to eql "ESLint error in app.js: \n  L1: Missing semicolon."
   end
 
   it 'should not have a jslint error when using [] notation unnecessarily' do
@@ -111,15 +111,20 @@ describe ZendeskAppsSupport::Validations::Source do
     package = ZendeskAppsSupport::Package.new('spec/invalid_app')
     errors  = ZendeskAppsSupport::Validations::Source.call(package)
 
+<<<<<<< HEAD
     # please keep this weird string syntax, my code editor (atom) wants to remove
     # the trailing space, failing the spec
     expect(errors.first.to_s).to eql "JSHint errors in lib/invalid.js: \n"\
 "  L4: Expected an assignment or function call and instead saw an expression.
+=======
+    expect(errors.first.to_s).to eql "ESLint errors in lib/invalid.js: 
+  L4: Expected an assignment or function call and instead saw an expression.
+>>>>>>> move jshint to eslint anywhere it's used
   L4: Missing semicolon.
   L6: Avoid arguments.caller.
   L7: Avoid arguments.callee.
+  L9: 'bla' is not defined.
   L13: 'y' is already defined.
-  L15: Missing semicolon.
-  L9: 'bla' is not defined."
+  L15: Missing semicolon."
   end
 end

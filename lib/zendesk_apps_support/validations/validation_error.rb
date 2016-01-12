@@ -72,20 +72,20 @@ module ZendeskAppsSupport
       end
     end
 
-    class JSHintValidationError < ValidationError
-      attr_reader :filename, :jshint_errors
+    class ESLintValidationError < ValidationError
+      attr_reader :filename, :eslint_errors
 
       def self.vivify(hash)
-        new(hash['filename'], hash['jshint_errors'])
+        new(hash['filename'], hash['eslint_errors'])
       end
 
-      def initialize(filename, jshint_errors)
-        errors = jshint_errors.compact.map { |err| "\n  L#{err['line']}: #{err['message']}" }.join('')
-        @filename = filename, @jshint_errors = jshint_errors
-        super(:jshint, {
+      def initialize(filename, eslint_errors)
+        errors = eslint_errors.compact.map { |err| "\n  L#{err['line']}: #{err['message']}" }.join('')
+        @filename = filename, @eslint_errors = eslint_errors
+        super(:eslint, {
           file: filename,
           errors: errors,
-          count: jshint_errors.length
+          count: eslint_errors.length
         })
       end
 
@@ -93,7 +93,7 @@ module ZendeskAppsSupport
         {
           'class' => self.class.to_s,
           'filename' => filename,
-          'jshint_errors' => jshint_errors
+          'eslint_errors' => eslint_errors
         }
       end
     end
