@@ -124,6 +124,7 @@ describe ZendeskAppsSupport::Validations::Source do
   L6: Avoid arguments.caller.
   L7: Avoid arguments.callee.
   L9: 'bla' is not defined.
+  L9: Unnecessary semicolon.
   L13: 'y' is already defined
   L15: Missing semicolon."
   end

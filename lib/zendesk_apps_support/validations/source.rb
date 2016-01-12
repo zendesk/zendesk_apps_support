@@ -7,6 +7,7 @@ module ZendeskAppsSupport
         rules: {
           # enforcing options:
           'semi' => 2,
+          'no-extra-semi' => 2,
           'no-caller' => 2,
           'no-undef' => 2,
 

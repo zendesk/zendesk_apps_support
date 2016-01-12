@@ -6,7 +6,7 @@ function o() {
   var caller = arguments.caller;
   var callee = arguments.callee;
 
-  bla = 1;
+  bla = 1;;
 
   if (x == null) {}
 
