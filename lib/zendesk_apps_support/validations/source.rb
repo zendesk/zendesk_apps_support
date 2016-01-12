@@ -18,12 +18,13 @@ module ZendeskAppsSupport
           'dot-notation' => 0
         },
         env: {
-          'browser' => true
+          'browser' => true,
+          'commonjs' => true
         },
         # predefined globals:
         globals: Hash[
-          %w(_ Base64 services helpers require module exports moment)
-        .map { |x| [x, 'true'] }]
+          %w(_ Base64 services helpers moment)
+        .map { |x| [x, false] }]
       }.freeze
 
       class <<self
