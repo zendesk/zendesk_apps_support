@@ -5,22 +5,22 @@ module ZendeskAppsSupport
     module Source
       LINTER_OPTIONS = {
         rules: {
-          semi: 2
           # enforcing options:
-          #noarg: 2,
-          #undef: 2,
+          'no-caller' => 2,
+          'no-undef' => 2,
 
           # relaxing options:
-          #eqnull: 2,
-          #laxcomma: 2,
-          #sub: 2,
+          'no-eq-null' => 0,
+          'comma-dangle' => 0,
+          'dot-notation' => 0
+        },
+        env: {
+          'browser' => true
         },
         # predefined globals:
         globals: %w(_ console services helpers alert confirm window document self
                    JSON Base64 clearInterval clearTimeout setInterval setTimeout
-                   require module exports top frames parent moment),
-
-        browser: true
+                   require module exports top frames parent moment)
       }.freeze
 
       class <<self
