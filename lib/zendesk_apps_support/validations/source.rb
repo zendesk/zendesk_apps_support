@@ -20,7 +20,7 @@ module ZendeskAppsSupport
         },
         # predefined globals:
         globals: Hash[
-          %w(_ services helpers require module exports moment)
+          %w(_ Base64 services helpers require module exports moment)
         .map { |x| [x, 'true'] }]
       }.freeze
 
