@@ -21,11 +21,9 @@ module ZendeskAppsSupport
 
       class <<self
         def call(package)
-          manifest = package.files.find { |f| f.relative_path == 'manifest.json' }
+          return [ValidationError.new(:missing_manifest)] unless package.has_file?('manifest.json')
 
-          return [ValidationError.new(:missing_manifest)] unless manifest
-
-          manifest = JSON.load(manifest.read)
+          manifest = package.manifest_json
 
           errors = []
           errors << missing_keys_error(manifest)

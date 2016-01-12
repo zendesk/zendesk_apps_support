@@ -21,6 +21,7 @@ describe ZendeskAppsSupport::Validations::Manifest do
     match do |package|
       errors = ZendeskAppsSupport::Validations::Manifest.call(package)
       errors.map!(&:to_s) unless error.is_a? Symbol
+      @actual = errors.compact
 
       error ||= /.+?/
 
@@ -31,22 +32,24 @@ describe ZendeskAppsSupport::Validations::Manifest do
       elsif error.is_a? Regexp
         errors.find { |e| e =~ error }
       end
+
     end
+    diffable
   end
 
   let(:location) { {} }
 
   it 'should have an error when manifest.json is missing' do
-    files = [double('AppFile', relative_path: 'abc.json')]
-    package = double('Package', files: files)
+    package = ZendeskAppsSupport::Package.new(@dir)
+    allow(@package).to receive(:has_file?).with('manifest.json') { false }
     expect(package).to have_error 'Could not find manifest.json'
   end
 
   before do
-    @manifest = double('AppFile', relative_path: 'manifest.json', read: JSON.dump({location: location}))
+    @manifest = double('AppFile', relative_path: 'manifest.json', read: JSON.dump(location: location))
     @dir = Dir.mktmpdir
     @package = ZendeskAppsSupport::Package.new(@dir, false)
-    allow(@package).to receive(:files) { [@manifest] }
+    allow(@package).to receive(:has_file?) { |file| file == 'manifest.json' ? true : false }
     allow(@package).to receive(:has_location?) { true }
     allow(@package).to receive(:requirements_only) { false }
     allow(@package).to receive(:requirements_only=) { nil }
@@ -62,7 +65,7 @@ describe ZendeskAppsSupport::Validations::Manifest do
   end
 
   it 'should have an error when location is missing without requirements' do
-    allow(@package).to receive_messages(:has_location? => false)
+    allow(@package).to receive_messages(has_location?: false)
     expect(@package).to have_error 'Missing required field in manifest: location'
   end
 
@@ -73,7 +76,7 @@ describe ZendeskAppsSupport::Validations::Manifest do
 
   it 'should not have an error when location is missing but requirements only is true' do
     allow(@manifest).to receive_messages(read: JSON.generate(requirementsOnly: true))
-    allow(@package).to receive_messages(:has_location? => false)
+    allow(@package).to receive_messages(has_location?: false)
     expect(@package).not_to have_error 'Missing required field in manifest: location'
   end
 
@@ -244,8 +247,7 @@ describe ZendeskAppsSupport::Validations::Manifest do
   end
 
   it 'should have an error when manifest is not a valid json' do
-    manifest = double('AppFile', relative_path: 'manifest.json', read: '}')
-    allow(@package).to receive_messages(files: [manifest])
+    allow(@package).to receive(:manifest_json) { raise JSON::ParserError.new }
 
     expect(@package).to have_error(/^manifest is not proper JSON/)
   end
