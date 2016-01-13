@@ -22,7 +22,7 @@ module ZendeskAppsSupport
       end
 
       def for(host)
-        LOCATIONS_AVAILABLE[host].keys
+        LOCATIONS_AVAILABLE[host.to_s].keys
       end
     end
   end
