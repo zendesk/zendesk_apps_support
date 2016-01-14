@@ -116,7 +116,7 @@ module ZendeskAppsSupport
 
       locale = options.fetch(:locale, 'en')
 
-      source = app_js
+      source = iframe_only? ? nil : app_js
       version = manifest_json['version']
       app_class_name = "app-#{app_id}"
       author = manifest_json['author']

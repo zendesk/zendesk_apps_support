@@ -78,7 +78,7 @@ describe ZendeskAppsSupport::Package do
     end
 
     it 'should generate js for iframe app installations' do
-      @package.manifest_json['location'] = { 'zopim' => { 'chat_sidebar' => 'http://apps.zopim.com/time-tracking/' } }
+      @package = ZendeskAppsSupport::Package.new('spec/iframe_only_app')
       js = @package.compile_js(app_name: "ABC", app_id: 0, assets_dir: 'http://localhost:4567/0/')
       expected = File.read('spec/fixtures/iframe_app.js')
       expect(js).to eq(expected)
