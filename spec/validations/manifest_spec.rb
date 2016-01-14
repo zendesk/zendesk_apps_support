@@ -1,6 +1,9 @@
 require 'spec_helper'
 require 'tmpdir'
 
+no_code_required_for_iframe_only = 'Javascripts, stylesheets and templates are not '\
+                                   'allowed when an iframe URI is specified'
+
 describe ZendeskAppsSupport::Validations::Manifest do
   def default_required_params(overrides = {})
     valid_fields = ZendeskAppsSupport::Validations::Manifest::REQUIRED_MANIFEST_FIELDS.inject(frameworkVersion: '1.0') do |fields, name|
@@ -171,7 +174,7 @@ describe ZendeskAppsSupport::Validations::Manifest do
       end
 
       it 'should have an error' do
-        expect(@package).to have_error('Javascript files are not allowed when an iframe URI is specified')
+        expect(@package).to have_error(no_code_required_for_iframe_only)
       end
     end
 
@@ -181,7 +184,30 @@ describe ZendeskAppsSupport::Validations::Manifest do
       end
 
       it 'should have an error' do
-        expect(@package).to have_error('Javascript files are not allowed when an iframe URI is specified')
+        expect(@package).to have_error(no_code_required_for_iframe_only)
+      end
+    end
+
+    context 'when the package includes app.css' do
+      before do
+        allow(@package).to receive(:js_files) { [] }
+        allow(@package).to receive(:app_css) { 'div {display: none;}' }
+      end
+
+      it 'should have an error' do
+        expect(@package).to have_error(no_code_required_for_iframe_only)
+      end
+    end
+
+    context 'when the package includes a template' do
+      before do
+        allow(@package).to receive(:js_files) { [] }
+        allow(@package).to receive(:app_css) { '' }
+        allow(@package).to receive(:template_files) { [ 'templates/layout.hdbs' ] }
+      end
+
+      it 'should have an error' do
+        expect(@package).to have_error(no_code_required_for_iframe_only)
       end
     end
   end

@@ -62,8 +62,12 @@ module ZendeskAppsSupport
           ValidationError.new(:no_framework_version_required) unless manifest['frameworkVersion'].nil?
         end
 
+        # TODO: decide if we need translations in iframe apps
+        # we may want it for the app name, settings and installation instructions
         def ban_code(package)
-          ValidationError.new(:no_code_required_for_iframe_only) unless package.js_files.empty?
+          unless package.js_files.empty? && package.template_files.empty? && package.app_css.empty?
+            ValidationError.new(:no_code_required_for_iframe_only)
+          end
         end
 
         def oauth_error(manifest)

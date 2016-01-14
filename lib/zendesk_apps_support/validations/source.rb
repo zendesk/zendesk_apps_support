@@ -26,16 +26,22 @@ module ZendeskAppsSupport
           files = package.js_files
           app   = files.find { |file| file.relative_path == 'app.js' }
 
-          if package.manifest_json['requirementsOnly']
+          if package_needs_app_js?(package)
+            return [ ValidationError.new(:missing_source) ] unless app
+          else
             return app ? [ValidationError.new(:no_app_js_required)] : []
           end
-
-          return [ValidationError.new(:missing_source)] unless app
 
           jshint_errors(files).flatten!
         end
 
         private
+
+        def package_needs_app_js?(package)
+          return false if package.manifest_json['requirementsOnly']
+          return true if package.locations.values.flat_map(&:values).any? { |l| l == '_legacy' }
+          false
+        end
 
         def jshint_error(file)
           errors = linter.lint(file.read)
