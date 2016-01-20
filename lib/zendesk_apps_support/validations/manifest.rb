@@ -105,7 +105,7 @@ module ZendeskAppsSupport
           manifest_location.find do |host, locations|
             error = if !Location.hosts.include?(host)
               ValidationError.new(:invalid_host, host_name: host)
-            elsif (invalid_locations = locations - Location.for(host)).any?
+            elsif (invalid_locations = locations - Location.names_for(host: host)).any?
               ValidationError.new(:invalid_location, invalid_locations: invalid_locations.join(', '), host_name: host, count: invalid_locations.length)
             end
             break error if error
