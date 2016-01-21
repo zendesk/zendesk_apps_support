@@ -29,7 +29,7 @@ module ZendeskAppsSupport
           if package_needs_app_js?(package)
             return [ ValidationError.new(:missing_source) ] unless app
           else
-            return app ? [ValidationError.new(:no_app_js_required)] : []
+            return (package_has_code?(package) ? [ ValidationError.new(:no_code_for_ifo_notemplate) ] : [])
           end
 
           jshint_errors(files).flatten!
@@ -37,10 +37,14 @@ module ZendeskAppsSupport
 
         private
 
+        def package_has_code?(package)
+          !(package.js_files.empty? && package.template_files.empty? && package.app_css.empty?)
+        end
+
         def package_needs_app_js?(package)
           return false if package.manifest_json['requirementsOnly']
-          return true if package.locations.values.flat_map(&:values).any? { |l| l == '_legacy' }
-          false
+          return false if package.iframe_only?
+          true
         end
 
         def jshint_error(file)

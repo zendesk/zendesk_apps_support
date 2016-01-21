@@ -34,8 +34,6 @@ module ZendeskAppsSupport
             errors << invalid_version_error(manifest, package)
           end
 
-          errors << ban_code(package) if package.iframe_only?
-
           errors.flatten.compact
         rescue JSON::ParserError => e
           return [ValidationError.new(:manifest_not_json, errors: e)]
@@ -49,14 +47,6 @@ module ZendeskAppsSupport
 
         def ban_framework_version(manifest)
           ValidationError.new(:no_framework_version_required) unless manifest['frameworkVersion'].nil?
-        end
-
-        # TODO: decide if we need translations in iframe apps
-        # we may want it for the app name, settings and installation instructions
-        def ban_code(package)
-          unless package.js_files.empty? && package.template_files.empty? && package.app_css.empty?
-            ValidationError.new(:no_code_required_for_iframe_only)
-          end
         end
 
         def oauth_error(manifest)
@@ -114,7 +104,7 @@ module ZendeskAppsSupport
           manifest_locations.find do |host, locations|
             error = if !Location.hosts.include?(host)
               ValidationError.new(:invalid_host, host_name: host)
-            elsif (invalid_locations = locations.keys - Location.names_for(host: host)).any?
+            elsif (invalid_locations = locations.keys - Location.names_for(host)).any?
               ValidationError.new(:invalid_location,
                                   invalid_locations: invalid_locations.join(', '),
                                   host_name: host,

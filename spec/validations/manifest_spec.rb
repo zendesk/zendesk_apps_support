@@ -1,9 +1,6 @@
 require 'spec_helper'
 require 'tmpdir'
 
-no_code_required_for_iframe_only = 'Javascripts, stylesheets and templates are not '\
-                                   'allowed when an iframe URI is specified'
-
 describe ZendeskAppsSupport::Validations::Manifest do
   def default_required_params(overrides = {})
     valid_fields = ZendeskAppsSupport::Validations::Manifest::REQUIRED_MANIFEST_FIELDS.inject(frameworkVersion: '1.0') do |fields, name|
@@ -35,7 +32,6 @@ describe ZendeskAppsSupport::Validations::Manifest do
       elsif error.is_a? Regexp
         errors.find { |e| e =~ error }
       end
-
     end
     diffable
   end
@@ -166,49 +162,6 @@ describe ZendeskAppsSupport::Validations::Manifest do
 
     it 'should not have a location error' do
       expect(@package).not_to have_error(/invalid location/)
-    end
-
-    context 'when the package includes app.js' do
-      before do
-        allow(@package).to receive(:js_files) { [ 'app.js' ] }
-      end
-
-      it 'should have an error' do
-        expect(@package).to have_error(no_code_required_for_iframe_only)
-      end
-    end
-
-    context 'when the package includes a library' do
-      before do
-        allow(@package).to receive(:js_files) { [ 'lib/slapp.js' ] }
-      end
-
-      it 'should have an error' do
-        expect(@package).to have_error(no_code_required_for_iframe_only)
-      end
-    end
-
-    context 'when the package includes app.css' do
-      before do
-        allow(@package).to receive(:js_files) { [] }
-        allow(@package).to receive(:app_css) { 'div {display: none;}' }
-      end
-
-      it 'should have an error' do
-        expect(@package).to have_error(no_code_required_for_iframe_only)
-      end
-    end
-
-    context 'when the package includes a template' do
-      before do
-        allow(@package).to receive(:js_files) { [] }
-        allow(@package).to receive(:app_css) { '' }
-        allow(@package).to receive(:template_files) { [ 'templates/layout.hdbs' ] }
-      end
-
-      it 'should have an error' do
-        expect(@package).to have_error(no_code_required_for_iframe_only)
-      end
     end
   end
 
