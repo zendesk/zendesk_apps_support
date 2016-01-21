@@ -1,8 +1,5 @@
 require 'spec_helper'
 
-no_code_for_ifo_notemplate = 'Javascripts, stylesheets and templates are not '\
-                                   'allowed when an iframe URI is specified'.freeze
-
 describe ZendeskAppsSupport::Validations::Source do
   let(:files) { [double('AppFile', relative_path: 'abc.js')] }
   let(:package) do
