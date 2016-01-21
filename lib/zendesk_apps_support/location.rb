@@ -21,7 +21,7 @@ module ZendeskAppsSupport
         LOCATIONS_AVAILABLE.keys
       end
 
-      def names_for(host: host)
+      def names_for(host:)
         LOCATIONS_AVAILABLE[host.to_s].keys
       end
     end
