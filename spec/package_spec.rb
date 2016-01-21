@@ -69,11 +69,11 @@ describe ZendeskAppsSupport::Package do
   describe 'compile_js' do
     it 'should generate js ready for installation' do
       js = @package.compile_js(app_name: "ABC", app_id: 0, assets_dir: 'http://localhost:4567/0/')
-      expected = File.read('spec/fixtures/app_en.js')
+      expected = File.read('spec/fixtures/legacy_app_en.js')
       expect(js).to eq(expected)
 
       js = @package.compile_js(app_name: "EFG", app_id: 1, assets_dir: 'http://localhost:4567/2/', locale: 'nl')
-      expected = File.read('spec/fixtures/app_nl.js')
+      expected = File.read('spec/fixtures/legacy_app_nl.js')
       expect(js).to eq(expected)
     end
 
