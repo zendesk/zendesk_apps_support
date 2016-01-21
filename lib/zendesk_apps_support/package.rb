@@ -208,7 +208,7 @@ module ZendeskAppsSupport
       if locations.is_a?(Hash)
         locations
       elsif locations.is_a?(Array)
-        { 'zendesk' => locations.map { |location| [ location, LEGACY_URI_STUB ] }.to_h }
+        { 'zendesk' => Hash[locations.map { |location| [ location, LEGACY_URI_STUB ] }] }
       else # String
         { 'zendesk' => { locations => LEGACY_URI_STUB } }
       end
