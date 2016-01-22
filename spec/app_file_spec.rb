@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe ZendeskAppsSupport::AppFile do
   before do
-    package = double('Package', root: Pathname('spec/app/templates/'))
+    package = double('Package', path_to: Pathname('spec/app/templates/layout.hdbs'))
     @file = ZendeskAppsSupport::AppFile.new(package, 'layout.hdbs')
   end
 

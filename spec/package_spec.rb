@@ -1,5 +1,5 @@
 require 'spec_helper'
-require 'fileutils'
+require 'tmpdir'
 
 describe ZendeskAppsSupport::Package do
   before do
@@ -69,11 +69,18 @@ describe ZendeskAppsSupport::Package do
   describe 'compile_js' do
     it 'should generate js ready for installation' do
       js = @package.compile_js(app_name: "ABC", app_id: 0, assets_dir: 'http://localhost:4567/0/')
-      expected = File.read('spec/fixtures/app_en.js')
+      expected = File.read('spec/fixtures/legacy_app_en.js')
       expect(js).to eq(expected)
 
       js = @package.compile_js(app_name: "EFG", app_id: 1, assets_dir: 'http://localhost:4567/2/', locale: 'nl')
-      expected = File.read('spec/fixtures/app_nl.js')
+      expected = File.read('spec/fixtures/legacy_app_nl.js')
+      expect(js).to eq(expected)
+    end
+
+    it 'should generate js for iframe app installations' do
+      @package = ZendeskAppsSupport::Package.new('spec/iframe_only_app')
+      js = @package.compile_js(app_name: "ABC", app_id: 0, assets_dir: 'http://localhost:4567/0/')
+      expected = File.read('spec/fixtures/iframe_app.js')
       expect(js).to eq(expected)
     end
   end
@@ -381,6 +388,39 @@ describe ZendeskAppsSupport::Package do
 
     context 'when there are no js modules' do
       it { expect(modules).not_to be nil }
+    end
+  end
+
+  describe "#locations" do
+    it "supports strings" do
+      location_object = @package.send(:locations)
+      expect(location_object).to eq({"zendesk"=>{"ticket_sidebar"=>"_legacy"}})
+    end
+
+    it "supports arrays" do
+      @package.manifest_json['location'] = %w[🔔 🃏]
+      location_object = @package.send(:locations)
+      expect(location_object).to eq({"zendesk"=>{"🃏"=>"_legacy", "🔔"=>"_legacy"}})
+    end
+
+    it "supports objects" do
+      @package.manifest_json['location'] = { 'zopim' => {'chat_sidebar' => 'http://www.zopim.com'} }
+      location_object = @package.send(:locations)
+      expect(location_object).to be @package.manifest_json['location']
+    end
+  end
+
+
+  describe '#legacy_non_iframe_app' do
+    it 'should return true for an app that doesn\'t define any iframe uris' do
+      legacy_uri_stub = ZendeskAppsSupport::Package::LEGACY_URI_STUB
+      @package.manifest_json['location'] = { 'zopim' => { 'chat_sidebar' => legacy_uri_stub } }
+      expect(@package.send(:legacy_non_iframe_app?)).to be_truthy
+    end
+
+    it 'should return false for an app that defines any iframe uris' do
+      @package.manifest_json['location'] = { 'zopim' => { 'chat_sidebar' => 'http://zopim.com' } }
+      expect(@package.send(:legacy_non_iframe_app?)).to be_falsey
     end
   end
 end

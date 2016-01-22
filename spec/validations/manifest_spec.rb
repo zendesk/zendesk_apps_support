@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'tmpdir'
 
 describe ZendeskAppsSupport::Validations::Manifest do
   def default_required_params(overrides = {})
@@ -20,6 +21,7 @@ describe ZendeskAppsSupport::Validations::Manifest do
     match do |package|
       errors = ZendeskAppsSupport::Validations::Manifest.call(package)
       errors.map!(&:to_s) unless error.is_a? Symbol
+      @actual = errors.compact
 
       error ||= /.+?/
 
@@ -31,18 +33,30 @@ describe ZendeskAppsSupport::Validations::Manifest do
         errors.find { |e| e =~ error }
       end
     end
+    diffable
   end
 
+  let(:location) { {} }
+
   it 'should have an error when manifest.json is missing' do
-    files = [double('AppFile', relative_path: 'abc.json')]
-    package = double('Package', files: files)
+    package = ZendeskAppsSupport::Package.new(@dir)
+    allow(@package).to receive(:has_file?).with('manifest.json') { false }
     expect(package).to have_error 'Could not find manifest.json'
   end
 
   before do
-    @manifest = double('AppFile', relative_path: 'manifest.json', read: '{}')
-    @package = double('Package', :files => [@manifest],
-                                 :has_location? => true, :requirements_only => false, :requirements_only= => nil)
+    @manifest = double('AppFile', relative_path: 'manifest.json', read: JSON.dump(location: location))
+    @dir = Dir.mktmpdir
+    @package = ZendeskAppsSupport::Package.new(@dir, false)
+    allow(@package).to receive(:has_file?) { |file| file == 'manifest.json' ? true : false }
+    allow(@package).to receive(:has_location?) { true }
+    allow(@package).to receive(:requirements_only) { false }
+    allow(@package).to receive(:requirements_only=) { nil }
+    allow(@package).to receive(:manifest_json) { JSON.parse(@manifest.read) }
+  end
+
+  after do
+    FileUtils.remove_entry @dir
   end
 
   it 'should have an error when required field is missing' do
@@ -50,7 +64,7 @@ describe ZendeskAppsSupport::Validations::Manifest do
   end
 
   it 'should have an error when location is missing without requirements' do
-    allow(@package).to receive_messages(:has_location? => false)
+    allow(@package).to receive_messages(has_location?: false)
     expect(@package).to have_error 'Missing required field in manifest: location'
   end
 
@@ -61,7 +75,7 @@ describe ZendeskAppsSupport::Validations::Manifest do
 
   it 'should not have an error when location is missing but requirements only is true' do
     allow(@manifest).to receive_messages(read: JSON.generate(requirementsOnly: true))
-    allow(@package).to receive_messages(:has_location? => false)
+    allow(@package).to receive_messages(has_location?: false)
     expect(@package).not_to have_error 'Missing required field in manifest: location'
   end
 
@@ -95,26 +109,92 @@ describe ZendeskAppsSupport::Validations::Manifest do
     expect(@package).to have_error(/Missing translation file/)
   end
 
-  it 'should not have an error when the app host is valid' do
-    manifest = { 'location' => { 'zopim' => ['chat_sidebar'] } }
-    allow(@manifest).to receive_messages(read: JSON.generate(manifest))
-
-    expect(@package).not_to have_error(/invalid host/)
-    expect(@package).not_to have_error(/invalid location/)
+  context 'when app host is valid' do
+    let(:location) { { 'zopim' => { 'chat_sidebar' => 'https://zen.desk/apps' } } }
+    it 'should not have an error' do
+      expect(@package).not_to have_error(/invalid host/)
+      expect(@package).not_to have_error(/invalid location in/)
+    end
   end
 
-  it 'should have an error when the app host is invalid' do
-    manifest = { 'location' => { 'freshdesk' => ['ticket_sidebar'] } }
-    allow(@manifest).to receive_messages(read: JSON.generate(manifest))
+  context 'app host is invalid' do
+    let(:location) { { 'freshdesk' => { 'ticket_sidebar' => 'app.html' } } }
 
-    expect(@package).to have_error(/invalid host/)
+    it 'should have an error' do
+      expect(@package).to have_error(/invalid host/)
+    end
   end
 
-  it 'should have an error when the location is invalid' do
-    manifest = { 'location' => %w(ticket_sidebar a_invalid_location) }
-    allow(@manifest).to receive_messages(read: JSON.generate(manifest))
+  context 'location is invalid' do
+    let(:location) { { 'zendesk' =>  { 'ticket_sidebar' => 'sidebar.html', 'a_invalid_location' => 'https://i.am.so.conf/used/setup.exe' } } }
 
-    expect(@package).to have_error(/invalid location/)
+    it 'should have an error' do
+      expect(@package).to have_error(/invalid location in/)
+    end
+  end
+
+  context 'location is localhost' do
+    let(:location) { { 'zendesk' =>  { 'ticket_sidebar' => 'http://localhost:9999/' } } }
+
+    it 'should not have an error' do
+      expect(@package).not_to have_error(/invalid location/)
+    end
+  end
+
+  context 'location uri is not HTTPS' do
+    let(:location) { { 'zendesk' =>  { 'ticket_sidebar' => 'http://mysite.com/zendesk_iframe' } } }
+
+    it 'should have an error' do
+      expect(@package).to have_error(/invalid location URI/)
+    end
+  end
+
+  context 'location uri is invalid' do
+    let(:location) { { 'zendesk' =>  { 'ticket_sidebar' => '\\' } } }
+
+    it 'should have an error when the location is an invalid URI' do
+      expect(@package).to have_error(/invalid location URI/)
+    end
+  end
+
+  context 'location references a correct URI' do
+    let(:location) { { 'zendesk' =>  { 'ticket_sidebar' => 'https://mysite.com/zendesk_iframe' } } }
+
+    it 'should not have a location error' do
+      expect(@package).not_to have_error(/invalid location/)
+    end
+  end
+
+  context 'location references a file outside of assets folder' do
+    let(:location) { { 'zendesk' =>  { 'ticket_sidebar' => 'manifest.json' } } }
+
+    before do
+      allow(@package).to receive(:has_file?).with('manifest.json').and_return(true)
+    end
+
+    it 'should have an error' do
+      expect(@package).to have_error(/invalid location URI/)
+    end
+  end
+
+  context 'location references a missing file' do
+    let(:location) { { 'zendesk' =>  { 'ticket_sidebar' => 'assets/herp.derp' } } }
+
+    it 'should have an error' do
+      expect(@package).to have_error(/invalid location URI/)
+    end
+  end
+
+  context 'location references a valid asset file' do
+    let(:location) { { 'zendesk' =>  { 'ticket_sidebar' => 'assets/iframe.html' } } }
+
+    before do
+      allow(@package).to receive(:has_file?).with('assets/iframe.html').and_return(true)
+    end
+
+    it 'should not have an error' do
+      expect(@package).not_to have_error(/invalid location URI/)
+    end
   end
 
   it 'should have an error when there are duplicate locations' do
@@ -146,8 +226,7 @@ describe ZendeskAppsSupport::Validations::Manifest do
   end
 
   it 'should have an error when manifest is not a valid json' do
-    manifest = double('AppFile', relative_path: 'manifest.json', read: '}')
-    allow(@package).to receive_messages(files: [manifest])
+    allow(@package).to receive(:manifest_json) { raise JSON::ParserError.new }
 
     expect(@package).to have_error(/^manifest is not proper JSON/)
   end

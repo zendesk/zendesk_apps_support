@@ -12,13 +12,15 @@ module ZendeskAppsSupport
     DEFAULT_SCSS   = File.read(File.expand_path('../assets/default_styles.scss', __FILE__))
     SRC_TEMPLATE   = Erubis::Eruby.new(File.read(File.expand_path('../assets/src.js.erb', __FILE__)))
 
+    LEGACY_URI_STUB = '_legacy'
+
     attr_reader :lib_root, :root, :warnings
 
     def initialize(dir, is_cached = true)
       @root     = Pathname.new(File.expand_path(dir))
-      @lib_root = Pathname.new(File.join(@root, 'lib'))
+      @lib_root = Pathname.new(File.join(root, 'lib'))
 
-      @is_cached    = is_cached #disabled by ZAT for development
+      @is_cached = is_cached # disabled by ZAT for development
       @warnings = []
     end
 
@@ -59,13 +61,13 @@ module ZendeskAppsSupport
     end
 
     def assets
-      @assets ||= Dir.chdir(@root) do
-        Dir["assets/**/*"].select { |f| File.file?(f) }
+      @assets ||= Dir.chdir(root) do
+        Dir['assets/**/*'].select { |f| File.file?(f) }
       end
     end
 
     def path_to(file)
-      File.join(@root, file)
+      File.join(root, file)
     end
 
     def requirements_path
@@ -114,8 +116,7 @@ module ZendeskAppsSupport
 
       locale = options.fetch(:locale, 'en')
 
-      source = app_js
-      location = manifest_json['location']
+      source = iframe_only? ? nil : app_js
       version = manifest_json['version']
       app_class_name = "app-#{app_id}"
       author = manifest_json['author']
@@ -124,23 +125,24 @@ module ZendeskAppsSupport
       templates = is_no_template ? {} : compiled_templates(app_id, asset_url_prefix)
 
       app_settings = {
-        location: location,
+        location: locations,
         noTemplate: is_no_template,
         singleInstall: single_install
       }.select { |_k, v| !v.nil? }
 
       SRC_TEMPLATE.result(
-          name: name,
-          version: version,
-          source: source,
-          app_settings: app_settings,
-          asset_url_prefix: asset_url_prefix,
-          app_class_name: app_class_name,
-          author: author,
-          translations: translations_for(locale),
-          framework_version: framework_version,
-          templates: templates,
-          modules: commonjs_modules
+        name: name,
+        version: version,
+        source: source,
+        app_settings: app_settings,
+        asset_url_prefix: asset_url_prefix,
+        app_class_name: app_class_name,
+        author: author,
+        translations: translations_for(locale),
+        framework_version: framework_version,
+        templates: templates,
+        modules: commonjs_modules,
+        iframe_only: iframe_only?
       )
     end
 
@@ -192,19 +194,38 @@ module ZendeskAppsSupport
       manifest_json['location']
     end
 
+    def has_file?(path)
+      File.exist?(path_to(path))
+    end
+
     def app_css
-      css_file = file_path('app.css')
+      css_file = path_to('app.css')
       File.exist?(css_file) ? File.read(css_file) : ''
     end
 
-    def file_path(path)
-      File.join(root, path)
+    def locations
+      locations = manifest_json['location']
+      if locations.is_a?(Hash)
+        locations
+      elsif locations.is_a?(Array)
+        { 'zendesk' => Hash[locations.map { |location| [ location, LEGACY_URI_STUB ] }] }
+      else # String
+        { 'zendesk' => { locations => LEGACY_URI_STUB } }
+      end
+    end
+
+    def iframe_only?
+      !legacy_non_iframe_app?
     end
 
     private
 
+    def legacy_non_iframe_app?
+      @non_iframe ||= locations.values.flat_map(&:values).any? { |l| l == LEGACY_URI_STUB }
+    end
+
     def templates
-      templates_dir = File.join(@root, 'templates')
+      templates_dir = File.join(root, 'templates')
       Dir["#{templates_dir}/*.hdbs"].inject({}) do |memo, file|
         str = File.read(file)
         str.chomp!
@@ -223,7 +244,7 @@ module ZendeskAppsSupport
       return @translations if @is_cached && @translations
 
       @translations = begin
-        translation_dir = File.join(@root, 'translations')
+        translation_dir = File.join(root, 'translations')
         return {} unless File.directory?(translation_dir)
 
         locale_path = "#{translation_dir}/#{self.manifest_json['defaultLocale']}.json"
@@ -255,15 +276,15 @@ module ZendeskAppsSupport
     end
 
     def has_manifest?
-      file_exists?('manifest.json')
+      has_file?('manifest.json')
     end
 
     def has_requirements?
-      file_exists?('requirements.json')
+      has_file?('requirements.json')
     end
 
     def has_banner?
-      file_exists?('assets/banner.png')
+      has_file?('assets/banner.png')
     end
 
     def app_js
@@ -280,10 +301,6 @@ module ZendeskAppsSupport
       end
     end
 
-    def file_exists?(path)
-      File.exist?(file_path(path))
-    end
-
     def deep_merge_hash(h, another_h)
       result_h = h.dup
       another_h.each do |key, value|
@@ -297,7 +314,7 @@ module ZendeskAppsSupport
     end
 
     def read_file(path)
-      File.read(file_path(path))
+      File.read(path_to(path))
     end
 
     def read_json(path)
