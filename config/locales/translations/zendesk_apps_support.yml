@@ -27,7 +27,7 @@ parts:
       key: "txt.apps.admin.error.app_build.no_app_js_required"
       title: "App builder job: ban app.js while requirements only"
       value: "Do not set your app to requirements only if you need app.js"
-      obsolete: 2016-02-28
+      obsolete: "2016-02-28"
   - translation:
       key: "txt.apps.admin.error.app_build.manifest_not_json"
       title: "App builder job: manifest is invalid JSON error"
@@ -107,7 +107,7 @@ parts:
   - translation:
       key: "txt.apps.admin.error.app_build.no_code_for_ifo_notemplate"
       title: "App builder job: code included for a type of app that shouldn't have code"
-      value: "Javascripts, stylesheets and templates are not allowed when an iframe URI or noTemplate is specified"
+      value: "Javascripts, stylesheets, and templates are not allowed when an iframe URI or noTemplate is specified"
   - translation:
       key: "txt.apps.admin.error.app_build.invalid_default_locale"
       title: "App builder job: invalid default locale"
@@ -131,7 +131,7 @@ parts:
   - translation:
       key: "txt.apps.admin.error.app_build.invalid_location_uri"
       title: "App builder job: invalid URI for an iframe in the manifest"
-      value: "%{uri} is either an invalid location URI, refers to a missing asset or does not use HTTPS."
+      value: "%{uri} is either an invalid location URI, refers to a missing asset, or does not use HTTPS."
   - translation:
       key: "txt.apps.admin.error.app_build.duplicate_location.one"
       title: "App builder job: duplicate locations"
