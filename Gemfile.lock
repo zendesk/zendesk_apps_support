@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    zendesk_apps_support (1.22.1)
+    zendesk_apps_support (1.23.0)
       erubis
       i18n
       image_size
@@ -27,7 +27,7 @@ GEM
     json (1.8.3)
     json-stream (0.2.1)
     multi_json (1.11.2)
-    rake (10.4.2)
+    rake (10.5.0)
     rspec (3.4.0)
       rspec-core (~> 3.4.0)
       rspec-expectations (~> 3.4.0)
