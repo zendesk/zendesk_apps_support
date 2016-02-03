@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    zendesk_apps_support (1.23.0)
+    zendesk_apps_support (1.24.0)
       erubis
       i18n
       image_size
@@ -41,7 +41,7 @@ GEM
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.4.0)
     rspec-support (3.4.1)
-    sass (3.4.20)
+    sass (3.4.21)
 
 PLATFORMS
   ruby
