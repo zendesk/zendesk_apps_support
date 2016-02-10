@@ -126,7 +126,7 @@ module ZendeskAppsSupport
 
       app_settings = {
         location: locations,
-        noTemplate: is_no_template,
+        noTemplate: no_template_locations,
         singleInstall: single_install
       }.select { |_k, v| !v.nil? }
 
