@@ -84,7 +84,7 @@ describe ZendeskAppsSupport::Package do
       expect(js).to eq(expected)
     end
 
-    it 'should generate js ready for installation' do
+    it 'should generate js with manifest noTemplate set to array' do
       @package.manifest_json['noTemplate'] = ['ticket_sidebar'];
       js = @package.compile_js(app_name: "ABC", app_id: 0, assets_dir: 'http://localhost:4567/0/')
       expected = File.read('spec/fixtures/legacy_app_no_template.js')
