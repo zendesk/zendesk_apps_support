@@ -206,6 +206,14 @@ module ZendeskAppsSupport
     def locations
       locations = manifest_json['location']
       if locations.is_a?(Hash)
+        locations.each do |host, location|
+          if location.is_a?(Array)
+            locations[host] = {}
+            location.each do |loc|
+              locations[host][loc] = LEGACY_URI_STUB
+            end
+          end
+        end
         locations
       elsif locations.is_a?(Array)
         { 'zendesk' => Hash[locations.map { |location| [ location, LEGACY_URI_STUB ] }] }

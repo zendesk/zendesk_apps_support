@@ -403,7 +403,13 @@ describe ZendeskAppsSupport::Package do
       expect(location_object).to eq({"zendesk"=>{"🃏"=>"_legacy", "🔔"=>"_legacy"}})
     end
 
-    it "supports objects" do
+    it "supports objects with arrays, outputs objects" do
+      @package.manifest_json['location'] = { 'zendesk' => ['ticket_sidebar', 'new_ticket_sidebar'] }
+      location_object = @package.send(:locations)
+      expect(location_object).to eq({ 'zendesk' => { 'ticket_sidebar' => '_legacy', 'new_ticket_sidebar' => '_legacy'} })
+    end
+
+    it "supports objects with objects" do
       @package.manifest_json['location'] = { 'zopim' => {'chat_sidebar' => 'http://www.zopim.com'} }
       location_object = @package.send(:locations)
       expect(location_object).to be @package.manifest_json['location']
