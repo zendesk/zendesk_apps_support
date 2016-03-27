@@ -32,7 +32,7 @@ module ZendeskAppsSupport
             return (package_has_code?(package) ? [ ValidationError.new(:no_code_for_ifo_notemplate) ] : [])
           end
 
-          #jshint_errors(files).flatten!
+          jshint_errors(files).flatten!
         end
 
         private
