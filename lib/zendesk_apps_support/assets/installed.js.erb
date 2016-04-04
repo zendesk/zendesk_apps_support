@@ -4,7 +4,9 @@
   <% end %>
 
   <% installations.each do |installation| %>
-    ZendeskApps[<%= installation.app_name.to_json %>].install(<%= installation.to_json %>);
+    if (ZendeskApps[<%= installation.app_name.to_json %>]) {
+      ZendeskApps[<%= installation.app_name.to_json %>].install(<%= installation.to_json %>);
+    }
   <% end %>
 
   <% installation_orders.each do |loc_name, installation_list| %>
