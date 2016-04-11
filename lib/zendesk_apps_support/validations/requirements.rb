@@ -22,6 +22,7 @@ module ZendeskAppsSupport
           [].tap do |errors|
             errors << invalid_requirements_types(requirements)
             errors << excessive_requirements(requirements)
+            errors << invalid_channel_integrations(requirements)
             errors << missing_required_fields(requirements)
             errors.flatten!
             errors.compact!
@@ -54,6 +55,21 @@ module ZendeskAppsSupport
           requirement_count = requirements.values.map(&:values).flatten.size
           if requirement_count > MAX_REQUIREMENTS
             ValidationError.new(:excessive_requirements, max: MAX_REQUIREMENTS, count: requirement_count)
+          end
+        end
+
+        def invalid_channel_integrations(requirements)
+          channel_integrations = requirements['channel_integrations']
+          return unless channel_integrations
+          [].tap do |errors|
+            if channel_integrations.size > 1
+              errors << ValidationError.new(:multiple_channel_integrations, count: channel_integrations.size)
+            end
+            channel_integrations.each do |identifier, fields|
+              unless fields.include? 'manifest'
+                errors << ValidationError.new(:missing_required_fields, field: 'manifest', identifier: identifier)
+              end
+            end
           end
         end
 
