@@ -200,7 +200,8 @@ module ZendeskAppsSupport
 
     def app_css
       css_file = path_to('app.css')
-      File.exist?(css_file) ? File.read(css_file) : ''
+      scss_file = path_to('app.scss')
+      File.exist?(scss_file) ? File.read(scss_file) : ( File.exist?(css_file) ? File.read(css_file) : '' )
     end
 
     def locations
