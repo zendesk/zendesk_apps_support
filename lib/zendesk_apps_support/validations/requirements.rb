@@ -23,6 +23,7 @@ module ZendeskAppsSupport
             errors << invalid_requirements_types(requirements)
             errors << excessive_requirements(requirements)
             errors << invalid_channel_integrations(requirements)
+            errors << invalid_user_fields(requirements)
             errors << missing_required_fields(requirements)
             errors.flatten!
             errors.compact!
@@ -35,17 +36,11 @@ module ZendeskAppsSupport
 
         def missing_required_fields(requirements)
           [].tap do |errors|
-            requirements.values.each do |requirement|
+            requirements.each do |requirement_type, requirement|
+              next if requirement_type == 'channel_integrations'
               requirement.each do |identifier, fields|
                 next if fields.include? 'title'
                 errors << ValidationError.new(:missing_required_fields, field: 'title', identifier: identifier)
-              end
-            end
-
-            unless requirements['user_fields'].nil?
-              requirements['user_fields'].each do |identifier, fields|
-                next if fields.include? 'key'
-                errors << ValidationError.new(:missing_required_fields, field: 'key', identifier: identifier)
               end
             end
           end
@@ -55,6 +50,17 @@ module ZendeskAppsSupport
           requirement_count = requirements.values.map(&:values).flatten.size
           if requirement_count > MAX_REQUIREMENTS
             ValidationError.new(:excessive_requirements, max: MAX_REQUIREMENTS, count: requirement_count)
+          end
+        end
+
+        def invalid_user_fields(requirements)
+          user_fields = requirements['user_fields']
+          return unless user_fields
+          [].tap do |errors|
+            user_fields.each do |identifier, fields|
+              next if fields.include? 'key'
+              errors << ValidationError.new(:missing_required_fields, field: 'key', identifier: identifier)
+            end
           end
         end
 
