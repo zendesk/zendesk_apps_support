@@ -66,8 +66,8 @@ module ZendeskAppsSupport
               errors << ValidationError.new(:multiple_channel_integrations, count: channel_integrations.size)
             end
             channel_integrations.each do |identifier, fields|
-              unless fields.include? 'manifest'
-                errors << ValidationError.new(:missing_required_fields, field: 'manifest', identifier: identifier)
+              unless fields.include? 'manifest_url'
+                errors << ValidationError.new(:missing_required_fields, field: 'manifest_url', identifier: identifier)
               end
             end
           end

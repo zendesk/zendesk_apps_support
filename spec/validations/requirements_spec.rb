@@ -76,7 +76,7 @@ describe ZendeskAppsSupport::Validations::Requirements do
 
   it 'creates an error if there are multiple channel integrations' do
     requirements = double('AppFile', relative_path: 'requirements.json', read:
-      '{ "channel_integrations": { "one": { "manifest": "manifest"}, "two": { "manifest": "manifest"} }}')
+      '{ "channel_integrations": { "one": { "manifest_url": "manifest"}, "two": { "manifest_url": "manifest"} }}')
     package = double('Package', files: [requirements])
     errors = ZendeskAppsSupport::Validations::Requirements.call(package)
 
@@ -90,6 +90,6 @@ describe ZendeskAppsSupport::Validations::Requirements do
     errors = ZendeskAppsSupport::Validations::Requirements.call(package)
 
     expect(errors.first.key).to eq(:missing_required_fields)
-    expect(errors.first.data).to eq({ field: 'manifest', identifier: 'channel_one' })
+    expect(errors.first.data).to eq({ field: 'manifest_url', identifier: 'channel_one' })
   end
 end
