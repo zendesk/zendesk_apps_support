@@ -1,13 +1,13 @@
 module ZendeskAppsSupport
   module Product
-    # The ids below match the values in the database, do not change them!
+    # The product code below match the values in the database, do not change them!
     PRODUCTS_AVAILABLE = [
       {
-        id: 1,
+        code: 1,
         name: 'support',
       },
       {
-        id: 2,
+        code: 2,
         name: 'zopim',
       }
     ].freeze
