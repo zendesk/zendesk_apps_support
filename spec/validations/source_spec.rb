@@ -111,15 +111,10 @@ describe ZendeskAppsSupport::Validations::Source do
     package = ZendeskAppsSupport::Package.new('spec/invalid_app')
     errors  = ZendeskAppsSupport::Validations::Source.call(package)
 
-<<<<<<< HEAD
     # please keep this weird string syntax, my code editor (atom) wants to remove
     # the trailing space, failing the spec
-    expect(errors.first.to_s).to eql "JSHint errors in lib/invalid.js: \n"\
+    expect(errors.first.to_s).to eql "ESLint errors in lib/invalid.js: \n"\
 "  L4: Expected an assignment or function call and instead saw an expression.
-=======
-    expect(errors.first.to_s).to eql "ESLint errors in lib/invalid.js: 
-  L4: Expected an assignment or function call and instead saw an expression.
->>>>>>> move jshint to eslint anywhere it's used
   L4: Missing semicolon.
   L6: Avoid arguments.caller.
   L7: Avoid arguments.callee.
