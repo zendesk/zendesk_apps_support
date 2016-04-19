@@ -122,4 +122,13 @@ describe ZendeskAppsSupport::Validations::Source do
   L15: Missing semicolon.
   L9: 'bla' is not defined."
   end
+
+  context 'when it\'s an ES6 app' do
+    it 'should be valid' do
+      package = ZendeskAppsSupport::Package.new('spec/app_es6')
+      errors = ZendeskAppsSupport::Validations::Source.call(package)
+
+      expect(errors).to be nil
+    end
+  end
 end

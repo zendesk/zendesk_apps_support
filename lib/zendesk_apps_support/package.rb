@@ -1,6 +1,7 @@
 require 'pathname'
 require 'erubis'
 require 'json'
+require 'babel/transpiler'
 
 module ZendeskAppsSupport
   class Package
@@ -133,6 +134,7 @@ module ZendeskAppsSupport
       SRC_TEMPLATE.result(
         name: name,
         version: version,
+        is_es2015: !!manifest_json['es2015'],
         source: source,
         app_settings: app_settings,
         asset_url_prefix: asset_url_prefix,
@@ -289,16 +291,21 @@ module ZendeskAppsSupport
     end
 
     def app_js
-      read_file('app.js')
+      transpile(read_file('app.js'))
+    end
+
+    def transpile(code)
+      manifest_json['es2015'] ? Babel::Transpiler.transform(code)['code'] : code
     end
 
     def commonjs_modules
       return {} unless has_lib_js?
 
       lib_files.each_with_object({}) do |file, modules|
+        raise Validations::ValidationError.new('reserved_filename') if file.relative_path == 'lib/_root.js'
         name          = file.relative_path.gsub(/^lib\//, '')
         content       = file.read
-        modules[name] = content
+        modules[name] = transpile(content)
       end
     end
 

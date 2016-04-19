@@ -1,6 +1,7 @@
 module ZendeskAppsSupport
   require 'zendesk_apps_support/sass_functions'
   require 'zendesk_apps_support/engine'
+  require 'execjs'
 
   autoload :AppFile,                'zendesk_apps_support/app_file'
   autoload :BuildTranslation,       'zendesk_apps_support/build_translation'

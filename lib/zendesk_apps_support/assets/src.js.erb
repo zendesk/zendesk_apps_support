@@ -1,15 +1,19 @@
 <% unless iframe_only %>
 with( ZendeskApps.AppScope.create() ) {
-  <% unless modules.empty? %>
   require.modules = {
-      <% modules.each do |path, content| %>
+    <% modules.each do |path, content| %>
       <%= path.to_json %>: function(exports, require, module) {
         <%= content %>
       },
-      <% end %>
+    <% end %>
+    <% if is_es2015 %>
+      '_root.js': function(exports, require, module) {
+        <%= source %>
+      }
+    <% else %>
     eom: undefined
+    <% end %>
   };
-  <% end %>
 
   var source = <%= source %>;
 }

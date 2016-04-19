@@ -19,6 +19,7 @@ en:
             missing_manifest: Could not find manifest.json
             symlink_in_zip: Symlinks are not allowed in the zip file
             missing_requirements: Could not find requirements.json
+            reserved_filename: reserved file name '_root.js' in lib folder
             manifest_keys:
               missing:
                 one: 'Missing required field in manifest: %{missing_keys}'
