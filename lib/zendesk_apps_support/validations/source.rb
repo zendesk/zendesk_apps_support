@@ -28,10 +28,28 @@ module ZendeskAppsSupport
         .map { |x| [x, false] }]
       }.freeze
 
+      ENFORCED_LINTER_OPTIONS = {
+        rules: {
+          # enforcing options:
+          'no-caller' => 2
+        },
+        env: {
+          'browser' => true,
+          'commonjs' => true
+        },
+        # predefined globals:
+        globals: Hash[
+          %w(_ Base64 services helpers moment)
+        .map { |x| [x, false] }]
+      }.freeze
+
       class <<self
         def call(package)
           files = package.js_files
           app   = files.find { |file| file.relative_path == 'app.js' }
+          eslint_config_path = "#{package.root}/.eslintrc.json"
+          has_eslint_config = File.exists?(eslint_config_path)
+          options = has_eslint_config ? JSON.parse(File.read(eslint_config_path)) : LINTER_OPTIONS
 
           if package_needs_app_js?(package)
             return [ ValidationError.new(:missing_source) ] unless app
@@ -39,7 +57,9 @@ module ZendeskAppsSupport
             return (package_has_code?(package) ? [ ValidationError.new(:no_code_for_ifo_notemplate) ] : [])
           end
 
-          return app ? eslint_errors(files).flatten! : [ValidationError.new(:missing_source)]
+          errors = eslint_errors(files, options)
+          errors << eslint_errors(files, ENFORCED_LINTER_OPTIONS) if errors.empty? && has_eslint_config
+          return app ? errors.flatten! : [ValidationError.new(:missing_source)]
         end
 
         private
