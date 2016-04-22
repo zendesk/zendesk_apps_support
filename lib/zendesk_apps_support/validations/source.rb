@@ -54,14 +54,14 @@ module ZendeskAppsSupport
           true
         end
 
-        def eslint_error(file)
-          errors = Eslintrb.lint(file.read, LINTER_OPTIONS)
+        def eslint_error(file, options)
+          errors = Eslintrb.lint(file.read, options)
           [ESLintValidationError.new(file.relative_path, errors)] if errors.any?
         end
 
-        def eslint_errors(files)
+        def eslint_errors(files, options)
           files.each_with_object([]) do |file, errors|
-            error = eslint_error(file)
+            error = eslint_error(file, options)
             errors << error unless error.nil?
           end
         end
