@@ -100,6 +100,38 @@ describe ZendeskAppsSupport::Validations::Source do
     expect(errors.first.to_s).to eql "ESLint error in app.js: \n  L1: Missing semicolon."
   end
 
+  context 'when custom eslint json' do
+    it 'should allow enabling certain errors' do
+      source = double('AppFile', relative_path: 'app.js', read: 'var a = 1; debugger;')
+      allow(package).to receive(:js_files) { [source] }
+      allow(File).to receive(:exists?).with('/.eslintrc.json').and_return(true)
+      allow(File).to receive(:read).and_return('{ "rules": { "no-debugger": 2 } }')
+      errors = ZendeskAppsSupport::Validations::Source.call(package)
+
+      expect(errors.first.to_s).to eql "ESLint error in app.js: \n  L1: Unexpected 'debugger' statement."
+    end
+
+    it 'should allow disabling certain errors' do
+      source = double('AppFile', relative_path: 'app.js', read: 'var a = 1')
+      allow(package).to receive(:js_files) { [source] }
+      allow(File).to receive(:exists?).with('/.eslintrc.json').and_return(true)
+      allow(File).to receive(:read).and_return('{ "rules": { "semi": 0 } }')
+      errors = ZendeskAppsSupport::Validations::Source.call(package)
+
+      expect(errors.first.to_s).to eql ""
+    end
+
+    it 'should not allow disabling certain errors' do
+      source = double('AppFile', relative_path: 'app.js', read: 'function foo() { var callee = arguments.callee; }')
+      allow(package).to receive(:js_files) { [source] }
+      allow(File).to receive(:exists?).with('/.eslintrc.json').and_return(true)
+      allow(File).to receive(:read).and_return('{ "rules": { "no-caller": 0 } }')
+      errors = ZendeskAppsSupport::Validations::Source.call(package)
+
+      expect(errors.first.to_s).to eql "ESLint error in app.js: \n  L1: Avoid arguments.callee."
+    end
+  end
+
   it 'should not have a jslint error when using [] notation unnecessarily' do
     source = double('AppFile', relative_path: 'app.js', read: "var a = {}; a['b'] = 0;")
     allow(package).to receive(:js_files) { [source] }
