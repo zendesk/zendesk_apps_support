@@ -4,6 +4,7 @@ describe ZendeskAppsSupport::Validations::Source do
   let(:files) { [double('AppFile', relative_path: 'abc.js')] }
   let(:package) do
     double('Package', js_files: files,
+                      root: '',
                       lib_files: [],
                       template_files: [],
                       app_css: '',
