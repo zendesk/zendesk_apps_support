@@ -8,7 +8,7 @@ module ZendeskAppsSupport
       },
       {
         code: 2,
-        name: 'zopim',
+        name: 'chat',
       }
     ].freeze
   end
