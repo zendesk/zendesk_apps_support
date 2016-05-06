@@ -14,7 +14,7 @@ This project uses rspec, which can be run with `bundle exec rake`.
 
 ## Contribute
 * Put up a PR into the master branch.
-* CC and get a +1 from @zendesk/vegemite.
+* CC and get two +1 from @zendesk/vegemite.
 
 ## Bugs
 Bugs can be reported as an issue here on github, or submitted to support@zendesk.com. By mentioning this project it will assigned to the right team.
