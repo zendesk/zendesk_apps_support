@@ -9,7 +9,7 @@ This repo is owned and maintained by the Zendesk Apps team. You can reach us on 
 ## Getting Started
 When you want to help **develop** this tool, you will need to clone this repo.
 
-Very likely you want to try out your changes with the use of ZAT. See [ZAT](https://github.com/zendesk/zendesk_apps_tool/) for how to get ZAT/ZAS in development.
+Very likely you want to try out your changes with the use of ZAT. See [ZAT](https://github.com/zendesk/zendesk_apps_tools/) for how to get ZAT/ZAS in development.
 
 ## Testing
 This project uses rspec, which can be run with `bundle exec rake`.
