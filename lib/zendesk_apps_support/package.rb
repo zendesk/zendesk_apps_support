@@ -321,7 +321,7 @@ module ZendeskAppsSupport
     def read_json(path)
       file = read_file(path)
       unless file.nil?
-        JSON.parse(read_file(path))
+        JSON.parse(file)
       end
     end
   end

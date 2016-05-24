@@ -4,6 +4,7 @@ describe ZendeskAppsSupport::Validations::Source do
   let(:files) { [double('AppFile', relative_path: 'abc.js')] }
   let(:package) do
     double('Package', js_files: files,
+                      root: '',
                       lib_files: [],
                       template_files: [],
                       app_css: '',
@@ -96,7 +97,39 @@ describe ZendeskAppsSupport::Validations::Source do
     allow(package).to receive(:js_files) { [source] }
     errors = ZendeskAppsSupport::Validations::Source.call(package)
 
-    expect(errors.first.to_s).to eql "JSHint error in app.js: \n  L1: Missing semicolon."
+    expect(errors.first.to_s).to eql "ESLint error in app.js: \n  L1: Missing semicolon."
+  end
+
+  context 'when custom eslint json' do
+    it 'should allow enabling certain errors' do
+      source = double('AppFile', relative_path: 'app.js', read: 'var a = 1; debugger;')
+      allow(package).to receive(:js_files) { [source] }
+      allow(File).to receive(:exists?).with('/.eslintrc.json').and_return(true)
+      allow(File).to receive(:read).and_return('{ "rules": { "no-debugger": 2 } }')
+      errors = ZendeskAppsSupport::Validations::Source.call(package)
+
+      expect(errors.first.to_s).to eql "ESLint error in app.js: \n  L1: Unexpected 'debugger' statement."
+    end
+
+    it 'should allow disabling certain errors' do
+      source = double('AppFile', relative_path: 'app.js', read: 'var a = 1')
+      allow(package).to receive(:js_files) { [source] }
+      allow(File).to receive(:exists?).with('/.eslintrc.json').and_return(true)
+      allow(File).to receive(:read).and_return('{ "rules": { "semi": 0 } }')
+      errors = ZendeskAppsSupport::Validations::Source.call(package)
+
+      expect(errors.first.to_s).to eql ""
+    end
+
+    it 'should not allow disabling certain errors' do
+      source = double('AppFile', relative_path: 'app.js', read: 'function foo() { var callee = arguments.callee; }')
+      allow(package).to receive(:js_files) { [source] }
+      allow(File).to receive(:exists?).with('/.eslintrc.json').and_return(true)
+      allow(File).to receive(:read).and_return('{ "rules": { "no-caller": 0 } }')
+      errors = ZendeskAppsSupport::Validations::Source.call(package)
+
+      expect(errors.first.to_s).to eql "ESLint error in app.js: \n  L1: Avoid arguments.callee."
+    end
   end
 
   it 'should not have a jslint error when using [] notation unnecessarily' do
@@ -113,13 +146,14 @@ describe ZendeskAppsSupport::Validations::Source do
 
     # please keep this weird string syntax, my code editor (atom) wants to remove
     # the trailing space, failing the spec
-    expect(errors.first.to_s).to eql "JSHint errors in lib/invalid.js: \n"\
+    expect(errors.first.to_s).to eql "ESLint errors in lib/invalid.js: \n"\
 "  L4: Expected an assignment or function call and instead saw an expression.
   L4: Missing semicolon.
   L6: Avoid arguments.caller.
   L7: Avoid arguments.callee.
-  L13: 'y' is already defined.
-  L15: Missing semicolon.
-  L9: 'bla' is not defined."
+  L9: 'bla' is not defined.
+  L9: Unnecessary semicolon.
+  L13: 'y' is already defined
+  L15: Missing semicolon."
   end
 end

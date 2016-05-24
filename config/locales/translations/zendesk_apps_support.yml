@@ -16,6 +16,14 @@ parts:
       title: "App builder job: JSHint error messages"
       value: "JSHint errors in %{file}: %{errors}"
   - translation:
+      key: "txt.apps.admin.error.app_build.eslint.one"
+      title: "App builder job: ESLint error message"
+      value: "ESLint error in %{file}: %{errors}"
+  - translation:
+      key: "txt.apps.admin.error.app_build.eslint.other"
+      title: "App builder job: ESLint error messages"
+      value: "ESLint errors in %{file}: %{errors}"
+  - translation:
       key: "txt.apps.admin.error.app_build.no_location_required"
       title: "App builder job: ban location while requirements only"
       value: "Locations can't be defined when you specify requirements only"

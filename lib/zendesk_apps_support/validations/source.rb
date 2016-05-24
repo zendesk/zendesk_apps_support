@@ -1,30 +1,55 @@
-require 'jshintrb'
+require 'eslintrb'
 
 module ZendeskAppsSupport
   module Validations
     module Source
       LINTER_OPTIONS = {
-        # enforcing options:
-        noarg: true,
-        undef: true,
+        rules: {
+          # enforcing options:
+          'semi' => 2,
+          'no-extra-semi' => 2,
+          'no-caller' => 2,
+          'no-undef' => 2,
 
-        # relaxing options:
-        eqnull: true,
-        laxcomma: true,
-        sub: true,
-
+          # relaxing options:
+          'no-unused-expressions' => 2,
+          'no-redeclare' => 2,
+          'no-eq-null' => 0,
+          'comma-dangle' => 0,
+          'dot-notation' => 0
+        },
+        env: {
+          'browser' => true,
+          'commonjs' => true
+        },
         # predefined globals:
-        predef: %w(_ console services helpers alert confirm window document self
-                   JSON Base64 clearInterval clearTimeout setInterval setTimeout
-                   require module exports top frames parent moment),
+        globals: Hash[
+          %w(_ Base64 services helpers moment)
+        .map { |x| [x, false] }]
+      }.freeze
 
-        browser: true
+      ENFORCED_LINTER_OPTIONS = {
+        rules: {
+          # enforcing options:
+          'no-caller' => 2
+        },
+        env: {
+          'browser' => true,
+          'commonjs' => true
+        },
+        # predefined globals:
+        globals: Hash[
+          %w(_ Base64 services helpers moment)
+        .map { |x| [x, false] }]
       }.freeze
 
       class <<self
         def call(package)
           files = package.js_files
           app   = files.find { |file| file.relative_path == 'app.js' }
+          eslint_config_path = "#{package.root}/.eslintrc.json"
+          has_eslint_config = File.exists?(eslint_config_path)
+          options = has_eslint_config ? JSON.parse(File.read(eslint_config_path)) : LINTER_OPTIONS
 
           if package_needs_app_js?(package)
             return [ ValidationError.new(:missing_source) ] unless app
@@ -32,7 +57,9 @@ module ZendeskAppsSupport
             return (package_has_code?(package) ? [ ValidationError.new(:no_code_for_ifo_notemplate) ] : [])
           end
 
-          jshint_errors(files).flatten!
+          errors = eslint_errors(files, options)
+          errors << eslint_errors(files, ENFORCED_LINTER_OPTIONS) if errors.empty? && has_eslint_config
+          return app ? errors.flatten! : [ValidationError.new(:missing_source)]
         end
 
         private
@@ -47,20 +74,16 @@ module ZendeskAppsSupport
           true
         end
 
-        def jshint_error(file)
-          errors = linter.lint(file.read)
-          [JSHintValidationError.new(file.relative_path, errors)] if errors.any?
+        def eslint_error(file, options)
+          errors = Eslintrb.lint(file.read, options)
+          [ESLintValidationError.new(file.relative_path, errors)] if errors.any?
         end
 
-        def jshint_errors(files)
+        def eslint_errors(files, options)
           files.each_with_object([]) do |file, errors|
-            error = jshint_error(file)
+            error = eslint_error(file, options)
             errors << error unless error.nil?
           end
-        end
-
-        def linter
-          Jshintrb::Lint.new(LINTER_OPTIONS)
         end
       end
     end
