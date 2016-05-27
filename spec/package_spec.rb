@@ -435,5 +435,10 @@ describe ZendeskAppsSupport::Package do
       @package.manifest_json['location'] = { 'zopim' => { 'chat_sidebar' => 'http://zopim.com' } }
       expect(@package.send(:legacy_non_iframe_app?)).to be_falsey
     end
+
+    it 'should return true for an app that doesn\'t have any locations in the manifest' do
+      @package.manifest_json.delete('location')
+      expect(@package.send(:legacy_non_iframe_app?)).to be_truthy
+    end
   end
 end
