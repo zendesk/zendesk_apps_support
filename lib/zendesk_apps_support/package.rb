@@ -225,7 +225,9 @@ module ZendeskAppsSupport
     private
 
     def legacy_non_iframe_app?
-      @non_iframe ||= locations.values.flat_map(&:values).any? { |l| l == LEGACY_URI_STUB }
+      iframe_urls = locations.values.flat_map(&:values)
+      return true if iframe_urls.empty?
+      @non_iframe ||= iframe_urls.any? { |l| l == LEGACY_URI_STUB }
     end
 
     def templates
