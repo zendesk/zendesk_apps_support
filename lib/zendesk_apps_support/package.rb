@@ -206,12 +206,15 @@ module ZendeskAppsSupport
 
     def locations
       locations = manifest_json['location']
-      if locations.is_a?(Hash)
+      case locations
+      when Hash
         locations
-      elsif locations.is_a?(Array)
+      when Array
         { 'zendesk' => Hash[locations.map { |location| [ location, LEGACY_URI_STUB ] }] }
-      else # String
+      when String
         { 'zendesk' => { locations => LEGACY_URI_STUB } }
+      else # NilClass
+        { 'zendesk' => {} }
       end
     end
 

@@ -398,22 +398,28 @@ describe ZendeskAppsSupport::Package do
     end
   end
 
-  describe "#locations" do
-    it "supports strings" do
+  describe '#locations' do
+    it 'supports strings' do
       location_object = @package.send(:locations)
-      expect(location_object).to eq({"zendesk"=>{"ticket_sidebar"=>"_legacy"}})
+      expect(location_object).to eq('zendesk' => { 'ticket_sidebar' => '_legacy' })
     end
 
-    it "supports arrays" do
-      @package.manifest_json['location'] = %w[🔔 🃏]
+    it 'supports arrays' do
+      @package.manifest_json['location'] = %w(🔔 🃏)
       location_object = @package.send(:locations)
-      expect(location_object).to eq({"zendesk"=>{"🃏"=>"_legacy", "🔔"=>"_legacy"}})
+      expect(location_object).to eq('zendesk' => { '🃏' => '_legacy', '🔔' => '_legacy' })
     end
 
-    it "supports objects" do
-      @package.manifest_json['location'] = { 'zopim' => {'chat_sidebar' => 'http://www.zopim.com'} }
+    it 'supports objects' do
+      @package.manifest_json['location'] = { 'zopim' => { 'chat_sidebar' => 'http://www.zopim.com' } }
       location_object = @package.send(:locations)
       expect(location_object).to be @package.manifest_json['location']
+    end
+
+    it 'works when not present' do
+      @package.manifest_json.delete('location')
+      location_object = @package.send(:locations)
+      expect(location_object).to eq('zendesk' => {})
     end
   end
 
