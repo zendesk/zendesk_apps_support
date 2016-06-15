@@ -1,29 +1,33 @@
 module ZendeskAppsSupport
-  module Location
-    # the numbers below match the enum values on the database, do not change them!
-    LOCATIONS_AVAILABLE = {
-      'zendesk' => {
-        'top_bar' => { 'id' => 1, 'orderable' => true },
-        'nav_bar' => { 'id' => 2, 'orderable' => true },
-        'ticket_sidebar' => { 'id' => 3, 'orderable' => true },
-        'new_ticket_sidebar' => { 'id' => 4, 'orderable' => true },
-        'user_sidebar' => { 'id' => 5, 'orderable' => true },
-        'organization_sidebar' => { 'id' => 6, 'orderable' => true },
-        'background' => { 'id' => 7, 'orderable' => false }
-      },
-      'zopim' => {
-        'chat_sidebar' => { 'id' => 8, 'orderable' => false }
-      }
-    }.freeze
+  class Location
+    extend ZendeskAppsSupport::Finders
+    attr_reader :id, :name, :orderable, :product_code
 
-    class << self
-      def hosts
-        LOCATIONS_AVAILABLE.keys
-      end
-
-      def names_for(host)
-        LOCATIONS_AVAILABLE[host.to_s].keys
-      end
+    def initialize(attrs)
+      @id = attrs.fetch(:id)
+      @name = attrs.fetch(:name)
+      @orderable = attrs.fetch(:orderable)
+      @product_code = attrs.fetch(:product_code)
     end
+
+    def product
+      Product.find_by(code: product_code)
+    end
+
+    def self.all
+      LOCATIONS_AVAILABLE
+    end
+
+    # the ids below match the enum values on the database, do not change them!
+    LOCATIONS_AVAILABLE = [
+      Location.new(id: 1, orderable: true, name: 'top_bar', product_code: Product::SUPPORT.code),
+      Location.new(id: 2, orderable: true, name: 'nav_bar', product_code: Product::SUPPORT.code),
+      Location.new(id: 3, orderable: true, name: 'ticket_sidebar', product_code: Product::SUPPORT.code),
+      Location.new(id: 4, orderable: true, name: 'new_ticket_sidebar', product_code: Product::SUPPORT.code),
+      Location.new(id: 5, orderable: true, name: 'user_sidebar', product_code: Product::SUPPORT.code),
+      Location.new(id: 6, orderable: true, name: 'organization_sidebar', product_code: Product::SUPPORT.code),
+      Location.new(id: 7, orderable: false, name: 'background', product_code: Product::SUPPORT.code),
+      Location.new(id: 8, orderable: false, name: 'chat_sidebar', product_code: Product::CHAT.code)
+    ].freeze
   end
 end

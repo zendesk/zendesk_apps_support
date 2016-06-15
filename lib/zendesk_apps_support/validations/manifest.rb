@@ -102,9 +102,10 @@ module ZendeskAppsSupport
           errors = []
           manifest_locations = package.locations
           manifest_locations.find do |host, locations|
-            error = if !Location.hosts.include?(host)
+            product = Product.find_by(legacy_name: host)
+            error = if product.nil?
               ValidationError.new(:invalid_host, host_name: host)
-            elsif (invalid_locations = locations.keys - Location.names_for(host)).any?
+            elsif (invalid_locations = locations.keys - Location.where(product_code: product.code).map(&:name)).any?
               ValidationError.new(:invalid_location,
                                   invalid_locations: invalid_locations.join(', '),
                                   host_name: host,
