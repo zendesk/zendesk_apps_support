@@ -122,12 +122,14 @@ module ZendeskAppsSupport
       author = manifest_json['author']
       framework_version = manifest_json['frameworkVersion']
       single_install = manifest_json['singleInstall'] || false
+      signed_urls = manifest_json['signedUrls'] || false
       templates = is_no_template ? {} : compiled_templates(app_id, asset_url_prefix)
 
       app_settings = {
         location: locations,
         noTemplate: no_template_locations,
-        singleInstall: single_install
+        singleInstall: single_install,
+        signedUrls: signed_urls
       }.select { |_k, v| !v.nil? }
 
       SRC_TEMPLATE.result(

@@ -10,6 +10,7 @@ module ZendeskAppsSupport
   autoload :Package,                'zendesk_apps_support/package'
   autoload :Installed,              'zendesk_apps_support/installed'
   autoload :Installation,           'zendesk_apps_support/installation'
+  autoload :Finders,                'zendesk_apps_support/finders'
   autoload :AppRequirement,         'zendesk_apps_support/app_requirement'
   autoload :AppVersion,             'zendesk_apps_support/app_version'
   autoload :StylesheetCompiler,     'zendesk_apps_support/stylesheet_compiler'
