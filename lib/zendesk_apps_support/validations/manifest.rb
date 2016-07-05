@@ -222,7 +222,7 @@ module ZendeskAppsSupport
 
           version = manifest['frameworkVersion']
           if (is_iframe_app && version < '2.0')
-            ValidationError.new(:old_version, target_version: version, available_versions: '>= 2.0')
+            ValidationError.new(:old_version)
           end
         end
       end

@@ -163,7 +163,7 @@ parts:
   - translation:
       key: "txt.apps.admin.error.app_build.old_version"
       title: "App builder job: old framework version"
-      value: "%{target_version} is an old framework version. Available versions are: %{available_versions}."
+      value: "Iframe Only apps must target framework versions 2.0 or greater."
   - translation:
       key: "txt.apps.admin.error.app_build.parameters_not_an_array"
       title: "App builder job: app parameters must be an array"
