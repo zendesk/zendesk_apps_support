@@ -161,6 +161,10 @@ parts:
       title: "App builder job: invalid framework version"
       value: "%{target_version} is not a valid framework version. Available versions are: %{available_versions}."
   - translation:
+      key: "txt.apps.admin.error.app_build.old_version"
+      title: "App builder job: old framework version"
+      value: "%{target_version} is an old framework version. Available versions are: %{available_versions}."
+  - translation:
       key: "txt.apps.admin.error.app_build.parameters_not_an_array"
       title: "App builder job: app parameters must be an array"
       value: "App parameters must be an array."
