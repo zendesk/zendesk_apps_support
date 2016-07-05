@@ -32,7 +32,7 @@ module ZendeskAppsSupport
             errors << duplicate_location_error(manifest)
             errors << missing_framework_version(manifest)
             errors << invalid_version_error(manifest, package)
-            errors << framework_version_iframe_only(manifest)
+            errors << framework_version_iframe_only(package, manifest)
           end
 
           errors.flatten.compact
@@ -212,16 +212,8 @@ module ZendeskAppsSupport
           ValidationError.new('manifest_keys.missing', missing_keys: missing_keys.join(', '), count: missing_keys.length)
         end
 
-        def framework_version_iframe_only(manifest)
-          is_iframe_app = manifest['location'].any? do |host, locations|
-            locations.any? do |location, url|
-              url = URI.parse(url)
-              url.absolute? || url.relative?
-            end
-          end
-
-          version = manifest['frameworkVersion']
-          if (is_iframe_app && version < '2.0')
+        def framework_version_iframe_only(package, manifest)
+          if (package.iframe_only? && manifest['frameworkVersion'] < '2.0')
             ValidationError.new(:old_version)
           end
         end
