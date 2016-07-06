@@ -213,7 +213,7 @@ module ZendeskAppsSupport
         end
 
         def framework_version_iframe_only(package, manifest)
-          if (package.iframe_only? && manifest['frameworkVersion'] < '2.0')
+          if (manifest['frameworkVersion'].nil? || package.iframe_only? && manifest['frameworkVersion'] < '2.0')
             ValidationError.new(:old_version)
           end
         end
