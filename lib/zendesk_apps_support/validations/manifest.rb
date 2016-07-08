@@ -32,6 +32,7 @@ module ZendeskAppsSupport
             errors << duplicate_location_error(manifest)
             errors << missing_framework_version(manifest)
             errors << invalid_version_error(manifest, package)
+            errors << framework_version_iframe_only(package, manifest)
           end
 
           errors.flatten.compact
@@ -209,6 +210,17 @@ module ZendeskAppsSupport
 
         def missing_keys_validation_error(missing_keys)
           ValidationError.new('manifest_keys.missing', missing_keys: missing_keys.join(', '), count: missing_keys.length)
+        end
+
+        def framework_version_iframe_only(package, manifest)
+          if (package.iframe_only?)
+            manifest_version = Gem::Version.new (manifest['frameworkVersion'] || 0)
+            required_version = Gem::Version.new '2.0'
+
+            if (manifest_version < required_version)
+              ValidationError.new(:old_version)
+            end
+          end
         end
       end
     end

@@ -81,6 +81,10 @@ parts:
       title: "App builder job: requirements file contains invalid types error"
       value: "requirements.json contains invalid types: %{invalid_types}"
   - translation:
+      key: "txt.apps.admin.error.app_build.multiple_channel_integrations"
+      title: "App builder job: requirements file contains multiple channel integrations"
+      value: "Specifying multiple channel integrations in requirements.json is not supported."
+  - translation:
       key: "txt.apps.admin.error.app_build.banner.invalid_format"
       title: "App builder job: Banner image invalid format error"
       value: "Banner image must be a PNG file."
@@ -160,6 +164,10 @@ parts:
       key: "txt.apps.admin.error.app_build.invalid_version"
       title: "App builder job: invalid framework version"
       value: "%{target_version} is not a valid framework version. Available versions are: %{available_versions}."
+  - translation:
+      key: "txt.apps.admin.error.app_build.old_version"
+      title: "App builder job: old framework version"
+      value: "Iframe Only apps must target framework versions 2.0 or greater."
   - translation:
       key: "txt.apps.admin.error.app_build.parameters_not_an_array"
       title: "App builder job: app parameters must be an array"

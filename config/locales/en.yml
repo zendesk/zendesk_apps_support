@@ -34,7 +34,8 @@ en:
             invalid_requirements_types:
               one: 'requirements.json contains an invalid type: %{invalid_types}'
               other: 'requirements.json contains invalid types: %{invalid_types}'
-            multiple_channel_integrations: 'Specifying multiple channel integrations in requirements.json is not supported.'
+            multiple_channel_integrations: Specifying multiple channel integrations
+              in requirements.json is not supported.
             banner:
               invalid_format: Banner image must be a PNG file.
               invalid_size: Invalid banner image dimensions. Must be %{required_banner_width}x%{required_banner_height}px.
@@ -44,7 +45,8 @@ en:
                 other: 'Missing required oauth fields in manifest: %{missing_keys}'
             missing_source: Could not find app.js
             style_in_template: "<style> tag in %{template}. Use an app.css file instead."
-            no_code_for_ifo_notemplate: Javascripts, stylesheets and templates are not allowed when an iframe URI or noTemplate is specified
+            no_code_for_ifo_notemplate: Javascripts, stylesheets, and templates are
+              not allowed when an iframe URI or noTemplate is specified
             invalid_default_locale: "%{defaultLocale} is not a valid default locale."
             missing_translation_file: 'Missing translation file for locale ''%{defaultLocale}''.
               Please read: http://developer.zendesk.com/documentation/apps/i18n.html'
@@ -53,7 +55,7 @@ en:
               one: "%{invalid_locations} is an invalid location in %{host_name}."
               other: "%{invalid_locations} are invalid locations in %{host_name}."
             invalid_location_uri: "%{uri} is either an invalid location URI, refers
-              to a missing asset or does not use HTTPS."
+              to a missing asset, or does not use HTTPS."
             duplicate_location:
               one: "%{duplicate_locations} is a duplicate location."
               other: "%{duplicate_locations} are duplicate locations."
@@ -63,6 +65,7 @@ en:
               other: "%{invalid_params} are set to hidden and cannot be required."
             invalid_version: "%{target_version} is not a valid framework version.
               Available versions are: %{available_versions}."
+            old_version: Iframe Only apps must target framework versions 2.0 or greater.
             parameters_not_an_array: App parameters must be an array.
             duplicate_parameters: 'Duplicate app parameters defined: %{duplicate_parameters}'
             translation:
