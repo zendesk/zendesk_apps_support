@@ -82,7 +82,7 @@ parts:
       value: "requirements.json contains invalid types: %{invalid_types}"
   - translation:
       key: "txt.apps.admin.error.app_build.multiple_channel_integrations"
-      title: "App builder job: requirements file contains multiple channel integrations, leave requirements.json as is (file name)"
+      title: "App builder job: requirements file contains multiple channel integrations, leace requirements.json as is (file name)"
       value: "Specifying multiple channel integrations in requirements.json is not supported."
   - translation:
       key: "txt.apps.admin.error.app_build.banner.invalid_format"
