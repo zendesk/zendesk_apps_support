@@ -13,26 +13,26 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
-    bump (0.5.2)
-    byebug (6.0.2)
+    bump (0.5.3)
+    byebug (9.0.5)
     diff-lcs (1.2.5)
     erubis (2.7.0)
-    execjs (2.6.0)
+    execjs (2.7.0)
     i18n (0.7.0)
     image_size (1.4.2)
     jshintrb (0.3.0)
       execjs
       multi_json (>= 1.3)
       rake
-    json (1.8.3)
+    json (2.0.1)
     json-stream (0.2.1)
-    multi_json (1.12.0)
-    rake (11.1.2)
+    multi_json (1.12.1)
+    rake (11.2.2)
     rspec (3.4.0)
       rspec-core (~> 3.4.0)
       rspec-expectations (~> 3.4.0)
       rspec-mocks (~> 3.4.0)
-    rspec-core (3.4.1)
+    rspec-core (3.4.4)
       rspec-support (~> 3.4.0)
     rspec-expectations (3.4.0)
       diff-lcs (>= 1.2.0, < 2.0)
