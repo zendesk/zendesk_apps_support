@@ -196,16 +196,26 @@ module ZendeskAppsSupport
           return unless manifest['parameters'].is_a?(Array)
 
           invalid_types = []
+          returned = []
+          empty_type = false
 
           manifest['parameters'].each do |parameter|
             parameter_type = parameter.fetch('type', '')
 
+            if parameter_type.empty?
+              empty_type = true
+              next
+            end
             invalid_types << parameter_type unless TYPES_AVAILABLE.include?(parameter_type)
           end
 
           if invalid_types.any?
-            ValidationError.new(:invalid_type_parameter, invalid_types: invalid_types.join(', '), count: invalid_types.length)
+            returned << ValidationError.new(:invalid_type_parameter, invalid_types: invalid_types.join(', '), count: invalid_types.length)
           end
+          if empty_type
+            returned << ValidationError.new(:empty_type_parameter)
+          end
+          returned
         end
 
         def missing_keys_validation_error(missing_keys)

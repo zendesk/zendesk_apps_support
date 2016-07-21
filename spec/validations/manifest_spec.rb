@@ -313,6 +313,18 @@ describe ZendeskAppsSupport::Validations::Manifest do
       expect(create_package(default_required_params.merge(parameter_hash))).to have_error 'integer is an invalid parameter type.'
     end
 
+    it 'has an error when the parameter type is missing' do
+      parameter_hash = {
+        'parameters' =>
+        [
+          {
+            'name' => 'should have type'
+          }
+        ]
+      }
+      expect(create_package(default_required_params.merge(parameter_hash))).to have_error 'A type needs to be specified for every parameter.'
+    end
+
     it "doesn't have an error with a correct parameter type" do
       parameter_hash = {
         'parameters' =>
