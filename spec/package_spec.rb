@@ -267,7 +267,15 @@ describe ZendeskAppsSupport::Package do
   end
 
   describe '#runtime_translations' do
-    let(:translations) { { 'app' => { 'name' => 'Some App', 'description' => 'It does something.', 'everything_else': 'preserved' } } }
+    let(:translations) do
+      {
+        'app' => {
+          'name' => 'Some App',
+          'description' => 'It does something.',
+          'everything_else' => 'preserved'
+        }
+      }
+    end
     let(:source) { build_app_source(additional_files: { "translations/en.json" => translations.to_json }) }
 
     subject { package.send :runtime_translations, package.translations_for('en')['app'] }
