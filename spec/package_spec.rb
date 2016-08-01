@@ -172,20 +172,6 @@ describe ZendeskAppsSupport::Package do
     })
   end
 
-  describe 'market_translations! works as expected' do
-    it 'builds an app' do
-      expect(package.manifest_json['author']['name']).to eq('Ned Stark')
-      expect(package.send(:translations)).to eq({"en"=>{"app"=>{"description"=>"Quickly access bookmarked tickets. Syncs with the iPad app."}, "custom1"=>"The first custom thing"}})
-      expect(package.send(:market_translations!, 'en')).to eq({})
-      expect(package.send(:translations)).to eq({"en"=>{"app"=>{}, "custom1"=>"The first custom thing"}})
-    end
-
-    it 'builds an app with changed manifest' do
-      manifest['author']['name'] = 'Olaf'
-      expect(package.manifest_json['author']['name']).to eq('Olaf')
-    end
-  end
-
   describe 'Reading a manifest' do
     it 'fetches data from the manifest' do
       expect(package.manifest_json['location']).to eq('ticket_sidebar')
@@ -280,11 +266,11 @@ describe ZendeskAppsSupport::Package do
     end
   end
 
-  describe '#market_translations!' do
-    let(:translations) { { 'app' => { 'name' => 'Some App', 'description' => 'It does something.' } } }
+  describe '#runtime_translations' do
+    let(:translations) { { 'app' => { 'name' => 'Some App', 'description' => 'It does something.', 'everything_else': 'preserved' } } }
     let(:source) { build_app_source(additional_files: { "translations/en.json" => translations.to_json }) }
 
-    subject { package.market_translations!('en') }
+    subject { package.send :runtime_translations, package.translations_for('en')['app'] }
 
     it 'ignores "name"' do
       expect(subject['name']).to be nil
@@ -292,6 +278,11 @@ describe ZendeskAppsSupport::Package do
 
     it 'ignores "description"' do
       expect(subject['description']).to be nil
+    end
+
+    it 'preserves the rest' do
+      puts subject
+      expect(subject['everything_else']).to eq 'preserved'
     end
   end
 
