@@ -278,19 +278,10 @@ describe ZendeskAppsSupport::Package do
     end
     let(:source) { build_app_source(additional_files: { "translations/en.json" => translations.to_json }) }
 
-    subject { package.send :runtime_translations, package.translations_for('en')['app'] }
+    subject { package.send :runtime_translations, package.translations_for('en').fetch('app') }
 
-    it 'ignores "name"' do
-      expect(subject['name']).to be nil
-    end
-
-    it 'ignores "description"' do
-      expect(subject['description']).to be nil
-    end
-
-    it 'preserves the rest' do
-      puts subject
-      expect(subject['everything_else']).to eq 'preserved'
+    it 'ignores "name" and "description", preserving other keys' do
+      expect(subject).to eq('everything_else' => 'preserved')
     end
   end
 
