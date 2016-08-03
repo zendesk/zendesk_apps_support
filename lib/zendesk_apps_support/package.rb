@@ -140,7 +140,7 @@ module ZendeskAppsSupport
         asset_url_prefix: asset_url_prefix,
         app_class_name: app_class_name,
         author: author,
-        translations: translations_for(locale),
+        translations: runtime_translations(translations_for(locale)),
         framework_version: framework_version,
         templates: templates,
         modules: commonjs_modules,
@@ -183,13 +183,10 @@ module ZendeskAppsSupport
       end
     end
 
-    def market_translations!(locale)
-      result = translations[locale].fetch('app', {})
-      result.delete('name')
-      result.delete('description')
-      result.delete('long_description')
-      result.delete('installation_instructions')
-      result
+    def translations_for(locale)
+      trans = translations
+      return trans[locale] if trans[locale]
+      trans[self.manifest_json['defaultLocale']]
     end
 
     def has_location?
@@ -226,6 +223,16 @@ module ZendeskAppsSupport
 
     private
 
+
+    def runtime_translations(translations)
+      result = translations.dup
+      result.delete('name')
+      result.delete('description')
+      result.delete('long_description')
+      result.delete('installation_instructions')
+      result
+    end
+
     def legacy_non_iframe_app?
       iframe_urls = locations.values.flat_map(&:values)
       iframe_urls.all? { |l| l == LEGACY_URI_STUB }
@@ -239,12 +246,6 @@ module ZendeskAppsSupport
         memo[File.basename(file, File.extname(file))] = str
         memo
       end
-    end
-
-    def translations_for(locale)
-      trans = translations
-      return trans[locale] if trans[locale]
-      trans[self.manifest_json['defaultLocale']]
     end
 
     def translations
