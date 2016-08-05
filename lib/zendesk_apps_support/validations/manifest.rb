@@ -4,35 +4,27 @@ require 'uri'
 module ZendeskAppsSupport
   module Validations
     module Manifest
-      REQUIRED_MANIFEST_FIELDS = %w( author defaultLocale ).freeze
-      OAUTH_REQUIRED_FIELDS    = %w( client_id client_secret authorize_uri access_token_uri ).freeze
-      TYPES_AVAILABLE          = %w( text password checkbox url number multiline hidden ).freeze
+      REQUIRED_MANIFEST_FIELDS = { author: 'author', default_locale: 'defaultLocale' }.freeze
+      OAUTH_REQUIRED_FIELDS    = %w(client_id client_secret authorize_uri access_token_uri).freeze
+      PARAMETER_TYPES          = %w(text password checkbox url number multiline hidden).freeze
 
       class <<self
         def call(package)
           return [ValidationError.new(:missing_manifest)] unless package.has_file?('manifest.json')
 
-          manifest = package.manifest_json
+          manifest = package.manifest
 
           errors = []
-          errors << missing_keys_error(manifest)
-          errors << default_locale_error(manifest, package)
-          errors << oauth_error(manifest)
-          errors << parameters_error(manifest)
-          errors << invalid_hidden_parameter_error(manifest)
-          errors << invalid_type_error(manifest)
-          errors << name_as_parameter_name_error(manifest)
+          check_errors(%i(missing_keys_error oauth_error parameters_error invalid_hidden_parameter_error
+                          invalid_type_error name_as_parameter_name_error no_template_format_error), errors, manifest)
+          check_errors(%i(default_locale_error), errors, manifest, package)
 
-          if manifest['requirementsOnly']
-            errors << ban_location(manifest)
-            errors << ban_framework_version(manifest)
+          if manifest.requirements_only?
+            check_errors(%i(ban_location ban_framework_version), errors, manifest)
           else
-            errors << missing_location_error(package)
-            errors << invalid_location_error(package)
-            errors << duplicate_location_error(manifest)
-            errors << missing_framework_version(manifest)
-            errors << invalid_version_error(manifest, package)
-            errors << framework_version_iframe_only(package, manifest)
+            check_errors(%i(missing_location_error invalid_location_error), errors, package)
+            check_errors(%i(duplicate_location_error missing_framework_version), errors, manifest)
+            check_errors(%i(invalid_version_error framework_version_iframe_only), errors, manifest, package)
           end
 
           errors.flatten.compact
@@ -42,19 +34,25 @@ module ZendeskAppsSupport
 
         private
 
+        def check_errors(error_types, collector, *checked_objects)
+          error_types.each do |error_type|
+            collector << send(error_type, *checked_objects)
+          end
+        end
+
         def ban_location(manifest)
-          ValidationError.new(:no_location_required) unless manifest['location'].nil?
+          ValidationError.new(:no_location_required) if manifest.location?
         end
 
         def ban_framework_version(manifest)
-          ValidationError.new(:no_framework_version_required) unless manifest['frameworkVersion'].nil?
+          ValidationError.new(:no_framework_version_required) unless manifest.framework_version.nil?
         end
 
         def oauth_error(manifest)
-          return unless manifest['oauth']
+          return unless manifest.oauth
 
           missing = OAUTH_REQUIRED_FIELDS.select do |key|
-            manifest['oauth'][key].nil? || manifest['oauth'][key].empty?
+            manifest.oauth[key].nil? || manifest.oauth[key].empty?
           end
 
           if missing.any?
@@ -63,13 +61,14 @@ module ZendeskAppsSupport
         end
 
         def parameters_error(manifest)
-          return unless manifest['parameters']
-
-          unless manifest['parameters'].is_a?(Array)
+          original = manifest.original_parameters
+          unless original.nil? || original.is_a?(Array)
             return ValidationError.new(:parameters_not_an_array)
           end
 
-          para_names = manifest['parameters'].collect { |para| para['name'] }
+          return unless manifest.parameters.any?
+
+          para_names = manifest.parameters.collect(&:name)
           duplicate_parameters = para_names.select { |name| para_names.count(name) > 1 }.uniq
           unless duplicate_parameters.empty?
             return ValidationError.new(:duplicate_parameters, duplicate_parameters: duplicate_parameters)
@@ -77,15 +76,15 @@ module ZendeskAppsSupport
         end
 
         def missing_keys_error(manifest)
-          missing = REQUIRED_MANIFEST_FIELDS.select do |key|
-            manifest[key].nil?
-          end
+          missing = REQUIRED_MANIFEST_FIELDS.map do |ruby_method, manifest_value|
+            manifest_value if manifest.public_send(ruby_method).nil?
+          end.compact
 
           missing_keys_validation_error(missing) if missing.any?
         end
 
         def default_locale_error(manifest, package)
-          default_locale = manifest['defaultLocale']
+          default_locale = manifest.default_locale
           unless default_locale.nil?
             if default_locale !~ Translations::VALID_LOCALE
               ValidationError.new(:invalid_default_locale, defaultLocale: default_locale)
@@ -128,13 +127,13 @@ module ZendeskAppsSupport
         end
 
         def invalid_location_uri_error(package, path)
-          return nil if path == Package::LEGACY_URI_STUB
+          return nil if path == ZendeskAppsSupport::Manifest::LEGACY_URI_STUB
           validation_error = ValidationError.new(:invalid_location_uri, uri: path)
           uri = URI.parse(path)
           unless uri.absolute? ? valid_absolute_uri?(uri) : valid_relative_uri?(package, uri)
             validation_error
           end
-        rescue URI::InvalidURIError => e
+        rescue URI::InvalidURIError
           validation_error
         end
 
@@ -147,7 +146,7 @@ module ZendeskAppsSupport
         end
 
         def duplicate_location_error(manifest)
-          locations           = *manifest['location']
+          locations           = *manifest.locations
           duplicate_locations = *locations.select { |location| locations.count(location) > 1 }.uniq
 
           unless duplicate_locations.empty?
@@ -156,12 +155,12 @@ module ZendeskAppsSupport
         end
 
         def missing_framework_version(manifest)
-          missing_keys_validation_error(['frameworkVersion']) if manifest['frameworkVersion'].nil?
+          missing_keys_validation_error(['frameworkVersion']) if manifest.framework_version.nil?
         end
 
         def invalid_version_error(manifest, package)
           valid_to_serve = AppVersion::TO_BE_SERVED
-          target_version = manifest['frameworkVersion']
+          target_version = manifest.framework_version
 
           if target_version == AppVersion::DEPRECATED
             package.warnings << I18n.t('txt.apps.admin.warning.app_build.deprecated_version')
@@ -173,19 +172,13 @@ module ZendeskAppsSupport
         end
 
         def name_as_parameter_name_error(manifest)
-          if manifest['parameters'].is_a?(Array)
-            if manifest['parameters'].any? { |p| p['name'] == 'name' }
-              ValidationError.new(:name_as_parameter_name)
-            end
+          if manifest.parameters.any? { |p| p.name == 'name' }
+            ValidationError.new(:name_as_parameter_name)
           end
         end
 
         def invalid_hidden_parameter_error(manifest)
-          invalid_params = []
-
-          if manifest.key?('parameters')
-            invalid_params = manifest['parameters'].select { |p| p['type'] == 'hidden' && p['required'] }.map { |p| p['name'] }
-          end
+          invalid_params = manifest.parameters.select { |p| p.type == 'hidden' && p.required }.map(&:name)
 
           if invalid_params.any?
             ValidationError.new(:invalid_hidden_parameter, invalid_params: invalid_params.join(', '), count: invalid_params.length)
@@ -193,43 +186,41 @@ module ZendeskAppsSupport
         end
 
         def invalid_type_error(manifest)
-          return unless manifest['parameters'].is_a?(Array)
-
           invalid_types = []
-          returned = []
-          empty_type = false
+          manifest.parameters.each do |parameter|
+            parameter_type = parameter.type
 
-          manifest['parameters'].each do |parameter|
-            parameter_type = parameter.fetch('type', '')
-
-            if parameter_type.empty?
-              empty_type = true
-              next
-            end
-            invalid_types << parameter_type unless TYPES_AVAILABLE.include?(parameter_type)
+            invalid_types << parameter_type unless PARAMETER_TYPES.include?(parameter_type)
           end
 
           if invalid_types.any?
-            returned << ValidationError.new(:invalid_type_parameter, invalid_types: invalid_types.join(', '), count: invalid_types.length)
+            ValidationError.new(:invalid_type_parameter,
+                                invalid_types: invalid_types.join(', '),
+                                count: invalid_types.length)
           end
-          if empty_type
-            returned << ValidationError.new(:empty_type_parameter)
-          end
-          returned
         end
 
         def missing_keys_validation_error(missing_keys)
           ValidationError.new('manifest_keys.missing', missing_keys: missing_keys.join(', '), count: missing_keys.length)
         end
 
-        def framework_version_iframe_only(package, manifest)
-          if (package.iframe_only?)
-            manifest_version = Gem::Version.new (manifest['frameworkVersion'] || 0)
+        def framework_version_iframe_only(manifest, package)
+          if package.iframe_only?
+            manifest_version = Gem::Version.new manifest.framework_version
             required_version = Gem::Version.new '2.0'
 
-            if (manifest_version < required_version)
+            if manifest_version < required_version
               ValidationError.new(:old_version)
             end
+          end
+        end
+
+        # TODO: support the new location format in the no_template array
+        def no_template_format_error(manifest)
+          no_template = manifest.no_template
+          return if no_template == false
+          unless no_template.is_a?(Array) && no_template_locations.all? { |loc| Location.find_by(name: loc) }
+            ValidationError.new(:invalid_no_template)
           end
         end
       end

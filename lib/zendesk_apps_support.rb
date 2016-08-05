@@ -6,6 +6,7 @@ module ZendeskAppsSupport
   autoload :BuildTranslation,       'zendesk_apps_support/build_translation'
   autoload :I18n,                   'zendesk_apps_support/i18n'
   autoload :Location,               'zendesk_apps_support/location'
+  autoload :Manifest,               'zendesk_apps_support/manifest'
   autoload :Product,                'zendesk_apps_support/product'
   autoload :Package,                'zendesk_apps_support/package'
   autoload :Installed,              'zendesk_apps_support/installed'
@@ -26,5 +27,9 @@ module ZendeskAppsSupport
     autoload :Stylesheets,           'zendesk_apps_support/validations/stylesheets'
     autoload :Requirements,          'zendesk_apps_support/validations/requirements'
     autoload :Banner,                'zendesk_apps_support/validations/banner'
+  end
+
+  class Manifest
+    autoload :Parameter, 'zendesk_apps_support/manifest/parameter'
   end
 end

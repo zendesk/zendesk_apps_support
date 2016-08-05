@@ -1,18 +1,18 @@
+# frozen_string_literal: true
 require 'pathname'
 require 'erubis'
 require 'json'
 
 module ZendeskAppsSupport
   class Package
+    extend Gem::Deprecate
     include ZendeskAppsSupport::BuildTranslation
 
-    REQUIREMENTS_FILENAME = "requirements.json"
+    REQUIREMENTS_FILENAME = 'requirements.json'
 
     DEFAULT_LAYOUT = Erubis::Eruby.new(File.read(File.expand_path('../assets/default_template.html.erb', __FILE__)))
     DEFAULT_SCSS   = File.read(File.expand_path('../assets/default_styles.scss', __FILE__))
     SRC_TEMPLATE   = Erubis::Eruby.new(File.read(File.expand_path('../assets/src.js.erb', __FILE__)))
-
-    LEGACY_URI_STUB = '_legacy'
 
     attr_reader :lib_root, :root, :warnings
 
@@ -34,7 +34,7 @@ module ZendeskAppsSupport
           errors << Validations::Source.call(self)
           errors << Validations::Translations.call(self)
 
-          unless manifest_json['requirementsOnly']
+          unless manifest.requirements_only?
             errors << Validations::Templates.call(self)
             errors << Validations::Stylesheets.call(self)
           end
@@ -117,31 +117,26 @@ module ZendeskAppsSupport
       locale = options.fetch(:locale, 'en')
 
       source = iframe_only? ? nil : app_js
-      version = manifest_json['version']
       app_class_name = "app-#{app_id}"
-      author = manifest_json['author']
-      framework_version = manifest_json['frameworkVersion']
-      single_install = manifest_json['singleInstall'] || false
-      signed_urls = manifest_json['signedUrls'] || false
       templates = is_no_template ? {} : compiled_templates(app_id, asset_url_prefix)
 
       app_settings = {
         location: locations,
         noTemplate: no_template_locations,
-        singleInstall: single_install,
-        signedUrls: signed_urls
+        singleInstall: manifest.single_install?,
+        signedUrls: manifest.signed_urls?
       }.select { |_k, v| !v.nil? }
 
       SRC_TEMPLATE.result(
         name: name,
-        version: version,
+        version: manifest.version,
         source: source,
         app_settings: app_settings,
         asset_url_prefix: asset_url_prefix,
         app_class_name: app_class_name,
-        author: author,
+        author: manifest.author,
         translations: runtime_translations(translations_for(locale)),
-        framework_version: framework_version,
+        framework_version: manifest.framework_version,
         templates: templates,
         modules: commonjs_modules,
         iframe_only: iframe_only?
@@ -149,7 +144,12 @@ module ZendeskAppsSupport
     end
 
     def manifest_json
-      @manifest ||= read_json('manifest.json')
+      @manifest_json ||= read_json('manifest.json')
+    end
+    deprecate :manifest_json, :manifest, 2016, 9
+
+    def manifest
+      @manifest ||= Manifest.new(read_json('manifest.json'))
     end
 
     def requirements_json
@@ -158,20 +158,14 @@ module ZendeskAppsSupport
     end
 
     def is_no_template
-      if manifest_json['noTemplate'].is_a?(Array)
-        false
-      else
-        !!manifest_json['noTemplate']
-      end
+      manifest.no_template?
     end
+    deprecate :is_no_template, 'manifest.no_template?', 2016, 9
 
     def no_template_locations
-      if manifest_json['noTemplate'].is_a?(Array)
-        manifest_json['noTemplate']
-      else
-        !!manifest_json['noTemplate']
-      end
+      manifest.no_template_locations
     end
+    deprecate :no_template_locations, 'manifest.no_template_locations', 2016, 9
 
     def compiled_templates(app_id, asset_url_prefix)
       compiled_css = ZendeskAppsSupport::StylesheetCompiler.new(DEFAULT_SCSS + app_css, app_id, asset_url_prefix).compile
@@ -186,12 +180,13 @@ module ZendeskAppsSupport
     def translations_for(locale)
       trans = translations
       return trans[locale] if trans[locale]
-      trans[self.manifest_json['defaultLocale']]
+      trans[manifest.default_locale]
     end
 
     def has_location?
-      manifest_json['location']
+      manifest.location?
     end
+    deprecate :has_location?, 'manifest.location?', 2016, 9
 
     def has_file?(path)
       File.exist?(path_to(path))
@@ -204,25 +199,16 @@ module ZendeskAppsSupport
     end
 
     def locations
-      locations = manifest_json['location']
-      case locations
-      when Hash
-        locations
-      when Array
-        { 'zendesk' => Hash[locations.map { |location| [ location, LEGACY_URI_STUB ] }] }
-      when String
-        { 'zendesk' => { locations => LEGACY_URI_STUB } }
-      else # NilClass
-        { 'zendesk' => {} }
-      end
+      manifest.locations
     end
+    deprecate :locations, 'manifest.locations', 2016, 9
 
     def iframe_only?
-      !legacy_non_iframe_app?
+      manifest.iframe_only?
     end
+    deprecate :iframe_only?, 'manifest.iframe_only?', 2016, 9
 
     private
-
 
     def runtime_translations(translations)
       result = translations.dup
@@ -231,11 +217,6 @@ module ZendeskAppsSupport
       result.delete('long_description')
       result.delete('installation_instructions')
       result
-    end
-
-    def legacy_non_iframe_app?
-      iframe_urls = locations.values.flat_map(&:values)
-      iframe_urls.all? { |l| l == LEGACY_URI_STUB }
     end
 
     def templates
@@ -255,13 +236,13 @@ module ZendeskAppsSupport
         translation_dir = File.join(root, 'translations')
         return {} unless File.directory?(translation_dir)
 
-        locale_path = "#{translation_dir}/#{self.manifest_json['defaultLocale']}.json"
+        locale_path = "#{translation_dir}/#{manifest.default_locale}.json"
         default_translations = process_translations(locale_path)
 
         Dir["#{translation_dir}/*.json"].inject({}) do |memo, path|
           locale = File.basename(path, File.extname(path))
 
-          locale_translations = if locale == self.manifest_json['defaultLocale']
+          locale_translations = if locale == manifest.default_locale
             default_translations
           else
             deep_merge_hash(default_translations, process_translations(path))

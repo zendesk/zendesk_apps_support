@@ -36,7 +36,7 @@ describe ZendeskAppsSupport::Validations::Requirements do
     expect(errors.first.key).to eq(:excessive_requirements)
   end
 
-  it 'creates an errror for any requirement that is lacking required fields' do
+  it 'creates an error for any requirement that is lacking required fields' do
     requirements_content = { 'targets' => { 'abc' => {} } }
     requirements = double('AppFile', relative_path: 'requirements.json',
                                      read: JSON.generate(requirements_content))
@@ -46,7 +46,7 @@ describe ZendeskAppsSupport::Validations::Requirements do
     expect(errors.first.key).to eq(:missing_required_fields)
   end
 
-  it 'creates an errror for every requirement that is lacking required fields' do
+  it 'creates an error for every requirement that is lacking required fields' do
     requirements_content = { 'targets' => { 'abc' => {}, 'xyz' => {} } }
     requirements = double('AppFile', relative_path: 'requirements.json',
                                      read: JSON.generate(requirements_content))

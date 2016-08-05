@@ -201,10 +201,6 @@ parts:
       title: "App builder job: single invalid parameter type error"
       value: "%{invalid_types} is an invalid parameter type."
   - translation:
-      key: "txt.apps.admin.error.app_build.empty_type_parameter"
-      title: "App builder job: empty parameter type error"
-      value: "A type needs to be specified for every parameter."
-  - translation:
       key: "txt.apps.admin.error.app_build.invalid_type_parameter.other"
       title: "App builder job: multiple invalid parameter types error"
       value: "%{invalid_types} are invalid parameter types."

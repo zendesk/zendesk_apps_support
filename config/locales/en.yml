@@ -77,7 +77,6 @@ en:
             invalid_type_parameter:
               one: "%{invalid_types} is an invalid parameter type."
               other: "%{invalid_types} are invalid parameter types."
-            empty_type_parameter: A type needs to be specified for every parameter.
         warning:
           app_build:
             deprecated_version: You are targeting a deprecated version of the framework.

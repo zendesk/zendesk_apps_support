@@ -3,9 +3,9 @@ require 'tmpdir'
 
 describe ZendeskAppsSupport::Validations::Manifest do
   def default_required_params(overrides = {})
-    valid_fields = ZendeskAppsSupport::Validations::Manifest::REQUIRED_MANIFEST_FIELDS.inject(frameworkVersion: '1.0') do |fields, name|
-      fields[name] = name
-      fields
+    valid_fields = ZendeskAppsSupport::Validations::Manifest::REQUIRED_MANIFEST_FIELDS.values.each_with_object(frameworkVersion: '1.0') do |fields, name|
+      name[fields] = fields
+      name
     end
 
     valid_fields.merge(overrides)
@@ -52,7 +52,7 @@ describe ZendeskAppsSupport::Validations::Manifest do
     allow(@package).to receive(:has_location?) { true }
     allow(@package).to receive(:requirements_only) { false }
     allow(@package).to receive(:requirements_only=) { nil }
-    allow(@package).to receive(:manifest_json) { JSON.parse(@manifest.read) }
+    allow(@package).to receive(:manifest) { ZendeskAppsSupport::Manifest.new(JSON.parse(@manifest.read)) }
   end
 
   after do
@@ -226,7 +226,7 @@ describe ZendeskAppsSupport::Validations::Manifest do
   end
 
   it 'should have an error when manifest is not a valid json' do
-    allow(@package).to receive(:manifest_json) { raise JSON::ParserError.new }
+    allow(@package).to receive(:read_json) { raise JSON::ParserError.new }
 
     expect(@package).to have_error(/^manifest is not proper JSON/)
   end
@@ -311,18 +311,6 @@ describe ZendeskAppsSupport::Validations::Manifest do
         ]
       }
       expect(create_package(default_required_params.merge(parameter_hash))).to have_error 'integer is an invalid parameter type.'
-    end
-
-    it 'has an error when the parameter type is missing' do
-      parameter_hash = {
-        'parameters' =>
-        [
-          {
-            'name' => 'should have type'
-          }
-        ]
-      }
-      expect(create_package(default_required_params.merge(parameter_hash))).to have_error 'A type needs to be specified for every parameter.'
     end
 
     it "doesn't have an error with a correct parameter type" do
