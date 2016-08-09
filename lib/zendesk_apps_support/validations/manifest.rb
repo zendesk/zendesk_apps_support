@@ -241,11 +241,12 @@ module ZendeskAppsSupport
           end
         end
 
-        # TODO: support the new location format in the no_template array
+        # TODO: support the new location format in the no_template array and check the app actually runs in
+        # included locations
         def no_template_format_error(manifest)
           no_template = manifest.no_template
-          return if no_template == false
-          unless no_template.is_a?(Array) && no_template_locations.all? { |loc| Location.find_by(name: loc) }
+          return if [false, true, nil].include? no_template
+          unless no_template.is_a?(Array) && manifest.no_template_locations.all? { |loc| Location.find_by(name: loc) }
             ValidationError.new(:invalid_no_template)
           end
         end

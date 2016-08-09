@@ -246,6 +246,14 @@ describe ZendeskAppsSupport::Validations::Manifest do
     expect(create_package('singleInstall' => 'false')).to have_error(/either true or false/)
   end
 
+  it 'should have an error when noTemplate is not a boolean or an array' do
+    expect(create_package('noTemplate' => 12)).to have_error(:invalid_no_template)
+  end
+
+  it 'should have an error when noTemplate is a garbage array' do
+    expect(create_package('noTemplate' => ['ticket_sidebar', 'someplace else'])).to have_error(:invalid_no_template)
+  end
+
   context 'with invalid parameters' do
     before do
       allow(ZendeskAppsSupport::Validations::Manifest).to receive(:default_locale_error)
