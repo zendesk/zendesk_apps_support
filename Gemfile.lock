@@ -18,6 +18,8 @@ GEM
     diff-lcs (1.2.5)
     erubis (2.7.0)
     execjs (2.7.0)
+    faker (1.6.6)
+      i18n (~> 0.5)
     i18n (0.7.0)
     image_size (1.4.2)
     jshintrb (0.3.0)
@@ -49,6 +51,7 @@ PLATFORMS
 DEPENDENCIES
   bump (~> 0.5.1)
   byebug
+  faker (~> 1.6.6)
   rspec (~> 3.4.0)
   zendesk_apps_support!
 

@@ -4,14 +4,12 @@ require 'uri'
 module ZendeskAppsSupport
   module Validations
     module Manifest
-      REQUIRED_MANIFEST_FIELDS = { author: 'author', default_locale: 'defaultLocale' }.freeze
+      REQUIRED_MANIFEST_FIELDS = { author: 'author', default_locale: 'defaultLocale', name: 'name' }.freeze
       OAUTH_REQUIRED_FIELDS    = %w(client_id client_secret authorize_uri access_token_uri).freeze
-      PARAMETER_TYPES          = %w(text password checkbox url number multiline hidden).freeze
 
       class <<self
         def call(package)
           return [ValidationError.new(:missing_manifest)] unless package.has_file?('manifest.json')
-
           manifest = package.manifest
 
           errors = []
@@ -23,8 +21,9 @@ module ZendeskAppsSupport
             check_errors(%i(ban_location ban_framework_version), errors, manifest)
           else
             check_errors(%i(missing_location_error invalid_location_error), errors, package)
-            check_errors(%i(duplicate_location_error missing_framework_version), errors, manifest)
-            check_errors(%i(invalid_version_error framework_version_iframe_only), errors, manifest, package)
+            check_errors(%i(duplicate_location_error missing_framework_version
+                            framework_version_iframe_only), errors, manifest)
+            check_errors(%i(invalid_version_error), errors, manifest, package)
           end
 
           errors.flatten.compact
@@ -95,12 +94,12 @@ module ZendeskAppsSupport
         end
 
         def missing_location_error(package)
-          missing_keys_validation_error(['location']) unless package.has_location?
+          missing_keys_validation_error(['location']) unless package.manifest.location?
         end
 
         def invalid_location_error(package)
           errors = []
-          manifest_locations = package.locations
+          manifest_locations = package.manifest.locations
           manifest_locations.find do |host, locations|
             # CRUFT: remove when support for legacy names are deprecated
             product = Product.find_by(legacy_name: host) || Product.find_by(name: host)
@@ -190,7 +189,7 @@ module ZendeskAppsSupport
           manifest.parameters.each do |parameter|
             parameter_type = parameter.type
 
-            invalid_types << parameter_type unless PARAMETER_TYPES.include?(parameter_type)
+            invalid_types << parameter_type unless ZendeskAppsSupport::Manifest::Parameter::TYPES.include?(parameter_type)
           end
 
           if invalid_types.any?
@@ -204,8 +203,8 @@ module ZendeskAppsSupport
           ValidationError.new('manifest_keys.missing', missing_keys: missing_keys.join(', '), count: missing_keys.length)
         end
 
-        def framework_version_iframe_only(manifest, package)
-          if package.iframe_only?
+        def framework_version_iframe_only(manifest)
+          if manifest.iframe_only?
             manifest_version = Gem::Version.new manifest.framework_version
             required_version = Gem::Version.new '2.0'
 

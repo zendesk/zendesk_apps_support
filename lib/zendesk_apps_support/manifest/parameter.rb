@@ -2,6 +2,7 @@
 module ZendeskAppsSupport
   class Manifest
     class Parameter
+      TYPES = %w(text password checkbox url number multiline hidden).freeze
       attr_reader :name, :type, :required, :secure
       def initialize(p)
         @name = p['name']

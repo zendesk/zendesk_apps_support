@@ -8,7 +8,7 @@ describe ZendeskAppsSupport::Validations::Source do
                       lib_files: [],
                       template_files: [],
                       app_css: '',
-                      manifest: ZendeskAppsSupport::Manifest.new(manifest_json),
+                      manifest: ZendeskAppsSupport::Manifest.new(JSON.dump manifest_json),
                       locations: { 'zendesk' => { 'ticket_sidebar' => '_legacy' } },
                       iframe_only?: false)
   end
@@ -32,7 +32,7 @@ describe ZendeskAppsSupport::Validations::Source do
 
   context 'when iframe only' do
     before do
-      allow(package).to receive(:iframe_only?) { true }
+      allow(package.manifest).to receive(:iframe_only?) { true }
     end
 
     context 'when the package includes app.js' do

@@ -116,13 +116,14 @@ module ZendeskAppsSupport
 
       locale = options.fetch(:locale, 'en')
 
-      source = iframe_only? ? nil : app_js
+      source = manifest.iframe_only? ? nil : app_js
       app_class_name = "app-#{app_id}"
-      templates = is_no_template ? {} : compiled_templates(app_id, asset_url_prefix)
+      # if no_template is an array, we still need the templates
+      templates = manifest.no_template == true ? {} : compiled_templates(app_id, asset_url_prefix)
 
       app_settings = {
-        location: locations,
-        noTemplate: no_template_locations,
+        location: manifest.locations,
+        noTemplate: manifest.no_template_locations,
         singleInstall: manifest.single_install?,
         signedUrls: manifest.signed_urls?
       }.select { |_k, v| !v.nil? }
@@ -139,7 +140,7 @@ module ZendeskAppsSupport
         framework_version: manifest.framework_version,
         templates: templates,
         modules: commonjs_modules,
-        iframe_only: iframe_only?
+        iframe_only: manifest.iframe_only?
       )
     end
 
@@ -149,7 +150,7 @@ module ZendeskAppsSupport
     deprecate :manifest_json, :manifest, 2016, 9
 
     def manifest
-      @manifest ||= Manifest.new(read_json('manifest.json'))
+      @manifest ||= Manifest.new(read_file('manifest.json'))
     end
 
     def requirements_json
@@ -306,10 +307,10 @@ module ZendeskAppsSupport
       File.read(path_to(path))
     end
 
-    def read_json(path)
+    def read_json(path, parser_opts = {})
       file = read_file(path)
       unless file.nil?
-        JSON.parse(read_file(path))
+        JSON.parse(read_file(path), parser_opts)
       end
     end
   end

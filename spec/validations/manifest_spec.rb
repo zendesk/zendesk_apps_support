@@ -8,12 +8,12 @@ describe ZendeskAppsSupport::Validations::Manifest do
       name
     end
 
-    valid_fields.merge(overrides)
+    valid_fields.merge(location: 'ticket_sidebar').merge(overrides)
   end
 
   def create_package(parameter_hash)
     params = default_required_params(parameter_hash)
-    allow(@manifest).to receive_messages(read: JSON.generate(params))
+    allow(@manifest_file).to receive_messages(read: JSON.generate(params))
     @package
   end
 
@@ -45,14 +45,17 @@ describe ZendeskAppsSupport::Validations::Manifest do
   end
 
   before do
-    @manifest = double('AppFile', relative_path: 'manifest.json', read: JSON.dump(location: location))
+    @manifest_file = double('AppFile', relative_path: 'manifest.json', read: JSON.dump(location: location))
     @dir = Dir.mktmpdir
     @package = ZendeskAppsSupport::Package.new(@dir, false)
     allow(@package).to receive(:has_file?) { |file| file == 'manifest.json' ? true : false }
     allow(@package).to receive(:has_location?) { true }
     allow(@package).to receive(:requirements_only) { false }
     allow(@package).to receive(:requirements_only=) { nil }
-    allow(@package).to receive(:manifest) { ZendeskAppsSupport::Manifest.new(JSON.parse(@manifest.read)) }
+    allow(@package).to receive(:manifest) do
+      @package.instance_variable_get(:@manifest) ||
+        @package.instance_variable_set(:@manifest, ZendeskAppsSupport::Manifest.new(@manifest_file.read))
+    end
   end
 
   after do
@@ -60,21 +63,21 @@ describe ZendeskAppsSupport::Validations::Manifest do
   end
 
   it 'should have an error when required field is missing' do
-    expect(@package).to have_error 'Missing required fields in manifest: author, defaultLocale'
+    expect(@package).to have_error 'Missing required fields in manifest: author, defaultLocale, name'
   end
 
   it 'should have an error when location is missing without requirements' do
-    allow(@package).to receive_messages(has_location?: false)
+    allow(@package.manifest).to receive(:location?) { false }
     expect(@package).to have_error 'Missing required field in manifest: location'
   end
 
   it 'should have an error when location is defined but requirements only is true' do
-    allow(@manifest).to receive_messages(read: JSON.generate(requirementsOnly: true, location: 1))
+    allow(@manifest_file).to receive_messages(read: JSON.generate(requirementsOnly: true, location: 'thicket_sidecar'))
     expect(@package).to have_error :no_location_required
   end
 
   it 'should not have an error when location is missing but requirements only is true' do
-    allow(@manifest).to receive_messages(read: JSON.generate(requirementsOnly: true))
+    allow(@manifest_file).to receive_messages(read: JSON.generate(requirementsOnly: true))
     allow(@package).to receive_messages(has_location?: false)
     expect(@package).not_to have_error 'Missing required field in manifest: location'
   end
@@ -84,25 +87,25 @@ describe ZendeskAppsSupport::Validations::Manifest do
   end
 
   it 'should have an error when frameworkVersion is defined but requirements only is true' do
-    allow(@manifest).to receive_messages(read: JSON.generate(requirementsOnly: true, frameworkVersion: 1))
+    allow(@manifest_file).to receive_messages(read: JSON.generate(requirementsOnly: true, frameworkVersion: 1))
     expect(@package).to have_error :no_framework_version_required
   end
 
   it 'should not have an error when frameworkVersion is missing with requirements' do
-    allow(@manifest).to receive_messages(read: JSON.generate(requirementsOnly: true))
+    allow(@manifest_file).to receive_messages(read: JSON.generate(requirementsOnly: true))
     expect(@package).not_to have_error 'Missing required field in manifest: frameworkVersion'
   end
 
   it 'should have an error when the defaultLocale is invalid' do
     manifest = { 'defaultLocale' => 'pt-BR-1' }
-    allow(@manifest).to receive_messages(read: JSON.generate(manifest))
+    allow(@manifest_file).to receive_messages(read: JSON.generate(manifest))
 
     expect(@package).to have_error(/default locale/)
   end
 
   it 'should have an error when the translation file is missing for the defaultLocale' do
     manifest = { 'defaultLocale' => 'pt' }
-    allow(@manifest).to receive_messages(read: JSON.generate(manifest))
+    allow(@manifest_file).to receive_messages(read: JSON.generate(manifest))
     translation_files = double('AppFile', relative_path: 'translations/en.json')
     allow(@package).to receive_messages(translation_files: [translation_files])
 
@@ -126,7 +129,7 @@ describe ZendeskAppsSupport::Validations::Manifest do
   end
 
   context 'location is invalid' do
-    let(:location) { { 'zendesk' =>  { 'ticket_sidebar' => 'sidebar.html', 'a_invalid_location' => 'https://i.am.so.conf/used/setup.exe' } } }
+    let(:location) { { 'zendesk' => { 'ticket_sidebar' => 'sidebar.html', 'a_invalid_location' => 'https://i.am.so.conf/used/setup.exe' } } }
 
     it 'should have an error' do
       expect(@package).to have_error(/invalid location in/)
@@ -134,7 +137,7 @@ describe ZendeskAppsSupport::Validations::Manifest do
   end
 
   context 'location is localhost' do
-    let(:location) { { 'zendesk' =>  { 'ticket_sidebar' => 'http://localhost:9999/' } } }
+    let(:location) { { 'zendesk' => { 'ticket_sidebar' => 'http://localhost:9999/' } } }
 
     it 'should not have an error' do
       expect(@package).not_to have_error(/invalid location/)
@@ -142,7 +145,7 @@ describe ZendeskAppsSupport::Validations::Manifest do
   end
 
   context 'location uri is not HTTPS' do
-    let(:location) { { 'zendesk' =>  { 'ticket_sidebar' => 'http://mysite.com/zendesk_iframe' } } }
+    let(:location) { { 'zendesk' => { 'ticket_sidebar' => 'http://mysite.com/zendesk_iframe' } } }
 
     it 'should have an error' do
       expect(@package).to have_error(/invalid location URI/)
@@ -150,7 +153,7 @@ describe ZendeskAppsSupport::Validations::Manifest do
   end
 
   context 'location uri is invalid' do
-    let(:location) { { 'zendesk' =>  { 'ticket_sidebar' => '\\' } } }
+    let(:location) { { 'zendesk' => { 'ticket_sidebar' => '\\' } } }
 
     it 'should have an error when the location is an invalid URI' do
       expect(@package).to have_error(/invalid location URI/)
@@ -158,7 +161,7 @@ describe ZendeskAppsSupport::Validations::Manifest do
   end
 
   context 'location references a correct URI' do
-    let(:location) { { 'zendesk' =>  { 'ticket_sidebar' => 'https://mysite.com/zendesk_iframe' } } }
+    let(:location) { { 'zendesk' => { 'ticket_sidebar' => 'https://mysite.com/zendesk_iframe' } } }
 
     it 'should not have a location error' do
       expect(@package).not_to have_error(/invalid location/)
@@ -166,7 +169,7 @@ describe ZendeskAppsSupport::Validations::Manifest do
   end
 
   context 'location references a file outside of assets folder' do
-    let(:location) { { 'zendesk' =>  { 'ticket_sidebar' => 'manifest.json' } } }
+    let(:location) { { 'zendesk' => { 'ticket_sidebar' => 'manifest.json' } } }
 
     before do
       allow(@package).to receive(:has_file?).with('manifest.json').and_return(true)
@@ -178,7 +181,7 @@ describe ZendeskAppsSupport::Validations::Manifest do
   end
 
   context 'location references a missing file' do
-    let(:location) { { 'zendesk' =>  { 'ticket_sidebar' => 'assets/herp.derp' } } }
+    let(:location) { { 'zendesk' => { 'ticket_sidebar' => 'assets/herp.derp' } } }
 
     it 'should have an error' do
       expect(@package).to have_error(/invalid location URI/)
@@ -186,7 +189,7 @@ describe ZendeskAppsSupport::Validations::Manifest do
   end
 
   context 'location references a valid asset file' do
-    let(:location) { { 'zendesk' =>  { 'ticket_sidebar' => 'assets/iframe.html' } } }
+    let(:location) { { 'zendesk' => { 'ticket_sidebar' => 'assets/iframe.html' } } }
 
     before do
       allow(@package).to receive(:has_file?).with('assets/iframe.html').and_return(true)
@@ -199,14 +202,14 @@ describe ZendeskAppsSupport::Validations::Manifest do
 
   it 'should have an error when there are duplicate locations' do
     manifest = { 'location' => %w(ticket_sidebar ticket_sidebar) }
-    allow(@manifest).to receive_messages(read: JSON.generate(manifest))
+    allow(@manifest_file).to receive_messages(read: JSON.generate(manifest))
 
-    expect(@package).to have_error(/duplicate/)
+    expect { @package.validate }.to raise_error(/Duplicate reference in manifest: ticket_sidebar/)
   end
 
   it 'should have an error when the version is not supported' do
     manifest = { 'frameworkVersion' => '0.7' }
-    allow(@manifest).to receive_messages(read: JSON.generate(manifest))
+    allow(@manifest_file).to receive_messages(read: JSON.generate(manifest))
 
     expect(@package).to have_error(/not a valid framework version/)
   end
@@ -220,13 +223,13 @@ describe ZendeskAppsSupport::Validations::Manifest do
       ]
     }
 
-    allow(@manifest).to receive_messages(read: JSON.generate(manifest))
+    allow(@manifest_file).to receive_messages(read: JSON.generate(manifest))
 
     expect(@package).to have_error(/set to hidden and cannot be required/)
   end
 
   it 'should have an error when manifest is not a valid json' do
-    allow(@package).to receive(:read_json) { raise JSON::ParserError.new }
+    allow(@package).to receive(:manifest) { raise JSON::ParserError.new }
 
     expect(@package).to have_error(/^manifest is not proper JSON/)
   end
@@ -235,7 +238,7 @@ describe ZendeskAppsSupport::Validations::Manifest do
     oauth_hash = {
       'oauth' => {}
     }
-    expect(create_package(default_required_params.merge(oauth_hash))).to have_error \
+    expect(create_package(oauth_hash)).to have_error \
       'Missing required oauth fields in manifest: client_id, client_secret, authorize_uri, access_token_uri'
   end
 
@@ -310,7 +313,7 @@ describe ZendeskAppsSupport::Validations::Manifest do
           }
         ]
       }
-      expect(create_package(default_required_params.merge(parameter_hash))).to have_error 'integer is an invalid parameter type.'
+      expect(create_package(parameter_hash)).to have_error 'integer is an invalid parameter type.'
     end
 
     it "doesn't have an error with a correct parameter type" do
@@ -323,7 +326,7 @@ describe ZendeskAppsSupport::Validations::Manifest do
           }
         ]
       }
-      expect(create_package(default_required_params.merge(parameter_hash))).not_to have_error
+      expect(create_package(parameter_hash)).not_to have_error
     end
   end
 end

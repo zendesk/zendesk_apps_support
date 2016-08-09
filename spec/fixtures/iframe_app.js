@@ -1,5 +1,5 @@
 var app = ZendeskApps.defineApp(null)
-  .reopenClass({"location":{"zopim":{"chat_sidebar":"https://apps.zopim.com/time-tracking/"}},"noTemplate":false,"singleInstall":false,"signedUrls":false})
+  .reopenClass({"location":{"zopim":{"chat_sidebar":"https://apps.zopim.com/time-tracking/"}},"noTemplate":[],"singleInstall":false,"signedUrls":false})
   .reopen({
     appName: "ABC",
     appVersion: "1.0.0",
@@ -9,7 +9,7 @@ var app = ZendeskApps.defineApp(null)
       name: "John Smith",
       email: "john@example.com"
     },
-    frameworkVersion: "1.0"
+    frameworkVersion: "2.0"
   });
 
 ZendeskApps["ABC"] = app;

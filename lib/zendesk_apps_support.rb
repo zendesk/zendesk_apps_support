@@ -31,5 +31,6 @@ module ZendeskAppsSupport
 
   class Manifest
     autoload :Parameter, 'zendesk_apps_support/manifest/parameter'
+    autoload :NoOverrideHash, 'zendesk_apps_support/manifest/no_override_hash'
   end
 end
