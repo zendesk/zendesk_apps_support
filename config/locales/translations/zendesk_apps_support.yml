@@ -204,3 +204,7 @@ parts:
       key: "txt.apps.admin.error.app_build.invalid_type_parameter.other"
       title: "App builder job: multiple invalid parameter types error"
       value: "%{invalid_types} are invalid parameter types."
+  - translation:
+      key: "txt.apps.admin.error.app_build.unacceptable_boolean"
+      title: "App builder job: this value needs to be either true or false, but something else was passed in"
+      value: "%{field} must be either true or false without quotes."

@@ -14,7 +14,7 @@ module ZendeskAppsSupport
 
           errors = []
           check_errors(%i(missing_keys_error oauth_error parameters_error invalid_hidden_parameter_error
-                          invalid_type_error name_as_parameter_name_error no_template_format_error), errors, manifest)
+                          invalid_type_error name_as_parameter_name_error no_template_format_error boolean_error), errors, manifest)
           check_errors(%i(default_locale_error), errors, manifest, package)
 
           if manifest.requirements_only?
@@ -32,6 +32,23 @@ module ZendeskAppsSupport
         end
 
         private
+
+        def boolean_error(manifest)
+          {
+            requirements_only: 'requirementsOnly',
+            single_install: 'singleInstall',
+            signed_urls: 'signedUrls',
+            private: 'private'
+          }.map do |field, manifest_value|
+            validate_boolean(manifest.public_send(field), manifest_value)
+          end.compact
+        end
+
+        def validate_boolean(value, label_for_error)
+          unless [true, false, nil].include? value
+            ValidationError.new(:unacceptable_boolean, field: label_for_error)
+          end
+        end
 
         def check_errors(error_types, collector, *checked_objects)
           error_types.each do |error_type|
@@ -67,11 +84,21 @@ module ZendeskAppsSupport
 
           return unless manifest.parameters.any?
 
-          para_names = manifest.parameters.collect(&:name)
+          para_names = manifest.parameters.map(&:name)
           duplicate_parameters = para_names.select { |name| para_names.count(name) > 1 }.uniq
           unless duplicate_parameters.empty?
             return ValidationError.new(:duplicate_parameters, duplicate_parameters: duplicate_parameters)
           end
+
+          invalid_required = manifest.parameters.map do |parameter|
+            validate_boolean(parameter.required, "parameters.#{parameter.name}.required")
+          end.compact
+          return invalid_required if invalid_required.any?
+
+          invalid_secure = manifest.parameters.map do |parameter|
+            validate_boolean(parameter.secure, "parameters.#{parameter.name}.secure")
+          end.compact
+          return invalid_secure if invalid_secure.any?
         end
 
         def missing_keys_error(manifest)

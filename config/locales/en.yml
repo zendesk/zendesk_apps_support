@@ -77,6 +77,7 @@ en:
             invalid_type_parameter:
               one: "%{invalid_types} is an invalid parameter type."
               other: "%{invalid_types} are invalid parameter types."
+            unacceptable_boolean: "%{field} must be either true or false without quotes."
         warning:
           app_build:
             deprecated_version: You are targeting a deprecated version of the framework.

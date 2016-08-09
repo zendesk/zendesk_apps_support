@@ -7,10 +7,30 @@ module ZendeskAppsSupport
         attr_reader(*names)
       end
     end
-    attr_reader :name, :requirements_only, :version, :author, :framework_version, :single_install,
-                :signed_urls, :no_template, :default_locale, :original_locations, :oauth, :parameters,
-                :original_parameters, :private
+
     LEGACY_URI_STUB = '_legacy'
+
+    RUBY_TO_JSON = {
+      name: 'name',
+      requirements_only: 'requirementsOnly',
+      version: 'version',
+      author: 'author',
+      framework_version: 'frameworkVersion',
+      single_install: 'singleInstall',
+      signed_urls: 'signedUrls',
+      no_template: 'noTemplate',
+      default_locale: 'defaultLocale',
+      original_locations: 'location',
+      private: 'private',
+      oauth: 'oauth',
+      original_parameters: 'parameters',
+      domain_whitelist: 'domainWhitelist',
+      remote_installation_url: 'remoteInstallationURL',
+      terms_conditions_url: 'termsConditionsURL',
+      google_analytics_code: 'gaID'
+    }
+
+    attr_reader(*RUBY_TO_JSON.keys)
 
     alias_method :requirements_only?, :requirements_only
     alias_method :signed_urls?, :signed_urls
@@ -56,25 +76,24 @@ module ZendeskAppsSupport
       iframe_urls.any? { |url| url != LEGACY_URI_STUB }
     end
 
+    def parameters
+      @parameters ||= begin
+        parameter_array = @original_parameters.is_a?(Array) ? @original_parameters : []
+        parameter_array.map do |parameter_hash|
+          Parameter.new(parameter_hash)
+        end
+      end
+    end
+
     def initialize(manifest_text)
       m = parse_json(manifest_text)
-      @name = m['name']
-      @requirements_only = m['requirementsOnly']
-      @version = m['version']
-      @author = m['author']
-      @framework_version = m['frameworkVersion']
-      @single_install = m['singleInstall'] || false
-      @private = m.fetch('private', true)
-      @signed_urls = m['signedUrls'] || false
-      @no_template = m['noTemplate'] || false
-      @default_locale = m['defaultLocale']
-      @original_locations = m['location']
-      @oauth = m['oauth']
-      @original_parameters = m['parameters']
-      parameter_array = @original_parameters.is_a?(Array) ? @original_parameters : []
-      @parameters = parameter_array.map do |parameter_hash|
-        Parameter.new(parameter_hash)
+      RUBY_TO_JSON.each do |ruby, json|
+        instance_variable_set(:"@#{ruby}", m[json])
       end
+      @single_install ||= false
+      @private = m.fetch('private', true)
+      @signed_urls ||= false
+      @no_template ||= false
     end
 
     private

@@ -242,6 +242,10 @@ describe ZendeskAppsSupport::Validations::Manifest do
       'Missing required oauth fields in manifest: client_id, client_secret, authorize_uri, access_token_uri'
   end
 
+  it 'should have an error when a non-boolean is passed for a field that must be boolean' do
+    expect(create_package('singleInstall' => 'false')).to have_error(/either true or false/)
+  end
+
   context 'with invalid parameters' do
     before do
       allow(ZendeskAppsSupport::Validations::Manifest).to receive(:default_locale_error)
