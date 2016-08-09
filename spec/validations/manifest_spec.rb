@@ -340,5 +340,19 @@ describe ZendeskAppsSupport::Validations::Manifest do
       }
       expect(create_package(parameter_hash)).not_to have_error
     end
+
+    it "doesn't have an error with a missing parameter type" do
+      parameter_hash = {
+        'parameters' =>
+        [
+          {
+            'name' => 'valid parameter'
+          }
+        ]
+      }
+      package = create_package(parameter_hash)
+      expect(package.manifest.parameters.first.type).to eq 'text'
+      expect(package).not_to have_error
+    end
   end
 end
