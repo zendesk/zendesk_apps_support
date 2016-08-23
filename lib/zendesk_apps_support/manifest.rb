@@ -1,17 +1,9 @@
 # frozen_string_literal: true
 module ZendeskAppsSupport
   class Manifest
-    class << self
-      def private_attr_reader(*names)
-        private
-        attr_reader(*names)
-      end
-    end
-
     LEGACY_URI_STUB = '_legacy'
 
     RUBY_TO_JSON = {
-      name: 'name',
       requirements_only: 'requirementsOnly',
       version: 'version',
       author: 'author',
@@ -28,7 +20,7 @@ module ZendeskAppsSupport
       remote_installation_url: 'remoteInstallationURL',
       terms_conditions_url: 'termsConditionsURL',
       google_analytics_code: 'gaID'
-    }
+    }.freeze
 
     attr_reader(*RUBY_TO_JSON.keys)
 
@@ -50,7 +42,7 @@ module ZendeskAppsSupport
     end
 
     def location?
-      locations != { 'zendesk' => {} }
+      !locations.values.all?(&:empty?)
     end
 
     def locations
@@ -59,21 +51,22 @@ module ZendeskAppsSupport
         when Hash
           original_locations
         when Array
-          { 'zendesk' => NoOverrideHash[original_locations.map { |location| [ location, LEGACY_URI_STUB ] }] }
+          { 'support' => NoOverrideHash[original_locations.map { |location| [ location, LEGACY_URI_STUB ] }] }
         when String
-          { 'zendesk' => { original_locations => LEGACY_URI_STUB } }
+          { 'support' => { original_locations => LEGACY_URI_STUB } }
         # TODO: error out for numbers and Booleans
         else # NilClass
-          { 'zendesk' => {} }
+          { 'support' => {} }
         end
+    rescue OverrideError => error
+      # if the error contains the word `_legacy` in the second sentence, let's
+      # only use the first one.
+      error.message = error.message[/([^.]*)\./] if error.message[/_legacy/]
+      raise
     end
 
     def iframe_only?
-      product_names = locations.keys
-      # if the app is not for Zendesk / Support, it must be iframe only
-      return true if product_names.any? { |name| !%w(zendesk support).include? name }
-      iframe_urls = locations.values.flat_map(&:values)
-      iframe_urls.any? { |url| url != LEGACY_URI_STUB }
+      Gem::Version.new(framework_version) >= Gem::Version.new('2')
     end
 
     def parameters
@@ -90,6 +83,7 @@ module ZendeskAppsSupport
       RUBY_TO_JSON.each do |ruby, json|
         instance_variable_set(:"@#{ruby}", m[json])
       end
+      @requirements_only ||= false
       @single_install ||= false
       @private = m.fetch('private', true)
       @signed_urls ||= false
