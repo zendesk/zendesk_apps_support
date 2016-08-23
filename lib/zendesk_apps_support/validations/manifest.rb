@@ -4,7 +4,8 @@ require 'uri'
 module ZendeskAppsSupport
   module Validations
     module Manifest
-      REQUIRED_MANIFEST_FIELDS = { author: 'author', default_locale: 'defaultLocale', name: 'name' }.freeze
+      RUBY_TO_JSON = ZendeskAppsSupport::Manifest::RUBY_TO_JSON
+      REQUIRED_MANIFEST_FIELDS = RUBY_TO_JSON.select { |k| %i(author default_locale).include? k }.freeze
       OAUTH_REQUIRED_FIELDS    = %w(client_id client_secret authorize_uri access_token_uri).freeze
 
       class <<self
@@ -22,7 +23,7 @@ module ZendeskAppsSupport
           else
             check_errors(%i(missing_location_error invalid_location_error), errors, package)
             check_errors(%i(duplicate_location_error missing_framework_version
-                            framework_version_iframe_only), errors, manifest)
+                            location_framework_mismatch), errors, manifest)
             check_errors(%i(invalid_version_error), errors, manifest, package)
           end
 
@@ -34,19 +35,17 @@ module ZendeskAppsSupport
         private
 
         def boolean_error(manifest)
-          {
-            requirements_only: 'requirementsOnly',
-            single_install: 'singleInstall',
-            signed_urls: 'signedUrls',
-            private: 'private'
-          }.map do |field, manifest_value|
-            validate_boolean(manifest.public_send(field), manifest_value)
+          booleans = %i(requirements_only single_install signed_urls private)
+          RUBY_TO_JSON.each do |ruby, json|
+            if booleans.include? ruby
+              validate_boolean(manifest.public_send(ruby), json)
+            end
           end.compact
         end
 
         def validate_boolean(value, label_for_error)
-          unless [true, false, nil].include? value
-            ValidationError.new(:unacceptable_boolean, field: label_for_error)
+          unless [true, false].include? value
+            ValidationError.new(:unacceptable_boolean, field: label_for_error, value: value)
           end
         end
 
@@ -230,14 +229,18 @@ module ZendeskAppsSupport
           ValidationError.new('manifest_keys.missing', missing_keys: missing_keys.join(', '), count: missing_keys.length)
         end
 
-        def framework_version_iframe_only(manifest)
+        def location_framework_mismatch(manifest)
+          locations = manifest.locations
+          iframe_locations = locations.values.any? do |location_hash|
+            location_hash.values.any? { |url| url != ZendeskAppsSupport::Manifest::LEGACY_URI_STUB }
+          end
+          legacy_locations = (!iframe_locations && manifest.location?) || locations.values.any? do |location_hash|
+            location_hash.values.any? { |url| url == ZendeskAppsSupport::Manifest::LEGACY_URI_STUB }
+          end
           if manifest.iframe_only?
-            manifest_version = Gem::Version.new manifest.framework_version
-            required_version = Gem::Version.new '2.0'
-
-            if manifest_version < required_version
-              ValidationError.new(:old_version)
-            end
+            return ValidationError.new(:locations_must_be_urls) if legacy_locations
+          elsif iframe_locations
+            return ValidationError.new(:locations_cant_be_urls)
           end
         end
 

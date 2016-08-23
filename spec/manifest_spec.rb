@@ -54,7 +54,6 @@ describe ZendeskAppsSupport::Manifest do
 
   describe 'attr_readers' do
     it 'should return values from the passed in JSON string' do
-      expect(manifest.name).to eq manifest_hash[:name]
       expect(manifest.requirements_only).to eq manifest_hash[:requirementsOnly]
       expect(manifest.requirements_only?).to eq manifest_hash[:requirementsOnly]
       expect(manifest.version).to eq manifest_hash[:version]
@@ -207,13 +206,13 @@ describe ZendeskAppsSupport::Manifest do
     it 'supports strings' do
       manifest_hash[:location] = 'ticket_sidebar'
       location_object = manifest.locations
-      expect(location_object).to eq('zendesk' => { 'ticket_sidebar' => '_legacy' })
+      expect(location_object).to eq('support' => { 'ticket_sidebar' => '_legacy' })
     end
 
     it 'supports arrays' do
       manifest_hash[:location] = %w(🔔 🃏)
       location_object = manifest.locations
-      expect(location_object).to eq('zendesk' => { '🃏' => '_legacy', '🔔' => '_legacy' })
+      expect(location_object).to eq('support' => { '🃏' => '_legacy', '🔔' => '_legacy' })
     end
 
     it 'supports objects' do
@@ -225,7 +224,7 @@ describe ZendeskAppsSupport::Manifest do
     it 'works when not present' do
       manifest_hash.delete(:location) { |key| raise "Manifest should have had #{key}" }
       location_object = manifest.locations
-      expect(location_object).to eq('zendesk' => {})
+      expect(location_object).to eq('support' => {})
     end
 
     it 'raises an error for duplicate locations' do
@@ -235,20 +234,19 @@ describe ZendeskAppsSupport::Manifest do
   end
 
   describe '#iframe_only?' do
-    it 'returns false for an app that doesn\'t define any iframe uris' do
-      legacy_uri_stub = ZendeskAppsSupport::Manifest::LEGACY_URI_STUB
-      manifest_hash[:location] = { 'zendesk' => { 'ticket_sidebar' => legacy_uri_stub, 'top_bar' => legacy_uri_stub } }
+    it 'returns false for an app that has a framework version less than 2' do
+      manifest_hash[:frameworkVersion] = '1.0'
       expect(manifest.iframe_only?).to be_falsey
     end
 
-    it 'returns true for an app that defines any iframe uris' do
-      manifest_hash[:location] = { 'zendesk' => { 'new_ticket_sidebar' => 'http://zopim.com' } }
+    it 'returns true for an app that has framework version equal to 2' do
+      manifest_hash[:frameworkVersion] = '2.0'
       expect(manifest.iframe_only?).to be_truthy
     end
 
-    it 'returns false for an app that doesn\'t have any locations in the manifest' do
-      manifest_hash.delete(:location) { |key| raise "Manifest should have had #{key}" }
-      expect(manifest.iframe_only?).to be_falsey
+    it 'returns true for an app that has framework version equal greater than 2' do
+      manifest_hash[:frameworkVersion] = '2.3'
+      expect(manifest.iframe_only?).to be_truthy
     end
   end
 end

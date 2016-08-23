@@ -63,7 +63,7 @@ describe ZendeskAppsSupport::Validations::Manifest do
   end
 
   it 'should have an error when required field is missing' do
-    expect(@package).to have_error 'Missing required fields in manifest: author, defaultLocale, name'
+    expect(@package).to have_error 'Missing required fields in manifest: author, defaultLocale'
   end
 
   it 'should have an error when location is missing without requirements' do
@@ -243,7 +243,7 @@ describe ZendeskAppsSupport::Validations::Manifest do
   end
 
   it 'should have an error when a non-boolean is passed for a field that must be boolean' do
-    expect(create_package('singleInstall' => 'false')).to have_error(/either true or false/)
+    expect(create_package('singleInstall' => 'false')).to have_error(/must be a Boolean value/)
   end
 
   it 'should have an error when noTemplate is not a boolean or an array' do
