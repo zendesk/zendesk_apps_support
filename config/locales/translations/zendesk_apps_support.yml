@@ -115,11 +115,11 @@ parts:
   - translation:
       key: "txt.apps.admin.error.app_build.invalid_default_locale"
       title: "App builder job: invalid default locale"
-      value: "%{defaultLocale} is not a valid default locale."
+      value: "%{default_locale} is not a valid default locale."
   - translation:
       key: "txt.apps.admin.error.app_build.missing_translation_file"
       title: "App builder job: missing translation file"
-      value: "Missing translation file for locale '%{defaultLocale}'. Please read: http://developer.zendesk.com/documentation/apps/i18n.html"
+      value: "Missing translation file for locale '%{default_locale}'. Please read: http://developer.zendesk.com/documentation/apps/i18n.html"
   - translation:
       key: "txt.apps.admin.error.app_build.invalid_host"
       title: "App builder job: invalid host application for apps"

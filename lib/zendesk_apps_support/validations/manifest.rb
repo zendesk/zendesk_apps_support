@@ -114,9 +114,9 @@ module ZendeskAppsSupport
           default_locale = manifest.default_locale
           unless default_locale.nil?
             if default_locale !~ Translations::VALID_LOCALE
-              ValidationError.new(:invalid_default_locale, defaultLocale: default_locale)
+              ValidationError.new(:invalid_default_locale, default_locale: default_locale)
             elsif package.translation_files.detect { |file| file.relative_path == "translations/#{default_locale}.json" }.nil?
-              ValidationError.new(:missing_translation_file, defaultLocale: default_locale)
+              ValidationError.new(:missing_translation_file, default_locale: default_locale)
             end
           end
         end
@@ -182,7 +182,7 @@ module ZendeskAppsSupport
         end
 
         def missing_framework_version(manifest)
-          missing_keys_validation_error(['frameworkVersion']) if manifest.framework_version.nil?
+          missing_keys_validation_error([RUBY_TO_JSON[:framework_version]]) if manifest.framework_version.nil?
         end
 
         def invalid_version_error(manifest, package)
