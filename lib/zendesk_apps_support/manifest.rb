@@ -49,7 +49,7 @@ module ZendeskAppsSupport
       @locations ||=
         case original_locations
         when Hash
-          original_locations
+          replace_legacy_locations! original_locations
         when Array
           { 'support' => NoOverrideHash[original_locations.map { |location| [ location, LEGACY_URI_STUB ] }] }
         when String
@@ -91,6 +91,14 @@ module ZendeskAppsSupport
     end
 
     private
+
+    def replace_legacy_locations!(locations)
+      Product::PRODUCTS_AVAILABLE.each do |product|
+        locations_for_product = locations.delete(product.legacy_name.to_s)
+        locations_for_product && locations[product.name.to_s] = locations_for_product
+      end
+      locations
+    end
 
     def parse_json(manifest_text)
       parser_opts = { object_class: Manifest::NoOverrideHash }

@@ -36,11 +36,13 @@ module ZendeskAppsSupport
 
         def boolean_error(manifest)
           booleans = %i(requirements_only single_install signed_urls private)
+          errors = []
           RUBY_TO_JSON.each do |ruby, json|
             if booleans.include? ruby
-              validate_boolean(manifest.public_send(ruby), json)
+              errors << validate_boolean(manifest.public_send(ruby), json)
             end
-          end.compact
+          end
+          errors.compact
         end
 
         def validate_boolean(value, label_for_error)

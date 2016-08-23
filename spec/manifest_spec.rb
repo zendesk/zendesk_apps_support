@@ -221,6 +221,46 @@ describe ZendeskAppsSupport::Manifest do
       expect(location_object).to eq stringify_keys[manifest_hash[:location]]
     end
 
+    it 'canonicalises zendesk to support' do
+      manifest_hash[:location] = stringify_keys[{
+        zendesk: {
+          ticket_sidebar: 'https://my-site.org/'
+        },
+        chat: {
+          main_panel: 'https://your-site.org/'
+        }
+      }]
+
+      expect(manifest.locations).to eq(
+        'support' => {
+          'ticket_sidebar' => 'https://my-site.org/'
+        },
+        'chat' => {
+          'main_panel' => 'https://your-site.org/'
+        }
+      )
+    end
+
+    it 'canonicalises zopim to chat' do
+      manifest_hash[:location] = stringify_keys[{
+        zendesk: {
+          ticket_sidebar: 'https://my-site.org/'
+        },
+        zopim: {
+          main_panel: 'https://your-site.org/'
+        }
+      }]
+
+      expect(manifest.locations).to eq(
+        'support' => {
+          'ticket_sidebar' => 'https://my-site.org/'
+        },
+        'chat' => {
+          'main_panel' => 'https://your-site.org/'
+        }
+      )
+    end
+
     it 'works when not present' do
       manifest_hash.delete(:location) { |key| raise "Manifest should have had #{key}" }
       location_object = manifest.locations
