@@ -4,33 +4,33 @@ require 'json'
 module ZendeskAppsSupport
   class Manifest
     class OverrideError < StandardError
-      class << self
-        def message_for(key, original = nil, attempted = nil)
-          message = "Duplicate reference in manifest: #{key}"
-          if original && attempted
-            message = "#{message}. Initially set to #{original}, attempted overwrite to #{attempted}."
-          end
-          message
-        end
+      attr_reader :key, :original, :attempted
+      attr_accessor :message
+      def initialize(key, original, attempted)
+        @key = key
+        @original = original
+        @attempted = attempted
+      end
+
+      def message
+        @message ||= "Duplicate reference in manifest: #{key}."\
+        " Initially set to #{original}, attempted overwrite to #{attempted}."
       end
     end
 
     class NoOverrideHash < Hash
       class << self
         def [](array)
-          uniques = Set.new
-          array.each do |key, _value|
-            if uniques.add?(key).nil?
-              # don't add the value to the error message because it might be '_legacy'
-              raise OverrideError, OverrideError.message_for(key)
+          new.tap do |hash|
+            array.each do |key, value|
+              hash[key] = value
             end
           end
-          super
         end
       end
 
       def []=(key, value)
-        raise OverrideError, OverrideError.message_for(key, self[key], value) if key? key
+        raise OverrideError.new(key, self[key], value) if key? key
         super
       end
     end
