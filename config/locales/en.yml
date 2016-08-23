@@ -77,7 +77,7 @@ en:
             invalid_type_parameter:
               one: "%{invalid_types} is an invalid parameter type."
               other: "%{invalid_types} are invalid parameter types."
-            unacceptable_boolean: "%{field} must be either true or false without quotes."
+            unacceptable_boolean: "%{field} must be a Boolean value, got %{value}"
             invalid_no_template: noTemplate must be set to true, false, or an array
               of valid locations.
         warning:

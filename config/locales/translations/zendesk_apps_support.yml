@@ -207,8 +207,8 @@ parts:
   - translation:
       key: "txt.apps.admin.error.app_build.unacceptable_boolean"
       title: "App builder job: this value needs to be either true or false, but something else was passed in"
-      value: "%{field} must be either true or false without quotes."
+      value: "%{field} must be a Boolean value, got %{value}"
   - translation:
       key: "txt.apps.admin.error.app_build.invalid_no_template"
-      title: "App builder job: `noTemplate` needs to be either true, false or a valid array, but something else was passed in"
+      title: "App builder job: `noTemplate` needs to be true, false or a valid array, but something else was passed in"
       value: "noTemplate must be set to true, false, or an array of valid locations."
