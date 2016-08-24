@@ -207,7 +207,7 @@ parts:
   - translation:
       key: "txt.apps.admin.error.app_build.unacceptable_boolean"
       title: "App builder job: this value needs to be either true or false, but something else was passed in"
-      value: "%{field} must be a Boolean value, got %{value}"
+      value: "%{field} must be a Boolean value, got \"%{value}\""
   - translation:
       key: "txt.apps.admin.error.app_build.invalid_no_template"
       title: "App builder job: `noTemplate` needs to be true, false or a valid array, but something else was passed in. noTemplate, true, and false should not be translated."
@@ -215,8 +215,8 @@ parts:
   - translation:
       key: "txt.apps.admin.error.app_build.duplicate_reference"
       title: "App builder job: a key was included twice in the supplied manifest file, but it is only allowed once"
-      value: "Duplicate reference in manifest: %{key}."
+      value: "Duplicate reference in manifest: \"%{key}\"."
   - translation:
       key: "txt.apps.admin.error.app_build.duplicate_reference_values"
       title: "This sentence follows txt.apps.admin.error.app_build.duplicate_reference. The values are included to help find the problem."
-      value: "Initially set to %{original}, attempted overwrite to %{attempted}."
+      value: "Initially set to \"%{original}\", attempted overwrite to \"%{attempted}\"."

@@ -204,7 +204,7 @@ describe ZendeskAppsSupport::Validations::Manifest do
     manifest = { 'location' => %w(ticket_sidebar ticket_sidebar) }
     allow(@manifest_file).to receive_messages(read: JSON.generate(manifest))
 
-    expect { @package.validate }.to raise_error(/Duplicate reference in manifest: ticket_sidebar/)
+    expect { @package.validate }.to raise_error(/Duplicate reference in manifest: "ticket_sidebar"/)
   end
 
   it 'should have an error when the version is not supported' do

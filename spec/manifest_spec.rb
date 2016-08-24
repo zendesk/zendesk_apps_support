@@ -269,7 +269,7 @@ describe ZendeskAppsSupport::Manifest do
 
     it 'raises an error for duplicate locations' do
       manifest_hash[:location] = %w(background background)
-      expect { manifest.locations }.to raise_error(/Duplicate reference in manifest: background/)
+      expect { manifest.locations }.to raise_error(/Duplicate reference in manifest: "background"/)
     end
   end
 
