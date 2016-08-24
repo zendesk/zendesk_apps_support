@@ -80,6 +80,9 @@ en:
             unacceptable_boolean: "%{field} must be a Boolean value, got %{value}"
             invalid_no_template: noTemplate must be set to true, false, or an array
               of valid locations.
+            duplicate_reference: 'Duplicate reference in manifest: %{key}.'
+            duplicate_reference_values: Initially set to %{original}, attempted overwrite
+              to %{attempted}.
         warning:
           app_build:
             deprecated_version: You are targeting a deprecated version of the framework.

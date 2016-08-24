@@ -127,7 +127,8 @@ module ZendeskAppsSupport
 
         def invalid_location_error(package)
           errors = []
-          manifest_locations = package.manifest.locations
+          manifest_locations = package.manifest.original_locations
+          return unless manifest_locations.is_a? Hash
           manifest_locations.find do |host, locations|
             # CRUFT: remove when support for legacy names are deprecated
             product = Product.find_by(legacy_name: host) || Product.find_by(name: host)
@@ -250,7 +251,7 @@ module ZendeskAppsSupport
         # included locations
         def no_template_format_error(manifest)
           no_template = manifest.no_template
-          return if [false, true, nil].include? no_template
+          return if [false, true].include? no_template
           unless no_template.is_a?(Array) && manifest.no_template_locations.all? { |loc| Location.find_by(name: loc) }
             ValidationError.new(:invalid_no_template)
           end

@@ -13,8 +13,18 @@ module ZendeskAppsSupport
       end
 
       def message
-        @message ||= "Duplicate reference in manifest: #{key}."\
-        " Initially set to #{original}, attempted overwrite to #{attempted}."
+        @message ||= begin
+          translated_error_key = 'txt.apps.admin.error.app_build.duplicate_reference'
+          translated_detail_key = 'txt.apps.admin.error.app_build.duplicate_reference_values'
+          translated_error = ZendeskAppsSupport::I18n.t(translated_error_key, key: key)
+          translated_detail = ZendeskAppsSupport::I18n.t(translated_detail_key, original: original, attempted: attempted)
+          "#{translated_error} #{translated_detail}"
+        end
+      end
+
+      def suppress_values!
+        translation = 'txt.apps.admin.error.app_build.duplicate_reference'
+        @message = ZendeskAppsSupport::I18n.t(translation, key: key)
       end
     end
 

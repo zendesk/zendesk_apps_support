@@ -49,7 +49,7 @@ module ZendeskAppsSupport
       @locations ||=
         case original_locations
         when Hash
-          replace_legacy_locations! original_locations
+          replace_legacy_locations original_locations
         when Array
           { 'support' => NoOverrideHash[original_locations.map { |location| [ location, LEGACY_URI_STUB ] }] }
         when String
@@ -61,7 +61,9 @@ module ZendeskAppsSupport
     rescue OverrideError => error
       # if the error contains the word `_legacy` in the second sentence, let's
       # only use the first one.
-      error.message = error.message[/([^.]*)\./] if error.message[/_legacy/]
+      if [error.original, error.attempted].any? { |val| val =~ /_legacy/ }
+        error.suppress_values!
+      end
       raise
     end
 
@@ -92,12 +94,15 @@ module ZendeskAppsSupport
 
     private
 
-    def replace_legacy_locations!(locations)
-      Product::PRODUCTS_AVAILABLE.each do |product|
-        locations_for_product = locations.delete(product.legacy_name.to_s)
-        locations_for_product && locations[product.name.to_s] = locations_for_product
+    def replace_legacy_locations(original_locations)
+      NoOverrideHash.new.tap do |new_locations_obj|
+        Product::PRODUCTS_AVAILABLE.each do |product|
+          product_key = product.name.to_s
+          legacy_key = product.legacy_name.to_s
+          value_for_product = original_locations.fetch(product_key, original_locations[legacy_key])
+          value_for_product && new_locations_obj[product_key] = value_for_product
+        end
       end
-      locations
     end
 
     def parse_json(manifest_text)
