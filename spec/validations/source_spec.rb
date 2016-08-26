@@ -2,20 +2,19 @@ require 'spec_helper'
 
 describe ZendeskAppsSupport::Validations::Source do
   let(:files) { [double('AppFile', relative_path: 'abc.js')] }
+  let(:manifest_json) { { 'requirementsOnly' => false } }
   let(:package) do
     double('Package', js_files: files,
                       lib_files: [],
                       template_files: [],
                       app_css: '',
-                      manifest_json: { 'requirementsOnly' => false },
+                      manifest: ZendeskAppsSupport::Manifest.new(JSON.dump manifest_json),
                       locations: { 'zendesk' => { 'ticket_sidebar' => '_legacy' } },
                       iframe_only?: false)
   end
 
   context 'when requirements only' do
-    before do
-      allow(package).to receive(:manifest_json) { { 'requirementsOnly' => true } }
-    end
+    let(:manifest_json) { { 'requirementsOnly' => true } }
 
     it 'should have an error when app.js is present' do
       errors = ZendeskAppsSupport::Validations::Source.call(package)
@@ -33,7 +32,7 @@ describe ZendeskAppsSupport::Validations::Source do
 
   context 'when iframe only' do
     before do
-      allow(package).to receive(:iframe_only?) { true }
+      allow(package.manifest).to receive(:iframe_only?) { true }
     end
 
     context 'when the package includes app.js' do

@@ -47,8 +47,8 @@ en:
             style_in_template: "<style> tag in %{template}. Use an app.css file instead."
             no_code_for_ifo_notemplate: Javascripts, stylesheets, and templates are
               not allowed when an iframe URI or noTemplate is specified
-            invalid_default_locale: "%{defaultLocale} is not a valid default locale."
-            missing_translation_file: 'Missing translation file for locale ''%{defaultLocale}''.
+            invalid_default_locale: "%{default_locale} is not a valid default locale."
+            missing_translation_file: 'Missing translation file for locale ''%{default_locale}''.
               Please read: http://developer.zendesk.com/documentation/apps/i18n.html'
             invalid_host: "%{host_name} is an invalid host for apps."
             invalid_location:
@@ -77,6 +77,12 @@ en:
             invalid_type_parameter:
               one: "%{invalid_types} is an invalid parameter type."
               other: "%{invalid_types} are invalid parameter types."
+            unacceptable_boolean: '%{field} must be a Boolean value, got "%{value}"'
+            invalid_no_template: noTemplate must be set to true, false, or an array
+              of valid locations.
+            duplicate_reference: 'Duplicate reference in manifest: "%{key}".'
+            duplicate_reference_values: Initially set to "%{original}", attempted
+              overwrite to "%{attempted}".
         warning:
           app_build:
             deprecated_version: You are targeting a deprecated version of the framework.

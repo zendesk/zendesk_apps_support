@@ -53,19 +53,6 @@ describe ZendeskAppsSupport::Package do
     end
   end
 
-  describe 'manifest_json' do
-    it 'should return manifest json' do
-      manifest = @package.manifest_json
-      expect(manifest['name']).to eq('ABC')
-      expect(manifest['author']['name']).to eq('John Smith')
-      expect(manifest['author']['email']).to eq('john@example.com')
-      expect(manifest['defaultLocale']).to eq('en')
-      expect(manifest['private']).to eq(true)
-      expect(manifest['location']).to eq('ticket_sidebar')
-      expect(manifest['frameworkVersion']).to eq('0.5')
-    end
-  end
-
   describe 'compile_js' do
     it 'should generate js ready for installation' do
       js = @package.compile_js(app_name: "ABC", app_id: 0, assets_dir: 'http://localhost:4567/0/')
@@ -85,7 +72,7 @@ describe ZendeskAppsSupport::Package do
     end
 
     it 'should generate js with manifest noTemplate set to array' do
-      @package.manifest_json['noTemplate'] = ['ticket_sidebar'];
+      allow(@package.manifest).to receive(:no_template) { ['ticket_sidebar'] }
       js = @package.compile_js(app_name: "ABC", app_id: 0, assets_dir: 'http://localhost:4567/0/')
       expected = File.read('spec/fixtures/legacy_app_no_template.js')
       expect(js).to eq(expected)
@@ -170,19 +157,6 @@ describe ZendeskAppsSupport::Package do
       manifest: manifest,
       additional_files: files
     })
-  end
-
-  describe 'Reading a manifest' do
-    it 'fetches data from the manifest' do
-      expect(package.manifest_json['location']).to eq('ticket_sidebar')
-      expect(package.manifest_json['defaultLocale']).to eq('en')
-      expect(package.manifest_json['version']).to eq('1.5')
-      expect(package.manifest_json['frameworkVersion']).to eq('0.5')
-      expect(package.manifest_json['remoteInstallationURL']).to eq('https://example.com/install')
-      expect(package.manifest_json['termsConditionsURL']).to eq('http://terms.com')
-
-      expect(package.manifest_json['author']).to eq({ 'name' => 'Ned Stark', 'email' => 'ned@winter.com', 'url' => 'http://www.zendesk.com/apps'})
-    end
   end
 
   describe '#translations' do
@@ -302,67 +276,6 @@ describe ZendeskAppsSupport::Package do
     end
   end
 
-  describe '#single_install' do
-    context 'when singleInstall is a boolean in the manifest' do
-      it 'returns true when singleInstall is true' do
-        manifest['singleInstall'] = true
-        expect(package.manifest_json['singleInstall']).to be_truthy
-      end
-
-      it 'returns false when singleInstall is false' do
-        manifest['singleInstall'] = false
-        expect(package.manifest_json['singleInstall']).to be_falsey
-      end
-    end
-
-    context 'when singleInstall is missing from the manifest' do
-      it 'returns false' do
-        expect(package.manifest_json['singleInstall']).to be_falsey
-      end
-    end
-  end
-
-  describe '#is_no_template' do
-    context 'when noTemplate is a boolean in the manifest' do
-      it 'returns true when noTemplate is true' do
-        manifest['noTemplate'] = true
-        expect(package.is_no_template).to be_truthy
-      end
-
-      it 'returns false when noTemplate is false' do
-        manifest['noTemplate'] = false
-        expect(package.is_no_template).to be_falsey
-      end
-    end
-    context 'when noTemplate is an array of locations' do
-      it 'returns false' do
-        manifest['noTemplate'] = ['new_ticket_sidebar', 'nav_bar']
-        expect(package.is_no_template).to be_falsey
-      end
-    end
-  end
-
-  describe '#no_template_locations' do
-    context 'when noTemplate is a boolean in the manifest' do
-      it 'returns true when noTemplate is true' do
-        manifest['noTemplate'] = true
-        expect(package.no_template_locations).to be_truthy
-      end
-
-      it 'returns false when noTemplate is false' do
-        manifest['noTemplate'] = false
-        expect(package.no_template_locations).to be_falsey
-      end
-    end
-    context 'when noTemplate is an array of locations' do
-      let(:no_template_locations) { ['new_ticket_sidebar', 'nav_bar'] }
-      it 'returns the array of locations' do
-        manifest['noTemplate'] = no_template_locations
-        expect(package.no_template_locations).to eq(no_template_locations)
-      end
-    end
-  end
-
   describe '#commonjs_modules' do
     let (:modules) { package.send(:commonjs_modules) }
 
@@ -385,50 +298,6 @@ describe ZendeskAppsSupport::Package do
 
     context 'when there are no js modules' do
       it { expect(modules).not_to be nil }
-    end
-  end
-
-  describe '#locations' do
-    it 'supports strings' do
-      location_object = @package.send(:locations)
-      expect(location_object).to eq('zendesk' => { 'ticket_sidebar' => '_legacy' })
-    end
-
-    it 'supports arrays' do
-      @package.manifest_json['location'] = %w(🔔 🃏)
-      location_object = @package.send(:locations)
-      expect(location_object).to eq('zendesk' => { '🃏' => '_legacy', '🔔' => '_legacy' })
-    end
-
-    it 'supports objects' do
-      @package.manifest_json['location'] = { 'zopim' => { 'chat_sidebar' => 'http://www.zopim.com' } }
-      location_object = @package.send(:locations)
-      expect(location_object).to be @package.manifest_json['location']
-    end
-
-    it 'works when not present' do
-      @package.manifest_json.delete('location')
-      location_object = @package.send(:locations)
-      expect(location_object).to eq('zendesk' => {})
-    end
-  end
-
-
-  describe '#legacy_non_iframe_app' do
-    it 'should return true for an app that doesn\'t define any iframe uris' do
-      legacy_uri_stub = ZendeskAppsSupport::Package::LEGACY_URI_STUB
-      @package.manifest_json['location'] = { 'zopim' => { 'chat_sidebar' => legacy_uri_stub } }
-      expect(@package.send(:legacy_non_iframe_app?)).to be_truthy
-    end
-
-    it 'should return false for an app that defines any iframe uris' do
-      @package.manifest_json['location'] = { 'zopim' => { 'chat_sidebar' => 'http://zopim.com' } }
-      expect(@package.send(:legacy_non_iframe_app?)).to be_falsey
-    end
-
-    it 'should return true for an app that doesn\'t have any locations in the manifest' do
-      @package.manifest_json.delete('location')
-      expect(@package.send(:legacy_non_iframe_app?)).to be_truthy
     end
   end
 end

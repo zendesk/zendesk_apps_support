@@ -37,7 +37,7 @@ module.exports = b;
 ;
 }
 var app = ZendeskApps.defineApp(source)
-  .reopenClass({"location":{"zendesk":{"ticket_sidebar":"_legacy"}},"noTemplate":false,"singleInstall":false,"signedUrls":false})
+  .reopenClass({"location":{"support":{"ticket_sidebar":"_legacy"}},"noTemplate":[],"singleInstall":false,"signedUrls":false})
   .reopen({
     appName: "EFG",
     appVersion: "1.0.0",

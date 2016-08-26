@@ -42,8 +42,8 @@ module ZendeskAppsSupport
         end
 
         def package_needs_app_js?(package)
-          return false if package.manifest_json['requirementsOnly']
-          return false if package.iframe_only?
+          return false if package.manifest.requirements_only?
+          return false if package.manifest.iframe_only?
           true
         end
 
