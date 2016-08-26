@@ -216,6 +216,34 @@ describe ZendeskAppsSupport::Validations::Manifest do
     end
   end
 
+  context 'a v1 app with v2 locations' do
+    before do
+      @manifest_hash = {
+        'location' => { 'zendesk' => { 'ticket_sidebar' => 'assets/iframe.html' } },
+        'frameworkVersion': '1.0'
+      }
+      allow(@package).to receive(:has_file?).with('assets/iframe.html').and_return(true)
+    end
+
+    it 'should have an error' do
+      expect(@package).to have_error(/must not be URLs/)
+    end
+  end
+
+  context 'a v2 app with v1 locations' do
+    before do
+      @manifest_hash = {
+        'location' => 'ticket_sidebar',
+        'frameworkVersion': '2.0'
+      }
+      allow(@package).to receive(:has_file?).with('assets/iframe.html').and_return(true)
+    end
+
+    it 'should have an error' do
+      expect(@package).to have_error(/need to be URLs/)
+    end
+  end
+
   it 'should have an error when there are duplicate locations' do
     @manifest_hash = { 'location' => %w(ticket_sidebar ticket_sidebar) }
 
