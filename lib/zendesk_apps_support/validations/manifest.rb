@@ -14,17 +14,26 @@ module ZendeskAppsSupport
           manifest = package.manifest
 
           errors = []
-          check_errors(%i(missing_keys_error oauth_error parameters_error invalid_hidden_parameter_error
-                          invalid_type_error name_as_parameter_name_error no_template_format_error boolean_error), errors, manifest)
-          check_errors(%i(default_locale_error), errors, manifest, package)
+          errors << missing_keys_error(manifest)
+          errors << oauth_error(manifest)
+          errors << parameters_error(manifest)
+          errors << invalid_hidden_parameter_error(manifest)
+          errors << invalid_type_error(manifest)
+          errors << name_as_parameter_name_error(manifest)
+          errors << no_template_format_error(manifest)
+          errors << boolean_error(manifest)
+          errors << default_locale_error(manifest, package)
 
           if manifest.requirements_only?
-            check_errors(%i(ban_location ban_framework_version), errors, manifest)
+            errors << ban_location(manifest)
+            errors << ban_framework_version(manifest)
           else
-            check_errors(%i(missing_location_error invalid_location_error), errors, package)
-            check_errors(%i(duplicate_location_error missing_framework_version
-                            location_framework_mismatch), errors, manifest)
-            check_errors(%i(invalid_version_error), errors, manifest, package)
+            errors << missing_location_error(package)
+            errors << invalid_location_error(package)
+            errors << duplicate_location_error(manifest)
+            errors << missing_framework_version(manifest)
+            errors << location_framework_mismatch(manifest)
+            errors << invalid_version_error(manifest, package)
           end
 
           errors.flatten.compact
@@ -127,29 +136,25 @@ module ZendeskAppsSupport
 
         def invalid_location_error(package)
           errors = []
-          manifest_locations = package.manifest.original_locations
-          return unless manifest_locations.is_a? Hash
+          manifest_locations = package.manifest.locations
           manifest_locations.find do |host, locations|
-            # CRUFT: remove when support for legacy names are deprecated
-            product = Product.find_by(legacy_name: host) || Product.find_by(name: host)
-            error = if product.nil?
-              ValidationError.new(:invalid_host, host_name: host)
-            elsif (invalid_locations = locations.keys - Location.where(product_code: product.code).map(&:name)).any?
-              ValidationError.new(:invalid_location,
+            product = Product.find_by(name: host)
+            stub = ZendeskAppsSupport::Manifest::LEGACY_URI_STUB
+            locations_allowed = Location.where(product_code: product.code).map(&:name).push(stub)
+            if (invalid_locations = locations.keys - locations_allowed).any?
+              errors << ValidationError.new(:invalid_location,
                                   invalid_locations: invalid_locations.join(', '),
                                   host_name: host,
                                   count: invalid_locations.length)
             end
 
-            # abort early for invalid host or location name
-            if error
-              errors << error
-              break
-            end
-
             locations.values.each do |path|
               errors << invalid_location_uri_error(package, path)
             end
+          end
+
+          package.manifest.unknown_hosts.each do |unknown_host|
+            errors << ValidationError.new(:invalid_host, host_name: unknown_host)
           end
           errors
         end
@@ -234,16 +239,23 @@ module ZendeskAppsSupport
 
         def location_framework_mismatch(manifest)
           locations = manifest.locations
-          iframe_locations = locations.values.any? do |location_hash|
-            location_hash.values.any? { |url| url != ZendeskAppsSupport::Manifest::LEGACY_URI_STUB }
+          stub = ZendeskAppsSupport::Manifest::LEGACY_URI_STUB
+          iframe_locations = locations_any?(locations) do |url|
+            url != stub
           end
-          legacy_locations = (!iframe_locations && manifest.location?) || locations.values.any? do |location_hash|
-            location_hash.values.any? { |url| url == ZendeskAppsSupport::Manifest::LEGACY_URI_STUB }
+          legacy_locations = (!iframe_locations && manifest.location?) || locations_any?(locations) do |url|
+            url != stub
           end
           if manifest.iframe_only?
             return ValidationError.new(:locations_must_be_urls) if legacy_locations
           elsif iframe_locations
             return ValidationError.new(:locations_cant_be_urls)
+          end
+        end
+
+        def locations_any?(locations)
+          locations.values.any? do |location_hash|
+            location_hash.values.any? { |url| yield(url) }
           end
         end
 

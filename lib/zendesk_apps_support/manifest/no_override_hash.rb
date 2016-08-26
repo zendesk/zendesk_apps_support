@@ -15,16 +15,19 @@ module ZendeskAppsSupport
       def message
         @message ||= begin
           translated_error_key = 'txt.apps.admin.error.app_build.duplicate_reference'
-          translated_detail_key = 'txt.apps.admin.error.app_build.duplicate_reference_values'
           translated_error = ZendeskAppsSupport::I18n.t(translated_error_key, key: key)
-          translated_detail = ZendeskAppsSupport::I18n.t(translated_detail_key, original: original, attempted: attempted)
+
+          # if the error contains the word `_legacy` in the second sentence, let's
+          # only use the first one.
+          if [original, attempted].any? { |val| val =~ /_legacy/ }
+            return translated_error
+          end
+          translated_detail_key = 'txt.apps.admin.error.app_build.duplicate_reference_values'
+          translated_detail = ZendeskAppsSupport::I18n.t(translated_detail_key,
+                                                         original: original,
+                                                         attempted: attempted)
           "#{translated_error} #{translated_detail}"
         end
-      end
-
-      def suppress_values!
-        translation = 'txt.apps.admin.error.app_build.duplicate_reference'
-        @message = ZendeskAppsSupport::I18n.t(translation, key: key)
       end
     end
 

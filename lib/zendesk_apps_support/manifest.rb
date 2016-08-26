@@ -49,22 +49,23 @@ module ZendeskAppsSupport
       @locations ||=
         case original_locations
         when Hash
+          @used_hosts = original_locations.keys
           replace_legacy_locations original_locations
         when Array
+          @used_hosts = ['support']
           { 'support' => NoOverrideHash[original_locations.map { |location| [ location, LEGACY_URI_STUB ] }] }
         when String
+          @used_hosts = ['support']
           { 'support' => { original_locations => LEGACY_URI_STUB } }
         # TODO: error out for numbers and Booleans
         else # NilClass
+          @used_hosts = ['support']
           { 'support' => {} }
         end
-    rescue OverrideError => error
-      # if the error contains the word `_legacy` in the second sentence, let's
-      # only use the first one.
-      if [error.original, error.attempted].any? { |val| val =~ /_legacy/ }
-        error.suppress_values!
-      end
-      raise
+    end
+
+    def unknown_hosts
+      @unknown_hosts ||= @used_hosts - Product::PRODUCTS_AVAILABLE.flat_map { |p| [p.name, p.legacy_name] }
     end
 
     def iframe_only?
