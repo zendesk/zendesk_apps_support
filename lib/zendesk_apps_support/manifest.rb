@@ -23,6 +23,7 @@ module ZendeskAppsSupport
     }.freeze
 
     attr_reader(*RUBY_TO_JSON.keys)
+    attr_reader :locations
 
     alias_method :requirements_only?, :requirements_only
     alias_method :signed_urls?, :signed_urls
@@ -45,30 +46,9 @@ module ZendeskAppsSupport
       !locations.values.all?(&:empty?)
     end
 
-    def locations
-      @locations ||=
-        case original_locations
-        when Hash
-          @used_hosts = original_locations.keys
-          replace_legacy_locations original_locations
-        when Array
-          @used_hosts = ['support']
-          { 'support' => NoOverrideHash[original_locations.map { |location| [ location, LEGACY_URI_STUB ] }] }
-        when String
-          @used_hosts = ['support']
-          { 'support' => { original_locations => LEGACY_URI_STUB } }
-        # TODO: error out for numbers and Booleans
-        else # NilClass
-          @used_hosts = ['support']
-          { 'support' => {} }
-        end
-    end
-
     def unknown_hosts
-      @unknown_hosts ||= begin
-        locations # parsing the locations populates used_hosts
+      @unknown_hosts ||=
         @used_hosts - Product::PRODUCTS_AVAILABLE.flat_map { |p| [p.name, p.legacy_name] }
-      end
     end
 
     def iframe_only?
@@ -94,9 +74,29 @@ module ZendeskAppsSupport
       @private = m.fetch('private', true)
       @signed_urls ||= false
       @no_template ||= false
+      set_locations_and_hosts
     end
 
     private
+
+    def set_locations_and_hosts
+      @locations =
+        case original_locations
+        when Hash
+          @used_hosts = original_locations.keys
+          replace_legacy_locations original_locations
+        when Array
+          @used_hosts = ['support']
+          { 'support' => NoOverrideHash[original_locations.map { |location| [ location, LEGACY_URI_STUB ] }] }
+        when String
+          @used_hosts = ['support']
+          { 'support' => { original_locations => LEGACY_URI_STUB } }
+        # TODO: error out for numbers and Booleans
+        else # NilClass
+          @used_hosts = ['support']
+          { 'support' => {} }
+        end
+    end
 
     def replace_legacy_locations(original_locations)
       NoOverrideHash.new.tap do |new_locations_obj|
