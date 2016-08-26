@@ -65,7 +65,10 @@ module ZendeskAppsSupport
     end
 
     def unknown_hosts
-      @unknown_hosts ||= @used_hosts - Product::PRODUCTS_AVAILABLE.flat_map { |p| [p.name, p.legacy_name] }
+      @unknown_hosts ||= begin
+        locations # parsing the locations populates used_hosts
+        @used_hosts - Product::PRODUCTS_AVAILABLE.flat_map { |p| [p.name, p.legacy_name] }
+      end
     end
 
     def iframe_only?
