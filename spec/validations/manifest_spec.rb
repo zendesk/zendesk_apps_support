@@ -220,7 +220,7 @@ describe ZendeskAppsSupport::Validations::Manifest do
     before do
       @manifest_hash = {
         'location' => { 'zendesk' => { 'ticket_sidebar' => 'assets/iframe.html' } },
-        'frameworkVersion': '1.0'
+        'frameworkVersion' => '1.0'
       }
       allow(@package).to receive(:has_file?).with('assets/iframe.html').and_return(true)
     end
@@ -234,7 +234,7 @@ describe ZendeskAppsSupport::Validations::Manifest do
     before do
       @manifest_hash = {
         'location' => 'ticket_sidebar',
-        'frameworkVersion': '2.0'
+        'frameworkVersion' => '2.0'
       }
       allow(@package).to receive(:has_file?).with('assets/iframe.html').and_return(true)
     end
