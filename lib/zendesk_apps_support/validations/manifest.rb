@@ -244,7 +244,7 @@ module ZendeskAppsSupport
             url != stub
           end
           legacy_locations = (!iframe_locations && manifest.location?) || locations_any?(locations) do |url|
-            url != stub
+            url == stub
           end
           if manifest.iframe_only?
             return ValidationError.new(:locations_must_be_urls) if legacy_locations

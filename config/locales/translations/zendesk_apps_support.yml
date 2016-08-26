@@ -220,3 +220,11 @@ parts:
       key: "txt.apps.admin.error.app_build.duplicate_reference_values"
       title: "This sentence follows txt.apps.admin.error.app_build.duplicate_reference. The values are included to help find the problem."
       value: "Initially set to \"%{original}\", attempted overwrite to \"%{attempted}\"."
+  - translation:
+      key: "txt.apps.admin.error.app_build.locations_must_be_urls"
+      title: "The locations needed to be URLs, but they were empty."
+      value: "App locations need to be URLs for this framework version."
+  - translation:
+      key: "txt.apps.admin.error.app_build.locations_cant_be_urls"
+      title: "The locations can't be URLs, but they were."
+      value: "App locations must not be URLs for this framework version."
