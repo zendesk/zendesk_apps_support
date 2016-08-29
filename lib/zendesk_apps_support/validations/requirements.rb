@@ -16,7 +16,7 @@ module ZendeskAppsSupport
             return []
           end
 
-          requirements_file = package.files.find { |f| f.relative_path == 'requirements.json' }
+          requirements_file = package.files.find { |f| f.relative_path == ZendeskAppsSupport::Package::REQUIREMENTS_FILENAME }
           requirements_stream = requirements_file.read
           duplicates = non_unique_type_keys(requirements_stream)
           unless duplicates.empty?

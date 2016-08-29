@@ -8,6 +8,7 @@ module ZendeskAppsSupport
     extend Gem::Deprecate
     include ZendeskAppsSupport::BuildTranslation
 
+    MANIFEST_FILENAME = 'manifest.json'
     REQUIREMENTS_FILENAME = 'requirements.json'
 
     DEFAULT_LAYOUT = Erubis::Eruby.new(File.read(File.expand_path('../assets/default_template.html.erb', __FILE__)))
@@ -142,17 +143,17 @@ module ZendeskAppsSupport
     end
 
     def manifest_json
-      @manifest_json ||= read_json('manifest.json')
+      @manifest_json ||= read_json(MANIFEST_FILENAME)
     end
     deprecate :manifest_json, :manifest, 2016, 9
 
     def manifest
-      @manifest ||= Manifest.new(read_file('manifest.json'))
+      @manifest ||= Manifest.new(read_file(MANIFEST_FILENAME))
     end
 
     def requirements_json
       return nil unless has_requirements?
-      @requirements ||= read_json('requirements.json')
+      @requirements ||= read_json(REQUIREMENTS_FILENAME)
     end
 
     def is_no_template
@@ -267,7 +268,7 @@ module ZendeskAppsSupport
     end
 
     def has_manifest?
-      has_file?('manifest.json')
+      has_file?(MANIFEST_FILENAME)
     end
 
     def has_banner?
