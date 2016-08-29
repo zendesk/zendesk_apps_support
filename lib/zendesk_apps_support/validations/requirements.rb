@@ -8,10 +8,15 @@ module ZendeskAppsSupport
 
       class <<self
         def call(package)
+          if package.manifest.requirements_only? && !package.has_requirements?
+            return [ValidationError.new(:missing_requirements)]
+          elsif package.manifest.marketing_only? && package.has_requirements?
+            return [ValidationError.new(:requirements_not_supported)]
+          elsif !package.has_requirements?
+            return []
+          end
+
           requirements_file = package.files.find { |f| f.relative_path == 'requirements.json' }
-
-          return [ValidationError.new(:missing_requirements)] unless requirements_file
-
           requirements_stream = requirements_file.read
           duplicates = non_unique_type_keys(requirements_stream)
           unless duplicates.empty?

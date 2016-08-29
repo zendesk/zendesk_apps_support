@@ -49,6 +49,10 @@ parts:
       title: "App builder job: missing requirements error"
       value: "Could not find requirements.json"
   - translation:
+      key: "txt.apps.admin.error.app_build.requirements_not_supported"
+      title: "App builder job: requirements not supported error"
+      value: "App requirements are not supported for marketing only apps"
+  - translation:
       key: "txt.apps.admin.error.app_build.manifest_keys.missing.one"
       title: "App builder job: missing manifest fields error"
       value: "Missing required field in manifest: %{missing_keys}"

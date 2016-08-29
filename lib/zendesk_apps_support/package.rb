@@ -33,14 +33,11 @@ module ZendeskAppsSupport
         if has_manifest?
           errors << Validations::Source.call(self)
           errors << Validations::Translations.call(self)
+          errors << Validations::Requirements.call(self)
 
-          unless manifest.requirements_only?
+          if !manifest.requirements_only? && manifest.marketing_only?
             errors << Validations::Templates.call(self)
             errors << Validations::Stylesheets.call(self)
-          end
-
-          if has_requirements?
-            errors << Validations::Requirements.call(self)
           end
         end
 
@@ -193,6 +190,10 @@ module ZendeskAppsSupport
       File.exist?(path_to(path))
     end
 
+    def has_requirements?
+      has_file?(REQUIREMENTS_FILENAME)
+    end
+
     def app_css
       css_file = path_to('app.css')
       scss_file = path_to('app.scss')
@@ -267,10 +268,6 @@ module ZendeskAppsSupport
 
     def has_manifest?
       has_file?('manifest.json')
-    end
-
-    def has_requirements?
-      has_file?('requirements.json')
     end
 
     def has_banner?
