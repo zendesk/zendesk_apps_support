@@ -16,15 +16,20 @@ module ZendeskAppsSupport
           errors = []
           errors << missing_keys_error(manifest)
           errors << oauth_error(manifest)
-          errors << parameters_error(manifest)
-          errors << invalid_hidden_parameter_error(manifest)
-          errors << invalid_type_error(manifest)
-          errors << name_as_parameter_name_error(manifest)
-          errors << no_template_format_error(manifest)
+
+          if manifest.marketing_only?
+            errors << ban_parameters(manifest)
+          else
+            errors << parameters_error(manifest)
+            errors << invalid_hidden_parameter_error(manifest)
+            errors << invalid_type_error(manifest)
+            errors << name_as_parameter_name_error(manifest)
+            errors << no_template_format_error(manifest)
+          end
           errors << boolean_error(manifest)
           errors << default_locale_error(manifest, package)
 
-          if manifest.requirements_only?
+          if manifest.requirements_only? || manifest.marketing_only?
             errors << ban_location(manifest)
             errors << ban_framework_version(manifest)
           else
@@ -44,7 +49,7 @@ module ZendeskAppsSupport
         private
 
         def boolean_error(manifest)
-          booleans = %i(requirements_only single_install signed_urls private)
+          booleans = %i(requirements_only marketing_only single_install signed_urls private)
           errors = []
           RUBY_TO_JSON.each do |ruby, json|
             if booleans.include? ruby
@@ -64,6 +69,10 @@ module ZendeskAppsSupport
           error_types.each do |error_type|
             collector << send(error_type, *checked_objects)
           end
+        end
+
+        def ban_parameters(manifest)
+          ValidationError.new(:no_parameters_required) unless manifest.parameters.empty?
         end
 
         def ban_location(manifest)

@@ -16,6 +16,10 @@ parts:
       title: "App builder job: JSHint error messages"
       value: "JSHint errors in %{file}: %{errors}"
   - translation:
+      key: "txt.apps.admin.error.app_build.no_parameters_required"
+      title: "App builder job: prevent adding parameters while marketing only"
+      value: "Parameters can't be defined for marketing-only apps"
+  - translation:
       key: "txt.apps.admin.error.app_build.no_location_required"
       title: "App builder job: ban location while requirements only"
       value: "Locations can't be defined when you specify requirements only"

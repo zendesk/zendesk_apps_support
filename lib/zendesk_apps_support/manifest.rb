@@ -5,6 +5,7 @@ module ZendeskAppsSupport
 
     RUBY_TO_JSON = {
       requirements_only: 'requirementsOnly',
+      marketing_only: 'marketingOnly',
       version: 'version',
       author: 'author',
       framework_version: 'frameworkVersion',
@@ -26,6 +27,7 @@ module ZendeskAppsSupport
     attr_reader :locations
 
     alias_method :requirements_only?, :requirements_only
+    alias_method :marketing_only?, :marketing_only
     alias_method :signed_urls?, :signed_urls
     alias_method :single_install?, :single_install
     alias_method :private?, :private
@@ -70,6 +72,7 @@ module ZendeskAppsSupport
         instance_variable_set(:"@#{ruby}", m[json])
       end
       @requirements_only ||= false
+      @marketing_only ||= false
       @single_install ||= false
       @private = m.fetch('private', true)
       @signed_urls ||= false
