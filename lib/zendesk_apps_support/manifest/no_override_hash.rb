@@ -1,6 +1,4 @@
 # frozen_string_literal: true
-require 'json'
-
 module ZendeskAppsSupport
   class Manifest
     class OverrideError < StandardError

@@ -1,5 +1,3 @@
-require 'json'
-
 module ZendeskAppsSupport
   # At any point in time, we support up to three versions:
   #  * deprecated -- we will still serve apps targeting the deprecated version,
