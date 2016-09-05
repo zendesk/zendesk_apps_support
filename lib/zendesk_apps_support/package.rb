@@ -30,13 +30,12 @@ module ZendeskAppsSupport
         errors << Validations::Marketplace.call(self) if marketplace
 
         errors << Validations::Manifest.call(self)
-
         if has_manifest?
           errors << Validations::Source.call(self)
           errors << Validations::Translations.call(self)
           errors << Validations::Requirements.call(self)
 
-          if !manifest.requirements_only? && manifest.marketing_only?
+          if !manifest.requirements_only? && !manifest.marketing_only? && !manifest.iframe_only?
             errors << Validations::Templates.call(self)
             errors << Validations::Stylesheets.call(self)
           end

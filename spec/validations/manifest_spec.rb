@@ -110,7 +110,7 @@ describe ZendeskAppsSupport::Validations::Manifest do
 
   context 'with a marketing only app' do
     it 'should not have any errors' do
-      @package = ZendeskAppsSupport::Package.new('spec/marketing_only_app')
+      @package = ZendeskAppsSupport::Package.new('spec/fixtures/marketing_only_app')
       errors = ZendeskAppsSupport::Validations::Manifest.call(@package)
       expect(errors).to be_empty
     end
