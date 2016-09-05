@@ -114,6 +114,16 @@ describe ZendeskAppsSupport::Validations::Manifest do
       errors = ZendeskAppsSupport::Validations::Manifest.call(@package)
       expect(errors).to be_empty
     end
+
+    it 'should have an error when parameters are specified' do
+      @manifest_hash = {
+        marketingOnly: true,
+        parameters: [
+          'name' => 'foo'
+        ]
+      }
+      expect(@package).to have_error /Parameters can't be defined/
+    end
   end
 
   context 'when app host is valid' do
