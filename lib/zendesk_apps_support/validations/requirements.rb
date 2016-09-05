@@ -1,6 +1,3 @@
-require 'json'
-require 'json/stream'
-
 module ZendeskAppsSupport
   module Validations
     module Requirements
@@ -16,14 +13,12 @@ module ZendeskAppsSupport
             return []
           end
 
-          requirements_file = package.files.find { |f| f.relative_path == ZendeskAppsSupport::Package::REQUIREMENTS_FILENAME }
-          requirements_stream = requirements_file.read
-          duplicates = non_unique_type_keys(requirements_stream)
-          unless duplicates.empty?
-            return [ValidationError.new(:duplicate_requirements, duplicate_keys: duplicates.join(', '), count: duplicates.length)]
+          begin
+            requirements = package.requirements_json
+          rescue ZendeskAppsSupport::Manifest::OverrideError => e
+            return [ValidationError.new(:duplicate_requirements, duplicate_keys: e.key, count: 1)]
           end
 
-          requirements = JSON.load(requirements_stream)
           [].tap do |errors|
             errors << invalid_requirements_types(requirements)
             errors << excessive_requirements(requirements)
@@ -90,19 +85,6 @@ module ZendeskAppsSupport
           unless invalid_types.empty?
             ValidationError.new(:invalid_requirements_types, invalid_types: invalid_types.join(', '), count: invalid_types.length)
           end
-        end
-
-        def non_unique_type_keys(requirements)
-          keys = []
-          duplicates = []
-          parser = JSON::Stream::Parser.new do
-            start_object { keys.push({}) }
-            end_object { keys.pop }
-            key { |k| duplicates.push(k) if keys.last.include? k; keys.last[k] = nil }
-          end
-          parser << requirements
-
-          duplicates
         end
       end
     end

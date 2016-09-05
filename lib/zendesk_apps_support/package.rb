@@ -153,7 +153,7 @@ module ZendeskAppsSupport
 
     def requirements_json
       return nil unless has_requirements?
-      @requirements ||= read_json(REQUIREMENTS_FILENAME)
+      @requirements ||= read_json(REQUIREMENTS_FILENAME, object_class: Manifest::NoOverrideHash)
     end
 
     def is_no_template

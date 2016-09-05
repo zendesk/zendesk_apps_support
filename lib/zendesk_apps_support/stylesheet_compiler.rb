@@ -1,4 +1,5 @@
 require 'sass'
+require 'zendesk_apps_support/sass_functions'
 
 module ZendeskAppsSupport
   class StylesheetCompiler
