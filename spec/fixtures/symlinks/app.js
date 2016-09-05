@@ -1,0 +1,1 @@
+../legacy_app_en.js

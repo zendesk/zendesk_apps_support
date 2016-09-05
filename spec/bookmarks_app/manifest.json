@@ -19,17 +19,17 @@
     {
       "name": "maxCount",
       "type": "number",
-      "required": "false"
+      "required": false
     },
     {
       "name": "Ability",
        "type": "text",
-       "required": "false"
+       "required": false
     },
     {
       "name": "Spin",
        "type": "text",
-       "required": "false"
+       "required": false
     }
 
   ]

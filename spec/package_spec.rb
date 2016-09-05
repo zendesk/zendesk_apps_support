@@ -260,19 +260,18 @@ describe ZendeskAppsSupport::Package do
   end
 
   describe '#validate' do
-    it 'should not raise error when symlink exists inside the app for outside the marketplace' do
-      package = ZendeskAppsSupport::Package.new('spec/fixtures/symlinks')
-      expect { package.validate!(marketplace: false) }.to raise_error(ZendeskAppsSupport::Validations::ValidationError)
+    before do
+      allow(ZendeskAppsSupport::Validations::Marketplace).to receive(:call)
     end
 
-    it 'should raise error when symlink exists inside the app for the marketplace' do
-      package = ZendeskAppsSupport::Package.new('spec/fixtures/symlinks')
-      expect { package.validate!(marketplace: true) }.to raise_error(ZendeskAppsSupport::Validations::ValidationError)
+    it 'should not run marketplace validations when app is not for the marketplace' do
+      package.validate!(marketplace: false)
+      expect(ZendeskAppsSupport::Validations::Marketplace).not_to have_received(:call)
     end
 
-    it 'should raise error when symlink exists inside the app for the marketplace' do
-      package = ZendeskAppsSupport::Package.new('spec/fixtures/symlinks')
-      expect { package.validate! }.to raise_error(ZendeskAppsSupport::Validations::ValidationError)
+    it 'should run marketplace validations when app is for the marketplace' do
+      package.validate!(marketplace: true)
+      expect(ZendeskAppsSupport::Validations::Marketplace).to have_received(:call).with(package)
     end
   end
 
