@@ -108,6 +108,24 @@ describe ZendeskAppsSupport::Validations::Manifest do
     expect(@package).to have_error(/Missing translation file/)
   end
 
+  context 'with a marketing only app' do
+    it 'should not have any errors' do
+      @package = ZendeskAppsSupport::Package.new('spec/fixtures/marketing_only_app')
+      errors = ZendeskAppsSupport::Validations::Manifest.call(@package)
+      expect(errors).to be_empty
+    end
+
+    it 'should have an error when parameters are specified' do
+      @manifest_hash = {
+        marketingOnly: true,
+        parameters: [
+          'name' => 'foo'
+        ]
+      }
+      expect(@package).to have_error /Parameters can't be defined/
+    end
+  end
+
   context 'when app host is valid' do
     before do
       @manifest_hash = { 'location' => { 'zopim' => { 'chat_sidebar' => 'https://zen.desk/apps' } } }

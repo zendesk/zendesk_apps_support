@@ -65,7 +65,7 @@ describe ZendeskAppsSupport::Package do
     end
 
     it 'should generate js for iframe app installations' do
-      @package = ZendeskAppsSupport::Package.new('spec/iframe_only_app')
+      @package = ZendeskAppsSupport::Package.new('spec/fixtures/iframe_only_app')
       js = @package.compile_js(app_name: "ABC", app_id: 0, assets_dir: 'http://localhost:4567/0/')
       expected = File.read('spec/fixtures/iframe_app.js')
       expect(js).to eq(expected)
@@ -260,19 +260,69 @@ describe ZendeskAppsSupport::Package do
   end
 
   describe '#validate' do
-    it 'should not raise error when symlink exists inside the app for outside the marketplace' do
-      package = ZendeskAppsSupport::Package.new('spec/fixtures/symlinks')
-      expect { package.validate!(marketplace: false) }.to raise_error(ZendeskAppsSupport::Validations::ValidationError)
+    before do
+      allow(ZendeskAppsSupport::Validations::Marketplace).to receive(:call)
+      allow(ZendeskAppsSupport::Validations::Templates).to receive(:call)
+      allow(ZendeskAppsSupport::Validations::Stylesheets).to receive(:call)
+      package.validate!(marketplace: false)
     end
 
-    it 'should raise error when symlink exists inside the app for the marketplace' do
-      package = ZendeskAppsSupport::Package.new('spec/fixtures/symlinks')
-      expect { package.validate!(marketplace: true) }.to raise_error(ZendeskAppsSupport::Validations::ValidationError)
+    it 'should not run marketplace validations when app is not for the marketplace' do
+      expect(ZendeskAppsSupport::Validations::Marketplace).not_to have_received(:call)
     end
 
-    it 'should raise error when symlink exists inside the app for the marketplace' do
-      package = ZendeskAppsSupport::Package.new('spec/fixtures/symlinks')
-      expect { package.validate! }.to raise_error(ZendeskAppsSupport::Validations::ValidationError)
+    it 'normally validates templates and stylesheets' do
+      expect(ZendeskAppsSupport::Validations::Templates).to have_received(:call)
+      expect(ZendeskAppsSupport::Validations::Stylesheets).to have_received(:call)
+    end
+
+    context 'for a marketplace app' do
+      it 'runs marketplace validations' do
+        package.validate!(marketplace: true)
+        expect(ZendeskAppsSupport::Validations::Marketplace).to have_received(:call).with(package)
+      end
+    end
+
+    context 'for a requirements-only app' do
+      let(:manifest) do
+        json = JSON.parse(File.read('spec/fixtures/marketing_only_app/manifest.json'))
+        json.merge('requirementsOnly' => true, 'marketingOnly' => false)
+      end
+      let(:source) do
+        build_app_source(
+          manifest: manifest,
+          additional_files: {
+            'requirements.json'     => read_fixture_file('requirements.json'),
+            'app.js'                => nil,
+            'app.css'               => nil,
+            'templates/layout.hdbs' => nil,
+            'templates/main.hdbs'   => nil,
+          }
+        )
+      end
+
+      it 'does not validate templates or stylesheets' do
+        expect(ZendeskAppsSupport::Validations::Templates).not_to have_received(:call)
+        expect(ZendeskAppsSupport::Validations::Stylesheets).not_to have_received(:call)
+      end
+    end
+
+    context 'for a marketing-only app' do
+      let(:package) { ZendeskAppsSupport::Package.new('spec/fixtures/marketing_only_app') }
+
+      it 'does not validate templates or stylesheets' do
+        expect(ZendeskAppsSupport::Validations::Templates).not_to have_received(:call)
+        expect(ZendeskAppsSupport::Validations::Stylesheets).not_to have_received(:call)
+      end
+    end
+
+    context 'for a iframe-only app' do
+      let(:package) { ZendeskAppsSupport::Package.new('spec/fixtures/iframe_only_app') }
+
+      it 'does not validate templates or stylesheets' do
+        expect(ZendeskAppsSupport::Validations::Templates).not_to have_received(:call)
+        expect(ZendeskAppsSupport::Validations::Stylesheets).not_to have_received(:call)
+      end
     end
   end
 

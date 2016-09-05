@@ -8,6 +8,7 @@ module ZendeskAppsSupport
     extend Gem::Deprecate
     include ZendeskAppsSupport::BuildTranslation
 
+    MANIFEST_FILENAME = 'manifest.json'
     REQUIREMENTS_FILENAME = 'requirements.json'
 
     DEFAULT_LAYOUT = Erubis::Eruby.new(File.read(File.expand_path('../assets/default_template.html.erb', __FILE__)))
@@ -29,18 +30,14 @@ module ZendeskAppsSupport
         errors << Validations::Marketplace.call(self) if marketplace
 
         errors << Validations::Manifest.call(self)
-
         if has_manifest?
           errors << Validations::Source.call(self)
           errors << Validations::Translations.call(self)
+          errors << Validations::Requirements.call(self)
 
-          unless manifest.requirements_only?
+          if !manifest.requirements_only? && !manifest.marketing_only? && !manifest.iframe_only?
             errors << Validations::Templates.call(self)
             errors << Validations::Stylesheets.call(self)
-          end
-
-          if has_requirements?
-            errors << Validations::Requirements.call(self)
           end
         end
 
@@ -145,17 +142,17 @@ module ZendeskAppsSupport
     end
 
     def manifest_json
-      @manifest_json ||= read_json('manifest.json')
+      @manifest_json ||= read_json(MANIFEST_FILENAME)
     end
     deprecate :manifest_json, :manifest, 2016, 9
 
     def manifest
-      @manifest ||= Manifest.new(read_file('manifest.json'))
+      @manifest ||= Manifest.new(read_file(MANIFEST_FILENAME))
     end
 
     def requirements_json
       return nil unless has_requirements?
-      @requirements ||= read_json('requirements.json', object_class: Manifest::NoOverrideHash)
+      @requirements ||= read_json(REQUIREMENTS_FILENAME, object_class: Manifest::NoOverrideHash)
     end
 
     def is_no_template
@@ -191,6 +188,10 @@ module ZendeskAppsSupport
 
     def has_file?(path)
       File.exist?(path_to(path))
+    end
+
+    def has_requirements?
+      has_file?(REQUIREMENTS_FILENAME)
     end
 
     def app_css
@@ -266,11 +267,7 @@ module ZendeskAppsSupport
     end
 
     def has_manifest?
-      has_file?('manifest.json')
-    end
-
-    def has_requirements?
-      has_file?('requirements.json')
+      has_file?(MANIFEST_FILENAME)
     end
 
     def has_banner?

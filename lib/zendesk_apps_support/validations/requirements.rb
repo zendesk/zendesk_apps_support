@@ -5,7 +5,13 @@ module ZendeskAppsSupport
 
       class <<self
         def call(package)
-          return [ValidationError.new(:missing_requirements)] unless package.has_file? 'requirements.json'
+          if package.manifest.requirements_only? && !package.has_requirements?
+            return [ValidationError.new(:missing_requirements)]
+          elsif package.manifest.marketing_only? && package.has_requirements?
+            return [ValidationError.new(:requirements_not_supported)]
+          elsif !package.has_requirements?
+            return []
+          end
 
           begin
             requirements = package.requirements_json

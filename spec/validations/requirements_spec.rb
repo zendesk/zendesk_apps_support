@@ -4,10 +4,13 @@ require 'tmpdir'
 
 describe ZendeskAppsSupport::Validations::Requirements do
   before do
-    allow(package).to receive(:has_file?).with('requirements.json').and_return true
+    allow(package).to receive(:has_file?).with('requirements.json').and_return(!requirements_string.nil?)
     allow(package).to receive(:read_file).with('requirements.json') { requirements_string }
+    allow(package).to receive(:manifest).and_return(manifest)
   end
   let(:dir) { Dir.mktmpdir }
+  let(:requirements_string) { nil }
+  let(:manifest) { ZendeskAppsSupport::Manifest.new(File.read('spec/app/manifest.json')) }
   let(:package) { ZendeskAppsSupport::Package.new(dir, false) }
   let(:errors) { ZendeskAppsSupport::Validations::Requirements.call(package) }
 
@@ -24,6 +27,28 @@ describe ZendeskAppsSupport::Validations::Requirements do
 
     it 'creates no error' do
       expect(errors).to be_empty
+    end
+  end
+
+  context 'requirements-only app' do
+    before do
+      allow(manifest).to receive(:requirements_only?).and_return(true)
+    end
+
+    it 'creates an error when the file does not exist' do
+      expect(errors.first.key).to eq(:missing_requirements)
+    end
+  end
+
+  context 'marketing-only app' do
+    before do
+      allow(manifest).to receive(:marketing_only?).and_return(true)
+    end
+
+    let(:requirements_string) { read_fixture_file('requirements.json') }
+
+    it 'creates an error when the file exists' do
+      expect(errors.first.key).to eq(:requirements_not_supported)
     end
   end
 

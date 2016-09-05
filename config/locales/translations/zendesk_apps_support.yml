@@ -16,6 +16,10 @@ parts:
       title: "App builder job: JSHint error messages"
       value: "JSHint errors in %{file}: %{errors}"
   - translation:
+      key: "txt.apps.admin.error.app_build.no_parameters_required"
+      title: "App builder job: prevent adding parameters while marketing only"
+      value: "Parameters can't be defined for marketing-only apps"
+  - translation:
       key: "txt.apps.admin.error.app_build.no_location_required"
       title: "App builder job: ban location while requirements only"
       value: "Locations can't be defined when you specify requirements only"
@@ -44,6 +48,10 @@ parts:
       key: "txt.apps.admin.error.app_build.missing_requirements"
       title: "App builder job: missing requirements error"
       value: "Could not find requirements.json"
+  - translation:
+      key: "txt.apps.admin.error.app_build.requirements_not_supported"
+      title: "App builder job: requirements not supported error"
+      value: "App requirements are not supported for marketing-only apps"
   - translation:
       key: "txt.apps.admin.error.app_build.manifest_keys.missing.one"
       title: "App builder job: missing manifest fields error"
