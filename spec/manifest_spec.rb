@@ -35,7 +35,10 @@ describe ZendeskAppsSupport::Manifest do
           required: Faker::Boolean.boolean,
           secure: Faker::Boolean.boolean
         }
-      ]
+      ],
+      experiments: {
+        hashParams: true
+      }
     }
   end
 
@@ -67,7 +70,17 @@ describe ZendeskAppsSupport::Manifest do
       expect(manifest.default_locale).to eq manifest_hash[:defaultLocale]
       expect(manifest.original_locations).to eq stringify_keys[manifest_hash[:location]]
       expect(manifest.oauth).to eq manifest_hash[:oauth]
+      expect(manifest.experiments).to eq stringify_keys[manifest_hash[:experiments]]
       expect(manifest.original_parameters).to eq manifest_hash[:parameters].map(&stringify_keys)
+    end
+  end
+
+  describe '#experiments' do
+    context 'when no experiments are declared' do
+      it 'returns an empty hash' do
+        manifest_hash.delete(:experiments) { |key| raise "Manifest should have had #{key}" }
+        expect(manifest.experiments).to eq({})
+      end
     end
   end
 

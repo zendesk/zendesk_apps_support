@@ -301,7 +301,7 @@ describe ZendeskAppsSupport::Validations::Manifest do
   end
 
   it 'should have an error when a non-boolean is passed for a field that must be boolean' do
-    expect(create_package('singleInstall' => 'false')).to have_error(/must be a Boolean value/)
+    expect(create_package('singleInstall' => 'false')).to have_error(/must be a boolean value/)
   end
 
   it 'should have an error when noTemplate is not a boolean or an array' do

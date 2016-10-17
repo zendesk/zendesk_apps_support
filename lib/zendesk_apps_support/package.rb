@@ -27,10 +27,9 @@ module ZendeskAppsSupport
 
     def validate(marketplace: true)
       [].tap do |errors|
-        errors << Validations::Marketplace.call(self) if marketplace
-
         errors << Validations::Manifest.call(self)
         if has_manifest?
+          errors << Validations::Marketplace.call(self) if marketplace
           errors << Validations::Source.call(self)
           errors << Validations::Translations.call(self)
           errors << Validations::Requirements.call(self)
@@ -119,6 +118,7 @@ module ZendeskAppsSupport
       templates = manifest.no_template == true ? {} : compiled_templates(app_id, asset_url_prefix)
 
       app_settings = {
+        experiments: manifest.experiments,
         location: manifest.locations,
         noTemplate: manifest.no_template_locations,
         singleInstall: manifest.single_install?,

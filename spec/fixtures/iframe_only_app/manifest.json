@@ -8,5 +8,8 @@
   "defaultLocale": "en",
   "private": true,
   "location": { "zopim": { "chat_sidebar": "https://apps.zopim.com/time-tracking/" } },
+  "experiments": {
+    "hashParams": true
+  },
   "frameworkVersion": "2.0"
 }

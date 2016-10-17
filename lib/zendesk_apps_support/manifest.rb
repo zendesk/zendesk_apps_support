@@ -8,6 +8,7 @@ module ZendeskAppsSupport
       marketing_only: 'marketingOnly',
       version: 'version',
       author: 'author',
+      experiments: 'experiments',
       framework_version: 'frameworkVersion',
       single_install: 'singleInstall',
       signed_urls: 'signedUrls',
@@ -66,6 +67,10 @@ module ZendeskAppsSupport
       end
     end
 
+    def enabled_experiments
+      (experiments || {}).select { |k, v| v }.keys
+    end
+
     def initialize(manifest_text)
       m = parse_json(manifest_text)
       RUBY_TO_JSON.each do |ruby, json|
@@ -77,6 +82,7 @@ module ZendeskAppsSupport
       @private = m.fetch('private', true)
       @signed_urls ||= false
       @no_template ||= false
+      @experiments ||= {}
       set_locations_and_hosts
     end
 
