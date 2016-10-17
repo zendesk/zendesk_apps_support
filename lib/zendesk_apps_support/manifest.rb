@@ -67,6 +67,10 @@ module ZendeskAppsSupport
       end
     end
 
+    def enabled_experiments
+      (experiments || {}).select { |k, v| v }.keys
+    end
+
     def initialize(manifest_text)
       m = parse_json(manifest_text)
       RUBY_TO_JSON.each do |ruby, json|

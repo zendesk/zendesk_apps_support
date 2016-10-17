@@ -27,10 +27,9 @@ module ZendeskAppsSupport
 
     def validate(marketplace: true)
       [].tap do |errors|
-        errors << Validations::Marketplace.call(self) if marketplace
-
         errors << Validations::Manifest.call(self)
         if has_manifest?
+          errors << Validations::Marketplace.call(self) if marketplace
           errors << Validations::Source.call(self)
           errors << Validations::Translations.call(self)
           errors << Validations::Requirements.call(self)
