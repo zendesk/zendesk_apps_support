@@ -55,7 +55,7 @@ en:
               not allowed when an iframe URI or noTemplate is specified
             invalid_default_locale: "%{default_locale} is not a valid default locale."
             missing_translation_file: 'Missing translation file for locale ''%{default_locale}''.
-              Please read: http://developer.zendesk.com/documentation/apps/i18n.html'
+              Learn more: http://developer.zendesk.com/documentation/apps/i18n.html'
             invalid_host: "%{host_name} is an invalid host for apps."
             invalid_location:
               one: "%{invalid_locations} is an invalid location in %{host_name}."
@@ -83,7 +83,7 @@ en:
             invalid_type_parameter:
               one: "%{invalid_types} is an invalid parameter type."
               other: "%{invalid_types} are invalid parameter types."
-            unacceptable_boolean: '%{field} must be a Boolean value, got "%{value}"'
+            unacceptable_boolean: '%{field} must be a boolean value, got "%{value}".'
             invalid_no_template: noTemplate must be set to true, false, or an array
               of valid locations.
             duplicate_reference: 'Duplicate reference in manifest: "%{key}".'
