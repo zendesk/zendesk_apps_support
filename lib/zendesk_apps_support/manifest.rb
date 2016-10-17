@@ -8,6 +8,7 @@ module ZendeskAppsSupport
       marketing_only: 'marketingOnly',
       version: 'version',
       author: 'author',
+      framework_options: 'frameworkOptions',
       framework_version: 'frameworkVersion',
       single_install: 'singleInstall',
       signed_urls: 'signedUrls',
@@ -78,6 +79,7 @@ module ZendeskAppsSupport
       @signed_urls ||= false
       @no_template ||= false
       set_locations_and_hosts
+      set_framework_options
     end
 
     private
@@ -99,6 +101,15 @@ module ZendeskAppsSupport
           @used_hosts = ['support']
           { 'support' => {} }
         end
+    end
+
+    def set_framework_options
+      @framework_options ||= {
+        noTemplate: no_template_locations,
+        singleInstall: single_install?,
+        signedUrls: signed_urls?
+      }
+      framework_options.merge!(location: locations)
     end
 
     def replace_legacy_locations(original_locations)

@@ -72,7 +72,10 @@ describe ZendeskAppsSupport::Package do
     end
 
     it 'should generate js with manifest noTemplate set to array' do
-      allow(@package.manifest).to receive(:no_template) { ['ticket_sidebar'] }
+      json = JSON.parse(File.read('spec/app/manifest.json'))
+      json['noTemplate'] = ['ticket_sidebar']
+      allow(@package).to receive(:read_file).and_call_original
+      allow(@package).to receive(:read_file).with('manifest.json').and_return(JSON.dump(json))
       js = @package.compile_js(app_name: "ABC", app_id: 0, assets_dir: 'http://localhost:4567/0/')
       expected = File.read('spec/fixtures/legacy_app_no_template.js')
       expect(js).to eq(expected)
