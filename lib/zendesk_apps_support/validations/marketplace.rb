@@ -18,9 +18,9 @@ module ZendeskAppsSupport
         end
 
         def no_experiments(manifest)
-          non_public_experiments = manifest.enabled_experiments - WHITELISTED_EXPERIMENTS
-          non_public_experiments.map do |experiment|
-            ValidationError.new(:experiment_not_public, experiment: experiment)
+          invalid_experiments = manifest.enabled_experiments - WHITELISTED_EXPERIMENTS
+          invalid_experiments.map do |experiment|
+            ValidationError.new(:invalid_experiment, experiment: experiment)
           end
         end
       end

@@ -45,8 +45,8 @@ parts:
       title: "App builder job: symlinks not allowed. https://en.wikipedia.org/wiki/Symbolic_link"
       value: "Symlinks are not allowed in the zip file"
   - translation:
-      key: "txt.apps.admin.error.app_build.experiment_not_public"
-      title: "App builder job: experiment has been specifed that is not publically available or otherwise unknown"
+      key: "txt.apps.admin.error.app_build.invalid_experiment"
+      title: "App builder job: experiment has been specifed that is not publically available or otherwise invalid"
       value: "Manifest specifies unknown or unavailable experiment: %{experiment}"
   - translation:
       key: "txt.apps.admin.error.app_build.missing_requirements"

@@ -24,8 +24,8 @@ describe ZendeskAppsSupport::Validations::Marketplace do
       package
     end
 
-    it 'raises experiment_not_public validation error' do
-      expect(errors[0].key).to eq(:experiment_not_public)
+    it 'raises invalid_experiment validation error' do
+      expect(errors[0].key).to eq(:invalid_experiment)
       expect(errors[0].message).to match(/unavailable experiment: explodingButtons/)
       expect(errors[1].message).to match(/unavailable experiment: punnyTickets/)
     end
