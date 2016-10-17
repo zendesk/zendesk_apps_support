@@ -131,6 +131,7 @@ module ZendeskAppsSupport
         source: source,
         app_settings: app_settings,
         asset_url_prefix: asset_url_prefix,
+        location_icons: location_icons,
         app_class_name: app_class_name,
         author: manifest.author,
         translations: runtime_translations(translations_for(locale)),
@@ -276,6 +277,30 @@ module ZendeskAppsSupport
 
     def app_js
       read_file('app.js')
+    end
+
+    def location_icons
+      {}.tap do |location_icons|
+        manifest.locations.each do |host, locations_for_host|
+          next unless ['support'].include?(host)
+
+          locations_for_host.keys.each do |location|
+            next unless ['top_bar', 'nav_bar'].include?(location)
+            location_icons[host] ||= {}
+            location_icons[host][location] = if (has_file?("assets/icon_#{location}.svg"))
+              { 'svg' => "icon_#{location}.svg" }
+            elsif (has_file?("assets/icon_#{location}_inactive.png"))
+              {
+                'inactive' => "icon_#{location}_inactive.png",
+                'active' => has_file?("assets/icon_#{location}_active.png") ? "icon_#{location}_active.png" : "icon_#{location}_inactive.png",
+                'hover' => has_file?("assets/icon_#{location}_hover.png") ? "icon_#{location}_hover.png" : "icon_#{location}_inactive.png"
+              }
+            else
+              {}
+            end
+          end
+        end
+      end
     end
 
     def commonjs_modules
