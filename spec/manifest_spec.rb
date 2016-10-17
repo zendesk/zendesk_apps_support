@@ -167,6 +167,30 @@ describe ZendeskAppsSupport::Manifest do
     end
   end
 
+  describe '#framework_options' do
+    context 'when frameworkOptions is missing from the manifest' do
+      it 'returns a hash of top-level settings' do
+        expect(manifest.framework_options).to be_a Hash
+        expect(manifest.framework_options[:location]).to eq manifest.locations
+        expect(manifest.framework_options[:singleInstall]).to eq manifest_hash[:singleInstall]
+        expect(manifest.framework_options[:signedUrls]).to eq manifest_hash[:signedUrls]
+      end
+    end
+
+    context 'when frameworkOptions is present' do
+      before do
+        manifest_hash[:frameworkOptions] = { signedUrls: true }
+      end
+
+      it 'returns the frameworkOptions' do
+        options = stringify_keys[manifest.framework_options]
+        expect(options['location']).to eq manifest.locations
+        expect(options['singleInstall']).to be_nil
+        expect(options['signedUrls']).to eq true
+      end
+    end
+  end
+
   describe '#location?' do
     context 'when locations are not supplied in the manifest' do
       before do
