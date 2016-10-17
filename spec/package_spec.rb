@@ -350,4 +350,78 @@ describe ZendeskAppsSupport::Package do
       it { expect(modules).not_to be nil }
     end
   end
+
+  describe '#location_icons' do
+    before do
+      allow(package.manifest).to receive(:locations) { { 'support' => { 'top_bar' => 'someurl' } } }
+    end
+
+    context 'when it has a svg' do
+      it 'returns correct location_icons hash' do
+        allow(package).to receive(:has_file?) { |file| file == 'assets/icon_top_bar.svg' }
+        expect(package.send(:location_icons)).to eq( {
+          "support" => {
+            "top_bar" => {
+              'svg' => "icon_top_bar.svg"
+            }
+          }
+        })
+      end
+    end
+
+    context 'when it has three pngs' do
+      it 'returns correct location_icons hash' do
+        allow(package).to receive(:has_file?) { |file| file != 'assets/icon_top_bar.svg' }
+        expect(package.send(:location_icons)).to eq( {
+          "support" => {
+            "top_bar" => {
+              'active' => "icon_top_bar_active.png",
+              'inactive' => "icon_top_bar_inactive.png",
+              'hover' => "icon_top_bar_hover.png"
+            }
+          }
+        })
+      end
+    end
+
+    context 'when it only has inactive pngs' do
+      it 'returns correct location_icons hash' do
+        allow(package).to receive(:has_file?) { |file| file == 'assets/icon_top_bar_inactive.png' }
+        expect(package.send(:location_icons)).to eq( {
+          "support" => {
+            "top_bar" => {
+              'active' => "icon_top_bar_inactive.png",
+              'inactive' => "icon_top_bar_inactive.png",
+              'hover' => "icon_top_bar_inactive.png"
+            }
+          }
+        })
+      end
+    end
+
+
+    context 'when it has pngs and svgs' do
+      it 'returns correct location_icons hash' do
+        allow(package).to receive(:has_file?) { true }
+        expect(package.send(:location_icons)).to eq( {
+          "support" => {
+            "top_bar" => {
+              'svg' => "icon_top_bar.svg"
+            }
+          }
+        })
+      end
+    end
+
+    context 'when it has no images' do
+      it 'returns correct location_icons hash' do
+        allow(package).to receive(:has_file?) { false }
+        expect(package.send(:location_icons)).to eq( {
+          "support" => {
+            "top_bar" => {}
+          }
+        })
+      end
+    end
+  end
 end
