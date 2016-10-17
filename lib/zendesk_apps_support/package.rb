@@ -119,6 +119,7 @@ module ZendeskAppsSupport
       templates = manifest.no_template == true ? {} : compiled_templates(app_id, asset_url_prefix)
 
       app_settings = {
+        experiments: manifest.experiments,
         location: manifest.locations,
         noTemplate: manifest.no_template_locations,
         singleInstall: manifest.single_install?,

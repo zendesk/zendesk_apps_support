@@ -8,6 +8,7 @@ module ZendeskAppsSupport
       marketing_only: 'marketingOnly',
       version: 'version',
       author: 'author',
+      experiments: 'experiments',
       framework_version: 'frameworkVersion',
       single_install: 'singleInstall',
       signed_urls: 'signedUrls',
@@ -77,6 +78,7 @@ module ZendeskAppsSupport
       @private = m.fetch('private', true)
       @signed_urls ||= false
       @no_template ||= false
+      @experiments ||= {}
       set_locations_and_hosts
     end
 
