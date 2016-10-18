@@ -282,7 +282,7 @@ module ZendeskAppsSupport
     def location_icons
       {}.tap do |location_icons|
         manifest.locations.each do |host, locations_for_host|
-          next unless ['support'].include?(host)
+          next unless [Product::SUPPORT.name].include?(host)
 
           locations_for_host.keys.each do |location|
             next unless ['top_bar', 'nav_bar'].include?(location)

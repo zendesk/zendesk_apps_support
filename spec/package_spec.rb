@@ -353,16 +353,22 @@ describe ZendeskAppsSupport::Package do
 
   describe '#location_icons' do
     before do
-      allow(package.manifest).to receive(:locations) { { 'support' => { 'top_bar' => 'someurl' } } }
+      allow(package.manifest).to receive(:locations) { {
+        'chat' => { 'other_location' => '' },
+        'support' => { 'top_bar' => 'some_url', 'nav_bar' => 'other_url', 'ticket_sidebar' => 'last_url' } }
+      }
     end
 
-    context 'when it has a svg' do
-      it 'returns correct location_icons hash' do
-        allow(package).to receive(:has_file?) { |file| file == 'assets/icon_top_bar.svg' }
+    context 'when it has an svg' do
+      it 'returns correct location_icons hash for top_bar' do
+        allow(package).to receive(:has_file?) { |file| file == 'assets/icon_top_bar.svg' || file == 'assets/icon_nav_bar.svg' }
         expect(package.send(:location_icons)).to eq( {
           "support" => {
             "top_bar" => {
               'svg' => "icon_top_bar.svg"
+            },
+            "nav_bar" => {
+              'svg' => "icon_nav_bar.svg"
             }
           }
         })
@@ -371,13 +377,18 @@ describe ZendeskAppsSupport::Package do
 
     context 'when it has three pngs' do
       it 'returns correct location_icons hash' do
-        allow(package).to receive(:has_file?) { |file| file != 'assets/icon_top_bar.svg' }
+        allow(package).to receive(:has_file?) { |file| file != 'assets/icon_top_bar.svg' && file != 'assets/icon_nav_bar.svg'}
         expect(package.send(:location_icons)).to eq( {
           "support" => {
             "top_bar" => {
               'active' => "icon_top_bar_active.png",
               'inactive' => "icon_top_bar_inactive.png",
               'hover' => "icon_top_bar_hover.png"
+            },
+            "nav_bar" => {
+              'active' => "icon_nav_bar_active.png",
+              'inactive' => "icon_nav_bar_inactive.png",
+              'hover' => "icon_nav_bar_hover.png"
             }
           }
         })
@@ -386,13 +397,18 @@ describe ZendeskAppsSupport::Package do
 
     context 'when it only has inactive pngs' do
       it 'returns correct location_icons hash' do
-        allow(package).to receive(:has_file?) { |file| file == 'assets/icon_top_bar_inactive.png' }
+        allow(package).to receive(:has_file?) { |file| file == 'assets/icon_top_bar_inactive.png' || file == 'assets/icon_nav_bar_inactive.png' }
         expect(package.send(:location_icons)).to eq( {
           "support" => {
             "top_bar" => {
               'active' => "icon_top_bar_inactive.png",
               'inactive' => "icon_top_bar_inactive.png",
               'hover' => "icon_top_bar_inactive.png"
+            },
+            "nav_bar" => {
+              'active' => "icon_nav_bar_inactive.png",
+              'inactive' => "icon_nav_bar_inactive.png",
+              'hover' => "icon_nav_bar_inactive.png"
             }
           }
         })
@@ -407,6 +423,9 @@ describe ZendeskAppsSupport::Package do
           "support" => {
             "top_bar" => {
               'svg' => "icon_top_bar.svg"
+            },
+            "nav_bar" => {
+              'svg' => "icon_nav_bar.svg"
             }
           }
         })
@@ -418,7 +437,8 @@ describe ZendeskAppsSupport::Package do
         allow(package).to receive(:has_file?) { false }
         expect(package.send(:location_icons)).to eq( {
           "support" => {
-            "top_bar" => {}
+            "top_bar" => {},
+            "nav_bar" => {}
           }
         })
       end
