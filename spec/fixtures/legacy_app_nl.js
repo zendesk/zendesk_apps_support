@@ -41,6 +41,7 @@ var app = ZendeskApps.defineApp(source)
   .reopen({
     appName: "EFG",
     appVersion: "1.0.0",
+    locationIcons: {},
     assetUrlPrefix: "http://localhost:4567/2/",
     appClassName: "app-1",
     author: {
