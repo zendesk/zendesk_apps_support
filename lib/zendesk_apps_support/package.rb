@@ -15,6 +15,8 @@ module ZendeskAppsSupport
     DEFAULT_SCSS   = File.read(File.expand_path('../assets/default_styles.scss', __FILE__))
     SRC_TEMPLATE   = Erubis::Eruby.new(File.read(File.expand_path('../assets/src.js.erb', __FILE__)))
 
+    LOCATIONS_WITH_ICONS = ['top_bar', 'nav_bar']
+
     attr_reader :lib_root, :root, :warnings
 
     def initialize(dir, is_cached = true)
@@ -285,7 +287,7 @@ module ZendeskAppsSupport
           next unless [Product::SUPPORT.name].include?(host)
 
           locations_for_host.keys.each do |location|
-            next unless ['top_bar', 'nav_bar'].include?(location)
+            next unless LOCATIONS_WITH_ICONS.include?(location)
             location_icons[host] ||= {}
             location_icons[host][location] = if (has_file?("assets/icon_#{location}.svg"))
               { 'svg' => "icon_#{location}.svg" }
