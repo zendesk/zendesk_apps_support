@@ -31,4 +31,10 @@ describe ZendeskAppsSupport::Validations::Marketplace do
     end
   end
 
+  context 'with package with whitelisted experiements' do
+    let(:package) { ZendeskAppsSupport::Package.new('spec/fixtures/iframe_only_app') }
+    it 'works' do
+      expect(errors).to be_empty
+    end
+  end
 end
