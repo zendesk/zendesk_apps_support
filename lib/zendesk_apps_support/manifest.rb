@@ -68,7 +68,7 @@ module ZendeskAppsSupport
     end
 
     def enabled_experiments
-      (experiments || {}).select { |k, v| v }.keys
+      (experiments || {}).select { |_k, v| v }.keys
     end
 
     def initialize(manifest_text)

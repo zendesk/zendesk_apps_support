@@ -3,12 +3,14 @@ module ZendeskAppsSupport
     extend ZendeskAppsSupport::Finders
     attr_reader :id, :name, :orderable, :product_code
 
-    IDS = Set.new
+    def self.unique_ids
+      @ids ||= Set.new
+    end
 
     def initialize(attrs)
       @id = attrs.fetch(:id)
-      raise 'Duplicate id' if IDS.include? @id
-      IDS.add @id
+      raise 'Duplicate id' if Location.unique_ids.include? @id
+      Location.unique_ids.add @id
       @name = attrs.fetch(:name)
       @orderable = attrs.fetch(:orderable)
       @product_code = attrs.fetch(:product_code)
