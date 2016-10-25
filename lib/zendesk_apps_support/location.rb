@@ -3,8 +3,14 @@ module ZendeskAppsSupport
     extend ZendeskAppsSupport::Finders
     attr_reader :id, :name, :orderable, :product_code
 
+    def self.unique_ids
+      @ids ||= Set.new
+    end
+
     def initialize(attrs)
       @id = attrs.fetch(:id)
+      raise 'Duplicate id' if Location.unique_ids.include? @id
+      Location.unique_ids.add @id
       @name = attrs.fetch(:name)
       @orderable = attrs.fetch(:orderable)
       @product_code = attrs.fetch(:product_code)
@@ -27,7 +33,8 @@ module ZendeskAppsSupport
       Location.new(id: 5, orderable: true, name: 'user_sidebar', product_code: Product::SUPPORT.code),
       Location.new(id: 6, orderable: true, name: 'organization_sidebar', product_code: Product::SUPPORT.code),
       Location.new(id: 7, orderable: false, name: 'background', product_code: Product::SUPPORT.code),
-      Location.new(id: 8, orderable: true, name: 'chat_sidebar', product_code: Product::CHAT.code)
+      Location.new(id: 8, orderable: true, name: 'chat_sidebar', product_code: Product::CHAT.code),
+      Location.new(id: 9, orderable: false, name: 'modal', product_code: Product::SUPPORT.code)
     ].freeze
   end
 end
