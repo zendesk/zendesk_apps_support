@@ -34,7 +34,8 @@ module ZendeskAppsSupport
       Location.new(id: 6, orderable: true, name: 'organization_sidebar', product_code: Product::SUPPORT.code),
       Location.new(id: 7, orderable: false, name: 'background', product_code: Product::SUPPORT.code),
       Location.new(id: 8, orderable: true, name: 'chat_sidebar', product_code: Product::CHAT.code),
-      Location.new(id: 9, orderable: false, name: 'modal', product_code: Product::SUPPORT.code)
+      Location.new(id: 9, orderable: false, name: 'modal', product_code: Product::SUPPORT.code),
+      Location.new(id: 10, orderable: false, name: 'ticket_editor', product_code: Product::SUPPORT.code)
     ].freeze
   end
 end
