@@ -1,7 +1,8 @@
+# frozen_string_literal: true
 module ZendeskAppsSupport
   module Validations
     module Marketplace
-      WHITELISTED_EXPERIMENTS = [].freeze
+      WHITELISTED_EXPERIMENTS = ['hashParams'].freeze
 
       class << self
         def call(package)

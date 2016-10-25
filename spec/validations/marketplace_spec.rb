@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'spec_helper'
 
 describe ZendeskAppsSupport::Validations::Marketplace do
@@ -31,4 +32,28 @@ describe ZendeskAppsSupport::Validations::Marketplace do
     end
   end
 
+  context 'with the default fixture' do
+    let(:package) { ZendeskAppsSupport::Package.new('spec/fixtures/iframe_only_app') }
+    it 'works' do
+      expect(errors).to be_empty
+    end
+  end
+
+  context 'with package with whitelisted experiements' do
+    let(:package) { ZendeskAppsSupport::Package.new('spec/fixtures/iframe_only_app') }
+    let(:manifest) { ZendeskAppsSupport::Manifest.new(JSON.dump(manifest_hash)) }
+    let(:manifest_hash) do
+      json = JSON.parse(File.read('spec/fixtures/iframe_only_app/manifest.json'))
+      json['experiments'] = { hashParams: true }
+      json
+    end
+    let(:package) do
+      package = ZendeskAppsSupport::Package.new('spec/fixtures/iframe_only_app')
+      allow(package).to receive(:manifest).and_return(manifest)
+      package
+    end
+    it 'works' do
+      expect(errors).to be_empty
+    end
+  end
 end
