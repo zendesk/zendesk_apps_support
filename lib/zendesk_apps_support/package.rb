@@ -190,7 +190,7 @@ module ZendeskAppsSupport
     deprecate :has_location?, 'manifest.location?', 2016, 9
 
     def has_file?(path)
-      File.exist?(path_to(path))
+      File.file?(path_to(path))
     end
 
     def has_requirements?
