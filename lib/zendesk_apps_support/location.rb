@@ -39,7 +39,7 @@ module ZendeskAppsSupport
       Location.new(id: 11, orderable: false, name: 'top_bar', product_code: Product::STANDALONE_CHAT.code),
       Location.new(id: 12, orderable: false, name: 'nav_bar', product_code: Product::STANDALONE_CHAT.code),
       Location.new(id: 13, orderable: false, name: 'system_top_bar', product_code: Product::SUPPORT.code),
-      Location.new(id: 11, orderable: false, name: 'system_top_bar', product_code: Product::STANDALONE_CHAT.code)
+      Location.new(id: 14, orderable: false, name: 'system_top_bar', product_code: Product::STANDALONE_CHAT.code)
     ].freeze
   end
 end
