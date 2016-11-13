@@ -8,6 +8,7 @@ module ZendeskAppsSupport
       marketing_only: 'marketingOnly',
       version: 'version',
       author: 'author',
+      name: 'name',
       experiments: 'experiments',
       framework_version: 'frameworkVersion',
       single_install: 'singleInstall',
