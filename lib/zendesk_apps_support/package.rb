@@ -15,7 +15,7 @@ module ZendeskAppsSupport
     DEFAULT_SCSS   = File.read(File.expand_path('../assets/default_styles.scss', __FILE__))
     SRC_TEMPLATE   = Erubis::Eruby.new(File.read(File.expand_path('../assets/src.js.erb', __FILE__)))
 
-    LOCATIONS_WITH_ICONS = ['top_bar', 'nav_bar']
+    LOCATIONS_WITH_ICONS = ['top_bar', 'nav_bar', 'system_top_bar']
 
     attr_reader :lib_root, :root, :warnings
 
@@ -190,7 +190,7 @@ module ZendeskAppsSupport
     deprecate :has_location?, 'manifest.location?', 2016, 9
 
     def has_file?(path)
-      File.exist?(path_to(path))
+      File.file?(path_to(path))
     end
 
     def has_requirements?
@@ -284,8 +284,6 @@ module ZendeskAppsSupport
     def location_icons
       {}.tap do |location_icons|
         manifest.locations.each do |host, locations_for_host|
-          next unless [Product::SUPPORT.name].include?(host)
-
           locations_for_host.keys.each do |location|
             next unless LOCATIONS_WITH_ICONS.include?(location)
             location_icons[host] ||= {}
