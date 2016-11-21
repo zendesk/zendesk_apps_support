@@ -156,8 +156,15 @@ module ZendeskAppsSupport
                                   count: invalid_locations.length)
             end
 
-            locations.values.each do |location|
-              errors << invalid_location_uri_error(package, location['url'])
+            locations.each do |location_key, location|
+              url = location['url']
+              no_iframe = location.fetch('noIframe', false)
+              if url && !url.empty?
+                errors << ValidationError.new(:cant_use_uri_with_no_iframe, location: location_key) if no_iframe
+                errors << invalid_location_uri_error(package, location['url'])
+              elsif !no_iframe
+                errors << ValidationError.new(:blank_location_uri, location: location_key)
+              end
             end
           end
 
