@@ -88,6 +88,8 @@ module ZendeskAppsSupport
 
     private
 
+    LEGACY_LOCATION_OBJECT = { 'url' => LEGACY_URI_STUB }.freeze
+
     def set_locations_and_hosts
       @locations =
         case original_locations
@@ -96,10 +98,11 @@ module ZendeskAppsSupport
           replace_legacy_locations original_locations
         when Array
           @used_hosts = ['support']
-          { 'support' => NoOverrideHash[original_locations.map { |location| [ location, LEGACY_URI_STUB ] }] }
+          new_locations = NoOverrideHash[original_locations.map { |location| [ location, LEGACY_LOCATION_OBJECT ] }]
+          { 'support' => new_locations }
         when String
           @used_hosts = ['support']
-          { 'support' => { original_locations => LEGACY_URI_STUB } }
+          { 'support' => { original_locations => LEGACY_LOCATION_OBJECT } }
         # TODO: error out for numbers and Booleans
         else # NilClass
           @used_hosts = ['support']
@@ -113,7 +116,17 @@ module ZendeskAppsSupport
           product_key = product.name.to_s
           legacy_key = product.legacy_name.to_s
           value_for_product = original_locations.fetch(product_key, original_locations[legacy_key])
-          value_for_product && new_locations_obj[product_key] = value_for_product
+          value_for_product && new_locations_obj[product_key] = replace_string_uris(value_for_product)
+        end
+      end
+    end
+
+    def replace_string_uris(product_locations)
+      product_locations.each_with_object({}) do |(k, v), new_locations|
+        if v.is_a? Hash
+          new_locations[k] = v
+        else
+          new_locations[k] = { 'url' => v }
         end
       end
     end
