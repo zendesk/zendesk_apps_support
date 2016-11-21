@@ -284,8 +284,6 @@ module ZendeskAppsSupport
     def location_icons
       {}.tap do |location_icons|
         manifest.locations.each do |host, locations_for_host|
-          next unless [Product::SUPPORT.name, Product::STANDALONE_CHAT.name].include?(host)
-
           locations_for_host.keys.each do |location|
             next unless LOCATIONS_WITH_ICONS.include?(location)
             location_icons[host] ||= {}
