@@ -21,11 +21,17 @@ describe ZendeskAppsSupport::Manifest do
       defaultLocale: Faker::Address.country_code,
       location: {
         support: {
-          new_ticket_sidebar: Faker::Internet.url,
-          top_bar: Faker::Internet.url
+          new_ticket_sidebar: {
+            url: Faker::Internet.url
+          },
+          top_bar: {
+            url: Faker::Internet.url
+          }
         },
         chat: {
-          main_panel: Faker::Internet.url
+          main_panel: {
+            url: Faker::Internet.url
+          }
         }
       },
       parameters: [
@@ -219,16 +225,48 @@ describe ZendeskAppsSupport::Manifest do
     it 'supports strings' do
       manifest_hash[:location] = 'ticket_sidebar'
       location_object = manifest.locations
-      expect(location_object).to eq('support' => { 'ticket_sidebar' => '_legacy' })
+      expect(location_object).to eq(
+        'support' => { 'ticket_sidebar' => { 'url' => '_legacy' } }
+      )
     end
 
     it 'supports arrays' do
       manifest_hash[:location] = %w(🔔 🃏)
       location_object = manifest.locations
-      expect(location_object).to eq('support' => { '🃏' => '_legacy', '🔔' => '_legacy' })
+      expect(location_object).to eq(
+        'support' => {
+          '🃏' => { 'url' => '_legacy' },
+          '🔔' => { 'url' => '_legacy' }
+        }
+      )
     end
 
-    it 'supports objects' do
+    it 'supports objects with string urls' do
+      manifest_hash[:location] = stringify_keys[{
+        support: {
+          ticket_sidebar: 'https://my-site.org/'
+        },
+        chat: {
+          main_panel: 'https://your-site.org/'
+        }
+      }]
+      location_object = manifest.locations
+
+      expect(location_object).to eq(
+        'support' => {
+          'ticket_sidebar' => {
+            'url' => 'https://my-site.org/'
+          }
+        },
+        'chat' => {
+          'main_panel' => {
+            'url' => 'https://your-site.org/'
+          }
+        }
+      )
+    end
+
+    it 'supports objects with objects' do
       location_object = manifest.locations
 
       expect(location_object).to eq stringify_keys[manifest_hash[:location]]
@@ -237,39 +275,35 @@ describe ZendeskAppsSupport::Manifest do
     it 'canonicalises zendesk to support' do
       manifest_hash[:location] = stringify_keys[{
         zendesk: {
-          ticket_sidebar: 'https://my-site.org/'
-        },
-        chat: {
-          main_panel: 'https://your-site.org/'
+          ticket_sidebar: {
+            url: 'https://my-site.org/'
+          }
         }
       }]
 
       expect(manifest.locations).to eq(
         'support' => {
-          'ticket_sidebar' => 'https://my-site.org/'
-        },
-        'chat' => {
-          'main_panel' => 'https://your-site.org/'
+          'ticket_sidebar' => {
+            'url' => 'https://my-site.org/'
+          }
         }
       )
     end
 
     it 'canonicalises zopim to chat' do
       manifest_hash[:location] = stringify_keys[{
-        zendesk: {
-          ticket_sidebar: 'https://my-site.org/'
-        },
         zopim: {
-          main_panel: 'https://your-site.org/'
+          main_panel: {
+            url: 'https://your-site.org/'
+          }
         }
       }]
 
       expect(manifest.locations).to eq(
-        'support' => {
-          'ticket_sidebar' => 'https://my-site.org/'
-        },
         'chat' => {
-          'main_panel' => 'https://your-site.org/'
+          'main_panel' => {
+            'url' => 'https://your-site.org/'
+          }
         }
       )
     end
