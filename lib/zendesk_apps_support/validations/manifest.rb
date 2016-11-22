@@ -158,11 +158,10 @@ module ZendeskAppsSupport
 
             locations.each do |location_key, location|
               url = location['url']
-              no_iframe = location.fetch('noIframe', false)
+              auto_load = location.fetch('autoLoad', true)
               if url && !url.empty?
-                errors << ValidationError.new(:cant_use_uri_with_no_iframe, location: location_key) if no_iframe
                 errors << invalid_location_uri_error(package, location['url'])
-              elsif !no_iframe
+              elsif auto_load
                 errors << ValidationError.new(:blank_location_uri, location: location_key)
               end
             end

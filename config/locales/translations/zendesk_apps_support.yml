@@ -145,10 +145,6 @@ parts:
       title: "App builder job: invalid locations"
       value: "%{invalid_locations} are invalid locations in %{host_name}."
   - translation:
-      key: "txt.apps.admin.error.app_build.cant_use_uri_with_no_iframe"
-      title: "App builder job: invalid location object as URI is specified along with no iframe option in the manifest"
-      value: "%{location} location cannot specify both a URI and the noIframe option."
-  - translation:
       key: "txt.apps.admin.error.app_build.blank_location_uri"
       title: "App builder job: invalid URI for an iframe in the manifest"
       value: "%{location} location does not specify a URI."

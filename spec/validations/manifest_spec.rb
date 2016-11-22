@@ -216,9 +216,9 @@ describe ZendeskAppsSupport::Validations::Manifest do
     end
   end
 
-  context 'location is noIframe' do
+  context 'location is manual load and has no uri' do
     before do
-      @manifest_hash = { 'location' => { 'zendesk' => { 'ticket_sidebar' => { 'noIframe' => true } } } }
+      @manifest_hash = { 'location' => { 'zendesk' => { 'ticket_sidebar' => { 'autoLoad' => false } } } }
     end
 
     it 'should not have a location error' do
@@ -228,13 +228,15 @@ describe ZendeskAppsSupport::Validations::Manifest do
     end
   end
 
-  context 'location is noIframe and specifies references a url' do
+  context 'location is manual load and specifies references a url' do
     before do
-      @manifest_hash = { 'location' => { 'zendesk' => { 'ticket_sidebar' => { 'noIframe' => true, 'url' => 'https://i.am.so.conf/used/setup.exe' } } } }
+      @manifest_hash = { 'location' => { 'zendesk' => { 'ticket_sidebar' => { 'autoLoad' => false, 'url' => 'https://i.am.so.conf/used/setup.exe' } } } }
     end
 
     it 'should not have a location error' do
-      expect(@package).to have_error(/cannot specify both a URI and the noIframe option/)
+      expect(@package).not_to have_error(/invalid location/)
+      expect(@package).not_to have_error(/cannot specify both a URI and the noIframe option/)
+      expect(@package).not_to have_error(/location does not specify a URI/)
     end
   end
 
