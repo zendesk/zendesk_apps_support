@@ -5,6 +5,7 @@ module ZendeskAppsSupport
   autoload :BuildTranslation,       'zendesk_apps_support/build_translation'
   autoload :I18n,                   'zendesk_apps_support/i18n'
   autoload :Location,               'zendesk_apps_support/location'
+  autoload :LocationOptions,        'zendesk_apps_support/location_options'
   autoload :Manifest,               'zendesk_apps_support/manifest'
   autoload :Product,                'zendesk_apps_support/product'
   autoload :Package,                'zendesk_apps_support/package'

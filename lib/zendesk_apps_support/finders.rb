@@ -23,10 +23,12 @@ module ZendeskAppsSupport
     private
 
     def filter_by_arg(arg)
-      fail('More than one key-value pair found') if arg.size > 1
-      attribute, value = arg.to_a.first
-      value = value.to_s if value.is_a? Symbol
-      ->(product) { product.public_send(attribute) == value }
+      lambda do |product|
+        arg.all? do |attribute, value|
+          value = value.to_s if value.is_a? Symbol
+          product.public_send(attribute) == value
+        end
+      end
     end
   end
 end

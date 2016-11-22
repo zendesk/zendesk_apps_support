@@ -50,6 +50,16 @@ module ZendeskAppsSupport
       !locations.values.all?(&:empty?)
     end
 
+    def location_options
+      @location_options ||= locations.flat_map do |product_key, locations|
+        product = Product.find_by!(name: product_key)
+        locations.map do |location_key, location_options|
+          location = Location.find_by!(product_code: product.code, name: location_key)
+          LocationOptions.new(location, location_options)
+        end
+      end
+    end
+
     def unknown_hosts
       @unknown_hosts ||=
         @used_hosts - Product::PRODUCTS_AVAILABLE.flat_map { |p| [p.name, p.legacy_name] }
