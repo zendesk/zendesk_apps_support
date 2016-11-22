@@ -16,6 +16,10 @@ parts:
       title: "App builder job: JSHint error messages"
       value: "JSHint errors in %{file}: %{errors}"
   - translation:
+      key: "txt.apps.admin.error.app_build.no_template_deprecated_in_v2"
+      title: "App builder job: prevent using noTemplate in v2 apps and give advice on how to migrate (use noIframe)"
+      value: "noTemplate option is deprecated and cannot be used with App Framework v2. Use the noIframe location option instead."
+  - translation:
       key: "txt.apps.admin.error.app_build.no_parameters_required"
       title: "App builder job: prevent adding parameters while marketing only"
       value: "Parameters can't be defined for marketing-only apps"

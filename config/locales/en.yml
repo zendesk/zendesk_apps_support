@@ -9,6 +9,8 @@ en:
             jshint:
               one: 'JSHint error in %{file}: %{errors}'
               other: 'JSHint errors in %{file}: %{errors}'
+            no_template_deprecated_in_v2: noTemplate option is deprecated and cannot
+              be used with App Framework v2. Use the noIframe location option instead.
             no_parameters_required: Parameters can't be defined for marketing-only
               apps
             no_location_required: Locations can't be defined when you specify requirements

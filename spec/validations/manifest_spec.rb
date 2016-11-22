@@ -82,12 +82,17 @@ describe ZendeskAppsSupport::Validations::Manifest do
     expect(@package).not_to have_error 'Missing required field in manifest: location'
   end
 
+  it 'should have an error when app is iframe only but specifies noTemplate: true' do
+    @manifest_hash = { noTemplate: true, frameworkVersion: '2.0.0' }
+    expect(@package).to have_error :no_template_deprecated_in_v2
+  end
+
   it 'should have an error when frameworkVersion is missing without requirements' do
     expect(@package).to have_error 'Missing required field in manifest: frameworkVersion'
   end
 
   it 'should have an error when frameworkVersion is defined but requirements only is true' do
-    @manifest_hash = { requirementsOnly: true, frameworkVersion: 1 }
+    @manifest_hash = { requirementsOnly: true, frameworkVersion: '1.0' }
     expect(@package).to have_error :no_framework_version_required
   end
 
