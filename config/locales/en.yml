@@ -60,8 +60,6 @@ en:
             invalid_location:
               one: "%{invalid_locations} is an invalid location in %{host_name}."
               other: "%{invalid_locations} are invalid locations in %{host_name}."
-            cant_use_uri_with_no_iframe: "%{location} location cannot specify both
-              a URI and the noIframe option."
             blank_location_uri: "%{location} location does not specify a URI."
             invalid_location_uri: "%{uri} is either an invalid location URI, refers
               to a missing asset, or does not use HTTPS."
