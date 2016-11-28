@@ -132,6 +132,22 @@ describe ZendeskAppsSupport::Manifest do
       expect(manifest.location_options.map(&:class).uniq).to eq [ZendeskAppsSupport::Manifest::LocationOptions]
       expect(manifest.location_options.length).to eq(3)
     end
+
+    it 'sets the correct location for each' do
+      expect(manifest.location_options.map(&:location).map(&:id)).to eq [4, 1, 8]
+    end
+
+    context 'with signedUrls set' do
+      before do
+        manifest_hash[:signedUrls] = true
+        manifest_hash[:location][:chat][:chat_sidebar][:signed] = false
+      end
+
+      it 'sets signed on each location by default' do
+        expect(manifest.location_options.first.signed).to be(true)
+        expect(manifest.location_options.last.signed).to be(false)
+      end
+    end
   end
 
   describe '#no_template?' do

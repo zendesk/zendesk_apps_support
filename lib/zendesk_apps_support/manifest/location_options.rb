@@ -6,11 +6,15 @@ module ZendeskAppsSupport
         legacy: 'legacy',
         auto_load: 'autoLoad',
         auto_hide: 'autoHide',
+        signed: 'signed',
         url: 'url'
       }.freeze
 
       attr_reader :location
       attr_reader(*RUBY_TO_JSON.keys)
+
+      alias_method :signed?, :signed
+      alias_method :legacy?, :legacy
 
       def initialize(location, options)
         @location = location
@@ -18,9 +22,10 @@ module ZendeskAppsSupport
         RUBY_TO_JSON.each do |ruby, json|
           instance_variable_set(:"@#{ruby}", options[json])
         end
-        @legacy ||= @uri == ZendeskAppsSupport::Manifest::LEGACY_URI_STUB
+        @legacy ||= @url == ZendeskAppsSupport::Manifest::LEGACY_URI_STUB
         @auto_load = options.fetch('autoLoad', true)
         @auto_hide ||= false
+        @signed ||= false
       end
     end
   end
