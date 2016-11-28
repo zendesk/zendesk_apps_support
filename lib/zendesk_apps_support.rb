@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module ZendeskAppsSupport
   require 'zendesk_apps_support/engine'
 
@@ -5,7 +6,6 @@ module ZendeskAppsSupport
   autoload :BuildTranslation,       'zendesk_apps_support/build_translation'
   autoload :I18n,                   'zendesk_apps_support/i18n'
   autoload :Location,               'zendesk_apps_support/location'
-  autoload :LocationOptions,        'zendesk_apps_support/location_options'
   autoload :Manifest,               'zendesk_apps_support/manifest'
   autoload :Product,                'zendesk_apps_support/product'
   autoload :Package,                'zendesk_apps_support/package'
@@ -30,6 +30,7 @@ module ZendeskAppsSupport
   end
 
   class Manifest
+    autoload :LocationOptions, 'zendesk_apps_support/manifest/location_options'
     autoload :Parameter, 'zendesk_apps_support/manifest/parameter'
     autoload :NoOverrideHash, 'zendesk_apps_support/manifest/no_override_hash'
   end

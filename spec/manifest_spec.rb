@@ -29,7 +29,7 @@ describe ZendeskAppsSupport::Manifest do
           }
         },
         chat: {
-          main_panel: {
+          chat_sidebar: {
             url: Faker::Internet.url
           }
         }
@@ -124,6 +124,13 @@ describe ZendeskAppsSupport::Manifest do
       expect(parameter.type).to eq manifest_hash[:parameters][0][:type]
       expect(parameter.required).to eq manifest_hash[:parameters][0][:required]
       expect(parameter.secure).to eq manifest_hash[:parameters][0][:secure]
+    end
+  end
+
+  describe '#location_options' do
+    it 'returns an array of LocationOptions instances' do
+      expect(manifest.location_options.map(&:class).uniq).to eq [ZendeskAppsSupport::Manifest::LocationOptions]
+      expect(manifest.location_options.length).to eq(3)
     end
   end
 

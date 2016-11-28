@@ -55,7 +55,7 @@ module ZendeskAppsSupport
         product = Product.find_by!(name: product_key)
         locations.map do |location_key, location_options|
           location = Location.find_by!(product_code: product.code, name: location_key)
-          LocationOptions.new(location, location_options)
+          Manifest::LocationOptions.new(location, location_options)
         end
       end
     end

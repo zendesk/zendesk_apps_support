@@ -1,0 +1,36 @@
+AllCops:
+  TargetRubyVersion: 2.3
+  Includes:
+    - 'Gemfile'
+    - 'Rakefile'
+  Excludes:
+    - 'vendor/**'
+
+ClassLength:
+  Enabled: false
+
+Documentation:
+  Enabled: false
+
+MethodLength:
+  Enabled: false
+
+SpaceInsideBrackets:
+  Enabled: false
+
+Style/Alias:
+  Enabled: false
+
+HashSyntax:
+  EnforcedStyle: ruby19
+
+LineLength:
+  Max: 120
+
+CommentAnnotation:
+  Keywords:
+    - TODO
+    - FIXME
+    - OPTIMIZE
+    - HACK
+    - REVIEW
