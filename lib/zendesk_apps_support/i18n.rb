@@ -9,12 +9,16 @@ module ZendeskAppsSupport
         i18n.locale = locale
       end
 
+      def set_load_path
+        require 'i18n'
+        ::I18n.load_path += locale_files
+      end
+
       private
 
       def i18n
         @i18n ||= begin
-          require 'i18n'
-          ::I18n.load_path += locale_files
+          set_load_path
           ::I18n
         end
       end
