@@ -12,7 +12,7 @@ env:
   - COMMAND=rake
 matrix:
   allow_failures:
-    env: COMMAND=rubocop
+    env: COMMAND='rubocop --config=.rubocop.yml'
   include:
     - rvm: 2.3.1
       env: COMMAND=rubocop
