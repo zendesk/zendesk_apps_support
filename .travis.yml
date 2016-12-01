@@ -8,3 +8,13 @@ rvm:
   - 2.3.1
 branches:
   only: [master]
+env:
+  - COMMAND=rake
+matrix:
+  allow_failures:
+    env: COMMAND=rubocop
+  include:
+    - rvm: 2.3.1
+      env: COMMAND=rubocop
+script:
+  - bundle exec $COMMAND

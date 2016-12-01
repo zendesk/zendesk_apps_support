@@ -1,9 +1,9 @@
 AllCops:
   TargetRubyVersion: 2.3
-  Includes:
+  Include:
     - 'Gemfile'
     - 'Rakefile'
-  Excludes:
+  Exclude:
     - 'vendor/**'
 
 ClassLength:
@@ -34,3 +34,5 @@ CommentAnnotation:
     - OPTIMIZE
     - HACK
     - REVIEW
+
+inherit_from: .rubocop_todo.yml

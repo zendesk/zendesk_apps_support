@@ -14,6 +14,11 @@ describe ZendeskAppsSupport::Manifest::LocationOptions do
     expect(location_options.legacy).to be true
   end
 
+  it 'provides question mark aliases' do
+    expect(location_options.signed?).to be true
+    expect(location_options.legacy?).to be true
+  end
+
   context 'with default options' do
     let(:options) { {} }
     it 'sets defaults' do
