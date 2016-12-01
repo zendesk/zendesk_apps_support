@@ -1,9 +1,9 @@
 AllCops:
   TargetRubyVersion: 2.3
-  Include:
+  Includes:
     - 'Gemfile'
     - 'Rakefile'
-  Exclude:
+  Excludes:
     - 'vendor/**'
 
 ClassLength:
