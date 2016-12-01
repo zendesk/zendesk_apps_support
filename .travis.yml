@@ -18,3 +18,4 @@ matrix:
       env: COMMAND=rubocop
 script:
   - bundle exec $COMMAND
+cache: bundler
