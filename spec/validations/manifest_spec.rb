@@ -196,6 +196,50 @@ describe ZendeskAppsSupport::Validations::Manifest do
     end
   end
 
+  context 'location references a correct URI' do
+    before do
+      @manifest_hash = { 'location' => { 'zendesk' => { 'ticket_sidebar' => { 'url' => 'https://mysite.com/zendesk_iframe' } } } }
+    end
+
+    it 'should not have a location error' do
+      expect(@package).not_to have_error(/invalid location/)
+    end
+  end
+
+  context 'location uri is blank' do
+    before do
+      @manifest_hash = { 'location' => { 'zendesk' => { 'ticket_sidebar' => '' } } }
+    end
+
+    it 'should not have a location error' do
+      expect(@package).to have_error(/location does not specify a URI/)
+    end
+  end
+
+  context 'location is manual load and has no uri' do
+    before do
+      @manifest_hash = { 'location' => { 'zendesk' => { 'ticket_sidebar' => { 'autoLoad' => false } } } }
+    end
+
+    it 'should not have a location error' do
+      expect(@package).not_to have_error(/invalid location/)
+      expect(@package).not_to have_error(/cannot specify both a URI and the noIframe option/)
+      expect(@package).not_to have_error(/location does not specify a URI/)
+    end
+  end
+
+  context 'location is manual load and specifies references a url' do
+    before do
+      @manifest_hash = { 'location' => { 'zendesk' => { 'ticket_sidebar' => { 'autoLoad' => false, 'url' => 'https://i.am.so.conf/used/setup.exe' } } } }
+    end
+
+    it 'should not have a location error' do
+      expect(@package).not_to have_error(/invalid location/)
+      expect(@package).not_to have_error(/cannot specify both a URI and the noIframe option/)
+      expect(@package).not_to have_error(/location does not specify a URI/)
+    end
+  end
+
   context 'location references a file outside of assets folder' do
     before do
       @manifest_hash = { 'location' => { 'zendesk' => { 'ticket_sidebar' => 'manifest.json' } } }

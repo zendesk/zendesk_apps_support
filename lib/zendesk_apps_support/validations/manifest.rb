@@ -156,8 +156,14 @@ module ZendeskAppsSupport
                                   count: invalid_locations.length)
             end
 
-            locations.values.each do |path|
-              errors << invalid_location_uri_error(package, path)
+            locations.each do |location_key, location|
+              url = location['url']
+              auto_load = location.fetch('autoLoad', true)
+              if url && !url.empty?
+                errors << invalid_location_uri_error(package, location['url'])
+              elsif auto_load
+                errors << ValidationError.new(:blank_location_uri, location: location_key)
+              end
             end
           end
 
@@ -248,10 +254,10 @@ module ZendeskAppsSupport
         def location_framework_mismatch(manifest)
           locations = manifest.locations
           stub = ZendeskAppsSupport::Manifest::LEGACY_URI_STUB
-          iframe_locations = locations_any?(locations) do |url|
+          iframe_locations = locations_any_url?(locations) do |url|
             url != stub
           end
-          legacy_locations = (!iframe_locations && manifest.location?) || locations_any?(locations) do |url|
+          legacy_locations = (!iframe_locations && manifest.location?) || locations_any_url?(locations) do |url|
             url == stub
           end
           if manifest.iframe_only?
@@ -261,9 +267,9 @@ module ZendeskAppsSupport
           end
         end
 
-        def locations_any?(locations)
+        def locations_any_url?(locations)
           locations.values.any? do |location_hash|
-            location_hash.values.any? { |url| yield(url) }
+            location_hash.values.any? { |location| yield(location['url']) }
           end
         end
 
