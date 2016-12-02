@@ -288,7 +288,8 @@ module ZendeskAppsSupport
             next unless LOCATIONS_WITH_ICONS.include?(location)
             location_icons[host] ||= {}
             location_icons[host][location] = if (has_file?("assets/icon_#{location}.svg"))
-              { 'svg' => "icon_#{location}.svg" }
+              disable_cache = "?#{Time.now.to_i}" unless @is_cached
+              { 'svg' => "icon_#{location}.svg#{disable_cache}" }
             elsif (has_file?("assets/icon_#{location}_inactive.png"))
               {
                 'inactive' => "icon_#{location}_inactive.png",
