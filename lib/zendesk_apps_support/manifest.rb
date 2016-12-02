@@ -8,7 +8,7 @@ module ZendeskAppsSupport
       marketing_only: 'marketingOnly',
       version: 'version',
       author: 'author',
-      name: 'name',
+      name: 'name', # currently only used in ZAT
       experiments: 'experiments',
       framework_version: 'frameworkVersion',
       single_install: 'singleInstall',
