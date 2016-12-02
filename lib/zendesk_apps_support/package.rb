@@ -119,19 +119,11 @@ module ZendeskAppsSupport
       # if no_template is an array, we still need the templates
       templates = manifest.no_template == true ? {} : compiled_templates(app_id, asset_url_prefix)
 
-      app_settings = {
-        experiments: manifest.experiments,
-        location: manifest.locations,
-        noTemplate: manifest.no_template_locations,
-        singleInstall: manifest.single_install?,
-        signedUrls: manifest.signed_urls?
-      }.select { |_k, v| !v.nil? }
-
       SRC_TEMPLATE.result(
         name: name,
         version: manifest.version,
         source: source,
-        app_settings: app_settings,
+        app_class_properties: manifest.app_class_properties,
         asset_url_prefix: asset_url_prefix,
         location_icons: location_icons,
         app_class_name: app_class_name,

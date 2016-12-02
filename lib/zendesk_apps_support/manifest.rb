@@ -26,7 +26,6 @@ module ZendeskAppsSupport
     }.freeze
 
     attr_reader(*RUBY_TO_JSON.keys)
-    attr_reader :locations
 
     alias_method :requirements_only?, :requirements_only
     alias_method :marketing_only?, :marketing_only
@@ -70,6 +69,16 @@ module ZendeskAppsSupport
       end
     end
 
+    def app_class_properties
+      {
+        experiments: experiments,
+        location: locations,
+        noTemplate: no_template_locations,
+        singleInstall: single_install?,
+        signedUrls: signed_urls?
+      }.select { |_k, v| !v.nil? }
+    end
+
     def unknown_hosts
       @unknown_hosts ||=
         @used_hosts - Product::PRODUCTS_AVAILABLE.flat_map { |p| [p.name, p.legacy_name] }
@@ -110,6 +119,8 @@ module ZendeskAppsSupport
     private
 
     LEGACY_LOCATION_OBJECT = { 'url' => LEGACY_URI_STUB }.freeze
+
+    attr_reader :locations
 
     def set_locations_and_hosts
       @locations =
