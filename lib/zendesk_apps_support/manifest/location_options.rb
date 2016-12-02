@@ -15,6 +15,8 @@ module ZendeskAppsSupport
 
       alias_method :signed?, :signed
       alias_method :legacy?, :legacy
+      alias_method :auto_load?, :auto_load
+      alias_method :auto_hide?, :auto_hide
 
       def initialize(location, options)
         @location = location

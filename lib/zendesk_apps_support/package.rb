@@ -176,11 +176,6 @@ module ZendeskAppsSupport
       trans[manifest.default_locale]
     end
 
-    def has_location?
-      manifest.location?
-    end
-    deprecate :has_location?, 'manifest.location?', 2016, 9
-
     def has_file?(path)
       File.file?(path_to(path))
     end
@@ -194,11 +189,6 @@ module ZendeskAppsSupport
       scss_file = path_to('app.scss')
       File.exist?(scss_file) ? File.read(scss_file) : ( File.exist?(css_file) ? File.read(css_file) : '' )
     end
-
-    def locations
-      manifest.locations
-    end
-    deprecate :locations, 'manifest.locations', 2016, 9
 
     def iframe_only?
       manifest.iframe_only?
@@ -274,23 +264,25 @@ module ZendeskAppsSupport
     end
 
     def location_icons
-      {}.tap do |location_icons|
-        manifest.locations.each do |host, locations_for_host|
-          locations_for_host.keys.each do |location|
-            next unless LOCATIONS_WITH_ICONS.include?(location)
-            location_icons[host] ||= {}
-            location_icons[host][location] = if (has_file?("assets/icon_#{location}.svg"))
-              cache_busting_param = "?#{Time.now.to_i}" unless @is_cached
-              { 'svg' => "icon_#{location}.svg#{cache_busting_param}" }
-            elsif (has_file?("assets/icon_#{location}_inactive.png"))
-              {
-                'inactive' => "icon_#{location}_inactive.png",
-                'active' => has_file?("assets/icon_#{location}_active.png") ? "icon_#{location}_active.png" : "icon_#{location}_inactive.png",
-                'hover' => has_file?("assets/icon_#{location}_hover.png") ? "icon_#{location}_hover.png" : "icon_#{location}_inactive.png"
-              }
-            else
-              {}
-            end
+      Hash.new { |h, k| h[k] = {} }.tap do |location_icons|
+        manifest.location_options.each do |location_options|
+          next unless location_options.location &&
+                      LOCATIONS_WITH_ICONS.include?(location_options.location.name) &&
+                      location_options.location.product == Product::SUPPORT
+
+          host = location_options.location.product.name
+          location = location_options.location.name
+          location_icons[host][location] = if (has_file?("assets/icon_#{location}.svg"))
+            cache_busting_param = "?#{Time.now.to_i}" unless @is_cached
+            { 'svg' => "icon_#{location}.svg#{cache_busting_param}" }
+          elsif (has_file?("assets/icon_#{location}_inactive.png"))
+            {
+              'inactive' => "icon_#{location}_inactive.png",
+              'active' => has_file?("assets/icon_#{location}_active.png") ? "icon_#{location}_active.png" : "icon_#{location}_inactive.png",
+              'hover' => has_file?("assets/icon_#{location}_hover.png") ? "icon_#{location}_hover.png" : "icon_#{location}_inactive.png"
+            }
+          else
+            {}
           end
         end
       end

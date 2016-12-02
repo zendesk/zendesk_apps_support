@@ -45,10 +45,6 @@ module ZendeskAppsSupport
       no_template || []
     end
 
-    def location?
-      !locations.values.all?(&:empty?)
-    end
-
     def products
       @products ||=
         location_options.map { |lo| lo.location.product_code }
@@ -58,9 +54,9 @@ module ZendeskAppsSupport
 
     def location_options
       @location_options ||= locations.flat_map do |product_key, locations|
-        product = Product.find_by!(name: product_key)
+        product = Product.find_by(name: product_key)
         locations.map do |location_key, location_options|
-          location = Location.find_by!(product_code: product.code, name: location_key)
+          location = product && Location.find_by(product_code: product.code, name: location_key)
           options_with_defaults = {
             'signed' => signed_urls?
           }.merge(location_options)
@@ -77,6 +73,14 @@ module ZendeskAppsSupport
         singleInstall: single_install?,
         signedUrls: signed_urls?
       }.select { |_k, v| !v.nil? }
+    end
+
+    def unknown_locations(host)
+      if locations.key?(host)
+        locations[host].keys.uniq - Location::LOCATIONS_AVAILABLE.map(&:name)
+      else
+        []
+      end
     end
 
     def unknown_hosts

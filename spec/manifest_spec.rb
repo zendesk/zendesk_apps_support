@@ -209,45 +209,10 @@ describe ZendeskAppsSupport::Manifest do
     end
   end
 
-  describe '#location?' do
-    context 'when locations are not supplied in the manifest' do
-      before do
-        manifest_hash.delete(:location) { |key| raise "Manifest should have had #{key}" }
-      end
-      it 'returns false' do
-        expect(manifest.location?).to be_falsey
-      end
-    end
-
-    context 'when locations are supplied as a string' do
-      before do
-        manifest_hash[:location] = 'ticket_sidebar'
-      end
-      it 'returns true' do
-        expect(manifest.location?).to be_truthy
-      end
-    end
-
-    context 'when locations are supplied as an array' do
-      before do
-        manifest_hash[:location] = %w(ticket_sidebar top_bar)
-      end
-      it 'returns true' do
-        expect(manifest.location?).to be_truthy
-      end
-    end
-
-    context 'when locations are supplied as an object' do
-      it 'returns true' do
-        expect(manifest.location?).to be_truthy
-      end
-    end
-  end
-
   describe '#locations' do
     it 'supports strings' do
       manifest_hash[:location] = 'ticket_sidebar'
-      location_object = manifest.locations
+      location_object = manifest.send(:locations)
       expect(location_object).to eq(
         'support' => { 'ticket_sidebar' => { 'url' => '_legacy' } }
       )
@@ -255,7 +220,7 @@ describe ZendeskAppsSupport::Manifest do
 
     it 'supports arrays' do
       manifest_hash[:location] = %w(🔔 🃏)
-      location_object = manifest.locations
+      location_object = manifest.send(:locations)
       expect(location_object).to eq(
         'support' => {
           '🃏' => { 'url' => '_legacy' },
@@ -273,7 +238,7 @@ describe ZendeskAppsSupport::Manifest do
           main_panel: 'https://your-site.org/'
         }
       }]
-      location_object = manifest.locations
+      location_object = manifest.send(:locations)
 
       expect(location_object).to eq(
         'support' => {
@@ -290,7 +255,7 @@ describe ZendeskAppsSupport::Manifest do
     end
 
     it 'supports objects with objects' do
-      location_object = manifest.locations
+      location_object = manifest.send(:locations)
 
       expect(location_object).to eq stringify_keys[manifest_hash[:location]]
     end
@@ -304,7 +269,7 @@ describe ZendeskAppsSupport::Manifest do
         }
       }]
 
-      expect(manifest.locations).to eq(
+      expect(manifest.send(:locations)).to eq(
         'support' => {
           'ticket_sidebar' => {
             'url' => 'https://my-site.org/'
@@ -322,7 +287,7 @@ describe ZendeskAppsSupport::Manifest do
         }
       }]
 
-      expect(manifest.locations).to eq(
+      expect(manifest.send(:locations)).to eq(
         'chat' => {
           'main_panel' => {
             'url' => 'https://your-site.org/'
@@ -333,13 +298,13 @@ describe ZendeskAppsSupport::Manifest do
 
     it 'works when not present' do
       manifest_hash.delete(:location) { |key| raise "Manifest should have had #{key}" }
-      location_object = manifest.locations
+      location_object = manifest.send(:locations)
       expect(location_object).to eq('support' => {})
     end
 
     it 'raises an error for duplicate locations' do
       manifest_hash[:location] = %w(background background)
-      expect { manifest.locations }.to raise_error(/Duplicate reference in manifest: "background"/)
+      expect { manifest.send(:locations) }.to raise_error(/Duplicate reference in manifest: "background"/)
     end
   end
 

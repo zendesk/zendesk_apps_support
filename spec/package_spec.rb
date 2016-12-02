@@ -353,9 +353,15 @@ describe ZendeskAppsSupport::Package do
 
   describe '#location_icons' do
     before do
-      allow(package.manifest).to receive(:locations) { {
-        'chat' => { 'other_location' => '' },
-        'support' => { 'top_bar' => 'some_url', 'nav_bar' => 'other_url', 'ticket_sidebar' => 'last_url' } }
+      allow(package.manifest).to receive(:locations) {
+        {
+          'chat' => { 'other_location' => { 'url' => '' } },
+          'support' => {
+            'top_bar' => { 'url' => 'some_url' },
+            'nav_bar' => { 'url' => 'other_url' },
+            'ticket_sidebar' => { 'url' => 'last_url' }
+          }
+        }
       }
     end
 
