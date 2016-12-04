@@ -120,9 +120,10 @@ module ZendeskAppsSupport
       set_locations_and_hosts
     end
 
-    private
-
     LEGACY_LOCATION_OBJECT = { 'url' => LEGACY_URI_STUB }.freeze
+    private_constant :LEGACY_LOCATION_OBJECT
+
+    private
 
     attr_reader :locations
 

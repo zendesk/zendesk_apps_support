@@ -10,15 +10,16 @@ module ZendeskAppsSupport
       end
 
       def set_load_path
-        require 'i18n'
-        ::I18n.load_path += locale_files
+        i18n
+        nil
       end
 
       private
 
       def i18n
         @i18n ||= begin
-          set_load_path
+          require 'i18n'
+          ::I18n.load_path += locale_files
           ::I18n
         end
       end
