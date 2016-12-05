@@ -23,10 +23,10 @@ module ZendeskAppsSupport
     private
 
     def filter_by_arg(arg)
-      lambda do |product|
+      lambda do |findable_record|
         arg.all? do |attribute, value|
           value = value.to_s if value.is_a? Symbol
-          product.public_send(attribute) == value
+          findable_record.public_send(attribute) == value
         end
       end
     end
