@@ -15,7 +15,7 @@ with( ZendeskApps.AppScope.create() ) {
 }
 <% end %>
 var app = ZendeskApps.defineApp(<%= iframe_only ? 'null' : 'source' %>)
-  .reopenClass(<%= app_settings.to_json %>)
+  .reopenClass(<%= app_class_properties.to_json %>)
   .reopen({
     appName: <%= name.to_json %>,
     appVersion: <%= version.to_json %>,

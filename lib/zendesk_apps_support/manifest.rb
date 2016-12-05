@@ -26,7 +26,6 @@ module ZendeskAppsSupport
     }.freeze
 
     attr_reader(*RUBY_TO_JSON.keys)
-    attr_reader :locations
 
     alias_method :requirements_only?, :requirements_only
     alias_method :marketing_only?, :marketing_only
@@ -46,8 +45,42 @@ module ZendeskAppsSupport
       no_template || []
     end
 
-    def location?
-      !locations.values.all?(&:empty?)
+    def products
+      @products ||=
+        location_options.map { |lo| lo.location.product_code }
+                        .uniq
+                        .map { |code| Product.find_by(code: code) }
+    end
+
+    def location_options
+      @location_options ||= locations.flat_map do |product_key, locations|
+        product = Product.find_by(name: product_key)
+        locations.map do |location_key, location_options|
+          location = product && Location.find_by(product_code: product.code, name: location_key)
+          options_with_defaults = {
+            'signed' => signed_urls?
+          }.merge(location_options)
+          Manifest::LocationOptions.new(location, options_with_defaults)
+        end
+      end
+    end
+
+    def app_class_properties
+      {
+        experiments: experiments,
+        location: locations,
+        noTemplate: no_template_locations,
+        singleInstall: single_install?,
+        signedUrls: signed_urls?
+      }.select { |_k, v| !v.nil? }
+    end
+
+    def unknown_locations(host)
+      if locations.key?(host)
+        locations[host].keys.uniq - Location::LOCATIONS_AVAILABLE.map(&:name)
+      else
+        []
+      end
     end
 
     def unknown_hosts
@@ -87,7 +120,12 @@ module ZendeskAppsSupport
       set_locations_and_hosts
     end
 
+    LEGACY_LOCATION_OBJECT = { 'url' => LEGACY_URI_STUB }.freeze
+    private_constant :LEGACY_LOCATION_OBJECT
+
     private
+
+    attr_reader :locations
 
     def set_locations_and_hosts
       @locations =
@@ -97,10 +135,11 @@ module ZendeskAppsSupport
           replace_legacy_locations original_locations
         when Array
           @used_hosts = ['support']
-          { 'support' => NoOverrideHash[original_locations.map { |location| [ location, LEGACY_URI_STUB ] }] }
+          new_locations = NoOverrideHash[original_locations.map { |location| [ location, LEGACY_LOCATION_OBJECT ] }]
+          { 'support' => new_locations }
         when String
           @used_hosts = ['support']
-          { 'support' => { original_locations => LEGACY_URI_STUB } }
+          { 'support' => { original_locations => LEGACY_LOCATION_OBJECT } }
         # TODO: error out for numbers and Booleans
         else # NilClass
           @used_hosts = ['support']
@@ -114,7 +153,17 @@ module ZendeskAppsSupport
           product_key = product.name.to_s
           legacy_key = product.legacy_name.to_s
           value_for_product = original_locations.fetch(product_key, original_locations[legacy_key])
-          value_for_product && new_locations_obj[product_key] = value_for_product
+          value_for_product && new_locations_obj[product_key] = replace_string_uris(value_for_product)
+        end
+      end
+    end
+
+    def replace_string_uris(product_locations)
+      product_locations.each_with_object({}) do |(k, v), new_locations|
+        if v.is_a? Hash
+          new_locations[k] = v
+        else
+          new_locations[k] = { 'url' => v }
         end
       end
     end

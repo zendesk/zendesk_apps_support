@@ -34,7 +34,6 @@ module ZendeskAppsSupport
           else
             errors << missing_location_error(package)
             errors << invalid_location_error(package)
-            errors << duplicate_location_error(manifest)
             errors << missing_framework_version(manifest)
             errors << location_framework_mismatch(manifest)
             errors << invalid_version_error(manifest, package)
@@ -75,7 +74,7 @@ module ZendeskAppsSupport
         end
 
         def ban_location(manifest)
-          ValidationError.new(:no_location_required) if manifest.location?
+          ValidationError.new(:no_location_required) unless manifest.location_options.empty?
         end
 
         def ban_framework_version(manifest)
@@ -139,31 +138,32 @@ module ZendeskAppsSupport
         end
 
         def missing_location_error(package)
-          missing_keys_validation_error(['location']) unless package.manifest.location?
+          missing_keys_validation_error(['location']) if package.manifest.location_options.empty?
         end
 
         def invalid_location_error(package)
           errors = []
-          manifest_locations = package.manifest.locations
-          manifest_locations.find do |host, locations|
-            product = Product.find_by(name: host)
-            stub = ZendeskAppsSupport::Manifest::LEGACY_URI_STUB
-            locations_allowed = Location.where(product_code: product.code).map(&:name).push(stub)
-            if (invalid_locations = locations.keys - locations_allowed).any?
-              errors << ValidationError.new(:invalid_location,
-                                  invalid_locations: invalid_locations.join(', '),
-                                  host_name: host,
-                                  count: invalid_locations.length)
+          package.manifest.location_options.each do |location_options|
+            if location_options.url && !location_options.url.empty?
+              errors << invalid_location_uri_error(package, location_options.url)
+            elsif location_options.auto_load?
+              errors << ValidationError.new(:blank_location_uri, location: location_options.location.name)
             end
+          end
 
-            locations.values.each do |path|
-              errors << invalid_location_uri_error(package, path)
-            end
+          Product::PRODUCTS_AVAILABLE.each do |product|
+            invalid_locations = package.manifest.unknown_locations(product.name)
+            next if invalid_locations.empty?
+            errors << ValidationError.new(:invalid_location,
+                                    invalid_locations: invalid_locations.join(', '),
+                                    host_name: product.name,
+                                    count: invalid_locations.length)
           end
 
           package.manifest.unknown_hosts.each do |unknown_host|
             errors << ValidationError.new(:invalid_host, host_name: unknown_host)
           end
+
           errors
         end
 
@@ -184,15 +184,6 @@ module ZendeskAppsSupport
 
         def valid_relative_uri?(package, uri)
           uri.path.start_with?('assets/') && package.has_file?(uri.path)
-        end
-
-        def duplicate_location_error(manifest)
-          locations           = *manifest.locations
-          duplicate_locations = *locations.select { |location| locations.count(location) > 1 }.uniq
-
-          unless duplicate_locations.empty?
-            ValidationError.new(:duplicate_location, duplicate_locations: duplicate_locations.join(', '), count: duplicate_locations.length)
-          end
         end
 
         def missing_framework_version(manifest)
@@ -246,24 +237,11 @@ module ZendeskAppsSupport
         end
 
         def location_framework_mismatch(manifest)
-          locations = manifest.locations
-          stub = ZendeskAppsSupport::Manifest::LEGACY_URI_STUB
-          iframe_locations = locations_any?(locations) do |url|
-            url != stub
-          end
-          legacy_locations = (!iframe_locations && manifest.location?) || locations_any?(locations) do |url|
-            url == stub
-          end
+          legacy_locations, iframe_locations = manifest.location_options.partition(&:legacy?)
           if manifest.iframe_only?
-            return ValidationError.new(:locations_must_be_urls) if legacy_locations
-          elsif iframe_locations
+            return ValidationError.new(:locations_must_be_urls) unless legacy_locations.empty?
+          elsif !iframe_locations.empty?
             return ValidationError.new(:locations_cant_be_urls)
-          end
-        end
-
-        def locations_any?(locations)
-          locations.values.any? do |location_hash|
-            location_hash.values.any? { |url| yield(url) }
           end
         end
 

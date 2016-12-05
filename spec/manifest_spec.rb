@@ -21,11 +21,17 @@ describe ZendeskAppsSupport::Manifest do
       defaultLocale: Faker::Address.country_code,
       location: {
         support: {
-          new_ticket_sidebar: Faker::Internet.url,
-          top_bar: Faker::Internet.url
+          new_ticket_sidebar: {
+            url: Faker::Internet.url
+          },
+          top_bar: {
+            url: Faker::Internet.url
+          }
         },
         chat: {
-          main_panel: Faker::Internet.url
+          chat_sidebar: {
+            url: Faker::Internet.url
+          }
         }
       },
       parameters: [
@@ -121,6 +127,29 @@ describe ZendeskAppsSupport::Manifest do
     end
   end
 
+  describe '#location_options' do
+    it 'returns an array of LocationOptions instances' do
+      expect(manifest.location_options.map(&:class).uniq).to eq [ZendeskAppsSupport::Manifest::LocationOptions]
+      expect(manifest.location_options.length).to eq(3)
+    end
+
+    it 'sets the correct location for each' do
+      expect(manifest.location_options.map(&:location).map(&:id)).to eq [4, 1, 8]
+    end
+
+    context 'with signedUrls set' do
+      before do
+        manifest_hash[:signedUrls] = true
+        manifest_hash[:location][:chat][:chat_sidebar][:signed] = false
+      end
+
+      it 'sets signed on each location by default' do
+        expect(manifest.location_options.first.signed).to be(true)
+        expect(manifest.location_options.last.signed).to be(false)
+      end
+    end
+  end
+
   describe '#no_template?' do
     context 'when noTemplate is a boolean in the manifest' do
       it 'returns true when noTemplate is true' do
@@ -180,56 +209,53 @@ describe ZendeskAppsSupport::Manifest do
     end
   end
 
-  describe '#location?' do
-    context 'when locations are not supplied in the manifest' do
-      before do
-        manifest_hash.delete(:location) { |key| raise "Manifest should have had #{key}" }
-      end
-      it 'returns false' do
-        expect(manifest.location?).to be_falsey
-      end
-    end
-
-    context 'when locations are supplied as a string' do
-      before do
-        manifest_hash[:location] = 'ticket_sidebar'
-      end
-      it 'returns true' do
-        expect(manifest.location?).to be_truthy
-      end
-    end
-
-    context 'when locations are supplied as an array' do
-      before do
-        manifest_hash[:location] = %w(ticket_sidebar top_bar)
-      end
-      it 'returns true' do
-        expect(manifest.location?).to be_truthy
-      end
-    end
-
-    context 'when locations are supplied as an object' do
-      it 'returns true' do
-        expect(manifest.location?).to be_truthy
-      end
-    end
-  end
-
   describe '#locations' do
     it 'supports strings' do
       manifest_hash[:location] = 'ticket_sidebar'
-      location_object = manifest.locations
-      expect(location_object).to eq('support' => { 'ticket_sidebar' => '_legacy' })
+      location_object = manifest.send(:locations)
+      expect(location_object).to eq(
+        'support' => { 'ticket_sidebar' => { 'url' => '_legacy' } }
+      )
     end
 
     it 'supports arrays' do
       manifest_hash[:location] = %w(🔔 🃏)
-      location_object = manifest.locations
-      expect(location_object).to eq('support' => { '🃏' => '_legacy', '🔔' => '_legacy' })
+      location_object = manifest.send(:locations)
+      expect(location_object).to eq(
+        'support' => {
+          '🃏' => { 'url' => '_legacy' },
+          '🔔' => { 'url' => '_legacy' }
+        }
+      )
     end
 
-    it 'supports objects' do
-      location_object = manifest.locations
+    it 'supports objects with string urls' do
+      manifest_hash[:location] = stringify_keys[{
+        support: {
+          ticket_sidebar: 'https://my-site.org/'
+        },
+        chat: {
+          main_panel: 'https://your-site.org/'
+        }
+      }]
+      location_object = manifest.send(:locations)
+
+      expect(location_object).to eq(
+        'support' => {
+          'ticket_sidebar' => {
+            'url' => 'https://my-site.org/'
+          }
+        },
+        'chat' => {
+          'main_panel' => {
+            'url' => 'https://your-site.org/'
+          }
+        }
+      )
+    end
+
+    it 'supports objects with objects' do
+      location_object = manifest.send(:locations)
 
       expect(location_object).to eq stringify_keys[manifest_hash[:location]]
     end
@@ -237,52 +263,48 @@ describe ZendeskAppsSupport::Manifest do
     it 'canonicalises zendesk to support' do
       manifest_hash[:location] = stringify_keys[{
         zendesk: {
-          ticket_sidebar: 'https://my-site.org/'
-        },
-        chat: {
-          main_panel: 'https://your-site.org/'
+          ticket_sidebar: {
+            url: 'https://my-site.org/'
+          }
         }
       }]
 
-      expect(manifest.locations).to eq(
+      expect(manifest.send(:locations)).to eq(
         'support' => {
-          'ticket_sidebar' => 'https://my-site.org/'
-        },
-        'chat' => {
-          'main_panel' => 'https://your-site.org/'
+          'ticket_sidebar' => {
+            'url' => 'https://my-site.org/'
+          }
         }
       )
     end
 
     it 'canonicalises zopim to chat' do
       manifest_hash[:location] = stringify_keys[{
-        zendesk: {
-          ticket_sidebar: 'https://my-site.org/'
-        },
         zopim: {
-          main_panel: 'https://your-site.org/'
+          main_panel: {
+            url: 'https://your-site.org/'
+          }
         }
       }]
 
-      expect(manifest.locations).to eq(
-        'support' => {
-          'ticket_sidebar' => 'https://my-site.org/'
-        },
+      expect(manifest.send(:locations)).to eq(
         'chat' => {
-          'main_panel' => 'https://your-site.org/'
+          'main_panel' => {
+            'url' => 'https://your-site.org/'
+          }
         }
       )
     end
 
     it 'works when not present' do
       manifest_hash.delete(:location) { |key| raise "Manifest should have had #{key}" }
-      location_object = manifest.locations
+      location_object = manifest.send(:locations)
       expect(location_object).to eq('support' => {})
     end
 
     it 'raises an error for duplicate locations' do
       manifest_hash[:location] = %w(background background)
-      expect { manifest.locations }.to raise_error(/Duplicate reference in manifest: "background"/)
+      expect { manifest.send(:locations) }.to raise_error(/Duplicate reference in manifest: "background"/)
     end
   end
 

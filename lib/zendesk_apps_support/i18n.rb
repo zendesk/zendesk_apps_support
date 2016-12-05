@@ -9,6 +9,11 @@ module ZendeskAppsSupport
         i18n.locale = locale
       end
 
+      def set_load_path
+        i18n
+        nil
+      end
+
       private
 
       def i18n

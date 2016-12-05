@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module ZendeskAppsSupport
   require 'zendesk_apps_support/engine'
 
@@ -29,6 +30,7 @@ module ZendeskAppsSupport
   end
 
   class Manifest
+    autoload :LocationOptions, 'zendesk_apps_support/manifest/location_options'
     autoload :Parameter, 'zendesk_apps_support/manifest/parameter'
     autoload :NoOverrideHash, 'zendesk_apps_support/manifest/no_override_hash'
   end

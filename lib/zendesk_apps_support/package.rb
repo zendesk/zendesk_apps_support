@@ -15,7 +15,7 @@ module ZendeskAppsSupport
     DEFAULT_SCSS   = File.read(File.expand_path('../assets/default_styles.scss', __FILE__))
     SRC_TEMPLATE   = Erubis::Eruby.new(File.read(File.expand_path('../assets/src.js.erb', __FILE__)))
 
-    LOCATIONS_WITH_ICONS = ['top_bar', 'nav_bar', 'system_top_bar']
+    LOCATIONS_WITH_ICONS = %w(top_bar nav_bar system_top_bar).freeze
 
     attr_reader :lib_root, :root, :warnings
 
@@ -119,19 +119,11 @@ module ZendeskAppsSupport
       # if no_template is an array, we still need the templates
       templates = manifest.no_template == true ? {} : compiled_templates(app_id, asset_url_prefix)
 
-      app_settings = {
-        experiments: manifest.experiments,
-        location: manifest.locations,
-        noTemplate: manifest.no_template_locations,
-        singleInstall: manifest.single_install?,
-        signedUrls: manifest.signed_urls?
-      }.select { |_k, v| !v.nil? }
-
       SRC_TEMPLATE.result(
         name: name,
         version: manifest.version,
         source: source,
-        app_settings: app_settings,
+        app_class_properties: manifest.app_class_properties,
         asset_url_prefix: asset_url_prefix,
         location_icons: location_icons,
         app_class_name: app_class_name,
@@ -184,11 +176,6 @@ module ZendeskAppsSupport
       trans[manifest.default_locale]
     end
 
-    def has_location?
-      manifest.location?
-    end
-    deprecate :has_location?, 'manifest.location?', 2016, 9
-
     def has_file?(path)
       File.file?(path_to(path))
     end
@@ -202,11 +189,6 @@ module ZendeskAppsSupport
       scss_file = path_to('app.scss')
       File.exist?(scss_file) ? File.read(scss_file) : ( File.exist?(css_file) ? File.read(css_file) : '' )
     end
-
-    def locations
-      manifest.locations
-    end
-    deprecate :locations, 'manifest.locations', 2016, 9
 
     def iframe_only?
       manifest.iframe_only?
@@ -282,23 +264,25 @@ module ZendeskAppsSupport
     end
 
     def location_icons
-      {}.tap do |location_icons|
-        manifest.locations.each do |host, locations_for_host|
-          locations_for_host.keys.each do |location|
-            next unless LOCATIONS_WITH_ICONS.include?(location)
-            location_icons[host] ||= {}
-            location_icons[host][location] = if (has_file?("assets/icon_#{location}.svg"))
-              cache_busting_param = "?#{Time.now.to_i}" unless @is_cached
-              { 'svg' => "icon_#{location}.svg#{cache_busting_param}" }
-            elsif (has_file?("assets/icon_#{location}_inactive.png"))
-              {
-                'inactive' => "icon_#{location}_inactive.png",
-                'active' => has_file?("assets/icon_#{location}_active.png") ? "icon_#{location}_active.png" : "icon_#{location}_inactive.png",
-                'hover' => has_file?("assets/icon_#{location}_hover.png") ? "icon_#{location}_hover.png" : "icon_#{location}_inactive.png"
-              }
-            else
-              {}
-            end
+      Hash.new { |h, k| h[k] = {} }.tap do |location_icons|
+        manifest.location_options.each do |location_options|
+          next unless location_options.location &&
+                      LOCATIONS_WITH_ICONS.include?(location_options.location.name) &&
+                      location_options.location.product == Product::SUPPORT
+
+          host = location_options.location.product.name
+          location = location_options.location.name
+          location_icons[host][location] = if (has_file?("assets/icon_#{location}.svg"))
+            cache_busting_param = "?#{Time.now.to_i}" unless @is_cached
+            { 'svg' => "icon_#{location}.svg#{cache_busting_param}" }
+          elsif (has_file?("assets/icon_#{location}_inactive.png"))
+            {
+              'inactive' => "icon_#{location}_inactive.png",
+              'active' => has_file?("assets/icon_#{location}_active.png") ? "icon_#{location}_active.png" : "icon_#{location}_inactive.png",
+              'hover' => has_file?("assets/icon_#{location}_hover.png") ? "icon_#{location}_hover.png" : "icon_#{location}_inactive.png"
+            }
+          else
+            {}
           end
         end
       end
