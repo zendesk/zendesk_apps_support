@@ -269,17 +269,17 @@ module ZendeskAppsSupport
 
           host = location_options.location.product.name
           location = location_options.location.name
-          inactive_png = "assets/icon_#{location}_inactive.png"
+          inactive_png = "icon_#{location}_inactive.png"
           location_icons[host][location] = if has_file?("assets/icon_#{location}.svg")
                                              cache_busting_param = "?#{Time.now.to_i}" unless @is_cached
                                              { 'svg' => "icon_#{location}.svg#{cache_busting_param}" }
-                                           elsif has_file?(inactive_png)
+                                           elsif has_file?("assets/#{inactive_png}")
                                              {
-                                               'inactive' => "icon_#{location}_inactive.png"
+                                               'inactive' => inactive_png
                                              }.tap do |icon_state_hash|
                                                %w(active hover).each do |state|
-                                                 specific_png = "assets/icon_#{location}_#{state}.png"
-                                                 icon_state_hash[state] = if has_file?(specific_png)
+                                                 specific_png = "icon_#{location}_#{state}.png"
+                                                 icon_state_hash[state] = if has_file?("assets/#{specific_png}")
                                                                             specific_png
                                                                           else
                                                                             inactive_png

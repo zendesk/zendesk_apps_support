@@ -383,13 +383,13 @@ describe ZendeskAppsSupport::Package do
         end
         expect(package.send(:location_icons)).to eq('support' => {
                                                       'top_bar' => {
-                                                        'active' => 'icon_top_bar_active.png',
                                                         'inactive' => 'icon_top_bar_inactive.png',
+                                                        'active' => 'icon_top_bar_active.png',
                                                         'hover' => 'icon_top_bar_hover.png'
                                                       },
                                                       'nav_bar' => {
-                                                        'active' => 'icon_nav_bar_active.png',
                                                         'inactive' => 'icon_nav_bar_inactive.png',
+                                                        'active' => 'icon_nav_bar_active.png',
                                                         'hover' => 'icon_nav_bar_hover.png'
                                                       }
                                                     })
@@ -403,13 +403,13 @@ describe ZendeskAppsSupport::Package do
         end
         expect(package.send(:location_icons)).to eq('support' => {
                                                       'top_bar' => {
-                                                        'active' => 'icon_top_bar_inactive.png',
                                                         'inactive' => 'icon_top_bar_inactive.png',
+                                                        'active' => 'icon_top_bar_inactive.png',
                                                         'hover' => 'icon_top_bar_inactive.png'
                                                       },
                                                       'nav_bar' => {
-                                                        'active' => 'icon_nav_bar_inactive.png',
                                                         'inactive' => 'icon_nav_bar_inactive.png',
+                                                        'active' => 'icon_nav_bar_inactive.png',
                                                         'hover' => 'icon_nav_bar_inactive.png'
                                                       }
                                                     })
