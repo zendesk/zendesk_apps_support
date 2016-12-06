@@ -277,7 +277,7 @@ module ZendeskAppsSupport
     def build_location_icons_hash(location)
       inactive_png = "icon_#{location}_inactive.png"
       if has_file?("assets/icon_#{location}.svg")
-        build_svg_icon(location)
+        build_svg_icon_hash(location)
       elsif has_file?("assets/#{inactive_png}")
         build_png_icons_hash(location)
       else
