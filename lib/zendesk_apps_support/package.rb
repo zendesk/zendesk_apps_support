@@ -42,9 +42,7 @@ module ZendeskAppsSupport
           end
         end
 
-        if has_banner?
-          errors << Validations::Banner.call(self)
-        end
+        errors << Validations::Banner.call(self) if has_banner?
 
         errors.flatten!.compact!
       end
@@ -52,9 +50,7 @@ module ZendeskAppsSupport
 
     def validate!(marketplace: true)
       errors = validate(marketplace: marketplace)
-      if errors.any?
-        raise errors.first
-      end
+      raise errors.first if errors.any?
       true
     end
 
@@ -80,27 +76,27 @@ module ZendeskAppsSupport
       files = []
       Dir[root.join('**/**')].each do |f|
         next unless File.file?(f)
-        relative_file_name = f.sub(/#{root}\/?/, '')
-        next if relative_file_name =~ /^tmp\//
+        relative_file_name = f.sub(%r{#{root}/?}, '')
+        next if relative_file_name =~ %r{^tmp/}
         files << AppFile.new(self, relative_file_name)
       end
       files
     end
 
     def js_files
-      @js_files ||= files.select { |f| f.to_s == 'app.js' || ( f.to_s.start_with?('lib/') && f.to_s.end_with?('.js') ) }
+      @js_files ||= files.select { |f| f.to_s == 'app.js' || (f.to_s.start_with?('lib/') && f.to_s.end_with?('.js')) }
     end
 
     def lib_files
-      @lib_files ||= js_files.select { |f| f =~ /^lib\// }
+      @lib_files ||= js_files.select { |f| f =~ %r{^lib/} }
     end
 
     def template_files
-      files.select { |f| f =~ /^templates\/.*\.hdbs$/ }
+      files.select { |f| f =~ %r{^templates/.*\.hdbs$} }
     end
 
     def translation_files
-      files.select { |f| f =~ /^translations\// }
+      files.select { |f| f =~ %r{^translations/} }
     end
 
     def compile_js(options)
@@ -161,7 +157,8 @@ module ZendeskAppsSupport
     deprecate :no_template_locations, 'manifest.no_template_locations', 2016, 9
 
     def compiled_templates(app_id, asset_url_prefix)
-      compiled_css = ZendeskAppsSupport::StylesheetCompiler.new(DEFAULT_SCSS + app_css, app_id, asset_url_prefix).compile
+      compiler = ZendeskAppsSupport::StylesheetCompiler.new(DEFAULT_SCSS + app_css, app_id, asset_url_prefix)
+      compiled_css = compiler.compile
 
       layout = templates['layout'] || DEFAULT_LAYOUT.result
 
@@ -185,9 +182,9 @@ module ZendeskAppsSupport
     end
 
     def app_css
-      css_file = path_to('app.css')
-      scss_file = path_to('app.scss')
-      File.exist?(scss_file) ? File.read(scss_file) : ( File.exist?(css_file) ? File.read(css_file) : '' )
+      return File.read(path_to('app.scss')) if has_file?('app.scss')
+      return File.read(path_to('app.css')) if has_file?('app.css')
+      ''
     end
 
     def iframe_only?
@@ -207,8 +204,8 @@ module ZendeskAppsSupport
     end
 
     def templates
-      templates_dir = File.join(root, 'templates')
-      Dir["#{templates_dir}/*.hdbs"].inject({}) do |memo, file|
+      templates_dir = path_to('templates')
+      Dir["#{templates_dir}/*.hdbs"].each_with_object({}) do |file, memo|
         str = File.read(file)
         str.chomp!
         memo[File.basename(file, File.extname(file))] = str
@@ -220,30 +217,29 @@ module ZendeskAppsSupport
       return @translations if @is_cached && @translations
 
       @translations = begin
-        translation_dir = File.join(root, 'translations')
+        translation_dir = path_to('translations')
         return {} unless File.directory?(translation_dir)
 
         locale_path = "#{translation_dir}/#{manifest.default_locale}.json"
         default_translations = process_translations(locale_path)
 
-        Dir["#{translation_dir}/*.json"].inject({}) do |memo, path|
+        Dir["#{translation_dir}/*.json"].each_with_object({}) do |path, memo|
           locale = File.basename(path, File.extname(path))
 
           locale_translations = if locale == manifest.default_locale
-            default_translations
-          else
-            deep_merge_hash(default_translations, process_translations(path))
-          end
+                                  default_translations
+                                else
+                                  deep_merge_hash(default_translations, process_translations(path))
+                                end
 
           memo[locale] = locale_translations
-          memo
         end
       end
     end
 
     def process_translations(locale_path)
       translations = File.exist?(locale_path) ? JSON.parse(File.read(locale_path)) : {}
-      translations['app'].delete('package') if translations.has_key?('app')
+      translations['app'].delete('package') if translations.key?('app')
       remove_zendesk_keys(translations)
     end
 
@@ -272,18 +268,36 @@ module ZendeskAppsSupport
 
           host = location_options.location.product.name
           location = location_options.location.name
-          location_icons[host][location] = if (has_file?("assets/icon_#{location}.svg"))
-            cache_busting_param = "?#{Time.now.to_i}" unless @is_cached
-            { 'svg' => "icon_#{location}.svg#{cache_busting_param}" }
-          elsif (has_file?("assets/icon_#{location}_inactive.png"))
-            {
-              'inactive' => "icon_#{location}_inactive.png",
-              'active' => has_file?("assets/icon_#{location}_active.png") ? "icon_#{location}_active.png" : "icon_#{location}_inactive.png",
-              'hover' => has_file?("assets/icon_#{location}_hover.png") ? "icon_#{location}_hover.png" : "icon_#{location}_inactive.png"
-            }
-          else
-            {}
-          end
+          location_icons[host][location] = build_location_icons_hash(location)
+        end
+      end
+    end
+
+    def build_location_icons_hash(location)
+      inactive_png = "icon_#{location}_inactive.png"
+      if has_file?("assets/icon_#{location}.svg")
+        build_svg_icon_hash(location)
+      elsif has_file?("assets/#{inactive_png}")
+        build_png_icons_hash(location)
+      else
+        {}
+      end
+    end
+
+    def build_svg_icon_hash(location)
+      cache_busting_param = "?#{Time.now.to_i}" unless @is_cached
+      { 'svg' => "icon_#{location}.svg#{cache_busting_param}" }
+    end
+
+    def build_png_icons_hash(location)
+      inactive_png = "icon_#{location}_inactive.png"
+      {
+        'inactive' => inactive_png
+      }.tap do |icon_state_hash|
+        %w(active hover).each do |state|
+          specific_png = "icon_#{location}_#{state}.png"
+          selected_png = has_file?("assets/#{specific_png}") ? specific_png : inactive_png
+          icon_state_hash[state] = selected_png
         end
       end
     end
@@ -301,11 +315,11 @@ module ZendeskAppsSupport
     def deep_merge_hash(h, another_h)
       result_h = h.dup
       another_h.each do |key, value|
-        if h.has_key?(key) && h[key].is_a?(Hash) && value.is_a?(Hash)
-          result_h[key] = deep_merge_hash(h[key], value)
-        else
-          result_h[key] = value
-        end
+        result_h[key] = if h.key?(key) && h[key].is_a?(Hash) && value.is_a?(Hash)
+                          deep_merge_hash(h[key], value)
+                        else
+                          value
+                        end
       end
       result_h
     end
@@ -316,9 +330,7 @@ module ZendeskAppsSupport
 
     def read_json(path, parser_opts = {})
       file = read_file(path)
-      unless file.nil?
-        JSON.parse(read_file(path), parser_opts)
-      end
+      JSON.parse(read_file(path), parser_opts) unless file.nil?
     end
   end
 end

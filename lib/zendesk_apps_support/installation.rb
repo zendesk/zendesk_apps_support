@@ -1,6 +1,6 @@
+# frozen_string_literal: true
 module ZendeskAppsSupport
   class Installation
-
     attr_accessor :id, :app_id, :app_name, :requirements, :settings, :enabled, :updated_at, :created_at
 
     def initialize(options)
@@ -11,8 +11,8 @@ module ZendeskAppsSupport
 
     def to_json
       hash = {}
-      self.instance_variables.each do |var|
-        hash[var.to_s.sub('@', '')] = self.instance_variable_get var
+      instance_variables.each do |var|
+        hash[var.to_s.sub('@', '')] = instance_variable_get var
       end
       hash.to_json
     end

@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'spec_helper'
 require 'json'
 require 'tmpdir'
@@ -103,7 +104,9 @@ describe ZendeskAppsSupport::Validations::Requirements do
   end
 
   context 'there are multiple channel integrations' do
-    let(:requirements_string) { '{ "channel_integrations": { "one": { "manifest_url": "manifest"}, "two": { "manifest_url": "manifest"} }}' }
+    let(:requirements_string) do
+      '{ "channel_integrations": { "one": { "manifest_url": "manifest"}, "two": { "manifest_url": "manifest"} }}'
+    end
 
     it 'creates an error' do
       expect(errors.first.key).to eq(:multiple_channel_integrations)
@@ -115,7 +118,7 @@ describe ZendeskAppsSupport::Validations::Requirements do
 
     it 'creates an error' do
       expect(errors.first.key).to eq(:missing_required_fields)
-      expect(errors.first.data).to eq({ field: 'manifest_url', identifier: 'channel_one' })
+      expect(errors.first.data).to eq(field: 'manifest_url', identifier: 'channel_one')
     end
   end
 end

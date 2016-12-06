@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'uri'
 
 module ZendeskAppsSupport
@@ -6,6 +7,7 @@ module ZendeskAppsSupport
       RUBY_TO_JSON = ZendeskAppsSupport::Manifest::RUBY_TO_JSON
       REQUIRED_MANIFEST_FIELDS = RUBY_TO_JSON.select { |k| %i(author default_locale).include? k }.freeze
       OAUTH_REQUIRED_FIELDS    = %w(client_id client_secret authorize_uri access_token_uri).freeze
+      PARAMETER_TYPES = ZendeskAppsSupport::Manifest::Parameter::TYPES
 
       class <<self
         def call(package)
@@ -131,7 +133,7 @@ module ZendeskAppsSupport
           unless default_locale.nil?
             if default_locale !~ Translations::VALID_LOCALE
               ValidationError.new(:invalid_default_locale, default_locale: default_locale)
-            elsif package.translation_files.detect { |file| file.relative_path == "translations/#{default_locale}.json" }.nil?
+            elsif package.translation_files.detect { |f| f.relative_path == "translations/#{default_locale}.json" }.nil?
               ValidationError.new(:missing_translation_file, default_locale: default_locale)
             end
           end
@@ -155,9 +157,9 @@ module ZendeskAppsSupport
             invalid_locations = package.manifest.unknown_locations(product.name)
             next if invalid_locations.empty?
             errors << ValidationError.new(:invalid_location,
-                                    invalid_locations: invalid_locations.join(', '),
-                                    host_name: product.name,
-                                    count: invalid_locations.length)
+                                          invalid_locations: invalid_locations.join(', '),
+                                          host_name: product.name,
+                                          count: invalid_locations.length)
           end
 
           package.manifest.unknown_hosts.each do |unknown_host|
@@ -199,7 +201,9 @@ module ZendeskAppsSupport
           end
 
           unless valid_to_serve.include?(target_version)
-            return ValidationError.new(:invalid_version, target_version: target_version, available_versions: valid_to_serve.join(', '))
+            return ValidationError.new(:invalid_version,
+                                       target_version: target_version,
+                                       available_versions: valid_to_serve.join(', '))
           end
         end
 
@@ -213,7 +217,9 @@ module ZendeskAppsSupport
           invalid_params = manifest.parameters.select { |p| p.type == 'hidden' && p.required }.map(&:name)
 
           if invalid_params.any?
-            ValidationError.new(:invalid_hidden_parameter, invalid_params: invalid_params.join(', '), count: invalid_params.length)
+            ValidationError.new(:invalid_hidden_parameter,
+                                invalid_params: invalid_params.join(', '),
+                                count: invalid_params.length)
           end
         end
 
@@ -222,7 +228,7 @@ module ZendeskAppsSupport
           manifest.parameters.each do |parameter|
             parameter_type = parameter.type
 
-            invalid_types << parameter_type unless ZendeskAppsSupport::Manifest::Parameter::TYPES.include?(parameter_type)
+            invalid_types << parameter_type unless PARAMETER_TYPES.include?(parameter_type)
           end
 
           if invalid_types.any?
@@ -233,7 +239,9 @@ module ZendeskAppsSupport
         end
 
         def missing_keys_validation_error(missing_keys)
-          ValidationError.new('manifest_keys.missing', missing_keys: missing_keys.join(', '), count: missing_keys.length)
+          ValidationError.new('manifest_keys.missing',
+                              missing_keys: missing_keys.join(', '),
+                              count: missing_keys.length)
         end
 
         def location_framework_mismatch(manifest)

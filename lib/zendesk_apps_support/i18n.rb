@@ -1,12 +1,9 @@
+# frozen_string_literal: true
 module ZendeskAppsSupport
   module I18n
     class << self
       def t(key, *args)
         i18n.t(key, *args)
-      end
-
-      def set_locale(locale)
-        i18n.locale = locale
       end
 
       def set_load_path

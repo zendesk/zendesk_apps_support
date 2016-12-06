@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'spec_helper'
 require 'faker'
 require 'json'
@@ -164,7 +165,7 @@ describe ZendeskAppsSupport::Manifest do
     end
     context 'when noTemplate is an array of locations' do
       it 'returns false' do
-        manifest_hash[:noTemplate] = ['new_ticket_sidebar', 'nav_bar']
+        manifest_hash[:noTemplate] = %w(new_ticket_sidebar nav_bar)
         expect(manifest.no_template?).to be_falsey
       end
     end
@@ -183,7 +184,7 @@ describe ZendeskAppsSupport::Manifest do
       end
     end
     context 'when noTemplate is an array of locations' do
-      let(:no_template_locations) { ['new_ticket_sidebar', 'nav_bar'] }
+      let(:no_template_locations) { %w(new_ticket_sidebar nav_bar) }
       it 'returns the array of locations' do
         manifest_hash[:noTemplate] = no_template_locations
         expect(manifest.no_template_locations).to eq(no_template_locations)

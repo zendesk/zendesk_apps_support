@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'zendesk_apps_support/stylesheet_compiler'
 
 module ZendeskAppsSupport
@@ -5,11 +6,8 @@ module ZendeskAppsSupport
     module Stylesheets
       class << self
         def call(package)
-          if css_error = validate_styles(package.app_css)
-            [css_error]
-          else
-            []
-          end
+          css_error = validate_styles(package.app_css)
+          css_error ? [css_error] : []
         end
 
         private

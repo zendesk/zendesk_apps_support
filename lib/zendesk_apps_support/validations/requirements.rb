@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module ZendeskAppsSupport
   module Validations
     module Requirements
@@ -47,10 +48,8 @@ module ZendeskAppsSupport
         end
 
         def excessive_requirements(requirements)
-          requirement_count = requirements.values.map(&:values).flatten.size
-          if requirement_count > MAX_REQUIREMENTS
-            ValidationError.new(:excessive_requirements, max: MAX_REQUIREMENTS, count: requirement_count)
-          end
+          count = requirements.values.map(&:values).flatten.size
+          ValidationError.new(:excessive_requirements, max: MAX_REQUIREMENTS, count: count) if count > MAX_REQUIREMENTS
         end
 
         def invalid_user_fields(requirements)
@@ -83,7 +82,9 @@ module ZendeskAppsSupport
           invalid_types = requirements.keys - ZendeskAppsSupport::AppRequirement::TYPES
 
           unless invalid_types.empty?
-            ValidationError.new(:invalid_requirements_types, invalid_types: invalid_types.join(', '), count: invalid_types.length)
+            ValidationError.new(:invalid_requirements_types,
+                                invalid_types: invalid_types.join(', '),
+                                count: invalid_types.length)
           end
         end
       end

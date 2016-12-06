@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module ZendeskAppsSupport
   module Finders
     class RecordNotFound < StandardError
@@ -12,7 +13,7 @@ module ZendeskAppsSupport
 
     def find_by!(arg)
       found = find_by(arg)
-      fail RecordNotFound.new("Unable to find #{self.name} with #{arg.inspect}") if found.nil?
+      raise(RecordNotFound, "Unable to find #{name} with #{arg.inspect}") if found.nil?
       found
     end
 

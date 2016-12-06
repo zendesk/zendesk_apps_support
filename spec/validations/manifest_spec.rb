@@ -1,9 +1,11 @@
+# frozen_string_literal: true
 require 'spec_helper'
 require 'tmpdir'
 
 describe ZendeskAppsSupport::Validations::Manifest do
   def default_required_params(overrides = {})
-    valid_fields = ZendeskAppsSupport::Validations::Manifest::REQUIRED_MANIFEST_FIELDS.values.each_with_object(frameworkVersion: '1.0') do |fields, name|
+    required = ZendeskAppsSupport::Validations::Manifest::REQUIRED_MANIFEST_FIELDS
+    valid_fields = required.values.each_with_object(frameworkVersion: '1.0') do |fields, name|
       name[fields] = fields
       name
     end
@@ -122,7 +124,7 @@ describe ZendeskAppsSupport::Validations::Manifest do
           'name' => 'foo'
         ]
       }
-      expect(@package).to have_error /Parameters can't be defined/
+      expect(@package).to have_error(/Parameters can't be defined/)
     end
   end
 
@@ -148,7 +150,14 @@ describe ZendeskAppsSupport::Validations::Manifest do
 
   context 'location is invalid' do
     before do
-      @manifest_hash = { 'location' => { 'zendesk' => { 'ticket_sidebar' => 'sidebar.html', 'a_invalid_location' => 'https://i.am.so.conf/used/setup.exe' } } }
+      @manifest_hash = {
+        'location' => {
+          'zendesk' => {
+            'ticket_sidebar' => 'sidebar.html',
+            'a_invalid_location' => 'https://i.am.so.conf/used/setup.exe'
+          }
+        }
+      }
     end
 
     it 'should have an error' do
@@ -198,7 +207,15 @@ describe ZendeskAppsSupport::Validations::Manifest do
 
   context 'location references a correct URI' do
     before do
-      @manifest_hash = { 'location' => { 'zendesk' => { 'ticket_sidebar' => { 'url' => 'https://mysite.com/zendesk_iframe' } } } }
+      @manifest_hash = {
+        'location' => {
+          'zendesk' => {
+            'ticket_sidebar' => {
+              'url' => 'https://mysite.com/zendesk_iframe'
+            }
+          }
+        }
+      }
     end
 
     it 'should not have a location error' do
@@ -230,7 +247,16 @@ describe ZendeskAppsSupport::Validations::Manifest do
 
   context 'location is manual load and specifies references a url' do
     before do
-      @manifest_hash = { 'location' => { 'zendesk' => { 'ticket_sidebar' => { 'autoLoad' => false, 'url' => 'https://i.am.so.conf/used/setup.exe' } } } }
+      @manifest_hash = {
+        'location' => {
+          'zendesk' => {
+            'ticket_sidebar' => {
+              'autoLoad' => false,
+              'url' => 'https://i.am.so.conf/used/setup.exe'
+            }
+          }
+        }
+      }
     end
 
     it 'should not have a location error' do
@@ -331,7 +357,7 @@ describe ZendeskAppsSupport::Validations::Manifest do
   end
 
   it 'should have an error when manifest is not a valid json' do
-    allow(@package).to receive(:manifest) { raise JSON::ParserError.new }
+    allow(@package).to receive(:manifest) { raise JSON::ParserError }
 
     expect(@package).to have_error(/^manifest is not proper JSON/)
   end
