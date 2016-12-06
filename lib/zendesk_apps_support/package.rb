@@ -230,7 +230,7 @@ module ZendeskAppsSupport
                                   default_translations
                                 else
                                   deep_merge_hash(default_translations, process_translations(path))
-          end
+                                end
 
           memo[locale] = locale_translations
           memo
@@ -269,26 +269,36 @@ module ZendeskAppsSupport
 
           host = location_options.location.product.name
           location = location_options.location.name
-          inactive_png = "icon_#{location}_inactive.png"
-          location_icons[host][location] = if has_file?("assets/icon_#{location}.svg")
-                                             cache_busting_param = "?#{Time.now.to_i}" unless @is_cached
-                                             { 'svg' => "icon_#{location}.svg#{cache_busting_param}" }
-                                           elsif has_file?("assets/#{inactive_png}")
-                                             {
-                                               'inactive' => inactive_png
-                                             }.tap do |icon_state_hash|
-                                               %w(active hover).each do |state|
-                                                 specific_png = "icon_#{location}_#{state}.png"
-                                                 icon_state_hash[state] = if has_file?("assets/#{specific_png}")
-                                                                            specific_png
-                                                                          else
-                                                                            inactive_png
-                                                                          end
-                                               end
-                                             end
-                                           else
-                                             {}
-          end
+          location_icons[host][location] = build_location_icons_hash(location)
+        end
+      end
+    end
+
+    def build_location_icons_hash(location)
+      inactive_png = "icon_#{location}_inactive.png"
+      if has_file?("assets/icon_#{location}.svg")
+        build_svg_icon(location)
+      elsif has_file?("assets/#{inactive_png}")
+        build_png_icons_hash(location)
+      else
+        {}
+      end
+    end
+
+    def build_svg_icon_hash(location)
+      cache_busting_param = "?#{Time.now.to_i}" unless @is_cached
+      { 'svg' => "icon_#{location}.svg#{cache_busting_param}" }
+    end
+
+    def build_png_icons_hash(location)
+      inactive_png = "icon_#{location}_inactive.png"
+      {
+        'inactive' => inactive_png
+      }.tap do |icon_state_hash|
+        %w(active hover).each do |state|
+          specific_png = "icon_#{location}_#{state}.png"
+          selected_png = has_file?("assets/#{specific_png}") ? specific_png : inactive_png
+          icon_state_hash[state] = selected_png
         end
       end
     end
