@@ -103,7 +103,9 @@ describe ZendeskAppsSupport::Validations::Requirements do
   end
 
   context 'there are multiple channel integrations' do
-    let(:requirements_string) { '{ "channel_integrations": { "one": { "manifest_url": "manifest"}, "two": { "manifest_url": "manifest"} }}' }
+    let(:requirements_string) do
+      '{ "channel_integrations": { "one": { "manifest_url": "manifest"}, "two": { "manifest_url": "manifest"} }}'
+    end
 
     it 'creates an error' do
       expect(errors.first.key).to eq(:multiple_channel_integrations)

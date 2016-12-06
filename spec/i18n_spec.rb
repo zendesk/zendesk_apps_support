@@ -12,6 +12,7 @@ describe 'translations' do
     project_root = Pathname.new(File.expand_path('../../', __FILE__))
     zendesk_version  = project_root.join('config/locales/translations/zendesk_apps_support.yml')
     standard_version = project_root.join('config/locales/en.yml')
-    expect(File.mtime(zendesk_version).to_i).to be <= File.mtime(standard_version).to_i, 'Need to run bundle exec rake i18n:standardize'
+    error_message = 'Need to run bundle exec rake i18n:standardize'
+    expect(File.mtime(zendesk_version).to_i).to be <= File.mtime(standard_version).to_i, error_message
   end
 end

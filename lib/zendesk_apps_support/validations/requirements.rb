@@ -83,7 +83,9 @@ module ZendeskAppsSupport
           invalid_types = requirements.keys - ZendeskAppsSupport::AppRequirement::TYPES
 
           unless invalid_types.empty?
-            ValidationError.new(:invalid_requirements_types, invalid_types: invalid_types.join(', '), count: invalid_types.length)
+            ValidationError.new(:invalid_requirements_types,
+                                invalid_types: invalid_types.join(', '),
+                                count: invalid_types.length)
           end
         end
       end

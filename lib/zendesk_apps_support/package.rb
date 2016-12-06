@@ -161,7 +161,8 @@ module ZendeskAppsSupport
     deprecate :no_template_locations, 'manifest.no_template_locations', 2016, 9
 
     def compiled_templates(app_id, asset_url_prefix)
-      compiled_css = ZendeskAppsSupport::StylesheetCompiler.new(DEFAULT_SCSS + app_css, app_id, asset_url_prefix).compile
+      compiler = ZendeskAppsSupport::StylesheetCompiler.new(DEFAULT_SCSS + app_css, app_id, asset_url_prefix)
+      compiled_css = compiler.compile
 
       layout = templates['layout'] || DEFAULT_LAYOUT.result
 
@@ -272,15 +273,19 @@ module ZendeskAppsSupport
 
           host = location_options.location.product.name
           location = location_options.location.name
+          inactive_png = "assets/icon_#{location}_inactive.png"
           location_icons[host][location] = if (has_file?("assets/icon_#{location}.svg"))
             cache_busting_param = "?#{Time.now.to_i}" unless @is_cached
             { 'svg' => "icon_#{location}.svg#{cache_busting_param}" }
-          elsif (has_file?("assets/icon_#{location}_inactive.png"))
+          elsif (has_file?(inactive_png))
             {
-              'inactive' => "icon_#{location}_inactive.png",
-              'active' => has_file?("assets/icon_#{location}_active.png") ? "icon_#{location}_active.png" : "icon_#{location}_inactive.png",
-              'hover' => has_file?("assets/icon_#{location}_hover.png") ? "icon_#{location}_hover.png" : "icon_#{location}_inactive.png"
-            }
+              'inactive' => "icon_#{location}_inactive.png"
+            }.tap do |icon_state_hash|
+              %w(active hover).each do |state|
+                current_state_png = "assets/icon_#{location}_#{state}.png"
+                icon_state_hash[state] = has_file?(current_state_png) ? current_state_png : inactive_png
+              end
+            end
           else
             {}
           end

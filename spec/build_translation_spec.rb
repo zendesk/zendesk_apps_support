@@ -50,8 +50,8 @@ describe ZendeskAppsSupport::BuildTranslation do
             'a.a1'    => 'value of a1',
             'a.b.b1'  => 'value of b1'
           }
-
-          expect(to_flattened_namespaced_hash(en_json, ZendeskAppsSupport::BuildTranslation::I18N_VALUE_KEY)).to eq(expected)
+          value_key = ZendeskAppsSupport::BuildTranslation::I18N_VALUE_KEY
+          expect(to_flattened_namespaced_hash(en_json, value_key)).to eq(expected)
         end
       end
 
@@ -62,8 +62,8 @@ describe ZendeskAppsSupport::BuildTranslation do
             'a.a1'    => 'description for a1 field',
             'a.b.b1'  => 'description for b1 field'
           }
-
-          expect(to_flattened_namespaced_hash(en_json, ZendeskAppsSupport::BuildTranslation::I18N_TITLE_KEY)).to eq(expected)
+          title_key = ZendeskAppsSupport::BuildTranslation::I18N_TITLE_KEY
+          expect(to_flattened_namespaced_hash(en_json, title_key)).to eq(expected)
         end
       end
     end

@@ -164,7 +164,8 @@ describe ZendeskAppsSupport::Package do
     let(:custom1) { 'The first custom thing' }
     context 'with default locale' do
       it 'returns translations' do
-        expect(package.send(:translations)).to eq({ 'en'=>{ 'app' => { 'description'=>description }, 'custom1' => custom1 } })
+        expected_translations = { 'en'=> { 'app' => { 'description'=>description }, 'custom1' => custom1 } }
+        expect(package.send(:translations)).to eq(expected_translations)
         expect(package.locales).to eq(['en'])
       end
 
@@ -180,7 +181,8 @@ describe ZendeskAppsSupport::Package do
         end
 
         it 'includes zh-cn in translations' do
-          expect(package.send(:translations)['zh-cn'].except('custom1')).to eq(JSON.parse(File.read('spec/translations/zh-cn.json')))
+          expected_translations = JSON.parse(File.read('spec/translations/zh-cn.json'))
+          expect(package.send(:translations)['zh-cn'].except('custom1')).to eq(expected_translations)
         end
 
         it 'merges missing keys with the default locale'  do
@@ -200,7 +202,8 @@ describe ZendeskAppsSupport::Package do
         end
 
         it 'removes zendesk-specific keys in translations' do
-          expect(package.send(:translations)['zh-cn'].except('custom1')).to eq(JSON.parse(File.read('spec/translations/zh-cn.json')))
+          expected_translations = JSON.parse(File.read('spec/translations/zh-cn.json'))
+          expect(package.send(:translations)['zh-cn'].except('custom1')).to eq(expected_translations)
         end
 
         it 'merges missing keys with the default locale'  do
@@ -217,7 +220,8 @@ describe ZendeskAppsSupport::Package do
       let(:manifest) { super().merge('defaultLocale' => nil) }
 
       it 'returns translations' do
-        expect(package.send(:translations)).to eq({ 'en'=>{ 'app' => { 'description'=>description }, 'custom1'=>custom1 } })
+        expected_translations = { 'en'=> { 'app' => { 'description'=>description }, 'custom1'=>custom1 } }
+        expect(package.send(:translations)).to eq(expected_translations)
         expect(package.locales).to eq(['en'])
       end
     end
@@ -367,7 +371,9 @@ describe ZendeskAppsSupport::Package do
 
     context 'when it has an svg' do
       it 'returns correct location_icons hash for top_bar' do
-        allow(package).to receive(:has_file?) { |file| file == 'assets/icon_top_bar.svg' || file == 'assets/icon_nav_bar.svg' }
+        allow(package).to receive(:has_file?) do |file|
+          file == 'assets/icon_top_bar.svg' || file == 'assets/icon_nav_bar.svg'
+        end
         expect(package.send(:location_icons)).to eq( {
           "support" => {
             "top_bar" => {
@@ -383,7 +389,9 @@ describe ZendeskAppsSupport::Package do
 
     context 'when it has three pngs' do
       it 'returns correct location_icons hash' do
-        allow(package).to receive(:has_file?) { |file| file != 'assets/icon_top_bar.svg' && file != 'assets/icon_nav_bar.svg'}
+        allow(package).to receive(:has_file?) do |file|
+          file != 'assets/icon_top_bar.svg' && file != 'assets/icon_nav_bar.svg'
+        end
         expect(package.send(:location_icons)).to eq( {
           "support" => {
             "top_bar" => {
@@ -403,7 +411,9 @@ describe ZendeskAppsSupport::Package do
 
     context 'when it only has inactive pngs' do
       it 'returns correct location_icons hash' do
-        allow(package).to receive(:has_file?) { |file| file == 'assets/icon_top_bar_inactive.png' || file == 'assets/icon_nav_bar_inactive.png' }
+        allow(package).to receive(:has_file?) do |file|
+          file == 'assets/icon_top_bar_inactive.png' || file == 'assets/icon_nav_bar_inactive.png'
+        end
         expect(package.send(:location_icons)).to eq( {
           "support" => {
             "top_bar" => {
