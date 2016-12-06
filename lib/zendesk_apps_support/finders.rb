@@ -13,7 +13,7 @@ module ZendeskAppsSupport
 
     def find_by!(arg)
       found = find_by(arg)
-      raise RecordNotFound, "Unable to find #{name} with #{arg.inspect}" if found.nil?
+      raise(RecordNotFound, "Unable to find #{name} with #{arg.inspect}") if found.nil?
       found
     end
 
