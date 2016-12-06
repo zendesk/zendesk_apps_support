@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module ZendeskAppsSupport
   class Product
     extend ZendeskAppsSupport::Finders

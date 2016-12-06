@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'spec_helper'
 require 'tmpdir'
 
@@ -356,7 +357,7 @@ describe ZendeskAppsSupport::Validations::Manifest do
   end
 
   it 'should have an error when manifest is not a valid json' do
-    allow(@package).to receive(:manifest) { raise JSON::ParserError.new }
+    allow(@package).to receive(:manifest) { raise JSON::ParserError }
 
     expect(@package).to have_error(/^manifest is not proper JSON/)
   end

@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'spec_helper'
 require 'tmpdir'
 
@@ -55,25 +56,25 @@ describe ZendeskAppsSupport::Package do
 
   describe 'compile_js' do
     it 'should generate js ready for installation' do
-      js = @package.compile_js(app_name: "ABC", app_id: 0, assets_dir: 'http://localhost:4567/0/')
+      js = @package.compile_js(app_name: 'ABC', app_id: 0, assets_dir: 'http://localhost:4567/0/')
       expected = File.read('spec/fixtures/legacy_app_en.js')
       expect(js).to eq(expected)
 
-      js = @package.compile_js(app_name: "EFG", app_id: 1, assets_dir: 'http://localhost:4567/2/', locale: 'nl')
+      js = @package.compile_js(app_name: 'EFG', app_id: 1, assets_dir: 'http://localhost:4567/2/', locale: 'nl')
       expected = File.read('spec/fixtures/legacy_app_nl.js')
       expect(js).to eq(expected)
     end
 
     it 'should generate js for iframe app installations' do
       @package = ZendeskAppsSupport::Package.new('spec/fixtures/iframe_only_app')
-      js = @package.compile_js(app_name: "ABC", app_id: 0, assets_dir: 'http://localhost:4567/0/')
+      js = @package.compile_js(app_name: 'ABC', app_id: 0, assets_dir: 'http://localhost:4567/0/')
       expected = File.read('spec/fixtures/iframe_app.js')
       expect(js).to eq(expected)
     end
 
     it 'should generate js with manifest noTemplate set to array' do
       allow(@package.manifest).to receive(:no_template) { ['ticket_sidebar'] }
-      js = @package.compile_js(app_name: "ABC", app_id: 0, assets_dir: 'http://localhost:4567/0/')
+      js = @package.compile_js(app_name: 'ABC', app_id: 0, assets_dir: 'http://localhost:4567/0/')
       expected = File.read('spec/fixtures/legacy_app_no_template.js')
       expect(js).to eq(expected)
     end
@@ -81,27 +82,27 @@ describe ZendeskAppsSupport::Package do
 
   describe 'deep_merge_hash' do
     it 'should merge a simple hash' do
-      hash_1   = {'id' => 1}
-      hash_2   = {'id' => 2}
-      expected = {'id' => 2}
-      expect( @package.send(:deep_merge_hash, hash_1, hash_2) ).to eq(expected)
+      hash_1   = { 'id' => 1 }
+      hash_2   = { 'id' => 2 }
+      expected = { 'id' => 2 }
+      expect(@package.send(:deep_merge_hash, hash_1, hash_2)).to eq(expected)
     end
 
     it 'should merge 2 hashes recursively' do
-      hash_1   = {'id' => 1, 'nick' => { label: 'test', gender: 'yes'}}
-      hash_2   = {'id' => 2}
-      expected = {'id' => 2, 'nick' => { label: 'test', gender: 'yes'}}
-      expect( @package.send(:deep_merge_hash, hash_1, hash_2) ).to eq(expected)
+      hash_1   = { 'id' => 1, 'nick' => { label: 'test', gender: 'yes' } }
+      hash_2   = { 'id' => 2 }
+      expected = { 'id' => 2, 'nick' => { label: 'test', gender: 'yes' } }
+      expect(@package.send(:deep_merge_hash, hash_1, hash_2)).to eq(expected)
 
-      hash_1   = {'id' => 1, 'nick' => { label: 'test', gender: 'yes'}}
-      hash_2   = {'id' => 2, 'nick' => 'test'}
-      expected = {'id' => 2, 'nick' => 'test'}
-      expect( @package.send(:deep_merge_hash, hash_1, hash_2) ).to eq(expected)
+      hash_1   = { 'id' => 1, 'nick' => { label: 'test', gender: 'yes' } }
+      hash_2   = { 'id' => 2, 'nick' => 'test' }
+      expected = { 'id' => 2, 'nick' => 'test' }
+      expect(@package.send(:deep_merge_hash, hash_1, hash_2)).to eq(expected)
 
-      hash_1   = {'id' => 1, 'nick' => { label: { text: 'text', value: 'value'}}}
-      hash_2   = {'id' => 2, 'nick' => { label: { text: 'different', option: 3}}}
-      expected = {'id' => 2, 'nick' => { label: { text: 'different', value: 'value', option: 3}}}
-      expect( @package.send(:deep_merge_hash, hash_1, hash_2) ).to eq(expected)
+      hash_1   = { 'id' => 1, 'nick' => { label: { text: 'text', value: 'value' } } }
+      hash_2   = { 'id' => 2, 'nick' => { label: { text: 'different', option: 3 } } }
+      expected = { 'id' => 2, 'nick' => { label: { text: 'different', value: 'value', option: 3 } } }
+      expect(@package.send(:deep_merge_hash, hash_1, hash_2)).to eq(expected)
     end
   end
 
@@ -112,7 +113,7 @@ describe ZendeskAppsSupport::Package do
   let(:root) { Dir.mktmpdir }
 
   after do
-    FileUtils.rm_rf(root) if Dir.exists?(root)
+    FileUtils.rm_rf(root) if Dir.exist?(root)
   end
 
   def build_app_source(app)
@@ -123,10 +124,10 @@ describe ZendeskAppsSupport::Package do
     en_json          = File.read('spec/bookmarks_app/translations/en.json')
     logo             = File.read('spec/bookmarks_app/assets/logo.png')
     logo_small       = File.read('spec/bookmarks_app/assets/logo-small.png')
-    manifest         = JSON.generate(app[:manifest] || { })
-    additional_files = app[:additional_files] || { }
+    manifest         = JSON.generate(app[:manifest] || {})
+    additional_files = app[:additional_files] || {}
 
-    FileUtils.rm_rf(root) if Dir.exists?(root)
+    FileUtils.rm_rf(root) if Dir.exist?(root)
 
     {
       'manifest.json'         => manifest,
@@ -138,11 +139,10 @@ describe ZendeskAppsSupport::Package do
       'assets/logo.png'       => logo,
       'assets/logo-small.png' => logo_small
     }.merge(additional_files).each do |path, content|
-      unless content.nil?
-        path = File.join(root, path)
-        FileUtils.mkdir_p( File.dirname(path) )
-        File.open(path, 'w') { |f| f << content }
-      end
+      next if content.nil?
+      path = File.join(root, path)
+      FileUtils.mkdir_p(File.dirname(path))
+      File.open(path, 'w') { |f| f << content }
     end
 
     File.join(root)
@@ -153,10 +153,8 @@ describe ZendeskAppsSupport::Package do
   let(:package) { ZendeskAppsSupport::Package.new(source) }
 
   def build_app_source_with_files(files)
-    build_app_source({
-      manifest: manifest,
-      additional_files: files
-    })
+    build_app_source(manifest: manifest,
+                     additional_files: files)
   end
 
   describe '#translations' do
@@ -164,16 +162,14 @@ describe ZendeskAppsSupport::Package do
     let(:custom1) { 'The first custom thing' }
     context 'with default locale' do
       it 'returns translations' do
-        expected_translations = { 'en'=> { 'app' => { 'description'=>description }, 'custom1' => custom1 } }
+        expected_translations = { 'en' => { 'app' => { 'description' => description }, 'custom1' => custom1 } }
         expect(package.send(:translations)).to eq(expected_translations)
         expect(package.locales).to eq(['en'])
       end
 
       context 'with zh-cn.json' do
         let (:source) do
-          build_app_source_with_files({
-            'translations/zh-cn.json' => File.read('spec/translations/zh-cn.json')
-          })
+          build_app_source_with_files('translations/zh-cn.json' => File.read('spec/translations/zh-cn.json'))
         end
 
         it 'includes en and zh-cn in translations' do
@@ -185,16 +181,14 @@ describe ZendeskAppsSupport::Package do
           expect(package.send(:translations)['zh-cn'].except('custom1')).to eq(expected_translations)
         end
 
-        it 'merges missing keys with the default locale'  do
+        it 'merges missing keys with the default locale' do
           expect(package.send(:translations)['zh-cn']['custom1']).to eq(custom1)
         end
       end
 
       context 'with zh-cn_keyval.json' do
         let (:source) do
-          build_app_source_with_files({
-            'translations/zh-cn.json' => File.read('spec/translations/zh-cn_keyval.json')
-          })
+          build_app_source_with_files('translations/zh-cn.json' => File.read('spec/translations/zh-cn_keyval.json'))
         end
 
         it 'includes en and zh-cn in translations' do
@@ -206,7 +200,7 @@ describe ZendeskAppsSupport::Package do
           expect(package.send(:translations)['zh-cn'].except('custom1')).to eq(expected_translations)
         end
 
-        it 'merges missing keys with the default locale'  do
+        it 'merges missing keys with the default locale' do
           expect(package.send(:translations)['zh-cn']['custom1']).to eq(custom1)
         end
 
@@ -220,12 +214,11 @@ describe ZendeskAppsSupport::Package do
       let(:manifest) { super().merge('defaultLocale' => nil) }
 
       it 'returns translations' do
-        expected_translations = { 'en'=> { 'app' => { 'description'=>description }, 'custom1'=>custom1 } }
+        expected_translations = { 'en' => { 'app' => { 'description' => description }, 'custom1' => custom1 } }
         expect(package.send(:translations)).to eq(expected_translations)
         expect(package.locales).to eq(['en'])
       end
     end
-
   end
 
   describe '#css' do
@@ -236,7 +229,7 @@ describe ZendeskAppsSupport::Package do
     end
 
     context 'for an app without an app.css' do
-      let(:source) { build_app_source(additional_files: { "app.css" => nil }) }
+      let(:source) { build_app_source(additional_files: { 'app.css' => nil }) }
 
       it 'returns an empty string' do
         expect(package.app_css).to eq('')
@@ -254,7 +247,7 @@ describe ZendeskAppsSupport::Package do
         }
       }
     end
-    let(:source) { build_app_source(additional_files: { "translations/en.json" => translations.to_json }) }
+    let(:source) { build_app_source(additional_files: { 'translations/en.json' => translations.to_json }) }
 
     subject { package.send :runtime_translations, package.translations_for('en').fetch('app') }
 
@@ -300,7 +293,7 @@ describe ZendeskAppsSupport::Package do
             'app.js'                => nil,
             'app.css'               => nil,
             'templates/layout.hdbs' => nil,
-            'templates/main.hdbs'   => nil,
+            'templates/main.hdbs'   => nil
           }
         )
       end
@@ -335,18 +328,16 @@ describe ZendeskAppsSupport::Package do
 
     context 'when there are js modules' do
       let (:source) do
-        build_app_source_with_files({
-          'lib/a.js'     => File.read('spec/bookmarks_app/lib/a.js'),
-          'lib/foo/b.js' => File.read('spec/bookmarks_app/lib/foo/b.js')
-        })
+        build_app_source_with_files('lib/a.js' => File.read('spec/bookmarks_app/lib/a.js'),
+                                    'lib/foo/b.js' => File.read('spec/bookmarks_app/lib/foo/b.js'))
       end
 
       it 'returns the contents of the file at lib/a.js' do
-        expect(modules["a.js"]).to eq(File.read('spec/bookmarks_app/lib/a.js'))
+        expect(modules['a.js']).to eq(File.read('spec/bookmarks_app/lib/a.js'))
       end
 
       it 'returns the contents of the file in subfolder lib/foo/b.js' do
-        expect(modules["foo/b.js"]).to eq(File.read('spec/bookmarks_app/lib/foo/b.js'))
+        expect(modules['foo/b.js']).to eq(File.read('spec/bookmarks_app/lib/foo/b.js'))
       end
     end
 
@@ -374,16 +365,14 @@ describe ZendeskAppsSupport::Package do
         allow(package).to receive(:has_file?) do |file|
           file == 'assets/icon_top_bar.svg' || file == 'assets/icon_nav_bar.svg'
         end
-        expect(package.send(:location_icons)).to eq( {
-          "support" => {
-            "top_bar" => {
-              'svg' => "icon_top_bar.svg"
-            },
-            "nav_bar" => {
-              'svg' => "icon_nav_bar.svg"
-            }
-          }
-        })
+        expect(package.send(:location_icons)).to eq('support' => {
+                                                      'top_bar' => {
+                                                        'svg' => 'icon_top_bar.svg'
+                                                      },
+                                                      'nav_bar' => {
+                                                        'svg' => 'icon_nav_bar.svg'
+                                                      }
+                                                    })
       end
     end
 
@@ -392,20 +381,18 @@ describe ZendeskAppsSupport::Package do
         allow(package).to receive(:has_file?) do |file|
           file != 'assets/icon_top_bar.svg' && file != 'assets/icon_nav_bar.svg'
         end
-        expect(package.send(:location_icons)).to eq( {
-          "support" => {
-            "top_bar" => {
-              'active' => "icon_top_bar_active.png",
-              'inactive' => "icon_top_bar_inactive.png",
-              'hover' => "icon_top_bar_hover.png"
-            },
-            "nav_bar" => {
-              'active' => "icon_nav_bar_active.png",
-              'inactive' => "icon_nav_bar_inactive.png",
-              'hover' => "icon_nav_bar_hover.png"
-            }
-          }
-        })
+        expect(package.send(:location_icons)).to eq('support' => {
+                                                      'top_bar' => {
+                                                        'active' => 'icon_top_bar_active.png',
+                                                        'inactive' => 'icon_top_bar_inactive.png',
+                                                        'hover' => 'icon_top_bar_hover.png'
+                                                      },
+                                                      'nav_bar' => {
+                                                        'active' => 'icon_nav_bar_active.png',
+                                                        'inactive' => 'icon_nav_bar_inactive.png',
+                                                        'hover' => 'icon_nav_bar_hover.png'
+                                                      }
+                                                    })
       end
     end
 
@@ -414,49 +401,42 @@ describe ZendeskAppsSupport::Package do
         allow(package).to receive(:has_file?) do |file|
           file == 'assets/icon_top_bar_inactive.png' || file == 'assets/icon_nav_bar_inactive.png'
         end
-        expect(package.send(:location_icons)).to eq( {
-          "support" => {
-            "top_bar" => {
-              'active' => "icon_top_bar_inactive.png",
-              'inactive' => "icon_top_bar_inactive.png",
-              'hover' => "icon_top_bar_inactive.png"
-            },
-            "nav_bar" => {
-              'active' => "icon_nav_bar_inactive.png",
-              'inactive' => "icon_nav_bar_inactive.png",
-              'hover' => "icon_nav_bar_inactive.png"
-            }
-          }
-        })
+        expect(package.send(:location_icons)).to eq('support' => {
+                                                      'top_bar' => {
+                                                        'active' => 'icon_top_bar_inactive.png',
+                                                        'inactive' => 'icon_top_bar_inactive.png',
+                                                        'hover' => 'icon_top_bar_inactive.png'
+                                                      },
+                                                      'nav_bar' => {
+                                                        'active' => 'icon_nav_bar_inactive.png',
+                                                        'inactive' => 'icon_nav_bar_inactive.png',
+                                                        'hover' => 'icon_nav_bar_inactive.png'
+                                                      }
+                                                    })
       end
     end
-
 
     context 'when it has pngs and svgs' do
       it 'returns correct location_icons hash' do
         allow(package).to receive(:has_file?) { true }
-        expect(package.send(:location_icons)).to eq( {
-          "support" => {
-            "top_bar" => {
-              'svg' => "icon_top_bar.svg"
-            },
-            "nav_bar" => {
-              'svg' => "icon_nav_bar.svg"
-            }
-          }
-        })
+        expect(package.send(:location_icons)).to eq('support' => {
+                                                      'top_bar' => {
+                                                        'svg' => 'icon_top_bar.svg'
+                                                      },
+                                                      'nav_bar' => {
+                                                        'svg' => 'icon_nav_bar.svg'
+                                                      }
+                                                    })
       end
     end
 
     context 'when it has no images' do
       it 'returns correct location_icons hash' do
         allow(package).to receive(:has_file?) { false }
-        expect(package.send(:location_icons)).to eq( {
-          "support" => {
-            "top_bar" => {},
-            "nav_bar" => {}
-          }
-        })
+        expect(package.send(:location_icons)).to eq('support' => {
+                                                      'top_bar' => {},
+                                                      'nav_bar' => {}
+                                                    })
       end
     end
   end

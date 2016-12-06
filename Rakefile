@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'bundler/gem_tasks'
 require 'bundler/setup'
 require 'rspec/core/rake_task'
@@ -7,7 +8,7 @@ RSpec::Core::RakeTask.new(:spec)
 task default: :spec
 
 def array_to_nested_hash(array)
-  array.inject({}) do |result, item|
+  array.each_with_object({}) do |item, result|
     keys = item['key'].split('.')
     current = result
     keys[0..-2].each do |key|

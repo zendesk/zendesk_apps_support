@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'spec_helper'
 
 describe ZendeskAppsSupport::BuildTranslation do
@@ -11,12 +12,12 @@ describe ZendeskAppsSupport::BuildTranslation do
           'value' => 'value of abc'
         }
       },
-      'a'   => {
+      'a' => {
         'a1' => {
           'title' => 'description for a1 field',
           'value' => 'value of a1'
         },
-        'b'  => {
+        'b' => {
           'b1' => {
             'title' => 'description for b1 field',
             'value' => 'value of b1'
@@ -75,7 +76,7 @@ describe ZendeskAppsSupport::BuildTranslation do
         'app' => {
           'abc' => 'value of abc'
         },
-        'a'   => {
+        'a' => {
           'a1' => 'value of a1',
           'b'  => {
             'b1' => 'value of b1'

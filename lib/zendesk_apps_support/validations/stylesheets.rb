@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'zendesk_apps_support/stylesheet_compiler'
 
 module ZendeskAppsSupport

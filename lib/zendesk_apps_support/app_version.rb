@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module ZendeskAppsSupport
   # At any point in time, we support up to three versions:
   #  * deprecated -- we will still serve apps targeting the deprecated version,
@@ -8,9 +9,9 @@ module ZendeskAppsSupport
   #                  newly created or updates apps MAY target it, but it
   #                  may change without notice
   class AppVersion
-    DEPRECATED = '0.5'.freeze
-    CURRENT    = '1.0'.freeze
-    FUTURE     = '2.0'.freeze
+    DEPRECATED = '0.5'
+    CURRENT    = '1.0'
+    FUTURE     = '2.0'
 
     TO_BE_SERVED     = [DEPRECATED, CURRENT, FUTURE].compact.freeze
     VALID_FOR_UPDATE = [CURRENT, FUTURE].compact.freeze

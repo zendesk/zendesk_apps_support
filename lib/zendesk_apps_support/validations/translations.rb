@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'jshintrb'
 require 'json'
 
@@ -12,7 +13,7 @@ module ZendeskAppsSupport
 
       class << self
         def call(package)
-          package.files.inject([]) do |errors, file|
+          package.files.each_with_object([]) do |file, errors|
             if path_match = TRANSLATIONS_PATH.match(file.relative_path)
               errors << locale_error(file, path_match[1]) << json_error(file)
             end
@@ -48,7 +49,7 @@ module ZendeskAppsSupport
 
         def validate_translation_format(json)
           json.keys.each do |key|
-            fail TranslationFormatError.new("'#{key}': '#{json[key]}'") unless json[key].is_a? Hash
+            raise TranslationFormatError, "'#{key}': '#{json[key]}'" unless json[key].is_a? Hash
 
             if json[key].keys.sort == BuildTranslation::I18N_KEYS &&
                json[key][BuildTranslation::I18N_TITLE_KEY].class == String &&

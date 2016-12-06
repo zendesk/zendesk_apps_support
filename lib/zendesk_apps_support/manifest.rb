@@ -160,11 +160,11 @@ module ZendeskAppsSupport
 
     def replace_string_uris(product_locations)
       product_locations.each_with_object({}) do |(k, v), new_locations|
-        if v.is_a? Hash
-          new_locations[k] = v
-        else
-          new_locations[k] = { 'url' => v }
-        end
+        new_locations[k] = if v.is_a? Hash
+                             v
+                           else
+                             { 'url' => v }
+                           end
       end
     end
 

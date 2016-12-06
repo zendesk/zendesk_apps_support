@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'spec_helper'
 
 describe ZendeskAppsSupport::Validations::Source do
@@ -8,7 +9,7 @@ describe ZendeskAppsSupport::Validations::Source do
                       lib_files: [],
                       template_files: [],
                       app_css: '',
-                      manifest: ZendeskAppsSupport::Manifest.new(JSON.dump manifest_json),
+                      manifest: ZendeskAppsSupport::Manifest.new(JSON.dump(manifest_json)),
                       locations: { 'zendesk' => { 'ticket_sidebar' => '_legacy' } },
                       iframe_only?: false)
   end

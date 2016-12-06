@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'uri'
 
 module ZendeskAppsSupport
@@ -156,9 +157,9 @@ module ZendeskAppsSupport
             invalid_locations = package.manifest.unknown_locations(product.name)
             next if invalid_locations.empty?
             errors << ValidationError.new(:invalid_location,
-                                    invalid_locations: invalid_locations.join(', '),
-                                    host_name: product.name,
-                                    count: invalid_locations.length)
+                                          invalid_locations: invalid_locations.join(', '),
+                                          host_name: product.name,
+                                          count: invalid_locations.length)
           end
 
           package.manifest.unknown_hosts.each do |unknown_host|
