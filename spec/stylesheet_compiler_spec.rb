@@ -3,7 +3,7 @@ require 'spec_helper'
 
 describe ZendeskAppsSupport::StylesheetCompiler do
   describe "Compiling an app's stylesheet" do
-    let(:color) { '%06x'.format rand(2**24 - 1) }
+    let(:color) { format '%06x', rand(2**24 - 1) }
     let(:app_id) { rand(100) }
     let(:asset_name) { 'submit_button.png' }
     let(:asset_url) { "/api/v2/apps/#{app_id}/assets/" }

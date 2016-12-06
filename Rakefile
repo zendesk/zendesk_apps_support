@@ -15,7 +15,6 @@ def array_to_nested_hash(array)
       current = (current[key] ||= {})
     end
     current[keys[-1]] = item['value']
-    result
   end
 end
 

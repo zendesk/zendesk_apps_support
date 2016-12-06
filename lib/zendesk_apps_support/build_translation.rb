@@ -17,7 +17,6 @@ module ZendeskAppsSupport
         else
           result[key] = value
         end
-        result
       end
     end
 

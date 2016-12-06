@@ -18,7 +18,6 @@ module ZendeskAppsSupport
             if path_match
               errors << locale_error(file, path_match[1]) << json_error(file)
             end
-            errors
           end.compact
         end
 

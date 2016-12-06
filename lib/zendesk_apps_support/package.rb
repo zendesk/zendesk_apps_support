@@ -182,8 +182,8 @@ module ZendeskAppsSupport
     end
 
     def app_css
-      return File.read('app.scss') if has_file?('app.scss')
-      return File.read('app.css') if has_file?('app.css')
+      return File.read(path_to('app.scss')) if has_file?('app.scss')
+      return File.read(path_to('app.css')) if has_file?('app.css')
       ''
     end
 
@@ -204,7 +204,7 @@ module ZendeskAppsSupport
     end
 
     def templates
-      templates_dir = File.join(root, 'templates')
+      templates_dir = path_to('templates')
       Dir["#{templates_dir}/*.hdbs"].each_with_object({}) do |file, memo|
         str = File.read(file)
         str.chomp!
@@ -217,7 +217,7 @@ module ZendeskAppsSupport
       return @translations if @is_cached && @translations
 
       @translations = begin
-        translation_dir = File.join(root, 'translations')
+        translation_dir = path_to('translations')
         return {} unless File.directory?(translation_dir)
 
         locale_path = "#{translation_dir}/#{manifest.default_locale}.json"
@@ -233,7 +233,6 @@ module ZendeskAppsSupport
                                 end
 
           memo[locale] = locale_translations
-          memo
         end
       end
     end
