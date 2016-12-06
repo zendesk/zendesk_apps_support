@@ -14,7 +14,8 @@ module ZendeskAppsSupport
       class << self
         def call(package)
           package.files.each_with_object([]) do |file, errors|
-            if path_match = TRANSLATIONS_PATH.match(file.relative_path)
+            path_match = TRANSLATIONS_PATH.match(file.relative_path)
+            if path_match
               errors << locale_error(file, path_match[1]) << json_error(file)
             end
             errors
@@ -29,7 +30,7 @@ module ZendeskAppsSupport
         end
 
         def json_error(file)
-          json = JSON.load(file.read)
+          json = JSON.parse(file.read)
           if json.is_a?(Hash)
             if json['app'] && json['app']['package']
               json['app'].delete('package')

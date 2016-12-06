@@ -124,7 +124,7 @@ describe ZendeskAppsSupport::Validations::Manifest do
           'name' => 'foo'
         ]
       }
-      expect(@package).to have_error /Parameters can't be defined/
+      expect(@package).to have_error(/Parameters can't be defined/)
     end
   end
 

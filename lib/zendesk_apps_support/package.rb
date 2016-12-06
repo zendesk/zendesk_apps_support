@@ -76,8 +76,8 @@ module ZendeskAppsSupport
       files = []
       Dir[root.join('**/**')].each do |f|
         next unless File.file?(f)
-        relative_file_name = f.sub(/#{root}\/?/, '')
-        next if relative_file_name =~ /^tmp\//
+        relative_file_name = f.sub(%r{#{root}/?}, '')
+        next if relative_file_name =~ %r{^tmp/}
         files << AppFile.new(self, relative_file_name)
       end
       files
@@ -88,15 +88,15 @@ module ZendeskAppsSupport
     end
 
     def lib_files
-      @lib_files ||= js_files.select { |f| f =~ /^lib\// }
+      @lib_files ||= js_files.select { |f| f =~ %r{^lib/} }
     end
 
     def template_files
-      files.select { |f| f =~ /^templates\/.*\.hdbs$/ }
+      files.select { |f| f =~ %r{^templates/.*\.hdbs$} }
     end
 
     def translation_files
-      files.select { |f| f =~ /^translations\// }
+      files.select { |f| f =~ %r{^translations/} }
     end
 
     def compile_js(options)
@@ -182,9 +182,9 @@ module ZendeskAppsSupport
     end
 
     def app_css
-      css_file = path_to('app.css')
-      scss_file = path_to('app.scss')
-      File.exist?(scss_file) ? File.read(scss_file) : (File.exist?(css_file) ? File.read(css_file) : '')
+      return File.read('app.scss') if has_file?('app.scss')
+      return File.read('app.css') if has_file?('app.css')
+      ''
     end
 
     def iframe_only?

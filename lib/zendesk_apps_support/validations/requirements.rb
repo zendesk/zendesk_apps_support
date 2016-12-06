@@ -48,10 +48,8 @@ module ZendeskAppsSupport
         end
 
         def excessive_requirements(requirements)
-          requirement_count = requirements.values.map(&:values).flatten.size
-          if requirement_count > MAX_REQUIREMENTS
-            ValidationError.new(:excessive_requirements, max: MAX_REQUIREMENTS, count: requirement_count)
-          end
+          count = requirements.values.map(&:values).flatten.size
+          ValidationError.new(:excessive_requirements, max: MAX_REQUIREMENTS, count: count) if count > MAX_REQUIREMENTS
         end
 
         def invalid_user_fields(requirements)

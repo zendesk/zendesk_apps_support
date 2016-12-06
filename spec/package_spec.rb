@@ -82,27 +82,27 @@ describe ZendeskAppsSupport::Package do
 
   describe 'deep_merge_hash' do
     it 'should merge a simple hash' do
-      hash_1   = { 'id' => 1 }
-      hash_2   = { 'id' => 2 }
+      hash1   = { 'id' => 1 }
+      hash2   = { 'id' => 2 }
       expected = { 'id' => 2 }
-      expect(@package.send(:deep_merge_hash, hash_1, hash_2)).to eq(expected)
+      expect(@package.send(:deep_merge_hash, hash1, hash2)).to eq(expected)
     end
 
     it 'should merge 2 hashes recursively' do
-      hash_1   = { 'id' => 1, 'nick' => { label: 'test', gender: 'yes' } }
-      hash_2   = { 'id' => 2 }
+      hash1   = { 'id' => 1, 'nick' => { label: 'test', gender: 'yes' } }
+      hash2   = { 'id' => 2 }
       expected = { 'id' => 2, 'nick' => { label: 'test', gender: 'yes' } }
-      expect(@package.send(:deep_merge_hash, hash_1, hash_2)).to eq(expected)
+      expect(@package.send(:deep_merge_hash, hash1, hash2)).to eq(expected)
 
-      hash_1   = { 'id' => 1, 'nick' => { label: 'test', gender: 'yes' } }
-      hash_2   = { 'id' => 2, 'nick' => 'test' }
+      hash1   = { 'id' => 1, 'nick' => { label: 'test', gender: 'yes' } }
+      hash2   = { 'id' => 2, 'nick' => 'test' }
       expected = { 'id' => 2, 'nick' => 'test' }
-      expect(@package.send(:deep_merge_hash, hash_1, hash_2)).to eq(expected)
+      expect(@package.send(:deep_merge_hash, hash1, hash2)).to eq(expected)
 
-      hash_1   = { 'id' => 1, 'nick' => { label: { text: 'text', value: 'value' } } }
-      hash_2   = { 'id' => 2, 'nick' => { label: { text: 'different', option: 3 } } }
+      hash1   = { 'id' => 1, 'nick' => { label: { text: 'text', value: 'value' } } }
+      hash2   = { 'id' => 2, 'nick' => { label: { text: 'different', option: 3 } } }
       expected = { 'id' => 2, 'nick' => { label: { text: 'different', value: 'value', option: 3 } } }
-      expect(@package.send(:deep_merge_hash, hash_1, hash_2)).to eq(expected)
+      expect(@package.send(:deep_merge_hash, hash1, hash2)).to eq(expected)
     end
   end
 
@@ -168,7 +168,7 @@ describe ZendeskAppsSupport::Package do
       end
 
       context 'with zh-cn.json' do
-        let (:source) do
+        let(:source) do
           build_app_source_with_files('translations/zh-cn.json' => File.read('spec/translations/zh-cn.json'))
         end
 
@@ -187,7 +187,7 @@ describe ZendeskAppsSupport::Package do
       end
 
       context 'with zh-cn_keyval.json' do
-        let (:source) do
+        let(:source) do
           build_app_source_with_files('translations/zh-cn.json' => File.read('spec/translations/zh-cn_keyval.json'))
         end
 
@@ -324,10 +324,10 @@ describe ZendeskAppsSupport::Package do
   end
 
   describe '#commonjs_modules' do
-    let (:modules) { package.send(:commonjs_modules) }
+    let(:modules) { package.send(:commonjs_modules) }
 
     context 'when there are js modules' do
-      let (:source) do
+      let(:source) do
         build_app_source_with_files('lib/a.js' => File.read('spec/bookmarks_app/lib/a.js'),
                                     'lib/foo/b.js' => File.read('spec/bookmarks_app/lib/foo/b.js'))
       end

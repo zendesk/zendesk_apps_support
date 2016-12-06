@@ -15,7 +15,7 @@ module ZendeskAppsSupport
       class << self
         # Turn a JSON string into a ValidationError.
         def from_json(json)
-          hash = JSON.load(json)
+          hash = JSON.parse(json)
           raise DeserializationError, json unless hash.is_a?(Hash)
           from_hash(hash)
         rescue JSON::ParserError, NameError
@@ -37,7 +37,7 @@ module ZendeskAppsSupport
         private
 
         def constantize(klass)
-          klass.to_s.split('::').inject(Object) { |klass, part| klass.const_get(part) }
+          klass.to_s.split('::').inject(Object) { |superclass, part| superclass.const_get(part) }
         end
       end
 
