@@ -75,7 +75,9 @@ module ZendeskAppsSupport
 
         def ban_no_template(manifest)
           no_template_migration_link = 'https://developer.zendesk.com/apps/docs/apps-v2/manifest#location'
-          ValidationError.new(:no_template_deprecated_in_v2, link: no_template_migration_link) if manifest.no_template?
+          if manifest.no_template? || !manifest.no_template_locations.empty?
+            ValidationError.new(:no_template_deprecated_in_v2, link: no_template_migration_link)
+          end
         end
 
         def ban_parameters(manifest)

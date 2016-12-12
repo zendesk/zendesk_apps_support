@@ -18,7 +18,7 @@ parts:
   - translation:
       key: "txt.apps.admin.error.app_build.no_template_deprecated_in_v2"
       title: "App builder job: prevent using noTemplate in v2 apps and give advice on how to migrate"
-      value: "noTemplate is deprecated and cannot be used with frameworkVersion 2 or above. Set the autoLoad property for each specific location to false instead. Learn more: %{link}."
+      value: "noTemplate is deprecated and cannot be used with frameworkVersion 2 or above. Set the autoLoad or autoHide property for each specific location instead. Learn more: %{link}."
   - translation:
       key: "txt.apps.admin.error.app_build.no_parameters_required"
       title: "App builder job: prevent adding parameters while marketing only"
