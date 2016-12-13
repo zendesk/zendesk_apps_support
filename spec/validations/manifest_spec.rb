@@ -87,6 +87,11 @@ describe ZendeskAppsSupport::Validations::Manifest do
     expect(@package).to have_error :no_template_deprecated_in_v2
   end
 
+  it 'should have an error when app is iframe only but specifies noTemplate locations' do
+    @manifest_hash = { noTemplate: ['ticket_sidebar'], frameworkVersion: '2.0.0' }
+    expect(@package).to have_error :no_template_deprecated_in_v2
+  end
+
   it 'should have an error when frameworkVersion is missing without requirements' do
     expect(@package).to have_error 'Missing required field in manifest: frameworkVersion'
   end
