@@ -30,6 +30,8 @@ module ZendeskAppsSupport
           errors << boolean_error(manifest)
           errors << default_locale_error(manifest, package)
 
+          errors << ban_no_template(manifest) if manifest.iframe_only?
+
           if manifest.requirements_only? || manifest.marketing_only?
             errors << ban_location(manifest)
             errors << ban_framework_version(manifest)
@@ -68,6 +70,13 @@ module ZendeskAppsSupport
         def check_errors(error_types, collector, *checked_objects)
           error_types.each do |error_type|
             collector << send(error_type, *checked_objects)
+          end
+        end
+
+        def ban_no_template(manifest)
+          no_template_migration_link = 'https://developer.zendesk.com/apps/docs/apps-v2/manifest#location'
+          if manifest.no_template? || !manifest.no_template_locations.empty?
+            ValidationError.new(:no_template_deprecated_in_v2, link: no_template_migration_link)
           end
         end
 
