@@ -49,7 +49,7 @@ var app = ZendeskApps.defineApp(source)
       email: "john@example.com"
     },
     translations: {"app":{"name":"Heilige machine"}},
-    templates: {"layout":"<style>\n.app-1 header .logo {\n  background-image: url(\"http://localhost:4567/2/logo-small.png\"); }\n.app-1 h1 {\n  color: red; }\n  .app-1 h1 span {\n    color: green; }\n</style>\n<header>\n  <span class=\"logo\"></span>\n  <h3>{{setting \"name\"}}</h3>\n</header>\n<section data-main></section>\n<footer>\n  <a href=\"mailto:{{author.email}}\">\n    {{author.name}}\n  </a>\n</footer>\n</div>"},
+    templates: {"layout":"<style>\n.app-1 header .logo {\n  background-image: url(\"http://localhost:4567/2/logo-small.png\"); }\n\n.app-1 h1 {\n  color: red; }\n  .app-1 h1 span {\n    color: green; }\n</style>\n<header>\n  <span class=\"logo\"></span>\n  <h3>{{setting \"name\"}}</h3>\n</header>\n<section data-main></section>\n<footer>\n  <a href=\"mailto:{{author.email}}\">\n    {{author.name}}\n  </a>\n</footer>\n</div>"},
     frameworkVersion: "0.5"
   });
 

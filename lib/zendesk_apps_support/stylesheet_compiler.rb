@@ -1,5 +1,5 @@
 # frozen_string_literal: true
-require 'sass'
+require 'sassc'
 require 'zendesk_apps_support/sass_functions'
 
 module ZendeskAppsSupport
@@ -11,7 +11,7 @@ module ZendeskAppsSupport
     end
 
     def compile
-      Sass::Engine.new(wrapped_source, syntax: :scss, app_asset_url_builder: self).render
+      SassC::Engine.new(wrapped_source.dup, syntax: :scss, app_asset_url_builder: self).render
     end
 
     def app_asset_url(name)

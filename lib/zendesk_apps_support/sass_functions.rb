@@ -1,12 +1,12 @@
 # frozen_string_literal: true
-require 'sass'
+require 'sassc'
 
-module Sass::Script::Functions
+module SassC::Script::Functions
   module AppAssetUrl
     def app_asset_url(name)
-      assert_type name, :String
+      raise ArgumentError, "Expected #{name} to be a string" unless name.is_a? Sass::Script::Value::String
       result = %{url("#{app_asset_url_helper(name)}")}
-      Sass::Script::String.new(result)
+      SassC::Script::String.new(result)
     end
 
     private
