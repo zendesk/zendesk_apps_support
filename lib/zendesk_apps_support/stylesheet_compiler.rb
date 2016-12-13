@@ -11,7 +11,7 @@ module ZendeskAppsSupport
     end
 
     def compile
-      SassC::Engine.new(wrapped_source.dup, syntax: :scss, app_asset_url_builder: self).render
+      SassC::Engine.new(wrapped_source.dup, syntax: :scss, style: :compressed, app_asset_url_builder: self).render
     end
 
     def app_asset_url(name)
