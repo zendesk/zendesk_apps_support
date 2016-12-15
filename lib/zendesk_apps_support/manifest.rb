@@ -47,9 +47,13 @@ module ZendeskAppsSupport
 
     def products
       @products ||=
-        location_options.map { |lo| lo.location.product_code }
-                        .uniq
-                        .map { |code| Product.find_by(code: code) }
+        if requirements_only?
+          [ Product::SUPPORT ]
+        else
+          location_options.map { |lo| lo.location.product_code }
+                          .uniq
+                          .map { |code| Product.find_by(code: code) }
+        end
     end
 
     def location_options
