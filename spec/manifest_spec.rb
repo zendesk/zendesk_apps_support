@@ -210,6 +210,19 @@ describe ZendeskAppsSupport::Manifest do
     end
   end
 
+  describe '#products' do
+    context 'for a requirements only app' do
+      before do
+        manifest_hash.delete(:locations)
+        manifest_hash[:requirementsOnly] = true
+      end
+
+      it 'returns Support' do
+        expect(manifest.products).to eq([ ZendeskAppsSupport::Product::SUPPORT ])
+      end
+    end
+  end
+
   describe '#locations' do
     it 'supports strings' do
       manifest_hash[:location] = 'ticket_sidebar'
