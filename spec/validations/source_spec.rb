@@ -107,6 +107,19 @@ describe ZendeskAppsSupport::Validations::Source do
     expect(errors).to be_nil
   end
 
+  it 'should not have a jslint error when using globals' do
+    source = double(
+      'AppFile',
+      relative_path: 'app.js',
+      read: 'var a = [window, document, self, clearInterval, clearTimeout, '\
+            'setInterval, setTimeout, top, frames, parent];'
+    )
+    allow(package).to receive(:js_files) { [source] }
+    errors = ZendeskAppsSupport::Validations::Source.call(package)
+
+    expect(errors).to be_nil
+  end
+
   it 'should have a jslint error when missing semicolon in lib js file' do
     package = ZendeskAppsSupport::Package.new('spec/invalid_app')
     errors  = ZendeskAppsSupport::Validations::Source.call(package)
