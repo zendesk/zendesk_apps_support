@@ -65,6 +65,13 @@ describe ZendeskAppsSupport::Package do
       expect(js).to eq(expected)
     end
 
+    it 'should generate css with the new flag (I know right, look at that function name)' do
+      expect(@package.manifest).to receive(:enabled_experiments).and_return(['new_css_compiler'])
+      js = @package.compile_js(app_name: 'ABC', app_id: 0, assets_dir: 'http://localhost:4567/0/')
+      expected = File.read('spec/fixtures/legacy_app_en_experimental_css.js')
+      expect(js).to eq(expected)
+    end
+
     it 'should generate js for iframe app installations' do
       @package = ZendeskAppsSupport::Package.new('spec/fixtures/iframe_only_app')
       js = @package.compile_js(app_name: 'ABC', app_id: 0, assets_dir: 'http://localhost:4567/0/')

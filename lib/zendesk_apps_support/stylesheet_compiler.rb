@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+require 'sass'
 require 'sassc'
 require 'zendesk_apps_support/sass_functions'
 
@@ -10,8 +11,17 @@ module ZendeskAppsSupport
       @url_prefix = url_prefix
     end
 
-    def compile
-      SassC::Engine.new(wrapped_source.dup, syntax: :scss, style: :compressed, app_asset_url_builder: self).render
+    def compile(sassc: false)
+      options = {
+        syntax: :scss, app_asset_url_builder: self
+      }
+      if sassc
+        compiler_class = SassC
+        options[:style] = :compressed
+      else
+        compiler_class = Sass
+      end
+      compiler_class::Engine.new(wrapped_source.dup, options).render
     end
 
     def app_asset_url(name)

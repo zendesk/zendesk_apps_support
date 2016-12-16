@@ -37,7 +37,7 @@ module.exports = b;
 ;
 }
 var app = ZendeskApps.defineApp(source)
-  .reopenClass({"experiments":{},"location":{"support":{"ticket_sidebar":{"url":"_legacy"}}},"noTemplate":["ticket_sidebar"],"singleInstall":false,"signedUrls":false})
+  .reopenClass({"experiments":{},"location":{"support":{"ticket_sidebar":{"url":"_legacy"}}},"noTemplate":[],"singleInstall":false,"signedUrls":false})
   .reopen({
     appName: "ABC",
     appVersion: "1.0.0",
@@ -49,7 +49,7 @@ var app = ZendeskApps.defineApp(source)
       email: "john@example.com"
     },
     translations: {"app":{"name":"Buddha Machine"}},
-    templates: {"layout":"<style>\n.app-0 header .logo {\n  background-image: url(\"http://localhost:4567/0/logo-small.png\"); }\n.app-0 h1 {\n  color: red; }\n  .app-0 h1 span {\n    color: green; }\n</style>\n<header>\n  <span class=\"logo\"></span>\n  <h3>{{setting \"name\"}}</h3>\n</header>\n<section data-main></section>\n<footer>\n  <a href=\"mailto:{{author.email}}\">\n    {{author.name}}\n  </a>\n</footer>\n</div>"},
+    templates: {"layout":"<style>\n.app-0 header .logo{background-image:url(\"http://localhost:4567/0/logo-small.png\")}.app-0 h1{color:red}.app-0 h1 span{color:green}\n</style>\n<header>\n  <span class=\"logo\"></span>\n  <h3>{{setting \"name\"}}</h3>\n</header>\n<section data-main></section>\n<footer>\n  <a href=\"mailto:{{author.email}}\">\n    {{author.name}}\n  </a>\n</footer>\n</div>"},
     frameworkVersion: "0.5"
   });
 

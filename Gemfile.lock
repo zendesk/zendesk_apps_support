@@ -7,6 +7,7 @@ PATH
       image_size
       jshintrb (~> 0.3.0)
       json
+      sass
       sassc
 
 GEM

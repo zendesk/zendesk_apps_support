@@ -99,6 +99,7 @@ module ZendeskAppsSupport
       files.select { |f| f =~ %r{^translations/} }
     end
 
+    # this is not really compile_js, it compiles the whole app including scss for v1 apps
     def compile_js(options)
       begin
         app_id = options.fetch(:app_id)
@@ -158,7 +159,7 @@ module ZendeskAppsSupport
 
     def compiled_templates(app_id, asset_url_prefix)
       compiler = ZendeskAppsSupport::StylesheetCompiler.new(DEFAULT_SCSS + app_css, app_id, asset_url_prefix)
-      compiled_css = compiler.compile
+      compiled_css = compiler.compile(sassc: manifest.enabled_experiments.include?('new_css_compiler'))
 
       layout = templates['layout'] || DEFAULT_LAYOUT.result
 
