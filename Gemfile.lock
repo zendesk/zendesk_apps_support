@@ -8,7 +8,7 @@ PATH
       jshintrb (~> 0.3.0)
       json
       sass
-      sassc
+      sassc (~> 1.11.0)
 
 GEM
   remote: https://rubygems.org/
@@ -55,8 +55,8 @@ GEM
       ruby-progressbar (~> 1.7)
       unicode-display_width (~> 1.0, >= 1.0.1)
     ruby-progressbar (1.8.1)
-    sass (3.4.22)
-    sassc (1.10.1)
+    sass (3.4.23)
+    sassc (1.11.0)
       bundler
       ffi (~> 1.9.6)
       sass (>= 3.3.0)
