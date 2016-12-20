@@ -54,34 +54,34 @@ describe ZendeskAppsSupport::Package do
     end
   end
 
-  describe 'compile_js' do
+  describe 'compile' do
     it 'should generate js ready for installation' do
-      js = @package.compile_js(app_name: 'ABC', app_id: 0, assets_dir: 'http://localhost:4567/0/')
+      js = @package.compile(app_name: 'ABC', app_id: 0, assets_dir: 'http://localhost:4567/0/')
       expected = File.read('spec/fixtures/legacy_app_en.js')
       expect(js).to eq(expected)
 
-      js = @package.compile_js(app_name: 'EFG', app_id: 1, assets_dir: 'http://localhost:4567/2/', locale: 'nl')
+      js = @package.compile(app_name: 'EFG', app_id: 1, assets_dir: 'http://localhost:4567/2/', locale: 'nl')
       expected = File.read('spec/fixtures/legacy_app_nl.js')
       expect(js).to eq(expected)
     end
 
-    it 'should generate css with the new flag (I know right, look at that function name)' do
-      expect(@package.manifest).to receive(:enabled_experiments).and_return(['new_css_compiler'])
-      js = @package.compile_js(app_name: 'ABC', app_id: 0, assets_dir: 'http://localhost:4567/0/')
+    it 'should generate css with the new flag' do
+      expect(@package.manifest).to receive(:enabled_experiments).and_return(['newCssCompiler'])
+      js = @package.compile(app_name: 'ABC', app_id: 0, assets_dir: 'http://localhost:4567/0/')
       expected = File.read('spec/fixtures/legacy_app_en_experimental_css.js')
       expect(js).to eq(expected)
     end
 
     it 'should generate js for iframe app installations' do
       @package = ZendeskAppsSupport::Package.new('spec/fixtures/iframe_only_app')
-      js = @package.compile_js(app_name: 'ABC', app_id: 0, assets_dir: 'http://localhost:4567/0/')
+      js = @package.compile(app_name: 'ABC', app_id: 0, assets_dir: 'http://localhost:4567/0/')
       expected = File.read('spec/fixtures/iframe_app.js')
       expect(js).to eq(expected)
     end
 
     it 'should generate js with manifest noTemplate set to array' do
       allow(@package.manifest).to receive(:no_template) { ['ticket_sidebar'] }
-      js = @package.compile_js(app_name: 'ABC', app_id: 0, assets_dir: 'http://localhost:4567/0/')
+      js = @package.compile(app_name: 'ABC', app_id: 0, assets_dir: 'http://localhost:4567/0/')
       expected = File.read('spec/fixtures/legacy_app_no_template.js')
       expect(js).to eq(expected)
     end
