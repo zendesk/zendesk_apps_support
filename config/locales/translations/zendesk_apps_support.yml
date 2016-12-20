@@ -251,10 +251,6 @@ parts:
       title: "The locations can't be URLs, but they were."
       value: "App locations must not be URLs for this framework version."
   - translation:
-      key: "txt.apps.admin.error.app_build.locations_not_in_product"
-      title: "The locations listed are not available in the product."
-      value: "App locations must be valid for the selected product."
-  - translation:
       key: "txt.apps.admin.error.app_build.invalid_locations_for_version"
       title: "The locations listed are not available in this framework version."
       value: "App locations are not valid for this framework version."

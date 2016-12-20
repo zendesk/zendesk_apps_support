@@ -97,8 +97,6 @@ en:
               version.
             locations_cant_be_urls: App locations must not be URLs for this framework
               version.
-            locations_not_in_product: App locations must be valid for the selected
-              product.
             invalid_locations_for_version: App locations are not valid for this framework
               version.
         warning:
