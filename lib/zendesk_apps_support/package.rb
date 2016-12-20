@@ -162,7 +162,7 @@ module ZendeskAppsSupport
 
     def compiled_templates(app_id, asset_url_prefix)
       compiler = ZendeskAppsSupport::StylesheetCompiler.new(DEFAULT_SCSS + app_css, app_id, asset_url_prefix)
-      compiled_css = compiler.compile(sassc: manifest.enabled_experiments.include?('new_css_compiler'))
+      compiled_css = compiler.compile(sassc: manifest.enabled_experiments.include?('newCssCompiler'))
 
       layout = templates['layout'] || DEFAULT_LAYOUT.result
 
