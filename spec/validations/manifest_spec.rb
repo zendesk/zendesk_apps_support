@@ -342,6 +342,23 @@ describe ZendeskAppsSupport::Validations::Manifest do
     end
   end
 
+  context 'an app with locations that are only valid in another product' do
+    before do
+      @manifest_hash = {
+        'location' => {
+          'zopim' => {
+            'ticket_sidebar' => 'assets/iframe.html',
+          }
+        }
+      }
+      allow(@package).to receive(:has_file?).with('assets/iframe.html').and_return(true)
+    end
+
+    it 'should have an error' do
+      expect(@package).to have_error(:invalid_location)
+    end
+  end
+
   it 'should have an error when there are duplicate locations' do
     @manifest_hash = { 'location' => %w(ticket_sidebar ticket_sidebar) }
 
