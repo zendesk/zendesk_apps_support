@@ -99,7 +99,8 @@ module ZendeskAppsSupport
       files.select { |f| f =~ %r{^translations/} }
     end
 
-    def compile_js(options)
+    # this is not really compile_js, it compiles the whole app including scss for v1 apps
+    def compile(options)
       begin
         app_id = options.fetch(:app_id)
         asset_url_prefix = options.fetch(:assets_dir)
@@ -132,6 +133,9 @@ module ZendeskAppsSupport
       )
     end
 
+    alias compile_js compile
+    deprecate :compile_js, :compile, 2017, 1
+
     def manifest_json
       @manifest_json ||= read_json(MANIFEST_FILENAME)
     end
@@ -158,7 +162,7 @@ module ZendeskAppsSupport
 
     def compiled_templates(app_id, asset_url_prefix)
       compiler = ZendeskAppsSupport::StylesheetCompiler.new(DEFAULT_SCSS + app_css, app_id, asset_url_prefix)
-      compiled_css = compiler.compile
+      compiled_css = compiler.compile(sassc: manifest.enabled_experiments.include?('newCssCompiler'))
 
       layout = templates['layout'] || DEFAULT_LAYOUT.result
 
