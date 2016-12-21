@@ -185,10 +185,7 @@ module ZendeskAppsSupport
 
             invalid_locations = []
             package.manifest.location_options.each do |location_options|
-              if !location_options.location.nil? &&
-                location_options.location.name == 'ticket_editor' ||
-                location_options.location.name == 'chat_sidebar'
-
+              if !location_options.location.nil? && location_options.location.v2_only
                 invalid_locations << location_options.location.name
               end
             end
