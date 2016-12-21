@@ -359,6 +359,19 @@ describe ZendeskAppsSupport::Validations::Manifest do
     end
   end
 
+  context 'a v1 app targetting v2 only locations' do
+    before do
+      @manifest_hash = {
+        'location' => 'ticket_editor',
+        'frameworkVersion' => '1.0'
+      }
+    end
+
+    it 'should have an error' do
+      expect(@package).to have_error(:invalid_v1_location)
+    end
+  end
+
   it 'should have an error when there are duplicate locations' do
     @manifest_hash = { 'location' => %w(ticket_sidebar ticket_sidebar) }
 

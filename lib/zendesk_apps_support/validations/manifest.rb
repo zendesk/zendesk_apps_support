@@ -38,6 +38,7 @@ module ZendeskAppsSupport
           else
             errors << missing_location_error(package)
             errors << invalid_location_error(package)
+            errors << invalid_v1_location(package)
             errors << missing_framework_version(manifest)
             errors << location_framework_mismatch(manifest)
             errors << invalid_version_error(manifest, package)
@@ -176,6 +177,26 @@ module ZendeskAppsSupport
           end
 
           errors
+        end
+
+        def invalid_v1_location(package)
+          if package.manifest.framework_version &&
+            Gem::Version.new(package.manifest.framework_version) < Gem::Version.new('2')
+
+            invalid_locations = []
+            package.manifest.location_options.each do |location_options|
+              if !location_options.location.nil? &&
+                location_options.location.name == 'ticket_editor' ||
+                location_options.location.name == 'chat_sidebar'
+
+                invalid_locations << location_options.location.name
+              end
+            end
+
+            if !invalid_locations.empty?
+              return ValidationError.new(:invalid_v1_location, invalid_locations: invalid_locations.join(', '))
+            end
+          end
         end
 
         def invalid_location_uri_error(package, path)
