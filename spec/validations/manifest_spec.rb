@@ -158,20 +158,30 @@ describe ZendeskAppsSupport::Validations::Manifest do
     end
   end
 
-  context 'location is invalid' do
+  context 'a v1 app with an invalid location' do
+    before do
+      @manifest_hash = { 'location' => ['ticket_sidebar', 'an_invalid_location' ] }
+    end
+
+    it 'should have an error' do
+      expect(@package).to have_error(:invalid_location)
+    end
+  end
+
+  context 'a v2 app with an invalid location' do
     before do
       @manifest_hash = {
         'location' => {
           'zendesk' => {
             'ticket_sidebar' => 'sidebar.html',
-            'a_invalid_location' => 'https://i.am.so.conf/used/setup.exe'
+            'an_invalid_location' => 'https://i.am.so.conf/used/setup.exe'
           }
         }
       }
     end
 
     it 'should have an error' do
-      expect(@package).to have_error(/invalid location in/)
+      expect(@package).to have_error(:invalid_location)
     end
   end
 
