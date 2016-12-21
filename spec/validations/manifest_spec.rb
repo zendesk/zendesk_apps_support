@@ -357,7 +357,7 @@ describe ZendeskAppsSupport::Validations::Manifest do
       @manifest_hash = {
         'location' => {
           'zopim' => {
-            'ticket_sidebar' => 'assets/iframe.html',
+            'ticket_sidebar' => 'assets/iframe.html'
           }
         }
       }
