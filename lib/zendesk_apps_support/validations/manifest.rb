@@ -180,18 +180,19 @@ module ZendeskAppsSupport
         end
 
         def invalid_v1_location(package)
-          return unless package.manifest.framework_version && Gem::Version.new(package.manifest.framework_version) < Gem::Version.new('2')
+          return unless package.manifest.framework_version &&
+                        Gem::Version.new(package.manifest.framework_version) < Gem::Version.new('2')
 
-          invalid locations = package.manifest.location_options
-            .map(&:location)
-            .compact
-            .select(&:v2_only)
-            .map(&:name)
+          invalid_locations = package.manifest.location_options
+                                     .map(&:location)
+                                     .compact
+                                     .select(&:v2_only)
+                                     .map(&:name)
 
-          if !invalid_locations.empty?
+          unless invalid_locations.empty?
             return ValidationError.new(:invalid_v1_location,
-              invalid_locations: invalid_locations.join(', '),
-              count: invalid_locations.length)
+                                       invalid_locations: invalid_locations.join(', '),
+                                       count: invalid_locations.length)
           end
         end
 
