@@ -160,7 +160,7 @@ describe ZendeskAppsSupport::Validations::Manifest do
 
   context 'a v1 app with an invalid location' do
     before do
-      @manifest_hash = { 'location' => ['ticket_sidebar', 'an_invalid_location' ] }
+      @manifest_hash = { 'location' => %w(ticket_sidebar an_invalid_location) }
     end
 
     it 'should have an error' do
