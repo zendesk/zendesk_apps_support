@@ -182,14 +182,11 @@ module ZendeskAppsSupport
         def invalid_v1_location(package)
           return unless package.manifest.framework_version && Gem::Version.new(package.manifest.framework_version) < Gem::Version.new('2')
 
-          invalid_locations = []
-          package.manifest.location_options.each do |location_options|
-            location = location_options.location
-            next if location.nil?
-            if location.v2_only
-              invalid_locations << location.name
-            end
-          end
+          invalid locations = package.manifest.location_options
+            .map(&:location)
+            .compact
+            .select(&:v2_only)
+            .map(&:name)
 
           if !invalid_locations.empty?
             return ValidationError.new(:invalid_v1_location,
