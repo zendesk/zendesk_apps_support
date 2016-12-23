@@ -21,6 +21,12 @@ SpaceInsideBrackets:
 Style/Alias:
   Enabled: false
 
+Style/IndentArray:
+  Enabled: false
+
+Style/IndentHash:
+  Enabled: false
+
 HashSyntax:
   EnforcedStyle: ruby19
 
