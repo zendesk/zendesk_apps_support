@@ -16,7 +16,7 @@ module ZendeskAppsSupport
           compiler = ZendeskAppsSupport::StylesheetCompiler.new(css, nil, nil)
           begin
             compiler.compile
-          rescue Sass::SyntaxError => e
+          rescue SassC::SyntaxError, Sass::SyntaxError => e
             return ValidationError.new(:stylesheet_error, sass_error: e.message)
           end
           nil

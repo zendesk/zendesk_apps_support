@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = 'zendesk_apps_support'
-  s.version     = '3.3.2'
+  s.version     = '3.3.3'
   s.license     = 'Apache License Version 2.0'
   s.authors     = ['James A. Rosen', 'Likun Liu', 'Sean Caffery', 'Daniel Ribeiro']
   s.email       = ['dev@zendesk.com']
@@ -11,7 +11,8 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = '>= 1.3.6'
 
   s.add_runtime_dependency 'i18n'
-  s.add_runtime_dependency 'sass'
+  s.add_runtime_dependency 'sassc', '~> 1.11.0'
+  s.add_runtime_dependency 'sass' # remove explicit dependency when all compilation uses SassC
   s.add_runtime_dependency 'json'
   s.add_runtime_dependency 'image_size'
   s.add_runtime_dependency 'erubis'

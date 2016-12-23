@@ -26,11 +26,11 @@ EOC
     end
 
     it 'wraps rules in an app-specific selector' do
-      expect(subject).to match(/\.app-#{app_id}\s+a\s*{\s*color:\s*##{color};/m)
+      expect(subject).to match(/\.app-#{app_id}\s+a\s*{\s*color:\s*##{color};?/m)
     end
 
     it 'evaluates app-asset-url calls' do
-      expect(subject).to match(/\.submit\s*{\s*background:\s*url\("#{asset_url}#{asset_name}"\);/m)
+      expect(subject).to match(/\.submit\s*{\s*background:\s*url\("#{asset_url}#{asset_name}"\);?/m)
     end
   end
 end
