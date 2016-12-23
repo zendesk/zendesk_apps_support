@@ -47,7 +47,7 @@ module ZendeskAppsSupport
 
     def products
       @products ||=
-        if requirements_only?
+        if requirements_only? || marketing_only?
           [ Product::SUPPORT ]
         else
           location_options.map { |lo| lo.location.product_code }

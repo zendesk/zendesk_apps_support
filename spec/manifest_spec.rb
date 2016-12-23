@@ -7,6 +7,7 @@ describe ZendeskAppsSupport::Manifest do
   let(:manifest_hash) do
     {
       name: Faker::App.name,
+      marketingOnly: Faker::Boolean.boolean,
       requirementsOnly: Faker::Boolean.boolean,
       version: Faker::App.version,
       private: true,
@@ -66,6 +67,8 @@ describe ZendeskAppsSupport::Manifest do
     it 'should return values from the passed in JSON string' do
       expect(manifest.requirements_only).to eq manifest_hash[:requirementsOnly]
       expect(manifest.requirements_only?).to eq manifest_hash[:requirementsOnly]
+      expect(manifest.marketing_only).to eq manifest_hash[:marketingOnly]
+      expect(manifest.marketing_only?).to eq manifest_hash[:marketingOnly]
       expect(manifest.version).to eq manifest_hash[:version]
       expect(manifest.author).to eq stringify_keys[manifest_hash[:author]]
       expect(manifest.framework_version).to eq manifest_hash[:frameworkVersion]
@@ -211,13 +214,36 @@ describe ZendeskAppsSupport::Manifest do
   end
 
   describe '#products' do
+    before do
+      manifest_hash.delete(:marketingOnly)
+      manifest_hash.delete(:requirementsOnly)
+    end
+
+    it 'derives the products from the locations' do
+      expect(manifest.products).to eq([
+        ZendeskAppsSupport::Product::SUPPORT,
+        ZendeskAppsSupport::Product::CHAT
+      ])
+    end
+
     context 'for a requirements only app' do
       before do
-        manifest_hash.delete(:locations)
+        manifest_hash.delete(:location)
         manifest_hash[:requirementsOnly] = true
       end
 
-      it 'returns Support' do
+      it 'is overriden to Support' do
+        expect(manifest.products).to eq([ ZendeskAppsSupport::Product::SUPPORT ])
+      end
+    end
+
+    context 'for a marketing only app' do
+      before do
+        manifest_hash.delete(:location)
+        manifest_hash[:marketingOnly] = true
+      end
+
+      it 'is overriden to Support' do
         expect(manifest.products).to eq([ ZendeskAppsSupport::Product::SUPPORT ])
       end
     end
