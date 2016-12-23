@@ -48,7 +48,9 @@ module ZendeskAppsSupport
     def products
       @products ||=
         if requirements_only?
-          [ Product::SUPPORT ]
+          product_array_or_fallback(requirements_only)
+        elsif marketing_only?
+          product_array_or_fallback(marketing_only)
         else
           location_options.map { |lo| lo.location.product_code }
                           .uniq
@@ -115,7 +117,9 @@ module ZendeskAppsSupport
         instance_variable_set(:"@#{ruby}", m[json])
       end
       @requirements_only ||= false
+      @requirements_only = false if @requirements_only.is_a?(Array) && @requirements_only.empty?
       @marketing_only ||= false
+      @marketing_only = false if @marketing_only.is_a?(Array) && @marketing_only.empty?
       @single_install ||= false
       @private = m.fetch('private', true)
       @signed_urls ||= false
@@ -130,6 +134,14 @@ module ZendeskAppsSupport
     private
 
     attr_reader :locations
+
+    def product_array_or_fallback(arr)
+      if arr.is_a?(Array)
+        arr.map { |product_name| Product.find_by(name: product_name) }
+      else
+        [ Product::SUPPORT ]
+      end
+    end
 
     def set_locations_and_hosts
       @locations =
