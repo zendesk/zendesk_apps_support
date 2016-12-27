@@ -1,3 +1,4 @@
+# rubocop:disable ModuleLength
 # frozen_string_literal: true
 require 'uri'
 
@@ -6,7 +7,7 @@ module ZendeskAppsSupport
     module Manifest
       RUBY_TO_JSON = ZendeskAppsSupport::Manifest::RUBY_TO_JSON
       REQUIRED_MANIFEST_FIELDS = RUBY_TO_JSON.select { |k| %i(author default_locale).include? k }.freeze
-      OAUTH_REQUIRED_FIELDS    = %w(client_id client_secret authorize_uri access_token_uri).freeze
+      OAUTH_REQUIRED_FIELDS = %w(client_id client_secret authorize_uri access_token_uri).freeze
       PARAMETER_TYPES = ZendeskAppsSupport::Manifest::Parameter::TYPES
 
       class << self
