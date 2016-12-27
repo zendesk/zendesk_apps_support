@@ -1,3 +1,4 @@
+# rubocop:disable ModuleLength
 # frozen_string_literal: true
 require 'uri'
 
@@ -6,17 +7,29 @@ module ZendeskAppsSupport
     module Manifest
       RUBY_TO_JSON = ZendeskAppsSupport::Manifest::RUBY_TO_JSON
       REQUIRED_MANIFEST_FIELDS = RUBY_TO_JSON.select { |k| %i(author default_locale).include? k }.freeze
-      OAUTH_REQUIRED_FIELDS    = %w(client_id client_secret authorize_uri access_token_uri).freeze
+      OAUTH_REQUIRED_FIELDS = %w(client_id client_secret authorize_uri access_token_uri).freeze
       PARAMETER_TYPES = ZendeskAppsSupport::Manifest::Parameter::TYPES
 
-      class <<self
+      class << self
         def call(package)
           return [ValidationError.new(:missing_manifest)] unless package.has_file?('manifest.json')
+
+          collate_manifest_errors(package)
+
+        rescue JSON::ParserError => e
+          return [ValidationError.new(:manifest_not_json, errors: e)]
+        end
+
+        private
+
+        def collate_manifest_errors(package)
           manifest = package.manifest
 
           errors = []
           errors << missing_keys_error(manifest)
           errors << oauth_error(manifest)
+          errors << boolean_error(manifest)
+          errors << default_locale_error(manifest, package)
 
           if manifest.marketing_only?
             errors << ban_parameters(manifest)
@@ -27,10 +40,6 @@ module ZendeskAppsSupport
             errors << name_as_parameter_name_error(manifest)
             errors << no_template_format_error(manifest)
           end
-          errors << boolean_error(manifest)
-          errors << default_locale_error(manifest, package)
-
-          errors << ban_no_template(manifest) if manifest.iframe_only?
 
           if manifest.requirements_only? || manifest.marketing_only?
             errors << ban_location(manifest)
@@ -38,17 +47,16 @@ module ZendeskAppsSupport
           else
             errors << missing_location_error(package)
             errors << invalid_location_error(package)
+            errors << invalid_v1_location(package)
             errors << missing_framework_version(manifest)
             errors << location_framework_mismatch(manifest)
             errors << invalid_version_error(manifest, package)
           end
 
-          errors.flatten.compact
-        rescue JSON::ParserError => e
-          return [ValidationError.new(:manifest_not_json, errors: e)]
-        end
+          errors << ban_no_template(manifest) if manifest.iframe_only?
 
-        private
+          errors.flatten.compact
+        end
 
         def boolean_error(manifest)
           booleans = %i(requirements_only marketing_only single_install signed_urls private)
@@ -176,6 +184,23 @@ module ZendeskAppsSupport
           end
 
           errors
+        end
+
+        def invalid_v1_location(package)
+          return unless package.manifest.framework_version &&
+                        Gem::Version.new(package.manifest.framework_version) < Gem::Version.new('2')
+
+          invalid_locations = package.manifest.location_options
+                                     .map(&:location)
+                                     .compact
+                                     .select(&:v2_only)
+                                     .map(&:name)
+
+          unless invalid_locations.empty?
+            return ValidationError.new(:invalid_v1_location,
+                                       invalid_locations: invalid_locations.join(', '),
+                                       count: invalid_locations.length)
+          end
         end
 
         def invalid_location_uri_error(package, path)

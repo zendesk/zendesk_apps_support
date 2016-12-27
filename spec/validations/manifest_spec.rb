@@ -158,20 +158,30 @@ describe ZendeskAppsSupport::Validations::Manifest do
     end
   end
 
-  context 'location is invalid' do
+  context 'a v1 app with an invalid location' do
+    before do
+      @manifest_hash = { 'location' => %w(ticket_sidebar an_invalid_location) }
+    end
+
+    it 'should have an error' do
+      expect(@package).to have_error(:invalid_location)
+    end
+  end
+
+  context 'a v2 app with an invalid location' do
     before do
       @manifest_hash = {
         'location' => {
           'zendesk' => {
             'ticket_sidebar' => 'sidebar.html',
-            'a_invalid_location' => 'https://i.am.so.conf/used/setup.exe'
+            'an_invalid_location' => 'https://i.am.so.conf/used/setup.exe'
           }
         }
       }
     end
 
     it 'should have an error' do
-      expect(@package).to have_error(/invalid location in/)
+      expect(@package).to have_error(:invalid_location)
     end
   end
 
@@ -339,6 +349,36 @@ describe ZendeskAppsSupport::Validations::Manifest do
 
     it 'should have an error' do
       expect(@package).to have_error(/need to be URLs/)
+    end
+  end
+
+  context 'an app with locations that are only valid in another product' do
+    before do
+      @manifest_hash = {
+        'location' => {
+          'zopim' => {
+            'ticket_sidebar' => 'assets/iframe.html'
+          }
+        }
+      }
+      allow(@package).to receive(:has_file?).with('assets/iframe.html').and_return(true)
+    end
+
+    it 'should have an error' do
+      expect(@package).to have_error(:invalid_location)
+    end
+  end
+
+  context 'a v1 app targetting v2 only locations' do
+    before do
+      @manifest_hash = {
+        'location' => 'ticket_editor',
+        'frameworkVersion' => '1.0'
+      }
+    end
+
+    it 'should have an error' do
+      expect(@package).to have_error(:invalid_v1_location)
     end
   end
 
