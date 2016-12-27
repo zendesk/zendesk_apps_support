@@ -9,14 +9,26 @@ module ZendeskAppsSupport
       OAUTH_REQUIRED_FIELDS    = %w(client_id client_secret authorize_uri access_token_uri).freeze
       PARAMETER_TYPES = ZendeskAppsSupport::Manifest::Parameter::TYPES
 
-      class <<self
+      class << self
         def call(package)
           return [ValidationError.new(:missing_manifest)] unless package.has_file?('manifest.json')
+
+          collate_manifest_errors(package)
+
+        rescue JSON::ParserError => e
+          return [ValidationError.new(:manifest_not_json, errors: e)]
+        end
+
+        private
+
+        def collate_manifest_errors(package)
           manifest = package.manifest
 
           errors = []
           errors << missing_keys_error(manifest)
           errors << oauth_error(manifest)
+          errors << boolean_error(manifest)
+          errors << default_locale_error(manifest, package)
 
           if manifest.marketing_only?
             errors << ban_parameters(manifest)
@@ -27,10 +39,6 @@ module ZendeskAppsSupport
             errors << name_as_parameter_name_error(manifest)
             errors << no_template_format_error(manifest)
           end
-          errors << boolean_error(manifest)
-          errors << default_locale_error(manifest, package)
-
-          errors << ban_no_template(manifest) if manifest.iframe_only?
 
           if manifest.requirements_only? || manifest.marketing_only?
             errors << ban_location(manifest)
@@ -44,12 +52,10 @@ module ZendeskAppsSupport
             errors << invalid_version_error(manifest, package)
           end
 
-          errors.flatten.compact
-        rescue JSON::ParserError => e
-          return [ValidationError.new(:manifest_not_json, errors: e)]
-        end
+          errors << ban_no_template(manifest) if manifest.iframe_only?
 
-        private
+          errors.flatten.compact
+        end
 
         def boolean_error(manifest)
           booleans = %i(requirements_only marketing_only single_install signed_urls private)
