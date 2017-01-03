@@ -119,10 +119,8 @@ module ZendeskAppsSupport
       RUBY_TO_JSON.each do |ruby, json|
         instance_variable_set(:"@#{ruby}", m[json])
       end
-      @requirements_only ||= false
-      @requirements_only = false if @requirements_only.is_a?(Array) && @requirements_only.empty?
-      @marketing_only ||= false
-      @marketing_only = false if @marketing_only.is_a?(Array) && @marketing_only.empty?
+      @requirements_only = normalize_array_or_string_to_array_or_bool(@requirements_only)
+      @marketing_only = normalize_array_or_string_to_array_or_bool(@marketing_only)
       @single_install ||= false
       @private = m.fetch('private', true)
       @signed_urls ||= false
@@ -164,6 +162,12 @@ module ZendeskAppsSupport
           @used_hosts = ['support']
           { 'support' => {} }
         end
+    end
+
+    def normalize_array_or_string_to_array_or_bool(val)
+      return [ val ] if val.is_a?(String)
+      return false if val.is_a?(Array) && val.empty?
+      val || false
     end
 
     def replace_legacy_locations(original_locations)

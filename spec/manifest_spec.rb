@@ -237,8 +237,13 @@ describe ZendeskAppsSupport::Manifest do
       end
 
       it 'sets the products to those specified in requirementsOnly' do
-        manifest_hash[:requirementsOnly] = [ 'chat' ]
+        manifest_hash[:requirementsOnly] = 'chat'
         expect(manifest.products).to eq([ ZendeskAppsSupport::Product::CHAT ])
+      end
+
+      it 'sets the products to those specified in requirementsOnly' do
+        manifest_hash[:requirementsOnly] = %w(support chat)
+        expect(manifest.products).to eq([ ZendeskAppsSupport::Product::SUPPORT, ZendeskAppsSupport::Product::CHAT ])
       end
     end
 
@@ -254,9 +259,13 @@ describe ZendeskAppsSupport::Manifest do
       end
 
       it 'sets the products to those specified in marketingOnly' do
-        manifest_hash[:marketingOnly] = [ 'chat' ]
-
+        manifest_hash[:marketingOnly] = 'chat'
         expect(manifest.products).to eq([ ZendeskAppsSupport::Product::CHAT ])
+      end
+
+      it 'sets the products to those specified in marketingOnly' do
+        manifest_hash[:marketingOnly] = %w(support chat)
+        expect(manifest.products).to eq([ ZendeskAppsSupport::Product::SUPPORT, ZendeskAppsSupport::Product::CHAT ])
       end
     end
   end
