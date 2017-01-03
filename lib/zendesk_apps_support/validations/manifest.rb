@@ -22,6 +22,7 @@ module ZendeskAppsSupport
 
         private
 
+        # rubocop:disable Metrics/AbcSize
         def collate_manifest_errors(package)
           manifest = package.manifest
 
@@ -58,6 +59,7 @@ module ZendeskAppsSupport
 
           errors.flatten.compact
         end
+        # rubocop:enable Metrics/AbcSize
 
         def boolean_error(manifest)
           booleans = %i(requirements_only marketing_only single_install signed_urls private)
