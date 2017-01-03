@@ -127,9 +127,17 @@ describe ZendeskAppsSupport::Validations::Manifest do
       expect(errors).to be_empty
     end
 
+    it 'should have an error if private is not false' do
+      @manifest_hash = {
+        marketingOnly: true
+      }
+      expect(@package).to have_error(/Marketing-only apps must not be private/)
+    end
+
     it 'should have an error when parameters are specified' do
       @manifest_hash = {
         marketingOnly: true,
+        private: false,
         parameters: [
           'name' => 'foo'
         ]

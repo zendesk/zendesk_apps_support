@@ -10,10 +10,11 @@ en:
               one: 'JSHint error in %{file}: %{errors}'
               other: 'JSHint errors in %{file}: %{errors}'
             no_template_deprecated_in_v2: 'noTemplate is deprecated and cannot be
-              used with frameworkVersion 2 or above. Set the autoLoad or autoHide
+              used with framework version 2 or above. Set the autoLoad or autoHide
               property for each specific location instead. Learn more: %{link}.'
             no_parameters_required: Parameters can't be defined for marketing-only
               apps
+            marketing_only_app_cant_be_private: Marketing-only apps must not be private
             no_location_required: Locations can't be defined when you specify requirements
               only
             no_framework_version_required: Framework versions can't be set when you

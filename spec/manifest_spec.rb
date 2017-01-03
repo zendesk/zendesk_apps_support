@@ -241,6 +241,7 @@ describe ZendeskAppsSupport::Manifest do
       before do
         manifest_hash.delete(:location)
         manifest_hash[:marketingOnly] = true
+        manifest_hash[:private] = false
       end
 
       it 'is overriden to Support' do

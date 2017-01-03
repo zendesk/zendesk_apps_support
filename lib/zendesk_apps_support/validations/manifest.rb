@@ -22,6 +22,7 @@ module ZendeskAppsSupport
 
         private
 
+        # rubocop:disable Metrics/AbcSize
         def collate_manifest_errors(package)
           manifest = package.manifest
 
@@ -33,6 +34,7 @@ module ZendeskAppsSupport
 
           if manifest.marketing_only?
             errors << ban_parameters(manifest)
+            errors << private_marketing_app_error(manifest)
           else
             errors << parameters_error(manifest)
             errors << invalid_hidden_parameter_error(manifest)
@@ -57,6 +59,7 @@ module ZendeskAppsSupport
 
           errors.flatten.compact
         end
+        # rubocop:enable Metrics/AbcSize
 
         def boolean_error(manifest)
           booleans = %i(requirements_only marketing_only single_install signed_urls private)
@@ -98,6 +101,10 @@ module ZendeskAppsSupport
 
         def ban_framework_version(manifest)
           ValidationError.new(:no_framework_version_required) unless manifest.framework_version.nil?
+        end
+
+        def private_marketing_app_error(manifest)
+          ValidationError.new(:marketing_only_app_cant_be_private) if manifest.private?
         end
 
         def oauth_error(manifest)
