@@ -98,6 +98,9 @@ en:
               version.
             locations_cant_be_urls: App locations must not be URLs for this framework
               version.
+            invalid_v1_location:
+              one: "%{invalid_locations} is an invalid location in framework v1."
+              other: "%{invalid_locations} are invalid locations in framework v1."
         warning:
           app_build:
             deprecated_version: You are targeting a deprecated version of the framework.

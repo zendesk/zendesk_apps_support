@@ -2,7 +2,7 @@
 module ZendeskAppsSupport
   class Location
     extend ZendeskAppsSupport::Finders
-    attr_reader :id, :name, :orderable, :product_code
+    attr_reader :id, :name, :orderable, :product_code, :v2_only
 
     def self.unique_ids
       @ids ||= Set.new
@@ -15,6 +15,7 @@ module ZendeskAppsSupport
       @name = attrs.fetch(:name)
       @orderable = attrs.fetch(:orderable)
       @product_code = attrs.fetch(:product_code)
+      @v2_only = attrs.fetch(:v2_only, product != Product::SUPPORT)
     end
 
     def product
@@ -35,11 +36,15 @@ module ZendeskAppsSupport
       Location.new(id: 6, orderable: true, name: 'organization_sidebar', product_code: Product::SUPPORT.code),
       Location.new(id: 7, orderable: false, name: 'background', product_code: Product::SUPPORT.code),
       Location.new(id: 8, orderable: true, name: 'chat_sidebar', product_code: Product::CHAT.code),
-      Location.new(id: 9, orderable: false, name: 'modal', product_code: Product::SUPPORT.code),
-      Location.new(id: 10, orderable: false, name: 'ticket_editor', product_code: Product::SUPPORT.code),
-      Location.new(id: 11, orderable: false, name: 'nav_bar', product_code: Product::STANDALONE_CHAT.code),
+      Location.new(id: 9, orderable: false, name: 'modal', product_code: Product::SUPPORT.code,
+                   v2_only: true),
+      Location.new(id: 10, orderable: false, name: 'ticket_editor', product_code: Product::SUPPORT.code,
+                   v2_only: true),
+      Location.new(id: 11, orderable: false, name: 'nav_bar', product_code: Product::STANDALONE_CHAT.code,
+                   v2_only: false),
       Location.new(id: 12, orderable: false, name: 'system_top_bar', product_code: Product::SUPPORT.code),
-      Location.new(id: 13, orderable: false, name: 'system_top_bar', product_code: Product::STANDALONE_CHAT.code)
+      Location.new(id: 13, orderable: false, name: 'system_top_bar', product_code: Product::STANDALONE_CHAT.code,
+                   v2_only: false)
     ].freeze
   end
 end

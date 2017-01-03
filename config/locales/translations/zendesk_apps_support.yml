@@ -254,3 +254,11 @@ parts:
       key: "txt.apps.admin.error.app_build.locations_cant_be_urls"
       title: "The locations can't be URLs, but they were."
       value: "App locations must not be URLs for this framework version."
+  - translation:
+      key: "txt.apps.admin.error.app_build.invalid_v1_location.one"
+      title: "The location listed is not available in framework v1."
+      value: "%{invalid_locations} is an invalid location in framework v1."
+  - translation:
+      key: "txt.apps.admin.error.app_build.invalid_v1_location.other"
+      title: "The locations listed are not available in framework v1."
+      value: "%{invalid_locations} are invalid locations in framework v1."

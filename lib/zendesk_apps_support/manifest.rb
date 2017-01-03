@@ -82,8 +82,11 @@ module ZendeskAppsSupport
     end
 
     def unknown_locations(host)
+      product = Product.find_by(name: host)
+
       if locations.key?(host)
-        locations[host].keys.uniq - Location::LOCATIONS_AVAILABLE.map(&:name)
+        product_locations = Location.where(product_code: product.code)
+        locations[host].keys.uniq - product_locations.map(&:name)
       else
         []
       end
