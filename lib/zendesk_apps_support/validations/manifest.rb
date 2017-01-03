@@ -20,6 +20,7 @@ module ZendeskAppsSupport
 
           if manifest.marketing_only?
             errors << ban_parameters(manifest)
+            errors << private_marketing_app_error(manifest)
           else
             errors << parameters_error(manifest)
             errors << invalid_hidden_parameter_error(manifest)
@@ -90,6 +91,10 @@ module ZendeskAppsSupport
 
         def ban_framework_version(manifest)
           ValidationError.new(:no_framework_version_required) unless manifest.framework_version.nil?
+        end
+
+        def private_marketing_app_error(manifest)
+          ValidationError.new(:marketing_only_app_cant_be_private) if manifest.private?
         end
 
         def oauth_error(manifest)
