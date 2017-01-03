@@ -52,9 +52,7 @@ module ZendeskAppsSupport
         elsif marketing_only?
           product_array_or_fallback(marketing_only)
         else
-          location_options.map { |lo| lo.location.product_code }
-                          .uniq
-                          .map { |code| Product.find_by(code: code) }
+          products_from_locations
         end
     end
 
@@ -142,6 +140,12 @@ module ZendeskAppsSupport
       else
         [ Product::SUPPORT ]
       end
+    end
+
+    def products_from_locations
+      location_options.map { |lo| lo.location.product_code }
+                      .uniq
+                      .map { |code| Product.find_by(code: code) }
     end
 
     def set_locations_and_hosts
