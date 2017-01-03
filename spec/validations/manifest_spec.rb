@@ -106,6 +106,16 @@ describe ZendeskAppsSupport::Validations::Manifest do
     expect(@package).not_to have_error 'Missing required field in manifest: frameworkVersion'
   end
 
+  it 'should not have an error when requirements only specifies an valid product' do
+    @manifest_hash = { requirementsOnly: 'chat' }
+    expect(@package).not_to have_error :invalid_host
+  end
+
+  it 'should have an error when requirements only specifies an invalid product' do
+    @manifest_hash = { requirementsOnly: 'foobar' }
+    expect(@package).to have_error :invalid_host
+  end
+
   it 'should have an error when the defaultLocale is invalid' do
     @manifest_hash = { 'defaultLocale' => 'pt-BR-1' }
 
@@ -143,6 +153,16 @@ describe ZendeskAppsSupport::Validations::Manifest do
         ]
       }
       expect(@package).to have_error(/Parameters can't be defined/)
+    end
+
+    it 'should not have an error when marketing only specifies an valid product' do
+      @manifest_hash = { marketingOnly: 'chat' }
+      expect(@package).not_to have_error :invalid_host
+    end
+
+    it 'should have an error when marketing only specifies an invalid product' do
+      @manifest_hash = { marketingOnly: 'foobar' }
+      expect(@package).to have_error :invalid_host
     end
   end
 

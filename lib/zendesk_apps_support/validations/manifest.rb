@@ -46,6 +46,8 @@ module ZendeskAppsSupport
           if manifest.requirements_only? || manifest.marketing_only?
             errors << ban_location(manifest)
             errors << ban_framework_version(manifest)
+            errors << invalid_product_error(manifest.requirements_only)
+            errors << invalid_product_error(manifest.marketing_only)
           else
             errors << missing_location_error(package)
             errors << invalid_location_error(package)
@@ -165,6 +167,15 @@ module ZendeskAppsSupport
 
         def missing_location_error(package)
           missing_keys_validation_error(['location']) if package.manifest.location_options.empty?
+        end
+
+        def invalid_product_error(products)
+          return unless products.is_a?(Array)
+          valid_product_names = Product::PRODUCTS_AVAILABLE.map(&:name)
+          invalid_products = products - valid_product_names
+          invalid_products.map do |product_name|
+            ValidationError.new(:invalid_host, host_name: product_name)
+          end
         end
 
         def invalid_location_error(package)
