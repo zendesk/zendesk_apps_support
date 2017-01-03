@@ -47,7 +47,7 @@ describe ZendeskAppsSupport::Manifest do
       experiments: {
         hashParams: true
       }
-    }.dup
+    }
   end
 
   let(:manifest) do
