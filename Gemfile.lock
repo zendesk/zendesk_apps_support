@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    zendesk_apps_support (3.3.3)
+    zendesk_apps_support (3.3.4)
       erubis
       i18n
       image_size
@@ -56,7 +56,7 @@ GEM
       unicode-display_width (~> 1.0, >= 1.0.1)
     ruby-progressbar (1.8.1)
     sass (3.4.23)
-    sassc (1.11.0)
+    sassc (1.11.1)
       bundler
       ffi (~> 1.9.6)
       sass (>= 3.3.0)
