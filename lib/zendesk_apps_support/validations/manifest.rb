@@ -64,7 +64,7 @@ module ZendeskAppsSupport
         # rubocop:enable Metrics/AbcSize
 
         def boolean_error(manifest)
-          booleans = %i(requirements_only marketing_only single_install signed_urls private)
+          booleans = %i(single_install signed_urls private)
           errors = []
           RUBY_TO_JSON.each do |ruby, json|
             if booleans.include? ruby

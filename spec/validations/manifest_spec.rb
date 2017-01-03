@@ -109,6 +109,7 @@ describe ZendeskAppsSupport::Validations::Manifest do
   it 'should not have an error when requirements only specifies an valid product' do
     @manifest_hash = { requirementsOnly: 'chat' }
     expect(@package).not_to have_error :invalid_host
+    expect(@package).not_to have_error :unacceptable_boolean
   end
 
   it 'should have an error when requirements only specifies an invalid product' do
@@ -158,6 +159,7 @@ describe ZendeskAppsSupport::Validations::Manifest do
     it 'should not have an error when marketing only specifies an valid product' do
       @manifest_hash = { marketingOnly: 'chat' }
       expect(@package).not_to have_error :invalid_host
+      expect(@package).not_to have_error :unacceptable_boolean
     end
 
     it 'should have an error when marketing only specifies an invalid product' do
