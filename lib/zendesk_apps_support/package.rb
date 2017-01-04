@@ -191,21 +191,18 @@ module ZendeskAppsSupport
       ''
     end
 
+    def app_js
+      if @is_cached
+        @app_js ||= read_file('app.js')
+      else
+        read_file('app.js')
+      end
+    end
+
     def iframe_only?
       manifest.iframe_only?
     end
     deprecate :iframe_only?, 'manifest.iframe_only?', 2016, 9
-
-    private
-
-    def runtime_translations(translations)
-      result = translations.dup
-      result.delete('name')
-      result.delete('description')
-      result.delete('long_description')
-      result.delete('installation_instructions')
-      result
-    end
 
     def templates
       templates_dir = path_to('templates')
@@ -241,6 +238,17 @@ module ZendeskAppsSupport
       end
     end
 
+    private
+
+    def runtime_translations(translations)
+      result = translations.dup
+      result.delete('name')
+      result.delete('description')
+      result.delete('long_description')
+      result.delete('installation_instructions')
+      result
+    end
+
     def process_translations(locale_path)
       translations = File.exist?(locale_path) ? JSON.parse(File.read(locale_path)) : {}
       translations['app'].delete('package') if translations.key?('app')
@@ -257,10 +265,6 @@ module ZendeskAppsSupport
 
     def has_banner?
       has_file?('assets/banner.png')
-    end
-
-    def app_js
-      read_file('app.js')
     end
 
     def location_icons
