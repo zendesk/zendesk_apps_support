@@ -86,7 +86,6 @@ module ZendeskAppsSupport
         end
 
         def string_error(manifest)
-          errors = []
           manifest_strings = %i(
             default_locale
             version
@@ -95,13 +94,13 @@ module ZendeskAppsSupport
             terms_conditions_url
             google_analytics_code
           )
-          errors.concat(manifest_strings.map do |field|
+          errors = manifest_strings.map do |field|
             validate_string(manifest.public_send(field), field)
-          end.compact)
+          end
 
           if manifest.author
             author_strings = %w(name email url)
-            errors.concat(author_strings.map do |field|
+            errors << (author_strings.map do |field|
               validate_string(manifest.author[field], "author #{field}")
             end)
           end
