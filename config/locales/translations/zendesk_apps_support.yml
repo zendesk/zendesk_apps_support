@@ -57,6 +57,18 @@ parts:
       title: "App builder job: an experiment has been specifed that is not publically available or otherwise invalid. https://en.wikipedia.org/wiki/Manifest_file"
       value: "Manifest specifies unknown or unavailable experiment: %{experiment}"
   - translation:
+      key: "txt.apps.admin.error.app_build.unacceptable_hash"
+      title: "App builder job: the value for a field needs to be key-value pairs, but it was something else. https://en.wikipedia.org/wiki/Manifest_file"
+      value: "The manifest field %{field} needs to be key-value pairs with string keys, but it was %{value}"
+  - translation:
+      key: "txt.apps.admin.error.app_build.unacceptable_array"
+      title: "App builder job: the value for a field needs to be an array, but it was something else. https://en.wikipedia.org/wiki/Manifest_file"
+      value: "The manifest field %{field} needs to be an array, but it was %{value}"
+  - translation:
+      key: "txt.apps.admin.error.app_build.unacceptable_array_of_strings"
+      title: "App builder job: the value for domainWhitelist needs to be an array of strings, but it was something else. https://en.wikipedia.org/wiki/Manifest_file"
+      value: "The manifest field %{field} need to be an array containing strings"
+  - translation:
       key: "txt.apps.admin.error.app_build.missing_requirements"
       title: "App builder job: missing requirements error"
       value: "Could not find requirements.json"
@@ -234,6 +246,10 @@ parts:
       key: "txt.apps.admin.error.app_build.unacceptable_boolean"
       title: "App builder job: this value needs to be either true or false, but something else was passed in. placeholder value is taken from user input. You can translate as: The value %{field} must be a Boolean... to avoid any gender issues."
       value: "%{field} must be a boolean value, got \"%{value}\"."
+  - translation:
+      key: "txt.apps.admin.error.app_build.unacceptable_string"
+      title: "App builder job: this value needs to be a text string, but something else was passed in. placeholder value is taken from user input. You can translate as: The value %{field} must be a string... to avoid any gender issues."
+      value: "%{field} must be a string, got \"%{value}\"."
   - translation:
       key: "txt.apps.admin.error.app_build.invalid_no_template"
       title: "App builder job: `noTemplate` needs to be true, false or a valid array, but something else was passed in. noTemplate, true, and false should not be translated."

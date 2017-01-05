@@ -26,6 +26,12 @@ en:
             symlink_in_zip: Symlinks are not allowed in the zip file
             invalid_experiment: 'Manifest specifies unknown or unavailable experiment:
               %{experiment}'
+            unacceptable_hash: The manifest field %{field} needs to be key-value pairs
+              with string keys, but it was %{value}
+            unacceptable_array: The manifest field %{field} needs to be an array,
+              but it was %{value}
+            unacceptable_array_of_strings: The manifest field %{field} need to be
+              an array containing strings
             missing_requirements: Could not find requirements.json
             requirements_not_supported: App requirements are not supported for marketing-only
               apps
@@ -89,6 +95,7 @@ en:
               one: "%{invalid_types} is an invalid parameter type."
               other: "%{invalid_types} are invalid parameter types."
             unacceptable_boolean: '%{field} must be a boolean value, got "%{value}".'
+            unacceptable_string: '%{field} must be a string, got "%{value}".'
             invalid_no_template: noTemplate must be set to true, false, or an array
               of valid locations.
             duplicate_reference: 'Duplicate reference in manifest: "%{key}".'

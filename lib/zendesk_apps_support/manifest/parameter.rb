@@ -3,7 +3,8 @@ module ZendeskAppsSupport
   class Manifest
     class Parameter
       TYPES = %w(text password checkbox url number multiline hidden).freeze
-      attr_reader :name, :type, :required, :secure, :default
+      ATTRIBUTES = %i(name type required secure default).freeze
+      attr_reader(*ATTRIBUTES)
       def default?
         @has_default
       end

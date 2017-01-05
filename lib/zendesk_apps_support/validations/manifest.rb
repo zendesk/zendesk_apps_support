@@ -22,14 +22,13 @@ module ZendeskAppsSupport
 
         private
 
-        # rubocop:disable Metrics/AbcSize
         def collate_manifest_errors(package)
           manifest = package.manifest
 
           errors = []
           errors << missing_keys_error(manifest)
+          errors << type_checks(manifest)
           errors << oauth_error(manifest)
-          errors << boolean_error(manifest)
           errors << default_locale_error(manifest, package)
 
           if manifest.marketing_only?
@@ -40,7 +39,6 @@ module ZendeskAppsSupport
             errors << invalid_hidden_parameter_error(manifest)
             errors << invalid_type_error(manifest)
             errors << name_as_parameter_name_error(manifest)
-            errors << no_template_format_error(manifest)
           end
 
           if manifest.requirements_only? || manifest.marketing_only?
@@ -59,7 +57,55 @@ module ZendeskAppsSupport
 
           errors.flatten.compact
         end
-        # rubocop:enable Metrics/AbcSize
+
+        def type_checks(manifest)
+          errors = []
+          errors << boolean_error(manifest)
+          errors << string_error(manifest)
+          errors << no_template_format_error(manifest)
+          unless manifest.experiments.is_a?(Hash)
+            errors << ValidationError.new(
+              :unacceptable_hash,
+              field: 'experiments',
+              value: manifest.experiments.class.to_s
+            )
+          end
+          whitelist = manifest.domain_whitelist
+          unless whitelist.nil? || whitelist.is_a?(Array) && whitelist.all? { |dom| dom.is_a? String }
+            errors << ValidationError.new(:unacceptable_array_of_strings, field: 'domainWhitelist')
+          end
+          parameters = manifest.original_parameters
+          unless parameters.nil? || parameters.is_a?(Array)
+            errors << ValidationError.new(
+              :unacceptable_array,
+              field: 'parameters',
+              value: parameters.class.to_s
+            )
+          end
+          errors
+        end
+
+        def string_error(manifest)
+          manifest_strings = %i(
+            default_locale
+            version
+            framework_version
+            remote_installation_url
+            terms_conditions_url
+            google_analytics_code
+          )
+          errors = manifest_strings.map do |field|
+            validate_string(manifest.public_send(field), field)
+          end
+
+          if manifest.author
+            author_strings = %w(name email url)
+            errors << (author_strings.map do |field|
+              validate_string(manifest.author[field], "author #{field}")
+            end)
+          end
+          errors
+        end
 
         def boolean_error(manifest)
           booleans = %i(requirements_only marketing_only single_install signed_urls private)
@@ -70,6 +116,12 @@ module ZendeskAppsSupport
             end
           end
           errors.compact
+        end
+
+        def validate_string(value, label_for_error)
+          unless value.is_a?(String) || value.nil?
+            ValidationError.new(:unacceptable_string, field: label_for_error, value: value)
+          end
         end
 
         def validate_boolean(value, label_for_error)
@@ -294,8 +346,7 @@ module ZendeskAppsSupport
           end
         end
 
-        # TODO: support the new location format in the no_template array and check the app actually runs in
-        # included locations
+        # TODO: check the app actually runs in included locations
         def no_template_format_error(manifest)
           no_template = manifest.no_template
           return if [false, true].include? no_template
