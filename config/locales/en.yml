@@ -89,6 +89,7 @@ en:
               one: "%{invalid_types} is an invalid parameter type."
               other: "%{invalid_types} are invalid parameter types."
             unacceptable_boolean: '%{field} must be a boolean value, got "%{value}".'
+            unacceptable_string: '%{field} must be a string, got "%{value}".'
             invalid_no_template: noTemplate must be set to true, false, or an array
               of valid locations.
             duplicate_reference: 'Duplicate reference in manifest: "%{key}".'
