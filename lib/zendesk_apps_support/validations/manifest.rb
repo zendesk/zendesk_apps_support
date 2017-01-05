@@ -65,15 +65,23 @@ module ZendeskAppsSupport
           errors << no_template_format_error(manifest)
           unless manifest.experiments.is_a?(Hash)
             errors << ValidationError.new(
-              :unacceptable_experiments,
+              :unacceptable_hash,
+              field: 'experiments',
               value: manifest.experiments.class.to_s
             )
           end
-          domain_whitelist = manifest.domain_whitelist
-          unless domain_whitelist.nil? || domain_whitelist.is_a?(Array) && domain_whitelist.all? { |dom| dom.is_a? String }
-            errors << ValidationError.new(:unacceptable_domain_whitelist)
+          whitelist = manifest.domain_whitelist
+          unless whitelist.nil? || whitelist.is_a?(Array) && whitelist.all? { |dom| dom.is_a? String }
+            errors << ValidationError.new(:unacceptable_array_of_strings, field: 'domainWhitelist')
           end
-          unless manifest.original_parameters.is_a?(Array)
+          parameters = manifest.original_parameters
+          unless parameters.nil? || parameters.is_a?(Array)
+            errors << ValidationError.new(
+              :unacceptable_array,
+              field: 'parameters',
+              value: parameters.class.to_s
+            )
+          end
           errors
         end
 
@@ -87,13 +95,15 @@ module ZendeskAppsSupport
             terms_conditions_url
             google_analytics_code
           )
-          errors.concat manifest_strings.map do |field|
+          errors.concat(manifest_strings.map do |field|
             validate_string(manifest.public_send(field), field)
-          end.compact
+          end.compact)
 
-          author_strings = %w(name email url)
-          errors.concat author_strings.map do |field|
-            validate_string(manifest.author[field], "author #{field}")
+          if manifest.author
+            author_strings = %w(name email url)
+            errors.concat(author_strings.map do |field|
+              validate_string(manifest.author[field], "author #{field}")
+            end)
           end
           errors
         end
