@@ -26,6 +26,10 @@ en:
             symlink_in_zip: Symlinks are not allowed in the zip file
             invalid_experiment: 'Manifest specifies unknown or unavailable experiment:
               %{experiment}'
+            unacceptable_experiments: Manifest experiments need to be key-value pairs
+              with string keys, but it was %{value}
+            unacceptable_domain_whitelist: Manifest domainWhitelist need to be an
+              array of strings
             missing_requirements: Could not find requirements.json
             requirements_not_supported: App requirements are not supported for marketing-only
               apps

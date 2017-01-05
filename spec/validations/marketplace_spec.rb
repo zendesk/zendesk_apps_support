@@ -38,7 +38,7 @@ describe ZendeskAppsSupport::Validations::Marketplace do
       end
     end
 
-    context 'with whitelisted experiements' do
+    context 'with whitelisted experiments' do
       let(:manifest_extras) { { experiments: { hashParams: true } } }
 
       it 'has no errors' do

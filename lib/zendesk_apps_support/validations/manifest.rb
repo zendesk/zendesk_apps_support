@@ -22,7 +22,6 @@ module ZendeskAppsSupport
 
         private
 
-        # rubocop:disable Metrics/AbcSize
         def collate_manifest_errors(package)
           manifest = package.manifest
 
@@ -58,7 +57,6 @@ module ZendeskAppsSupport
 
           errors.flatten.compact
         end
-        # rubocop:enable Metrics/AbcSize
 
         def type_checks(manifest)
           errors = []
@@ -68,7 +66,6 @@ module ZendeskAppsSupport
           unless manifest.experiments.is_a?(Hash)
             errors << ValidationError.new(
               :unacceptable_experiments,
-              field: 'experiments',
               value: manifest.experiments.class.to_s
             )
           end

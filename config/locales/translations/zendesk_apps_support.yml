@@ -57,6 +57,14 @@ parts:
       title: "App builder job: an experiment has been specifed that is not publically available or otherwise invalid. https://en.wikipedia.org/wiki/Manifest_file"
       value: "Manifest specifies unknown or unavailable experiment: %{experiment}"
   - translation:
+      key: "txt.apps.admin.error.app_build.unacceptable_experiments"
+      title: "App builder job: the value for experiments needs to be key-value pairs, but it was something else. https://en.wikipedia.org/wiki/Manifest_file"
+      value: "Manifest experiments need to be key-value pairs with string keys, but it was %{value}"
+  - translation:
+      key: "txt.apps.admin.error.app_build.unacceptable_domain_whitelist"
+      title: "App builder job: the value for domainWhitelist needs to be an array of strings, but it was something else. https://en.wikipedia.org/wiki/Manifest_file"
+      value: "Manifest domainWhitelist need to be an array of strings"
+  - translation:
       key: "txt.apps.admin.error.app_build.missing_requirements"
       title: "App builder job: missing requirements error"
       value: "Could not find requirements.json"
