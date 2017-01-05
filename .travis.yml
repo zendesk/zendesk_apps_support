@@ -1,6 +1,7 @@
 ---
 language: ruby
 sudo: false
+dist: trusty
 rvm:
   - 2.1
   - 2.0
