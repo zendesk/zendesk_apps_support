@@ -1,95 +1,124 @@
+# frozen_string_literal: true
 require 'spec_helper'
 require 'json'
+require 'tmpdir'
 
 describe ZendeskAppsSupport::Validations::Requirements do
-  it 'creates an error when the file is not valid JSON' do
-    requirements = double('AppFile', relative_path: 'requirements.json', read: '{')
-    package = double('Package', files: [requirements])
-    errors = ZendeskAppsSupport::Validations::Requirements.call(package)
+  before do
+    allow(package).to receive(:has_file?).with('requirements.json').and_return(!requirements_string.nil?)
+    allow(package).to receive(:read_file).with('requirements.json') { requirements_string }
+    allow(package).to receive(:manifest).and_return(manifest)
+  end
+  let(:dir) { Dir.mktmpdir }
+  let(:requirements_string) { nil }
+  let(:manifest) { ZendeskAppsSupport::Manifest.new(File.read('spec/app/manifest.json')) }
+  let(:package) { ZendeskAppsSupport::Package.new(dir, false) }
+  let(:errors) { ZendeskAppsSupport::Validations::Requirements.call(package) }
 
-    expect(errors.first.key).to eq(:requirements_not_json)
+  context 'the file is not valid JSON' do
+    let(:requirements_string) { '{' }
+
+    it 'creates an error' do
+      expect(errors.first.key).to eq(:requirements_not_json)
+    end
   end
 
-  it 'creates no error when the file is valid JSON' do
-    requirements = double('AppFile', relative_path: 'requirements.json',
-                                     read: read_fixture_file('requirements.json'))
-    package = double('Package', files: [requirements])
-    errors = ZendeskAppsSupport::Validations::Requirements.call(package)
+  context 'the file is valid JSON' do
+    let(:requirements_string) { read_fixture_file('requirements.json') }
 
-    expect(errors).to be_empty
+    it 'creates no error' do
+      expect(errors).to be_empty
+    end
   end
 
-  it 'creates an error if there are more than 10 requirements' do
-    requirements_content = {}
-    max = ZendeskAppsSupport::Validations::Requirements::MAX_REQUIREMENTS
-
-    ZendeskAppsSupport::AppRequirement::TYPES.each do |type|
-      requirements_content[type] = {}
-      (max - 1).times { |n| requirements_content[type]["#{type}#{n}"] = { 'title' => "#{type}#{n}" } }
+  context 'requirements-only app' do
+    before do
+      allow(manifest).to receive(:requirements_only?).and_return(true)
     end
 
-    requirements = double('AppFile', relative_path: 'requirements.json',
-                                     read: JSON.generate(requirements_content))
-    package = double('Package', files: [requirements])
-    errors = ZendeskAppsSupport::Validations::Requirements.call(package)
-
-    expect(errors.first.key).to eq(:excessive_requirements)
+    it 'creates an error when the file does not exist' do
+      expect(errors.first.key).to eq(:missing_requirements)
+    end
   end
 
-  it 'creates an errror for any requirement that is lacking required fields' do
-    requirements_content = { 'targets' => { 'abc' => {} } }
-    requirements = double('AppFile', relative_path: 'requirements.json',
-                                     read: JSON.generate(requirements_content))
-    package = double('Package', files: [requirements])
-    errors = ZendeskAppsSupport::Validations::Requirements.call(package)
+  context 'marketing-only app' do
+    before do
+      allow(manifest).to receive(:marketing_only?).and_return(true)
+    end
 
-    expect(errors.first.key).to eq(:missing_required_fields)
+    let(:requirements_string) { read_fixture_file('requirements.json') }
+
+    it 'creates an error when the file exists' do
+      expect(errors.first.key).to eq(:requirements_not_supported)
+    end
   end
 
-  it 'creates an errror for every requirement that is lacking required fields' do
-    requirements_content = { 'targets' => { 'abc' => {}, 'xyz' => {} } }
-    requirements = double('AppFile', relative_path: 'requirements.json',
-                                     read: JSON.generate(requirements_content))
-    package = double('Package', files: [requirements])
-    errors = ZendeskAppsSupport::Validations::Requirements.call(package)
+  context 'there are more than 10 requirements' do
+    let(:requirements_string) do
+      requirements_content = {}
+      max = ZendeskAppsSupport::Validations::Requirements::MAX_REQUIREMENTS
 
-    expect(errors.size).to eq(2)
+      ZendeskAppsSupport::AppRequirement::TYPES.each do |type|
+        requirements_content[type] = {}
+        (max - 1).times { |n| requirements_content[type]["#{type}#{n}"] = { 'title' => "#{type}#{n}" } }
+      end
+
+      JSON.generate(requirements_content)
+    end
+
+    it 'creates an error' do
+      expect(errors.first.key).to eq(:excessive_requirements)
+    end
   end
 
-  it 'creates an error if there are invalid requirement types' do
-    requirements = double('AppFile', relative_path: 'requirements.json',
-                                     read: '{ "i_am_not_a_valid_type": {}}')
-    package = double('Package', files: [requirements])
-    errors = ZendeskAppsSupport::Validations::Requirements.call(package)
+  context 'a requirement is lacking required fields' do
+    let(:requirements_string) { JSON.generate('targets' => { 'abc' => {} }) }
 
-    expect(errors.first.key).to eq(:invalid_requirements_types)
+    it 'creates an error for any requirement that is lacking required fields' do
+      expect(errors.first.key).to eq(:missing_required_fields)
+    end
   end
 
-  it 'creates an error if there are duplicate requirements types' do
-    requirements = double('AppFile', relative_path: 'requirements.json',
-                                     read: '{ "a": { "b": 1, "b": 2 }}')
-    package = double('Package', files: [requirements])
-    errors = ZendeskAppsSupport::Validations::Requirements.call(package)
+  context 'many requirements are lacking required fields' do
+    let(:requirements_string) { JSON.generate('targets' => { 'abc' => {}, 'xyz' => {} }) }
 
-    expect(errors.first.key).to eq(:duplicate_requirements)
+    it 'creates an error for each of them' do
+      expect(errors.size).to eq(2)
+    end
   end
 
-  it 'creates an error if there are multiple channel integrations' do
-    requirements = double('AppFile', relative_path: 'requirements.json', read:
-      '{ "channel_integrations": { "one": { "manifest_url": "manifest"}, "two": { "manifest_url": "manifest"} }}')
-    package = double('Package', files: [requirements])
-    errors = ZendeskAppsSupport::Validations::Requirements.call(package)
+  context 'there are invalid requirement types' do
+    let(:requirements_string) { '{ "i_am_not_a_valid_type": {}}' }
 
-    expect(errors.first.key).to eq(:multiple_channel_integrations)
+    it 'creates an error' do
+      expect(errors.first.key).to eq(:invalid_requirements_types)
+    end
   end
 
-  it 'creates an error if a channel integration is missing a manifest' do
-    requirements = double('AppFile', relative_path: 'requirements.json',
-                                     read: '{ "channel_integrations": { "channel_one": {} }}')
-    package = double('Package', files: [requirements])
-    errors = ZendeskAppsSupport::Validations::Requirements.call(package)
+  context 'there are duplicate requirements' do
+    let(:requirements_string) { '{ "a": { "b": 1, "b": 2 }}' }
 
-    expect(errors.first.key).to eq(:missing_required_fields)
-    expect(errors.first.data).to eq({ field: 'manifest_url', identifier: 'channel_one' })
+    it 'creates an error' do
+      expect(errors.first.key).to eq(:duplicate_requirements)
+    end
+  end
+
+  context 'there are multiple channel integrations' do
+    let(:requirements_string) do
+      '{ "channel_integrations": { "one": { "manifest_url": "manifest"}, "two": { "manifest_url": "manifest"} }}'
+    end
+
+    it 'creates an error' do
+      expect(errors.first.key).to eq(:multiple_channel_integrations)
+    end
+  end
+
+  context 'a channel integration is missing a manifest' do
+    let(:requirements_string) { '{ "channel_integrations": { "channel_one": {} }}' }
+
+    it 'creates an error' do
+      expect(errors.first.key).to eq(:missing_required_fields)
+      expect(errors.first.data).to eq(field: 'manifest_url', identifier: 'channel_one')
+    end
   end
 end

@@ -1,6 +1,4 @@
-require 'json'
-require 'json/stream'
-
+# frozen_string_literal: true
 module ZendeskAppsSupport
   module Validations
     module Requirements
@@ -8,17 +6,20 @@ module ZendeskAppsSupport
 
       class <<self
         def call(package)
-          requirements_file = package.files.find { |f| f.relative_path == 'requirements.json' }
-
-          return [ValidationError.new(:missing_requirements)] unless requirements_file
-
-          requirements_stream = requirements_file.read
-          duplicates = non_unique_type_keys(requirements_stream)
-          unless duplicates.empty?
-            return [ValidationError.new(:duplicate_requirements, duplicate_keys: duplicates.join(', '), count: duplicates.length)]
+          if package.manifest.requirements_only? && !package.has_requirements?
+            return [ValidationError.new(:missing_requirements)]
+          elsif package.manifest.marketing_only? && package.has_requirements?
+            return [ValidationError.new(:requirements_not_supported)]
+          elsif !package.has_requirements?
+            return []
           end
 
-          requirements = JSON.load(requirements_stream)
+          begin
+            requirements = package.requirements_json
+          rescue ZendeskAppsSupport::Manifest::OverrideError => e
+            return [ValidationError.new(:duplicate_requirements, duplicate_keys: e.key, count: 1)]
+          end
+
           [].tap do |errors|
             errors << invalid_requirements_types(requirements)
             errors << excessive_requirements(requirements)
@@ -47,10 +48,8 @@ module ZendeskAppsSupport
         end
 
         def excessive_requirements(requirements)
-          requirement_count = requirements.values.map(&:values).flatten.size
-          if requirement_count > MAX_REQUIREMENTS
-            ValidationError.new(:excessive_requirements, max: MAX_REQUIREMENTS, count: requirement_count)
-          end
+          count = requirements.values.map(&:values).flatten.size
+          ValidationError.new(:excessive_requirements, max: MAX_REQUIREMENTS, count: count) if count > MAX_REQUIREMENTS
         end
 
         def invalid_user_fields(requirements)
@@ -83,21 +82,10 @@ module ZendeskAppsSupport
           invalid_types = requirements.keys - ZendeskAppsSupport::AppRequirement::TYPES
 
           unless invalid_types.empty?
-            ValidationError.new(:invalid_requirements_types, invalid_types: invalid_types.join(', '), count: invalid_types.length)
+            ValidationError.new(:invalid_requirements_types,
+                                invalid_types: invalid_types.join(', '),
+                                count: invalid_types.length)
           end
-        end
-
-        def non_unique_type_keys(requirements)
-          keys = []
-          duplicates = []
-          parser = JSON::Stream::Parser.new do
-            start_object { keys.push({}) }
-            end_object { keys.pop }
-            key { |k| duplicates.push(k) if keys.last.include? k; keys.last[k] = nil }
-          end
-          parser << requirements
-
-          duplicates
         end
       end
     end

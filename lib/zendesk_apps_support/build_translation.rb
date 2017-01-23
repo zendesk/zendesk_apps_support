@@ -1,14 +1,15 @@
+# frozen_string_literal: true
 module ZendeskAppsSupport
   module BuildTranslation
     I18N_TITLE_KEY = 'title'
     I18N_VALUE_KEY = 'value'
-    I18N_KEYS      = [I18N_TITLE_KEY, I18N_VALUE_KEY]
+    I18N_KEYS      = [I18N_TITLE_KEY, I18N_VALUE_KEY].freeze
 
     def to_flattened_namespaced_hash(hash, target_key = nil, prefix = nil)
-      hash.inject({}) do |result, (key, value)|
+      hash.each_with_object({}) do |(key, value), result|
         key = [prefix, key].compact.join('.')
         if value.is_a?(Hash)
-          if target_key && is_translation_hash?(value)
+          if target_key && translation_hash?(value)
             result[key] = value[target_key]
           else
             result.update(to_flattened_namespaced_hash(value, target_key, key))
@@ -16,7 +17,6 @@ module ZendeskAppsSupport
         else
           result[key] = value
         end
-        result
       end
     end
 
@@ -26,7 +26,7 @@ module ZendeskAppsSupport
 
         if context.is_a?(Hash)
 
-          if is_translation_hash?(context)
+          if translation_hash?(context)
             translations[key] = context[I18N_VALUE_KEY]
           else
             translations[key] ||= {}
@@ -43,7 +43,7 @@ module ZendeskAppsSupport
 
     private
 
-    def is_translation_hash?(hash)
+    def translation_hash?(hash)
       hash.keys.sort == I18N_KEYS
     end
   end

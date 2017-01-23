@@ -1,7 +1,9 @@
+# frozen_string_literal: true
 require 'erubis'
 
 module ZendeskAppsSupport
   class Installed
+    extend Gem::Deprecate
     INSTALLED_TEMPLATE = Erubis::Eruby.new(File.read(File.expand_path('../assets/installed.js.erb', __FILE__)))
 
     def initialize(appsjs, installations = [])
@@ -9,7 +11,7 @@ module ZendeskAppsSupport
       @installations = installations
     end
 
-    def compile_js(options = {})
+    def compile(options = {})
       INSTALLED_TEMPLATE.result(
         appsjs: @appsjs,
         installations: @installations,
@@ -17,5 +19,8 @@ module ZendeskAppsSupport
         rollbar_zaf_access_token: options.fetch(:rollbar_zaf_access_token, "")
       )
     end
+
+    alias compile_js compile
+    deprecate :compile_js, :compile, 2017, 1
   end
 end

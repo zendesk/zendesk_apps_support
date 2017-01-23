@@ -9,6 +9,12 @@ en:
             jshint:
               one: 'JSHint error in %{file}: %{errors}'
               other: 'JSHint errors in %{file}: %{errors}'
+            no_template_deprecated_in_v2: 'noTemplate is deprecated and cannot be
+              used with framework version 2 or above. Set the autoLoad or autoHide
+              property for each specific location instead. Learn more: %{link}.'
+            no_parameters_required: Parameters can't be defined for marketing-only
+              apps
+            marketing_only_app_cant_be_private: Marketing-only apps must not be private
             no_location_required: Locations can't be defined when you specify requirements
               only
             no_framework_version_required: Framework versions can't be set when you
@@ -18,7 +24,17 @@ en:
             manifest_not_json: manifest is not proper JSON. %{errors}
             missing_manifest: Could not find manifest.json
             symlink_in_zip: Symlinks are not allowed in the zip file
+            invalid_experiment: 'Manifest specifies unknown or unavailable experiment:
+              %{experiment}'
+            unacceptable_hash: The manifest field %{field} needs to be key-value pairs
+              with string keys, but it was %{value}
+            unacceptable_array: The manifest field %{field} needs to be an array,
+              but it was %{value}
+            unacceptable_array_of_strings: The manifest field %{field} need to be
+              an array containing strings
             missing_requirements: Could not find requirements.json
+            requirements_not_supported: App requirements are not supported for marketing-only
+              apps
             manifest_keys:
               missing:
                 one: 'Missing required field in manifest: %{missing_keys}'
@@ -34,7 +50,8 @@ en:
             invalid_requirements_types:
               one: 'requirements.json contains an invalid type: %{invalid_types}'
               other: 'requirements.json contains invalid types: %{invalid_types}'
-            multiple_channel_integrations: 'Specifying multiple channel integrations in requirements.json is not supported.'
+            multiple_channel_integrations: Specifying multiple channel integrations
+              in requirements.json is not supported.
             banner:
               invalid_format: Banner image must be a PNG file.
               invalid_size: Invalid banner image dimensions. Must be %{required_banner_width}x%{required_banner_height}px.
@@ -44,16 +61,18 @@ en:
                 other: 'Missing required oauth fields in manifest: %{missing_keys}'
             missing_source: Could not find app.js
             style_in_template: "<style> tag in %{template}. Use an app.css file instead."
-            no_code_for_ifo_notemplate: Javascripts, stylesheets and templates are not allowed when an iframe URI or noTemplate is specified
-            invalid_default_locale: "%{defaultLocale} is not a valid default locale."
-            missing_translation_file: 'Missing translation file for locale ''%{defaultLocale}''.
-              Please read: http://developer.zendesk.com/documentation/apps/i18n.html'
+            no_code_for_ifo_notemplate: Javascripts, stylesheets, and templates are
+              not allowed when an iframe URI or noTemplate is specified
+            invalid_default_locale: "%{default_locale} is not a valid default locale."
+            missing_translation_file: 'Missing translation file for locale ''%{default_locale}''.
+              Learn more: http://developer.zendesk.com/documentation/apps/i18n.html'
             invalid_host: "%{host_name} is an invalid host for apps."
             invalid_location:
               one: "%{invalid_locations} is an invalid location in %{host_name}."
               other: "%{invalid_locations} are invalid locations in %{host_name}."
+            blank_location_uri: "%{location} location does not specify a URI."
             invalid_location_uri: "%{uri} is either an invalid location URI, refers
-              to a missing asset or does not use HTTPS."
+              to a missing asset, or does not use HTTPS."
             duplicate_location:
               one: "%{duplicate_locations} is a duplicate location."
               other: "%{duplicate_locations} are duplicate locations."
@@ -63,6 +82,7 @@ en:
               other: "%{invalid_params} are set to hidden and cannot be required."
             invalid_version: "%{target_version} is not a valid framework version.
               Available versions are: %{available_versions}."
+            old_version: Iframe Only apps must target framework versions 2.0 or greater.
             parameters_not_an_array: App parameters must be an array.
             duplicate_parameters: 'Duplicate app parameters defined: %{duplicate_parameters}'
             translation:
@@ -74,6 +94,20 @@ en:
             invalid_type_parameter:
               one: "%{invalid_types} is an invalid parameter type."
               other: "%{invalid_types} are invalid parameter types."
+            unacceptable_boolean: '%{field} must be a boolean value, got "%{value}".'
+            unacceptable_string: '%{field} must be a string, got "%{value}".'
+            invalid_no_template: noTemplate must be set to true, false, or an array
+              of valid locations.
+            duplicate_reference: 'Duplicate reference in manifest: "%{key}".'
+            duplicate_reference_values: Initially set to "%{original}", attempted
+              overwrite to "%{attempted}".
+            locations_must_be_urls: App locations need to be URLs for this framework
+              version.
+            locations_cant_be_urls: App locations must not be URLs for this framework
+              version.
+            invalid_v1_location:
+              one: "%{invalid_locations} is an invalid location in framework v1."
+              other: "%{invalid_locations} are invalid locations in framework v1."
         warning:
           app_build:
             deprecated_version: You are targeting a deprecated version of the framework.

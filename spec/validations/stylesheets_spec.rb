@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'spec_helper'
 
 describe ZendeskAppsSupport::Validations::Stylesheets do
@@ -28,6 +29,6 @@ describe ZendeskAppsSupport::Validations::Stylesheets do
 
     errors = ZendeskAppsSupport::Validations::Stylesheets.call(package)
     expect(errors.count).to eq(1)
-    expect(errors.first.to_s).to match(/Sass error: Invalid CSS after.*/)
+    expect(errors.first.to_s).to match(/Sass error: (?:Error: )?Invalid CSS after.*/)
   end
 end

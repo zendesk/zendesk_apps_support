@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'jshintrb'
 
 module ZendeskAppsSupport
@@ -14,9 +15,8 @@ module ZendeskAppsSupport
         sub: true,
 
         # predefined globals:
-        predef: %w(_ console services helpers alert confirm window document self
-                   JSON Base64 clearInterval clearTimeout setInterval setTimeout
-                   require module exports top frames parent moment),
+        predef: %w(_ console services helpers alert confirm self
+                   JSON Base64 require module exports moment),
 
         browser: true
       }.freeze
@@ -42,8 +42,9 @@ module ZendeskAppsSupport
         end
 
         def package_needs_app_js?(package)
-          return false if package.manifest_json['requirementsOnly']
-          return false if package.iframe_only?
+          return false if package.manifest.marketing_only?
+          return false if package.manifest.requirements_only?
+          return false if package.manifest.iframe_only?
           true
         end
 

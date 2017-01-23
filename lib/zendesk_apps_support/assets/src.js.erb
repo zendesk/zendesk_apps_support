@@ -15,10 +15,11 @@ with( ZendeskApps.AppScope.create() ) {
 }
 <% end %>
 var app = ZendeskApps.defineApp(<%= iframe_only ? 'null' : 'source' %>)
-  .reopenClass(<%= app_settings.to_json %>)
+  .reopenClass(<%= app_class_properties.to_json %>)
   .reopen({
     appName: <%= name.to_json %>,
     appVersion: <%= version.to_json %>,
+    locationIcons: <%= location_icons.to_json %>,
     assetUrlPrefix: <%= asset_url_prefix.to_json %>,
     appClassName: <%= app_class_name.to_json %>,
     author: {

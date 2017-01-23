@@ -1,18 +1,21 @@
+# frozen_string_literal: true
 require 'pathname'
 require 'erubis'
 require 'json'
 
 module ZendeskAppsSupport
   class Package
+    extend Gem::Deprecate
     include ZendeskAppsSupport::BuildTranslation
 
-    REQUIREMENTS_FILENAME = "requirements.json"
+    MANIFEST_FILENAME = 'manifest.json'
+    REQUIREMENTS_FILENAME = 'requirements.json'
 
     DEFAULT_LAYOUT = Erubis::Eruby.new(File.read(File.expand_path('../assets/default_template.html.erb', __FILE__)))
     DEFAULT_SCSS   = File.read(File.expand_path('../assets/default_styles.scss', __FILE__))
     SRC_TEMPLATE   = Erubis::Eruby.new(File.read(File.expand_path('../assets/src.js.erb', __FILE__)))
 
-    LEGACY_URI_STUB = '_legacy'
+    LOCATIONS_WITH_ICONS = %w(top_bar nav_bar system_top_bar ticket_editor).freeze
 
     attr_reader :lib_root, :root, :warnings
 
@@ -26,27 +29,20 @@ module ZendeskAppsSupport
 
     def validate(marketplace: true)
       [].tap do |errors|
-        errors << Validations::Marketplace.call(self) if marketplace
-
         errors << Validations::Manifest.call(self)
-
         if has_manifest?
+          errors << Validations::Marketplace.call(self) if marketplace
           errors << Validations::Source.call(self)
           errors << Validations::Translations.call(self)
+          errors << Validations::Requirements.call(self)
 
-          unless manifest_json['requirementsOnly']
+          if !manifest.requirements_only? && !manifest.marketing_only? && !manifest.iframe_only?
             errors << Validations::Templates.call(self)
             errors << Validations::Stylesheets.call(self)
           end
-
-          if has_requirements?
-            errors << Validations::Requirements.call(self)
-          end
         end
 
-        if has_banner?
-          errors << Validations::Banner.call(self)
-        end
+        errors << Validations::Banner.call(self) if has_banner?
 
         errors.flatten!.compact!
       end
@@ -54,9 +50,7 @@ module ZendeskAppsSupport
 
     def validate!(marketplace: true)
       errors = validate(marketplace: marketplace)
-      if errors.any?
-        raise errors.first
-      end
+      raise errors.first if errors.any?
       true
     end
 
@@ -82,30 +76,31 @@ module ZendeskAppsSupport
       files = []
       Dir[root.join('**/**')].each do |f|
         next unless File.file?(f)
-        relative_file_name = f.sub(/#{root}\/?/, '')
-        next if relative_file_name =~ /^tmp\//
+        relative_file_name = f.sub(%r{#{root}/?}, '')
+        next if relative_file_name =~ %r{^tmp/}
         files << AppFile.new(self, relative_file_name)
       end
       files
     end
 
     def js_files
-      @js_files ||= files.select { |f| f.to_s == 'app.js' || ( f.to_s.start_with?('lib/') && f.to_s.end_with?('.js') ) }
+      @js_files ||= files.select { |f| f.to_s == 'app.js' || (f.to_s.start_with?('lib/') && f.to_s.end_with?('.js')) }
     end
 
     def lib_files
-      @lib_files ||= js_files.select { |f| f =~ /^lib\// }
+      @lib_files ||= js_files.select { |f| f =~ %r{^lib/} }
     end
 
     def template_files
-      files.select { |f| f =~ /^templates\/.*\.hdbs$/ }
+      files.select { |f| f =~ %r{^templates/.*\.hdbs$} }
     end
 
     def translation_files
-      files.select { |f| f =~ /^translations\// }
+      files.select { |f| f =~ %r{^translations/} }
     end
 
-    def compile_js(options)
+    # this is not really compile_js, it compiles the whole app including scss for v1 apps
+    def compile(options)
       begin
         app_id = options.fetch(:app_id)
         asset_url_prefix = options.fetch(:assets_dir)
@@ -116,63 +111,58 @@ module ZendeskAppsSupport
 
       locale = options.fetch(:locale, 'en')
 
-      source = iframe_only? ? nil : app_js
-      version = manifest_json['version']
+      source = manifest.iframe_only? ? nil : app_js
       app_class_name = "app-#{app_id}"
-      author = manifest_json['author']
-      framework_version = manifest_json['frameworkVersion']
-      single_install = manifest_json['singleInstall'] || false
-      templates = is_no_template ? {} : compiled_templates(app_id, asset_url_prefix)
-
-      app_settings = {
-        location: locations,
-        noTemplate: no_template_locations,
-        singleInstall: single_install
-      }.select { |_k, v| !v.nil? }
+      # if no_template is an array, we still need the templates
+      templates = manifest.no_template == true ? {} : compiled_templates(app_id, asset_url_prefix)
 
       SRC_TEMPLATE.result(
         name: name,
-        version: version,
+        version: manifest.version,
         source: source,
-        app_settings: app_settings,
+        app_class_properties: manifest.app_class_properties,
         asset_url_prefix: asset_url_prefix,
+        location_icons: location_icons,
         app_class_name: app_class_name,
-        author: author,
-        translations: translations_for(locale),
-        framework_version: framework_version,
+        author: manifest.author,
+        translations: runtime_translations(translations_for(locale)),
+        framework_version: manifest.framework_version,
         templates: templates,
         modules: commonjs_modules,
-        iframe_only: iframe_only?
+        iframe_only: manifest.iframe_only?
       )
     end
 
+    alias compile_js compile
+    deprecate :compile_js, :compile, 2017, 1
+
     def manifest_json
-      @manifest ||= read_json('manifest.json')
+      @manifest_json ||= read_json(MANIFEST_FILENAME)
+    end
+    deprecate :manifest_json, :manifest, 2016, 9
+
+    def manifest
+      @manifest ||= Manifest.new(read_file(MANIFEST_FILENAME))
     end
 
     def requirements_json
       return nil unless has_requirements?
-      @requirements ||= read_json('requirements.json')
+      @requirements ||= read_json(REQUIREMENTS_FILENAME, object_class: Manifest::NoOverrideHash)
     end
 
     def is_no_template
-      if manifest_json['noTemplate'].is_a?(Array)
-        false
-      else
-        !!manifest_json['noTemplate']
-      end
+      manifest.no_template?
     end
+    deprecate :is_no_template, 'manifest.no_template?', 2016, 9
 
     def no_template_locations
-      if manifest_json['noTemplate'].is_a?(Array)
-        manifest_json['noTemplate']
-      else
-        !!manifest_json['noTemplate']
-      end
+      manifest.no_template_locations
     end
+    deprecate :no_template_locations, 'manifest.no_template_locations', 2016, 9
 
     def compiled_templates(app_id, asset_url_prefix)
-      compiled_css = ZendeskAppsSupport::StylesheetCompiler.new(DEFAULT_SCSS + app_css, app_id, asset_url_prefix).compile
+      compiler = ZendeskAppsSupport::StylesheetCompiler.new(DEFAULT_SCSS + app_css, app_id, asset_url_prefix)
+      compiled_css = compiler.compile(sassc: manifest.enabled_experiments.include?('newCssCompiler'))
 
       layout = templates['layout'] || DEFAULT_LAYOUT.result
 
@@ -181,53 +171,42 @@ module ZendeskAppsSupport
       end
     end
 
-    def market_translations!(locale)
-      result = translations[locale].fetch('app', {})
-      result.delete('name')
-      result.delete('description')
-      result.delete('long_description')
-      result.delete('installation_instructions')
-      result
-    end
-
-    def has_location?
-      manifest_json['location']
+    def translations_for(locale)
+      trans = translations
+      return trans[locale] if trans[locale]
+      trans[manifest.default_locale]
     end
 
     def has_file?(path)
-      File.exist?(path_to(path))
+      File.file?(path_to(path))
+    end
+
+    def has_requirements?
+      has_file?(REQUIREMENTS_FILENAME)
     end
 
     def app_css
-      css_file = path_to('app.css')
-      scss_file = path_to('app.scss')
-      File.exist?(scss_file) ? File.read(scss_file) : ( File.exist?(css_file) ? File.read(css_file) : '' )
+      return File.read(path_to('app.scss')) if has_file?('app.scss')
+      return File.read(path_to('app.css')) if has_file?('app.css')
+      ''
     end
 
-    def locations
-      locations = manifest_json['location']
-      if locations.is_a?(Hash)
-        locations
-      elsif locations.is_a?(Array)
-        { 'zendesk' => Hash[locations.map { |location| [ location, LEGACY_URI_STUB ] }] }
-      else # String
-        { 'zendesk' => { locations => LEGACY_URI_STUB } }
+    def app_js
+      if @is_cached
+        @app_js ||= read_file('app.js')
+      else
+        read_file('app.js')
       end
     end
 
     def iframe_only?
-      !legacy_non_iframe_app?
+      manifest.iframe_only?
     end
-
-    private
-
-    def legacy_non_iframe_app?
-      @non_iframe ||= locations.values.flat_map(&:values).any? { |l| l == LEGACY_URI_STUB }
-    end
+    deprecate :iframe_only?, 'manifest.iframe_only?', 2016, 9
 
     def templates
-      templates_dir = File.join(root, 'templates')
-      Dir["#{templates_dir}/*.hdbs"].inject({}) do |memo, file|
+      templates_dir = path_to('templates')
+      Dir["#{templates_dir}/*.hdbs"].each_with_object({}) do |file, memo|
         str = File.read(file)
         str.chomp!
         memo[File.basename(file, File.extname(file))] = str
@@ -235,40 +214,44 @@ module ZendeskAppsSupport
       end
     end
 
-    def translations_for(locale)
-      trans = translations
-      return trans[locale] if trans[locale]
-      trans[self.manifest_json['defaultLocale']]
-    end
-
     def translations
       return @translations if @is_cached && @translations
 
       @translations = begin
-        translation_dir = File.join(root, 'translations')
+        translation_dir = path_to('translations')
         return {} unless File.directory?(translation_dir)
 
-        locale_path = "#{translation_dir}/#{self.manifest_json['defaultLocale']}.json"
+        locale_path = "#{translation_dir}/#{manifest.default_locale}.json"
         default_translations = process_translations(locale_path)
 
-        Dir["#{translation_dir}/*.json"].inject({}) do |memo, path|
+        Dir["#{translation_dir}/*.json"].each_with_object({}) do |path, memo|
           locale = File.basename(path, File.extname(path))
 
-          locale_translations = if locale == self.manifest_json['defaultLocale']
-            default_translations
-          else
-            deep_merge_hash(default_translations, process_translations(path))
-          end
+          locale_translations = if locale == manifest.default_locale
+                                  default_translations
+                                else
+                                  deep_merge_hash(default_translations, process_translations(path))
+                                end
 
           memo[locale] = locale_translations
-          memo
         end
       end
     end
 
+    private
+
+    def runtime_translations(translations)
+      result = translations.dup
+      result.delete('name')
+      result.delete('description')
+      result.delete('long_description')
+      result.delete('installation_instructions')
+      result
+    end
+
     def process_translations(locale_path)
       translations = File.exist?(locale_path) ? JSON.parse(File.read(locale_path)) : {}
-      translations['app'].delete('package') if translations.has_key?('app')
+      translations['app'].delete('package') if translations.key?('app')
       remove_zendesk_keys(translations)
     end
 
@@ -277,19 +260,54 @@ module ZendeskAppsSupport
     end
 
     def has_manifest?
-      has_file?('manifest.json')
-    end
-
-    def has_requirements?
-      has_file?('requirements.json')
+      has_file?(MANIFEST_FILENAME)
     end
 
     def has_banner?
       has_file?('assets/banner.png')
     end
 
-    def app_js
-      read_file('app.js')
+    def location_icons
+      Hash.new { |h, k| h[k] = {} }.tap do |location_icons|
+        manifest.location_options.each do |location_options|
+          next unless location_options.location &&
+                      LOCATIONS_WITH_ICONS.include?(location_options.location.name) &&
+                      location_options.location.product == Product::SUPPORT
+
+          host = location_options.location.product.name
+          location = location_options.location.name
+          location_icons[host][location] = build_location_icons_hash(location)
+        end
+      end
+    end
+
+    def build_location_icons_hash(location)
+      inactive_png = "icon_#{location}_inactive.png"
+      if has_file?("assets/icon_#{location}.svg")
+        build_svg_icon_hash(location)
+      elsif has_file?("assets/#{inactive_png}")
+        build_png_icons_hash(location)
+      else
+        {}
+      end
+    end
+
+    def build_svg_icon_hash(location)
+      cache_busting_param = "?#{Time.now.to_i}" unless @is_cached
+      { 'svg' => "icon_#{location}.svg#{cache_busting_param}" }
+    end
+
+    def build_png_icons_hash(location)
+      inactive_png = "icon_#{location}_inactive.png"
+      {
+        'inactive' => inactive_png
+      }.tap do |icon_state_hash|
+        %w(active hover).each do |state|
+          specific_png = "icon_#{location}_#{state}.png"
+          selected_png = has_file?("assets/#{specific_png}") ? specific_png : inactive_png
+          icon_state_hash[state] = selected_png
+        end
+      end
     end
 
     def commonjs_modules
@@ -305,11 +323,11 @@ module ZendeskAppsSupport
     def deep_merge_hash(h, another_h)
       result_h = h.dup
       another_h.each do |key, value|
-        if h.has_key?(key) && h[key].is_a?(Hash) && value.is_a?(Hash)
-          result_h[key] = deep_merge_hash(h[key], value)
-        else
-          result_h[key] = value
-        end
+        result_h[key] = if h.key?(key) && h[key].is_a?(Hash) && value.is_a?(Hash)
+                          deep_merge_hash(h[key], value)
+                        else
+                          value
+                        end
       end
       result_h
     end
@@ -318,11 +336,9 @@ module ZendeskAppsSupport
       File.read(path_to(path))
     end
 
-    def read_json(path)
+    def read_json(path, parser_opts = {})
       file = read_file(path)
-      unless file.nil?
-        JSON.parse(read_file(path))
-      end
+      JSON.parse(read_file(path), parser_opts) unless file.nil?
     end
   end
 end

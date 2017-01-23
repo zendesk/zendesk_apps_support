@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'spec_helper'
 require 'tmpdir'
 
@@ -53,40 +54,34 @@ describe ZendeskAppsSupport::Package do
     end
   end
 
-  describe 'manifest_json' do
-    it 'should return manifest json' do
-      manifest = @package.manifest_json
-      expect(manifest['name']).to eq('ABC')
-      expect(manifest['author']['name']).to eq('John Smith')
-      expect(manifest['author']['email']).to eq('john@example.com')
-      expect(manifest['defaultLocale']).to eq('en')
-      expect(manifest['private']).to eq(true)
-      expect(manifest['location']).to eq('ticket_sidebar')
-      expect(manifest['frameworkVersion']).to eq('0.5')
-    end
-  end
-
-  describe 'compile_js' do
+  describe 'compile' do
     it 'should generate js ready for installation' do
-      js = @package.compile_js(app_name: "ABC", app_id: 0, assets_dir: 'http://localhost:4567/0/')
+      js = @package.compile(app_name: 'ABC', app_id: 0, assets_dir: 'http://localhost:4567/0/')
       expected = File.read('spec/fixtures/legacy_app_en.js')
       expect(js).to eq(expected)
 
-      js = @package.compile_js(app_name: "EFG", app_id: 1, assets_dir: 'http://localhost:4567/2/', locale: 'nl')
+      js = @package.compile(app_name: 'EFG', app_id: 1, assets_dir: 'http://localhost:4567/2/', locale: 'nl')
       expected = File.read('spec/fixtures/legacy_app_nl.js')
       expect(js).to eq(expected)
     end
 
+    it 'should generate css with the new flag' do
+      expect(@package.manifest).to receive(:enabled_experiments).and_return(['newCssCompiler'])
+      js = @package.compile(app_name: 'ABC', app_id: 0, assets_dir: 'http://localhost:4567/0/')
+      expected = File.read('spec/fixtures/legacy_app_en_experimental_css.js')
+      expect(js).to eq(expected)
+    end
+
     it 'should generate js for iframe app installations' do
-      @package = ZendeskAppsSupport::Package.new('spec/iframe_only_app')
-      js = @package.compile_js(app_name: "ABC", app_id: 0, assets_dir: 'http://localhost:4567/0/')
+      @package = ZendeskAppsSupport::Package.new('spec/fixtures/iframe_only_app')
+      js = @package.compile(app_name: 'ABC', app_id: 0, assets_dir: 'http://localhost:4567/0/')
       expected = File.read('spec/fixtures/iframe_app.js')
       expect(js).to eq(expected)
     end
 
     it 'should generate js with manifest noTemplate set to array' do
-      @package.manifest_json['noTemplate'] = ['ticket_sidebar'];
-      js = @package.compile_js(app_name: "ABC", app_id: 0, assets_dir: 'http://localhost:4567/0/')
+      allow(@package.manifest).to receive(:no_template) { ['ticket_sidebar'] }
+      js = @package.compile(app_name: 'ABC', app_id: 0, assets_dir: 'http://localhost:4567/0/')
       expected = File.read('spec/fixtures/legacy_app_no_template.js')
       expect(js).to eq(expected)
     end
@@ -94,27 +89,27 @@ describe ZendeskAppsSupport::Package do
 
   describe 'deep_merge_hash' do
     it 'should merge a simple hash' do
-      hash_1   = {'id' => 1}
-      hash_2   = {'id' => 2}
-      expected = {'id' => 2}
-      expect( @package.send(:deep_merge_hash, hash_1, hash_2) ).to eq(expected)
+      hash1   = { 'id' => 1 }
+      hash2   = { 'id' => 2 }
+      expected = { 'id' => 2 }
+      expect(@package.send(:deep_merge_hash, hash1, hash2)).to eq(expected)
     end
 
     it 'should merge 2 hashes recursively' do
-      hash_1   = {'id' => 1, 'nick' => { label: 'test', gender: 'yes'}}
-      hash_2   = {'id' => 2}
-      expected = {'id' => 2, 'nick' => { label: 'test', gender: 'yes'}}
-      expect( @package.send(:deep_merge_hash, hash_1, hash_2) ).to eq(expected)
+      hash1   = { 'id' => 1, 'nick' => { label: 'test', gender: 'yes' } }
+      hash2   = { 'id' => 2 }
+      expected = { 'id' => 2, 'nick' => { label: 'test', gender: 'yes' } }
+      expect(@package.send(:deep_merge_hash, hash1, hash2)).to eq(expected)
 
-      hash_1   = {'id' => 1, 'nick' => { label: 'test', gender: 'yes'}}
-      hash_2   = {'id' => 2, 'nick' => 'test'}
-      expected = {'id' => 2, 'nick' => 'test'}
-      expect( @package.send(:deep_merge_hash, hash_1, hash_2) ).to eq(expected)
+      hash1   = { 'id' => 1, 'nick' => { label: 'test', gender: 'yes' } }
+      hash2   = { 'id' => 2, 'nick' => 'test' }
+      expected = { 'id' => 2, 'nick' => 'test' }
+      expect(@package.send(:deep_merge_hash, hash1, hash2)).to eq(expected)
 
-      hash_1   = {'id' => 1, 'nick' => { label: { text: 'text', value: 'value'}}}
-      hash_2   = {'id' => 2, 'nick' => { label: { text: 'different', option: 3}}}
-      expected = {'id' => 2, 'nick' => { label: { text: 'different', value: 'value', option: 3}}}
-      expect( @package.send(:deep_merge_hash, hash_1, hash_2) ).to eq(expected)
+      hash1   = { 'id' => 1, 'nick' => { label: { text: 'text', value: 'value' } } }
+      hash2   = { 'id' => 2, 'nick' => { label: { text: 'different', option: 3 } } }
+      expected = { 'id' => 2, 'nick' => { label: { text: 'different', value: 'value', option: 3 } } }
+      expect(@package.send(:deep_merge_hash, hash1, hash2)).to eq(expected)
     end
   end
 
@@ -125,7 +120,7 @@ describe ZendeskAppsSupport::Package do
   let(:root) { Dir.mktmpdir }
 
   after do
-    FileUtils.rm_rf(root) if Dir.exists?(root)
+    FileUtils.rm_rf(root) if Dir.exist?(root)
   end
 
   def build_app_source(app)
@@ -136,10 +131,10 @@ describe ZendeskAppsSupport::Package do
     en_json          = File.read('spec/bookmarks_app/translations/en.json')
     logo             = File.read('spec/bookmarks_app/assets/logo.png')
     logo_small       = File.read('spec/bookmarks_app/assets/logo-small.png')
-    manifest         = JSON.generate(app[:manifest] || { })
-    additional_files = app[:additional_files] || { }
+    manifest         = JSON.generate(app[:manifest] || {})
+    additional_files = app[:additional_files] || {}
 
-    FileUtils.rm_rf(root) if Dir.exists?(root)
+    FileUtils.rm_rf(root) if Dir.exist?(root)
 
     {
       'manifest.json'         => manifest,
@@ -151,11 +146,10 @@ describe ZendeskAppsSupport::Package do
       'assets/logo.png'       => logo,
       'assets/logo-small.png' => logo_small
     }.merge(additional_files).each do |path, content|
-      unless content.nil?
-        path = File.join(root, path)
-        FileUtils.mkdir_p( File.dirname(path) )
-        File.open(path, 'w') { |f| f << content }
-      end
+      next if content.nil?
+      path = File.join(root, path)
+      FileUtils.mkdir_p(File.dirname(path))
+      File.open(path, 'w') { |f| f << content }
     end
 
     File.join(root)
@@ -166,37 +160,8 @@ describe ZendeskAppsSupport::Package do
   let(:package) { ZendeskAppsSupport::Package.new(source) }
 
   def build_app_source_with_files(files)
-    build_app_source({
-      manifest: manifest,
-      additional_files: files
-    })
-  end
-
-  describe 'market_translations! works as expected' do
-    it 'builds an app' do
-      expect(package.manifest_json['author']['name']).to eq('Ned Stark')
-      expect(package.send(:translations)).to eq({"en"=>{"app"=>{"description"=>"Quickly access bookmarked tickets. Syncs with the iPad app."}, "custom1"=>"The first custom thing"}})
-      expect(package.send(:market_translations!, 'en')).to eq({})
-      expect(package.send(:translations)).to eq({"en"=>{"app"=>{}, "custom1"=>"The first custom thing"}})
-    end
-
-    it 'builds an app with changed manifest' do
-      manifest['author']['name'] = 'Olaf'
-      expect(package.manifest_json['author']['name']).to eq('Olaf')
-    end
-  end
-
-  describe 'Reading a manifest' do
-    it 'fetches data from the manifest' do
-      expect(package.manifest_json['location']).to eq('ticket_sidebar')
-      expect(package.manifest_json['defaultLocale']).to eq('en')
-      expect(package.manifest_json['version']).to eq('1.5')
-      expect(package.manifest_json['frameworkVersion']).to eq('0.5')
-      expect(package.manifest_json['remoteInstallationURL']).to eq('https://example.com/install')
-      expect(package.manifest_json['termsConditionsURL']).to eq('http://terms.com')
-
-      expect(package.manifest_json['author']).to eq({ 'name' => 'Ned Stark', 'email' => 'ned@winter.com', 'url' => 'http://www.zendesk.com/apps'})
-    end
+    build_app_source(manifest: manifest,
+                     additional_files: files)
   end
 
   describe '#translations' do
@@ -204,15 +169,14 @@ describe ZendeskAppsSupport::Package do
     let(:custom1) { 'The first custom thing' }
     context 'with default locale' do
       it 'returns translations' do
-        expect(package.send(:translations)).to eq({ 'en'=>{ 'app' => { 'description'=>description }, 'custom1' => custom1 } })
+        expected_translations = { 'en' => { 'app' => { 'description' => description }, 'custom1' => custom1 } }
+        expect(package.send(:translations)).to eq(expected_translations)
         expect(package.locales).to eq(['en'])
       end
 
       context 'with zh-cn.json' do
-        let (:source) do
-          build_app_source_with_files({
-            'translations/zh-cn.json' => File.read('spec/translations/zh-cn.json')
-          })
+        let(:source) do
+          build_app_source_with_files('translations/zh-cn.json' => File.read('spec/translations/zh-cn.json'))
         end
 
         it 'includes en and zh-cn in translations' do
@@ -220,19 +184,18 @@ describe ZendeskAppsSupport::Package do
         end
 
         it 'includes zh-cn in translations' do
-          expect(package.send(:translations)['zh-cn'].except('custom1')).to eq(JSON.parse(File.read('spec/translations/zh-cn.json')))
+          expected_translations = JSON.parse(File.read('spec/translations/zh-cn.json'))
+          expect(package.send(:translations)['zh-cn'].except('custom1')).to eq(expected_translations)
         end
 
-        it 'merges missing keys with the default locale'  do
+        it 'merges missing keys with the default locale' do
           expect(package.send(:translations)['zh-cn']['custom1']).to eq(custom1)
         end
       end
 
       context 'with zh-cn_keyval.json' do
-        let (:source) do
-          build_app_source_with_files({
-            'translations/zh-cn.json' => File.read('spec/translations/zh-cn_keyval.json')
-          })
+        let(:source) do
+          build_app_source_with_files('translations/zh-cn.json' => File.read('spec/translations/zh-cn_keyval.json'))
         end
 
         it 'includes en and zh-cn in translations' do
@@ -240,10 +203,11 @@ describe ZendeskAppsSupport::Package do
         end
 
         it 'removes zendesk-specific keys in translations' do
-          expect(package.send(:translations)['zh-cn'].except('custom1')).to eq(JSON.parse(File.read('spec/translations/zh-cn.json')))
+          expected_translations = JSON.parse(File.read('spec/translations/zh-cn.json'))
+          expect(package.send(:translations)['zh-cn'].except('custom1')).to eq(expected_translations)
         end
 
-        it 'merges missing keys with the default locale'  do
+        it 'merges missing keys with the default locale' do
           expect(package.send(:translations)['zh-cn']['custom1']).to eq(custom1)
         end
 
@@ -257,11 +221,11 @@ describe ZendeskAppsSupport::Package do
       let(:manifest) { super().merge('defaultLocale' => nil) }
 
       it 'returns translations' do
-        expect(package.send(:translations)).to eq({ 'en'=>{ 'app' => { 'description'=>description }, 'custom1'=>custom1 } })
+        expected_translations = { 'en' => { 'app' => { 'description' => description }, 'custom1' => custom1 } }
+        expect(package.send(:translations)).to eq(expected_translations)
         expect(package.locales).to eq(['en'])
       end
     end
-
   end
 
   describe '#css' do
@@ -272,7 +236,7 @@ describe ZendeskAppsSupport::Package do
     end
 
     context 'for an app without an app.css' do
-      let(:source) { build_app_source(additional_files: { "app.css" => nil }) }
+      let(:source) { build_app_source(additional_files: { 'app.css' => nil }) }
 
       it 'returns an empty string' do
         expect(package.app_css).to eq('')
@@ -280,116 +244,107 @@ describe ZendeskAppsSupport::Package do
     end
   end
 
-  describe '#market_translations!' do
-    let(:translations) { { 'app' => { 'name' => 'Some App', 'description' => 'It does something.' } } }
-    let(:source) { build_app_source(additional_files: { "translations/en.json" => translations.to_json }) }
-
-    subject { package.market_translations!('en') }
-
-    it 'ignores "name"' do
-      expect(subject['name']).to be nil
+  describe '#runtime_translations' do
+    let(:translations) do
+      {
+        'app' => {
+          'name' => 'Some App',
+          'description' => 'It does something.',
+          'everything_else' => 'preserved'
+        }
+      }
     end
+    let(:source) { build_app_source(additional_files: { 'translations/en.json' => translations.to_json }) }
 
-    it 'ignores "description"' do
-      expect(subject['description']).to be nil
+    subject { package.send :runtime_translations, package.translations_for('en').fetch('app') }
+
+    it 'ignores "name" and "description", preserving other keys' do
+      expect(subject).to eq('everything_else' => 'preserved')
     end
   end
 
   describe '#validate' do
-    it 'should not raise error when symlink exists inside the app for outside the marketplace' do
-      package = ZendeskAppsSupport::Package.new('spec/fixtures/symlinks')
-      expect { package.validate!(marketplace: false) }.to raise_error(ZendeskAppsSupport::Validations::ValidationError)
+    before do
+      allow(ZendeskAppsSupport::Validations::Marketplace).to receive(:call)
+      allow(ZendeskAppsSupport::Validations::Templates).to receive(:call)
+      allow(ZendeskAppsSupport::Validations::Stylesheets).to receive(:call)
+      package.validate!(marketplace: false)
     end
 
-    it 'should raise error when symlink exists inside the app for the marketplace' do
-      package = ZendeskAppsSupport::Package.new('spec/fixtures/symlinks')
-      expect { package.validate!(marketplace: true) }.to raise_error(ZendeskAppsSupport::Validations::ValidationError)
+    it 'should not run marketplace validations when app is not for the marketplace' do
+      expect(ZendeskAppsSupport::Validations::Marketplace).not_to have_received(:call)
     end
 
-    it 'should raise error when symlink exists inside the app for the marketplace' do
-      package = ZendeskAppsSupport::Package.new('spec/fixtures/symlinks')
-      expect { package.validate! }.to raise_error(ZendeskAppsSupport::Validations::ValidationError)
+    it 'normally validates templates and stylesheets' do
+      expect(ZendeskAppsSupport::Validations::Templates).to have_received(:call)
+      expect(ZendeskAppsSupport::Validations::Stylesheets).to have_received(:call)
     end
-  end
 
-  describe '#single_install' do
-    context 'when singleInstall is a boolean in the manifest' do
-      it 'returns true when singleInstall is true' do
-        manifest['singleInstall'] = true
-        expect(package.manifest_json['singleInstall']).to be_truthy
-      end
-
-      it 'returns false when singleInstall is false' do
-        manifest['singleInstall'] = false
-        expect(package.manifest_json['singleInstall']).to be_falsey
+    context 'for a marketplace app' do
+      it 'runs marketplace validations' do
+        package.validate!(marketplace: true)
+        expect(ZendeskAppsSupport::Validations::Marketplace).to have_received(:call).with(package)
       end
     end
 
-    context 'when singleInstall is missing from the manifest' do
-      it 'returns false' do
-        expect(package.manifest_json['singleInstall']).to be_falsey
+    context 'for a requirements-only app' do
+      let(:manifest) do
+        json = JSON.parse(File.read('spec/fixtures/marketing_only_app/manifest.json'))
+        json.merge('requirementsOnly' => true, 'marketingOnly' => false)
       end
-    end
-  end
-
-  describe '#is_no_template' do
-    context 'when noTemplate is a boolean in the manifest' do
-      it 'returns true when noTemplate is true' do
-        manifest['noTemplate'] = true
-        expect(package.is_no_template).to be_truthy
-      end
-
-      it 'returns false when noTemplate is false' do
-        manifest['noTemplate'] = false
-        expect(package.is_no_template).to be_falsey
-      end
-    end
-    context 'when noTemplate is an array of locations' do
-      it 'returns false' do
-        manifest['noTemplate'] = ['new_ticket_sidebar', 'nav_bar']
-        expect(package.is_no_template).to be_falsey
-      end
-    end
-  end
-
-  describe '#no_template_locations' do
-    context 'when noTemplate is a boolean in the manifest' do
-      it 'returns true when noTemplate is true' do
-        manifest['noTemplate'] = true
-        expect(package.no_template_locations).to be_truthy
+      let(:source) do
+        build_app_source(
+          manifest: manifest,
+          additional_files: {
+            'requirements.json'     => read_fixture_file('requirements.json'),
+            'app.js'                => nil,
+            'app.css'               => nil,
+            'templates/layout.hdbs' => nil,
+            'templates/main.hdbs'   => nil
+          }
+        )
       end
 
-      it 'returns false when noTemplate is false' do
-        manifest['noTemplate'] = false
-        expect(package.no_template_locations).to be_falsey
+      it 'does not validate templates or stylesheets' do
+        expect(ZendeskAppsSupport::Validations::Templates).not_to have_received(:call)
+        expect(ZendeskAppsSupport::Validations::Stylesheets).not_to have_received(:call)
       end
     end
-    context 'when noTemplate is an array of locations' do
-      let(:no_template_locations) { ['new_ticket_sidebar', 'nav_bar'] }
-      it 'returns the array of locations' do
-        manifest['noTemplate'] = no_template_locations
-        expect(package.no_template_locations).to eq(no_template_locations)
+
+    context 'for a marketing-only app' do
+      let(:package) { ZendeskAppsSupport::Package.new('spec/fixtures/marketing_only_app') }
+
+      it 'does not validate templates or stylesheets' do
+        expect(ZendeskAppsSupport::Validations::Templates).not_to have_received(:call)
+        expect(ZendeskAppsSupport::Validations::Stylesheets).not_to have_received(:call)
+      end
+    end
+
+    context 'for a iframe-only app' do
+      let(:package) { ZendeskAppsSupport::Package.new('spec/fixtures/iframe_only_app') }
+
+      it 'does not validate templates or stylesheets' do
+        expect(ZendeskAppsSupport::Validations::Templates).not_to have_received(:call)
+        expect(ZendeskAppsSupport::Validations::Stylesheets).not_to have_received(:call)
       end
     end
   end
 
   describe '#commonjs_modules' do
-    let (:modules) { package.send(:commonjs_modules) }
+    let(:modules) { package.send(:commonjs_modules) }
 
     context 'when there are js modules' do
-      let (:source) do
-        build_app_source_with_files({
-          'lib/a.js'     => File.read('spec/bookmarks_app/lib/a.js'),
-          'lib/foo/b.js' => File.read('spec/bookmarks_app/lib/foo/b.js')
-        })
+      let(:source) do
+        build_app_source_with_files('lib/a.js' => File.read('spec/bookmarks_app/lib/a.js'),
+                                    'lib/foo/b.js' => File.read('spec/bookmarks_app/lib/foo/b.js'))
       end
 
       it 'returns the contents of the file at lib/a.js' do
-        expect(modules["a.js"]).to eq(File.read('spec/bookmarks_app/lib/a.js'))
+        expect(modules['a.js']).to eq(File.read('spec/bookmarks_app/lib/a.js'))
       end
 
       it 'returns the contents of the file in subfolder lib/foo/b.js' do
-        expect(modules["foo/b.js"]).to eq(File.read('spec/bookmarks_app/lib/foo/b.js'))
+        expect(modules['foo/b.js']).to eq(File.read('spec/bookmarks_app/lib/foo/b.js'))
       end
     end
 
@@ -398,36 +353,98 @@ describe ZendeskAppsSupport::Package do
     end
   end
 
-  describe "#locations" do
-    it "supports strings" do
-      location_object = @package.send(:locations)
-      expect(location_object).to eq({"zendesk"=>{"ticket_sidebar"=>"_legacy"}})
+  describe '#location_icons' do
+    before do
+      allow(package.manifest).to receive(:locations) {
+        {
+          'chat' => { 'other_location' => { 'url' => '' } },
+          'support' => {
+            'top_bar' => { 'url' => 'some_url' },
+            'nav_bar' => { 'url' => 'other_url' },
+            'ticket_sidebar' => { 'url' => 'last_url' }
+          }
+        }
+      }
     end
 
-    it "supports arrays" do
-      @package.manifest_json['location'] = %w[🔔 🃏]
-      location_object = @package.send(:locations)
-      expect(location_object).to eq({"zendesk"=>{"🃏"=>"_legacy", "🔔"=>"_legacy"}})
+    context 'when it has an svg' do
+      it 'returns correct location_icons hash for top_bar' do
+        allow(package).to receive(:has_file?) do |file|
+          file == 'assets/icon_top_bar.svg' || file == 'assets/icon_nav_bar.svg'
+        end
+        expect(package.send(:location_icons)).to eq('support' => {
+                                                      'top_bar' => {
+                                                        'svg' => 'icon_top_bar.svg'
+                                                      },
+                                                      'nav_bar' => {
+                                                        'svg' => 'icon_nav_bar.svg'
+                                                      }
+                                                    })
+      end
     end
 
-    it "supports objects" do
-      @package.manifest_json['location'] = { 'zopim' => {'chat_sidebar' => 'http://www.zopim.com'} }
-      location_object = @package.send(:locations)
-      expect(location_object).to be @package.manifest_json['location']
+    context 'when it has three pngs' do
+      it 'returns correct location_icons hash' do
+        allow(package).to receive(:has_file?) do |file|
+          file != 'assets/icon_top_bar.svg' && file != 'assets/icon_nav_bar.svg'
+        end
+        expect(package.send(:location_icons)).to eq('support' => {
+                                                      'top_bar' => {
+                                                        'inactive' => 'icon_top_bar_inactive.png',
+                                                        'active' => 'icon_top_bar_active.png',
+                                                        'hover' => 'icon_top_bar_hover.png'
+                                                      },
+                                                      'nav_bar' => {
+                                                        'inactive' => 'icon_nav_bar_inactive.png',
+                                                        'active' => 'icon_nav_bar_active.png',
+                                                        'hover' => 'icon_nav_bar_hover.png'
+                                                      }
+                                                    })
+      end
     end
-  end
 
-
-  describe '#legacy_non_iframe_app' do
-    it 'should return true for an app that doesn\'t define any iframe uris' do
-      legacy_uri_stub = ZendeskAppsSupport::Package::LEGACY_URI_STUB
-      @package.manifest_json['location'] = { 'zopim' => { 'chat_sidebar' => legacy_uri_stub } }
-      expect(@package.send(:legacy_non_iframe_app?)).to be_truthy
+    context 'when it only has inactive pngs' do
+      it 'returns correct location_icons hash' do
+        allow(package).to receive(:has_file?) do |file|
+          file == 'assets/icon_top_bar_inactive.png' || file == 'assets/icon_nav_bar_inactive.png'
+        end
+        expect(package.send(:location_icons)).to eq('support' => {
+                                                      'top_bar' => {
+                                                        'inactive' => 'icon_top_bar_inactive.png',
+                                                        'active' => 'icon_top_bar_inactive.png',
+                                                        'hover' => 'icon_top_bar_inactive.png'
+                                                      },
+                                                      'nav_bar' => {
+                                                        'inactive' => 'icon_nav_bar_inactive.png',
+                                                        'active' => 'icon_nav_bar_inactive.png',
+                                                        'hover' => 'icon_nav_bar_inactive.png'
+                                                      }
+                                                    })
+      end
     end
 
-    it 'should return false for an app that defines any iframe uris' do
-      @package.manifest_json['location'] = { 'zopim' => { 'chat_sidebar' => 'http://zopim.com' } }
-      expect(@package.send(:legacy_non_iframe_app?)).to be_falsey
+    context 'when it has pngs and svgs' do
+      it 'returns correct location_icons hash' do
+        allow(package).to receive(:has_file?) { true }
+        expect(package.send(:location_icons)).to eq('support' => {
+                                                      'top_bar' => {
+                                                        'svg' => 'icon_top_bar.svg'
+                                                      },
+                                                      'nav_bar' => {
+                                                        'svg' => 'icon_nav_bar.svg'
+                                                      }
+                                                    })
+      end
+    end
+
+    context 'when it has no images' do
+      it 'returns correct location_icons hash' do
+        allow(package).to receive(:has_file?) { false }
+        expect(package.send(:location_icons)).to eq('support' => {
+                                                      'top_bar' => {},
+                                                      'nav_bar' => {}
+                                                    })
+      end
     end
   end
 end

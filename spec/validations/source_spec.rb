@@ -1,21 +1,21 @@
+# frozen_string_literal: true
 require 'spec_helper'
 
 describe ZendeskAppsSupport::Validations::Source do
   let(:files) { [double('AppFile', relative_path: 'abc.js')] }
+  let(:manifest_json) { { 'requirementsOnly' => false } }
   let(:package) do
     double('Package', js_files: files,
                       lib_files: [],
                       template_files: [],
                       app_css: '',
-                      manifest_json: { 'requirementsOnly' => false },
+                      manifest: ZendeskAppsSupport::Manifest.new(JSON.dump(manifest_json)),
                       locations: { 'zendesk' => { 'ticket_sidebar' => '_legacy' } },
                       iframe_only?: false)
   end
 
   context 'when requirements only' do
-    before do
-      allow(package).to receive(:manifest_json) { { 'requirementsOnly' => true } }
-    end
+    let(:manifest_json) { { 'requirementsOnly' => true } }
 
     it 'should have an error when app.js is present' do
       errors = ZendeskAppsSupport::Validations::Source.call(package)
@@ -33,7 +33,7 @@ describe ZendeskAppsSupport::Validations::Source do
 
   context 'when iframe only' do
     before do
-      allow(package).to receive(:iframe_only?) { true }
+      allow(package.manifest).to receive(:iframe_only?) { true }
     end
 
     context 'when the package includes app.js' do
@@ -101,6 +101,19 @@ describe ZendeskAppsSupport::Validations::Source do
 
   it 'should not have a jslint error when using [] notation unnecessarily' do
     source = double('AppFile', relative_path: 'app.js', read: "var a = {}; a['b'] = 0;")
+    allow(package).to receive(:js_files) { [source] }
+    errors = ZendeskAppsSupport::Validations::Source.call(package)
+
+    expect(errors).to be_nil
+  end
+
+  it 'should not have a jslint error when using globals' do
+    source = double(
+      'AppFile',
+      relative_path: 'app.js',
+      read: 'var a = [window, document, self, clearInterval, clearTimeout, '\
+            'setInterval, setTimeout, top, frames, parent];'
+    )
     allow(package).to receive(:js_files) { [source] }
     errors = ZendeskAppsSupport::Validations::Source.call(package)
 

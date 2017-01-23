@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'spec_helper'
 
 describe ZendeskAppsSupport::Validations::ValidationError do
@@ -16,9 +17,9 @@ describe ZendeskAppsSupport::Validations::ValidationError do
 
     it do
       is_expected.to eq(JSON.generate(
-        'class' => error.class.to_s,
-        'key'   => error.key,
-        'data'  => error.data
+                          'class' => error.class.to_s,
+                          'key'   => error.key,
+                          'data'  => error.data
       ))
     end
   end
