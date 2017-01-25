@@ -12,12 +12,11 @@ module ZendeskAppsSupport
     end
 
     def compile(options = {})
-      installation_order = options.fetch(:installation_orders, {})
-
       INSTALLED_TEMPLATE.result(
         appsjs: @appsjs,
         installations: @installations,
-        installation_orders: installation_order
+        installation_orders: options.fetch(:installation_orders, {}),
+        rollbar_zaf_access_token: options.fetch(:rollbar_zaf_access_token, '')
       )
     end
 
