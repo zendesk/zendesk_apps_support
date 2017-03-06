@@ -55,7 +55,7 @@ module ZendeskAppsSupport
         def invalid_custom_fields(requirements)
           user_fields = requirements['user_fields']
           organization_fields = requirements['organization_fields']
-          custom_fields = user_fields.merge(organization_fields)
+          custom_fields = {}.merge(user_fields).merge(organization_fields)
           return unless custom_fields
           [].tap do |errors|
             custom_fields.each do |identifier, fields|
