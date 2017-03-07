@@ -79,6 +79,30 @@ describe ZendeskAppsSupport::Validations::Requirements do
     end
   end
 
+  context 'a user field requirement is lacking required fields' do
+    let(:requirements_string) { JSON.generate('user_fields' => { 'abc' => {'type' => 'text', 'title' => 'abc'} }) }
+
+    it 'creates an error for missing required fields' do
+      expect(errors.first.key).to eq(:missing_required_fields)
+    end
+  end
+
+  context 'an org field requirement is lacking required fields' do
+    let(:requirements_string) { JSON.generate('organization_fields' => { 'abc' => {'type' => 'text', 'title' => 'abc'} }) }
+
+    it 'creates an error for missing required fields' do
+      expect(errors.first.key).to eq(:missing_required_fields)
+    end
+  end
+
+  context 'multiple custom field types are accepted with valid fields' do
+    let(:requirements_string) { JSON.generate( 'user_fields' => { 'abc' => {'type' => 'text', 'title' => 'abc', 'key' => 'abc' }}, 'organization_fields' => { 'xyz' => { 'type' => 'text', 'title' => 'xyz', 'key' => 'xyz' }} ) }
+    it 'passes with no errors' do
+      puts errors
+      expect(errors).to be_empty
+    end
+  end
+
   context 'many requirements are lacking required fields' do
     let(:requirements_string) { JSON.generate('targets' => { 'abc' => {}, 'xyz' => {} }) }
 
