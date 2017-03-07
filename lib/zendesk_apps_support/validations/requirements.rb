@@ -56,7 +56,7 @@ module ZendeskAppsSupport
           user_fields = requirements['user_fields'] || {}
           organization_fields = requirements['organization_fields'] || {}
           custom_fields = user_fields.merge(organization_fields)
-          return unless custom_fields
+          return if custom_fields.empty?
           [].tap do |errors|
             custom_fields.each do |identifier, fields|
               next if fields.include? 'key'
