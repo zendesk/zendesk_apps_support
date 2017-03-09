@@ -71,10 +71,63 @@ describe ZendeskAppsSupport::Validations::Requirements do
     end
   end
 
-  context 'a requirement is lacking required fields' do
+  context 'a requirement field missing a "key"' do
     let(:requirements_string) { JSON.generate('targets' => { 'abc' => {} }) }
 
-    it 'creates an error for any requirement that is lacking required fields' do
+    it 'creates an error for missing required fields' do
+      expect(errors.first.key).to eq(:missing_required_fields)
+    end
+  end
+
+  context 'a user field missing a "key"' do
+    let(:requirements_string) do
+      JSON.generate('user_fields' => { 'abc' => { 'type' => 'text', 'title' => 'abc' } })
+    end
+
+    it 'creates an error for missing required fields' do
+      expect(errors.first.key).to eq(:missing_required_fields)
+    end
+  end
+
+  context 'an org field missing a "key"' do
+    let(:requirements_string) do
+      JSON.generate('organization_fields' => { 'abc' => { 'type' => 'text', 'title' => 'abc' } })
+    end
+
+    it 'creates an error for missing required fields' do
+      expect(errors.first.key).to eq(:missing_required_fields)
+    end
+  end
+
+  context 'multiple custom field types with valid fields' do
+    let(:requirements_string) do
+      JSON.generate(
+        'user_fields' => {
+          'abc' => { 'type' => 'text', 'title' => 'abc', 'key' => 'abc' }
+        },
+        'organization_fields' => {
+          'xyz' => { 'type' => 'text', 'title' => 'xyz', 'key' => 'xyz' }
+        }
+      )
+    end
+    it 'passes with no errors' do
+      puts errors
+      expect(errors).to be_empty
+    end
+  end
+
+  context 'multiple custom field groups with duplicate nested keys' do
+    let(:requirements_string) do
+      JSON.generate(
+        'user_fields' => {
+          'abc' => { 'type' => 'text', 'title' => 'abc' }
+        },
+        'organization_fields' => {
+          'abc' => { 'type' => 'text', 'title' => 'abc', 'key' => 'abc' }
+        }
+      )
+    end
+    it 'create an error for missing required fields' do
       expect(errors.first.key).to eq(:missing_required_fields)
     end
   end
