@@ -116,6 +116,22 @@ describe ZendeskAppsSupport::Validations::Requirements do
     end
   end
 
+  context 'multiple custom field groups with duplicate nested keys are valid and do not overwrite each others errors' do
+    let(:requirements_string) do
+      JSON.generate(
+        'user_fields' => {
+          'abc' => { 'type' => 'text', 'title' => 'abc' }
+        },
+        'organization_fields' => {
+          'abc' => { 'type' => 'text', 'title' => 'abc', 'key' => 'abc' }
+        }
+      )
+    end
+    it 'creates an error for missing required fields' do
+      expect(errors.first.key).to eq(:missing_required_fields)
+    end
+  end
+
   context 'many requirements are lacking required fields' do
     let(:requirements_string) { JSON.generate('targets' => { 'abc' => {}, 'xyz' => {} }) }
 
