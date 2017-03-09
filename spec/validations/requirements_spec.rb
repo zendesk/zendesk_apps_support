@@ -71,15 +71,15 @@ describe ZendeskAppsSupport::Validations::Requirements do
     end
   end
 
-  context 'a requirement is lacking required fields' do
+  context 'a requirement field missing a "key"' do
     let(:requirements_string) { JSON.generate('targets' => { 'abc' => {} }) }
 
-    it 'creates an error for any requirement that is lacking required fields' do
+    it 'creates an error for missing required fields' do
       expect(errors.first.key).to eq(:missing_required_fields)
     end
   end
 
-  context 'a user field requirement is lacking required fields' do
+  context 'a user field missing a "key"' do
     let(:requirements_string) do
       JSON.generate('user_fields' => { 'abc' => { 'type' => 'text', 'title' => 'abc' } })
     end
@@ -89,7 +89,7 @@ describe ZendeskAppsSupport::Validations::Requirements do
     end
   end
 
-  context 'an org field requirement is lacking required fields' do
+  context 'an org field missing a "key"' do
     let(:requirements_string) do
       JSON.generate('organization_fields' => { 'abc' => { 'type' => 'text', 'title' => 'abc' } })
     end
@@ -99,7 +99,7 @@ describe ZendeskAppsSupport::Validations::Requirements do
     end
   end
 
-  context 'multiple custom field types are accepted with valid fields' do
+  context 'multiple custom field types with valid fields' do
     let(:requirements_string) do
       JSON.generate(
         'user_fields' => {
@@ -116,7 +116,7 @@ describe ZendeskAppsSupport::Validations::Requirements do
     end
   end
 
-  context 'multiple custom field groups with duplicate nested keys are valid and do not overwrite each others errors' do
+  context 'multiple custom field groups with duplicate nested keys' do
     let(:requirements_string) do
       JSON.generate(
         'user_fields' => {
@@ -127,7 +127,7 @@ describe ZendeskAppsSupport::Validations::Requirements do
         }
       )
     end
-    it 'creates an error for missing required fields' do
+    it 'create an error for missing required fields' do
       expect(errors.first.key).to eq(:missing_required_fields)
     end
   end
