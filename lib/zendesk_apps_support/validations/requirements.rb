@@ -53,14 +53,15 @@ module ZendeskAppsSupport
         end
 
         def invalid_custom_fields(requirements)
-          user_fields = requirements['user_fields'] || {}
-          organization_fields = requirements['organization_fields'] || {}
-          custom_fields = user_fields.merge(organization_fields)
-          return if custom_fields.empty?
+          user_fields = requirements['user_fields']
+          organization_fields = requirements['organization_fields']
+          return if user_fields.nil? && organization_fields.nil?
           [].tap do |errors|
-            custom_fields.each do |identifier, fields|
-              next if fields.include? 'key'
-              errors << ValidationError.new(:missing_required_fields, field: 'key', identifier: identifier)
+            [user_fields, organization_fields].compact.each do |field_group|
+              field_group.each do |identifier, fields|
+                next if fields.include? 'key'
+                errors << ValidationError.new(:missing_required_fields, field: 'key', identifier: identifier)
+              end
             end
           end
         end
