@@ -24,7 +24,7 @@ module ZendeskAppsSupport
             errors << invalid_requirements_types(requirements)
             errors << excessive_requirements(requirements)
             errors << invalid_channel_integrations(requirements)
-            errors << invalid_custom_fields(requirements)
+            errors << invalid_user_fields(requirements)
             errors << missing_required_fields(requirements)
             errors.flatten!
             errors.compact!
@@ -52,16 +52,13 @@ module ZendeskAppsSupport
           ValidationError.new(:excessive_requirements, max: MAX_REQUIREMENTS, count: count) if count > MAX_REQUIREMENTS
         end
 
-        def invalid_custom_fields(requirements)
+        def invalid_user_fields(requirements)
           user_fields = requirements['user_fields']
-          organization_fields = requirements['organization_fields']
-          return if user_fields.nil? && organization_fields.nil?
+          return unless user_fields
           [].tap do |errors|
-            [user_fields, organization_fields].compact.each do |field_group|
-              field_group.each do |identifier, fields|
-                next if fields.include? 'key'
-                errors << ValidationError.new(:missing_required_fields, field: 'key', identifier: identifier)
-              end
+            user_fields.each do |identifier, fields|
+              next if fields.include? 'key'
+              errors << ValidationError.new(:missing_required_fields, field: 'key', identifier: identifier)
             end
           end
         end
