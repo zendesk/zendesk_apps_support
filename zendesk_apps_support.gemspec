@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = 'zendesk_apps_support'
-  s.version     = '3.3.9'
+  s.version     = '3.4.0'
   s.license     = 'Apache License Version 2.0'
   s.authors     = ['James A. Rosen', 'Likun Liu', 'Sean Caffery', 'Daniel Ribeiro']
   s.email       = ['dev@zendesk.com']
