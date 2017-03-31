@@ -12,7 +12,13 @@ module ZendeskAppsSupport
 
       class << self
         def call(package)
-          return [ValidationError.new(:missing_manifest)] unless package.has_file?('manifest.json')
+          unless package.has_file?('manifest.json')
+            nested_manifest = package.files.find { |file| file =~ %r{\A[^/]+?/manifest\.json\Z} }
+            if nested_manifest
+              return [ValidationError.new(:nested_manifest, found_path: nested_manifest.relative_path)]
+            end
+            return [ValidationError.new(:missing_manifest)]
+          end
 
           collate_manifest_errors(package)
 
