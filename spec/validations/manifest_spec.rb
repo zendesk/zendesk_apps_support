@@ -45,6 +45,11 @@ describe ZendeskAppsSupport::Validations::Manifest do
     expect(package).to have_error 'Could not find manifest.json'
   end
 
+  it 'should have an error when manifest.json is in a subdirectory' do
+    package = ZendeskAppsSupport::Package.new('spec/fixtures')
+    expect(package).to have_error(/Could not find manifest\.json in the root of the zip file, /)
+  end
+
   let(:manifest) { ZendeskAppsSupport::Manifest.new(JSON.dump(@manifest_hash)) }
 
   before do
