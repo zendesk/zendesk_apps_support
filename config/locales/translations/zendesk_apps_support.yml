@@ -50,7 +50,7 @@ parts:
       value: "Could not find manifest.json"
   - translation:
       key: "txt.apps.admin.error.app_build.nested_manifest"
-      title: "App builder job: missing manifest error, but it was found in a subdirectory"
+      title: "App builder job: missing manifest.json (file name, leave as is) error, but it was found in a subdirectory (path to correct file is loaded in the placeholder"
       value: "Could not find manifest.json in the root of the zip file, but %{found_path} was found. Try re-creating the archive from this directory."
   - translation:
       key: "txt.apps.admin.error.app_build.symlink_in_zip"
