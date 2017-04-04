@@ -6,6 +6,8 @@
   <% installations.each do |installation| %>
     if (ZendeskApps[<%= installation.app_name.to_json %>]) {
       ZendeskApps[<%= installation.app_name.to_json %>].install(<%= installation.to_json %>);
+    } else {
+      Rollbar && Rollbar.critical("App code missing: '<%= installation.app_name.to_json %>' (<%= installation.app_id.to_json %>)");
     }
   <% end %>
 
