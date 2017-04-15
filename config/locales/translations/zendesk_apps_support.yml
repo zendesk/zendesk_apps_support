@@ -29,15 +29,15 @@ parts:
       value: "Marketing-only apps must not be private"
   - translation:
       key: "txt.apps.admin.error.app_build.no_location_required"
-      title: "App builder job: ban location while requirements only"
+      title: "App builder job: ban locations from being specified if the requirementsOnly object is set"
       value: "Locations can't be defined when you specify requirements only"
   - translation:
       key: "txt.apps.admin.error.app_build.no_framework_version_required"
-      title: "App builder job: ban framework version while requirements only"
+      title: "App builder job: ban framework versions from being specified if the requirementsOnly object is set"
       value: "Framework versions can't be set when you specify requirements only"
   - translation:
       key: "txt.apps.admin.error.app_build.no_app_js_required"
-      title: "App builder job: ban app.js while requirements only"
+      title: "App builder job: disallow having app.js if the requirementsOnly object is set"
       value: "Do not set your app to requirements only if you need app.js"
       obsolete: "2016-02-28"
   - translation:
