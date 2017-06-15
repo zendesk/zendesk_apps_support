@@ -6,7 +6,9 @@ module ZendeskAppsSupport
   module Validations
     module Translations
       TRANSLATIONS_PATH = %r{^translations/(.*)\.json$}
-      VALID_LOCALE      = /^[a-z]{2}(-\w{2,3})?$/
+                          # from https://support.zendesk.com/api/v2/locales/agent.json
+                          # manually added 'en'
+      VALID_LOCALES     = %w{bg cs da de en en-CA en-GB en-US es es-419 es-ES fi fr fr-CA it ja ko nl no pl pt pt-BR ro ru sv tr uk zh-CN zh-TW}.freeze
 
       class TranslationFormatError < StandardError
       end
@@ -24,7 +26,7 @@ module ZendeskAppsSupport
         private
 
         def locale_error(file, locale)
-          return nil if VALID_LOCALE =~ locale
+          return nil if VALID_LOCALES.include?(locale)
           ValidationError.new('translation.invalid_locale', file: file.relative_path)
         end
 

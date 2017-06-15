@@ -213,7 +213,7 @@ module ZendeskAppsSupport
         def default_locale_error(manifest, package)
           default_locale = manifest.default_locale
           unless default_locale.nil?
-            if default_locale !~ Translations::VALID_LOCALE
+            if !Translations::VALID_LOCALES.include?(default_locale)
               ValidationError.new(:invalid_default_locale, default_locale: default_locale)
             elsif package.translation_files.detect { |f| f.relative_path == "translations/#{default_locale}.json" }.nil?
               ValidationError.new(:missing_translation_file, default_locale: default_locale)
