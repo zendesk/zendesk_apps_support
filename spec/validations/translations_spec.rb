@@ -45,6 +45,17 @@ describe ZendeskAppsSupport::Validations::Translations do
     end
   end
 
+  context 'when there is a file with an incorrect capitalized locale for a name' do
+    let(:translation_files) do
+      [double('AppFile', relative_path: 'translations/en-us.json', read: '{}')]
+    end
+
+    it 'should report the error' do
+      expect(subject.length).to eq(1)
+      expect(subject[0].to_s).to match(/locale/)
+    end
+  end
+
   context 'when there is a file with a valid locale containing valid JSON' do
     let(:translation_files) do
       [double('AppFile', relative_path: 'translations/en-US.json', read: '{}')]
