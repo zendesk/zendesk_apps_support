@@ -299,6 +299,10 @@ module ZendeskAppsSupport
             package.warnings << I18n.t('txt.apps.admin.warning.app_build.deprecated_version')
           end
 
+          if target_version == '1.0'
+            package.warnings << I18n.t('txt.apps.admin.warning.app_build.sunsetting_version_v1')
+          end
+
           unless valid_to_serve.include?(target_version)
             return ValidationError.new(:invalid_version,
                                        target_version: target_version,

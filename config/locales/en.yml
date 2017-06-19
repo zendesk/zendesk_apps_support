@@ -115,3 +115,6 @@ en:
             deprecated_version: You are targeting a deprecated version of the framework.
               Your app will work, but it might break when the new framework version
               is deployed.
+            sunsetting_version_v1: 'You are targeting the v1 framework, which is deprecated.
+              From August 1st 2017, no new v1 app submissions will be accepted. Consider
+              migrating to the v2 framework. For more information: https://support.zendesk.com/hc/articles/115004453028'
