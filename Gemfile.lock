@@ -28,7 +28,7 @@ GEM
       execjs
       multi_json (>= 1.3)
       rake
-    json (2.0.3)
+    json (2.1.0)
     multi_json (1.12.1)
     parser (2.3.3.0)
       ast (~> 2.2)
@@ -55,7 +55,7 @@ GEM
       ruby-progressbar (~> 1.7)
       unicode-display_width (~> 1.0, >= 1.0.1)
     ruby-progressbar (1.8.1)
-    sass (3.4.23)
+    sass (3.4.24)
     sassc (1.11.2)
       bundler
       ffi (~> 1.9.6)
@@ -74,4 +74,4 @@ DEPENDENCIES
   zendesk_apps_support!
 
 BUNDLED WITH
-   1.14.6
+   1.15.1
