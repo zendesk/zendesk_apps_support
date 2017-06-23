@@ -20,9 +20,12 @@ module ZendeskAppsSupport
     TO_BE_SERVED     = [DEPRECATED, SUNSETTING, CURRENT, FUTURE].compact.flatten.freeze
     VALID_FOR_UPDATE = [SUNSETTING, CURRENT, FUTURE].compact.flatten.freeze
 
+    attr_reader :current
+
     def initialize(version)
       @version = version.to_s
       @version.freeze
+      @current = CURRENT
       freeze
     end
 
@@ -40,10 +43,6 @@ module ZendeskAppsSupport
 
     def sunsetting?
       SUNSETTING && SUNSETTING.include?(@version)
-    end
-
-    def current
-      CURRENT
     end
 
     def obsolete?
