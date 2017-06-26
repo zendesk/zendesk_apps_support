@@ -292,7 +292,7 @@ module ZendeskAppsSupport
         end
 
         def invalid_version_error(manifest, package)
-          valid_to_serve = AppVersion::TO_BE_SERVED.compact
+          valid_to_serve = AppVersion::TO_BE_SERVED
           target_version = manifest.framework_version
 
           if target_version == AppVersion::DEPRECATED
