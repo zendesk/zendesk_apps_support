@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 module ZendeskAppsSupport
-  # At any point in time, we support up to four types of versions:
+  # At any point in time, we support up to four versions:
   #  * deprecated -- we will still serve apps targeting the deprecated version,
   #                  but newly created or updated apps CANNOT target it
   #  * sunsetting -- we will soon be removing support for this version;
@@ -10,15 +10,14 @@ module ZendeskAppsSupport
   #  * future     -- we will serve apps targeting the future version;
   #                  newly created or updates apps MAY target it, but it
   #                  may change without notice
-  # Versions can be listed as strings or in arrays
   class AppVersion
     DEPRECATED = '0.5'
     SUNSETTING = '1.0'
     CURRENT    = '2.0'
     FUTURE     = nil
 
-    TO_BE_SERVED     = [DEPRECATED, SUNSETTING, CURRENT, FUTURE].compact.flatten.freeze
-    VALID_FOR_UPDATE = [SUNSETTING, CURRENT, FUTURE].compact.flatten.freeze
+    TO_BE_SERVED     = [DEPRECATED, SUNSETTING, CURRENT, FUTURE].compact.freeze
+    VALID_FOR_UPDATE = [SUNSETTING, CURRENT, FUTURE].compact.freeze
 
     attr_reader :current
 
@@ -38,11 +37,11 @@ module ZendeskAppsSupport
     end
 
     def deprecated?
-      DEPRECATED.include?(@version)
+      @version == DEPRECATED
     end
 
     def sunsetting?
-      SUNSETTING && SUNSETTING.include?(@version)
+      @version == SUNSETTING
     end
 
     def obsolete?
