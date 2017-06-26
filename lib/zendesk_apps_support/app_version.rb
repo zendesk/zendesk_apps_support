@@ -22,8 +22,7 @@ module ZendeskAppsSupport
     attr_reader :current
 
     def initialize(version)
-      @version = version.to_s
-      @version.freeze
+      @version = version.to_s.freeze
       @current = CURRENT
       freeze
     end
