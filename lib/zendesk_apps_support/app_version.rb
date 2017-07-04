@@ -4,7 +4,7 @@ module ZendeskAppsSupport
   #  * deprecated -- we will still serve apps targeting the deprecated version,
   #                  but newly created or updated apps CANNOT target it
   #  * sunsetting -- we will soon be removing support for this version;
-  #                  newly created or updated apps SHOULD target the current version
+  #                  updated apps SHOULD target the current version, no new apps allowed
   #  * current    -- we will serve apps targeting the current version;
   #                  newly created or updated apps SHOULD target it
   #  * future     -- we will serve apps targeting the future version;
@@ -18,6 +18,7 @@ module ZendeskAppsSupport
 
     TO_BE_SERVED     = [DEPRECATED, SUNSETTING, CURRENT, FUTURE].compact.freeze
     VALID_FOR_UPDATE = [SUNSETTING, CURRENT, FUTURE].compact.freeze
+    VALID_FOR_CREATE = [CURRENT, FUTURE].compact.freeze
 
     attr_reader :current
 
@@ -33,6 +34,10 @@ module ZendeskAppsSupport
 
     def valid_for_update?
       VALID_FOR_UPDATE.include?(@version)
+    end
+
+    def valid_for_create?
+      VALID_FOR_CREATE.include?(@version)
     end
 
     def deprecated?
