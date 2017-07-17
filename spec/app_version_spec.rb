@@ -11,6 +11,7 @@ describe ZendeskAppsSupport::AppVersion do
     it { is_expected.to be_present }
     it { is_expected.to be_servable }
     it { is_expected.to be_valid_for_update }
+    it { is_expected.to be_valid_for_create }
     it { is_expected.not_to be_blank }
     it { is_expected.not_to be_deprecated }
     it { is_expected.not_to be_obsolete }
@@ -37,6 +38,7 @@ describe ZendeskAppsSupport::AppVersion do
     it { is_expected.to be_present }
     it { is_expected.to be_servable }
     it { is_expected.not_to be_valid_for_update }
+    it { is_expected.not_to be_valid_for_create }
     it { is_expected.not_to be_blank }
     it { is_expected.to be_deprecated }
     it { is_expected.not_to be_obsolete }
@@ -63,6 +65,7 @@ describe ZendeskAppsSupport::AppVersion do
     it { is_expected.to be_present }
     it { is_expected.not_to be_servable }
     it { is_expected.not_to be_valid_for_update }
+    it { is_expected.not_to be_valid_for_create }
     it { is_expected.not_to be_blank }
     it { is_expected.not_to be_deprecated }
     it { is_expected.to be_obsolete }
