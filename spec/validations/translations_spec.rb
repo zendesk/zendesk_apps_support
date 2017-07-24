@@ -58,7 +58,7 @@ describe ZendeskAppsSupport::Validations::Translations do
   context 'validate translation format when "package" is defined inside "app"' do
     context 'all the leaf nodes have defined "title" and "value"' do
       let(:translation_files) do
-        [double('AppFile', relative_path: 'translations/en-US.json', read: read_fixture_file('valid_en.json'))]
+        [double('AppFile', relative_path: 'translations/en-US.json', read: read_fixture_file('valid_en-US.json'))]
       end
 
       it 'should be valid' do
@@ -68,7 +68,7 @@ describe ZendeskAppsSupport::Validations::Translations do
 
     context 'when the "title" field is not defined on one leaf node' do
       let(:translation_files) do
-        [double('AppFile', relative_path: 'translations/en-US.json', read: read_fixture_file('invalid_en.json'))]
+        [double('AppFile', relative_path: 'translations/en-US.json', read: read_fixture_file('invalid_en-US.json'))]
       end
 
       it 'should be invalid' do
