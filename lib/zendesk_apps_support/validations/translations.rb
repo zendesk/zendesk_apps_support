@@ -17,6 +17,7 @@ module ZendeskAppsSupport
             path_match = TRANSLATIONS_PATH.match(file.relative_path)
             if path_match
               errors << locale_error(file, path_match[1]) << json_error(file)
+              errors << required_keys(file) if errors.compact.empty?
             end
           end.compact
         end
@@ -45,6 +46,14 @@ module ZendeskAppsSupport
           end
         rescue JSON::ParserError => e
           ValidationError.new('translation.not_json', file: file.relative_path, errors: e)
+        end
+
+        def required_keys(file)
+          return if file.relative_path != 'translations/en.json' || JSON.parse(file.read)['app']['name']
+
+          ValidationError.new('translation.missing_required_key',
+                              file: file.relative_path,
+                              missing_key: 'app.name')
         end
 
         def validate_translation_format(json)

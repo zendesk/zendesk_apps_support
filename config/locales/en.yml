@@ -92,6 +92,7 @@ en:
               invalid_format: "%{field} is invalid for translation."
               not_json: "%{file} is not valid JSON. %{errors}"
               not_json_object: "%{file} is not a JSON object."
+              missing_required_key: 'Missing required key from %{file}: %{missing_key}'
             stylesheet_error: 'Sass error: %{sass_error}'
             invalid_type_parameter:
               one: "%{invalid_types} is an invalid parameter type."

@@ -251,6 +251,7 @@ module ZendeskAppsSupport
 
     def process_translations(locale_path)
       translations = File.exist?(locale_path) ? JSON.parse(File.read(locale_path)) : {}
+      translations['app'].delete('name') if translations.key?('app')
       translations['app'].delete('package') if translations.key?('app')
       remove_zendesk_keys(translations)
     end
