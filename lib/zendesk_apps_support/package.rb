@@ -243,7 +243,7 @@ module ZendeskAppsSupport
     def runtime_translations(translations)
       result = translations.dup
       result.delete('name')
-      result.delete('description')
+      result.delete('short_description')
       result.delete('long_description')
       result.delete('installation_instructions')
       result

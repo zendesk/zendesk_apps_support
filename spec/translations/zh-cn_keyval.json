@@ -1,7 +1,7 @@
 {
   "app": {
     "package": "bookmarks_app",
-    "description": {
+    "short_description": {
       "title": "app description",
       "value": "从我们的 iPad 和 iPhone app 访问已添加书签的工单"
     }

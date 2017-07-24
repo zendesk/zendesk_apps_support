@@ -1,6 +1,6 @@
 {
   "app": {
-    "description": "从我们的 iPad 和 iPhone app 访问已添加书签的工单"
+    "short_description": "从我们的 iPad 和 iPhone app 访问已添加书签的工单"
   },
   "fetch": {
     "fail": "取回书签时出错",
