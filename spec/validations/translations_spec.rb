@@ -55,6 +55,32 @@ describe ZendeskAppsSupport::Validations::Translations do
     end
   end
 
+  context 'when there is a en.json' do
+    context 'required keys are missing' do
+      let(:translation_files) do
+        [double('AppFile',
+                relative_path: 'translations/en.json',
+                read: read_fixture_file('invalid_en.json'),
+                to_s: 'translations/en.json')]
+      end
+
+      it 'should report the error' do
+        expect(subject.length).to eq(1)
+        expect(subject[0].to_s).to match(/Missing required key from/)
+      end
+    end
+
+    context 'required keys are present' do
+      let(:translation_files) do
+        [double('AppFile', relative_path: 'translations/en.json', read: read_fixture_file('valid_en.json'))]
+      end
+
+      it 'should be valid' do
+        expect(subject.length).to eq(0)
+      end
+    end
+  end
+
   context 'validate translation format when "package" is defined inside "app"' do
     context 'all the leaf nodes have defined "title" and "value"' do
       let(:translation_files) do
@@ -71,7 +97,7 @@ describe ZendeskAppsSupport::Validations::Translations do
         [double('AppFile', relative_path: 'translations/en-US.json', read: read_fixture_file('invalid_en-US.json'))]
       end
 
-      it 'should be invalid' do
+      it 'should report the error' do
         expect(subject.length).to eq(1)
         expect(subject[0].to_s).to match(/is invalid for translation/)
       end
