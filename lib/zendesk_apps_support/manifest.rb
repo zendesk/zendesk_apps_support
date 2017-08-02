@@ -47,8 +47,10 @@ module ZendeskAppsSupport
 
     def products
       @products ||=
-        if requirements_only? || marketing_only?
+        if requirements_only?
           [ Product::SUPPORT ]
+        elsif marketing_only?
+          products_ignore_locations || [ Product::SUPPORT ]
         else
           products_from_locations
         end
@@ -136,6 +138,12 @@ module ZendeskAppsSupport
       location_options.map { |lo| lo.location.product_code }
                       .uniq
                       .map { |code| Product.find_by(code: code) }
+    end
+
+    def products_ignore_locations
+      locations.keys.map do |product_name|
+        Product.find_by(name: product_name)
+      end
     end
 
     def set_locations_and_hosts

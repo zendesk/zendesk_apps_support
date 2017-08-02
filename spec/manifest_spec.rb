@@ -238,14 +238,31 @@ describe ZendeskAppsSupport::Manifest do
     end
 
     context 'for a marketing only app' do
-      before do
-        manifest_hash.delete(:location)
-        manifest_hash[:marketingOnly] = true
-        manifest_hash[:private] = false
+      context 'when no locations are specified' do
+        before do
+          manifest_hash.delete(:location)
+          manifest_hash[:marketingOnly] = true
+          manifest_hash[:private] = false
+        end
+
+        it 'defaults to Support' do
+          expect(manifest.products).to eq([ ZendeskAppsSupport::Product::SUPPORT ])
+        end
       end
 
-      it 'is overriden to Support' do
-        expect(manifest.products).to eq([ ZendeskAppsSupport::Product::SUPPORT ])
+      context 'when products are specified regardless of locations' do
+        before do
+          manifest_hash[:location][:chat] = {}
+          manifest_hash[:marketingOnly] = true
+          manifest_hash[:private] = false
+        end
+
+        it 'returns the products specified in the manifest' do
+          expect(manifest.products).to eq([
+            ZendeskAppsSupport::Product::SUPPORT,
+            ZendeskAppsSupport::Product::CHAT
+          ])
+        end
       end
     end
   end
