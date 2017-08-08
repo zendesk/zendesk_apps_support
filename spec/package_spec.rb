@@ -169,7 +169,7 @@ describe ZendeskAppsSupport::Package do
     let(:custom1) { 'The first custom thing' }
     context 'with default locale' do
       it 'returns translations' do
-        expected_translations = { 'en' => { 'app' => { 'description' => description }, 'custom1' => custom1 } }
+        expected_translations = { 'en' => { 'app' => { 'short_description' => description }, 'custom1' => custom1 } }
         expect(package.send(:translations)).to eq(expected_translations)
         expect(package.locales).to eq(['en'])
       end
@@ -221,7 +221,7 @@ describe ZendeskAppsSupport::Package do
       let(:manifest) { super().merge('defaultLocale' => nil) }
 
       it 'returns translations' do
-        expected_translations = { 'en' => { 'app' => { 'description' => description }, 'custom1' => custom1 } }
+        expected_translations = { 'en' => { 'app' => { 'short_description' => description }, 'custom1' => custom1 } }
         expect(package.send(:translations)).to eq(expected_translations)
         expect(package.locales).to eq(['en'])
       end
@@ -249,7 +249,9 @@ describe ZendeskAppsSupport::Package do
       {
         'app' => {
           'name' => 'Some App',
-          'description' => 'It does something.',
+          'short_description' => 'It does something.',
+          'long_description' => 'Some App does some really fantastic things.',
+          'installation_instructions' => 'Just click install.',
           'everything_else' => 'preserved'
         }
       }
@@ -258,7 +260,7 @@ describe ZendeskAppsSupport::Package do
 
     subject { package.send :runtime_translations, package.translations_for('en').fetch('app') }
 
-    it 'ignores "name" and "description", preserving other keys' do
+    it 'ignores "name", "short_description", "long_description", "installation_instructions", preserving other keys' do
       expect(subject).to eq('everything_else' => 'preserved')
     end
   end

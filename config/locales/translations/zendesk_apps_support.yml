@@ -235,6 +235,10 @@ parts:
       title: "App builder job: translation file is not a JSON object"
       value: "%{file} is not a JSON object."
   - translation:
+      key: "txt.apps.admin.error.app_build.translation.missing_required_key"
+      title: "App builder job: required key missing from translation file"
+      value: "Missing required key from %{file}: %{missing_key}"
+  - translation:
       key: "txt.apps.admin.error.app_build.stylesheet_error"
       title: "App builder job: invalid stylesheet syntax"
       value: "Sass error: %{sass_error}"

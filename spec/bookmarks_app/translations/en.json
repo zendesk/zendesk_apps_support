@@ -1,6 +1,7 @@
 {
   "app": {
-    "description": "Quickly access bookmarked tickets. Syncs with the iPad app."
+    "name": "Bookmarks App",
+    "short_description": "Quickly access bookmarked tickets. Syncs with the iPad app."
   },
   "custom1": "The first custom thing"
 }

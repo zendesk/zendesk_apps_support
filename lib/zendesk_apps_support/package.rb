@@ -243,7 +243,7 @@ module ZendeskAppsSupport
     def runtime_translations(translations)
       result = translations.dup
       result.delete('name')
-      result.delete('description')
+      result.delete('short_description')
       result.delete('long_description')
       result.delete('installation_instructions')
       result
@@ -251,6 +251,7 @@ module ZendeskAppsSupport
 
     def process_translations(locale_path)
       translations = File.exist?(locale_path) ? JSON.parse(File.read(locale_path)) : {}
+      translations['app'].delete('name') if translations.key?('app')
       translations['app'].delete('package') if translations.key?('app')
       remove_zendesk_keys(translations)
     end
