@@ -1,7 +1,7 @@
 # Zendesk Apps Support
 
 ## Description
-Classes to manage and validate zendesk apps. This is a gem used in [Zendesk Apps Tools](https://github.com/zendesk/zendesk_apps_tools/).
+Classes to manage and validate Zendesk Apps. This is a gem used in [Zendesk Apps Tools](https://github.com/zendesk/zendesk_apps_tools/).
 
 ## Owners
 This repo is owned and maintained by the Zendesk Apps team. You can reach us on vegemite@zendesk.com. We are located in Melbourne!
