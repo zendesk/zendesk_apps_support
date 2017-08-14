@@ -169,7 +169,13 @@ describe ZendeskAppsSupport::Package do
     let(:custom1) { 'The first custom thing' }
     context 'with default locale' do
       it 'returns translations' do
-        expected_translations = { 'en' => { 'app' => { 'short_description' => description }, 'custom1' => custom1 } }
+        expected_translations = { 'en' => { 'app' => {
+            'short_description' => description,
+            'description' => 'Access bookmarks',
+            'long_description' => 'Access bookmarks in your Zendesk',
+            'installation_instructions' => 'Pull the big lever'
+          },
+          'custom1' => custom1 } }
         expect(package.send(:translations)).to eq(expected_translations)
         expect(package.locales).to eq(['en'])
       end

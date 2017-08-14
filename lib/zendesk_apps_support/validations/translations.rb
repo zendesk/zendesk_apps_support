@@ -60,10 +60,11 @@ module ZendeskAppsSupport
 
           if present_product_keys.empty?
             # validate all mandatory keys are there 
-            if (json['app'].keys & MANDATORY_KEYS) != MANDATORY_KEYS
+            if (json['app'].keys & MANDATORY_KEYS).sort != MANDATORY_KEYS.sort
+              missing_keys = MANDATORY_KEYS - json['app'].keys
               return ValidationError.new('translation.missing_required_key',
                     file: file.relative_path,
-                    missing_key: 'app.name')
+                    missing_key: missing_keys.join(', '))
             end
           else
             # validate product keys match manifest products
@@ -77,7 +78,7 @@ module ZendeskAppsSupport
 
             # validate each product key has required keys under it
             present_product_keys.each do |product|
-              if (json['app'][product].keys & MANDATORY_KEYS) != MANDATORY_KEYS
+              if (json['app'][product].keys & MANDATORY_KEYS).sort != MANDATORY_KEYS.sort
                 missing_keys = MANDATORY_KEYS - json['app'][product].keys
                 return ValidationError.new('translation.missing_required_key_for_product',
                   file: file.relative_path,
