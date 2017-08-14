@@ -117,20 +117,31 @@ describe ZendeskAppsSupport::Validations::Translations do
     end
 
     context 'when multiple products are specified' do
-
       context 'when only some mandatory keys are specified on the product level' do
         let(:translation_files) do
-          [double('AppFile', relative_path: 'translations/en.json', read: read_fixture_file('invalid_en_multi_product_mixed.json'))]
+          [
+            double(
+              'AppFile',
+              relative_path: 'translations/en.json',
+              read: read_fixture_file('invalid_en_multi_product_mixed.json')
+            )
+          ]
         end
 
         it 'should report the error' do
-          expect(subject[0].to_s).to match(/Missing required key from translations\/en.json for support/)
+          expect(subject[0].to_s).to match(%r{Missing required key from translations/en.json for support})
         end
       end
 
       context 'when all mandatory keys are specified on the product level' do
         let(:translation_files) do
-          [double('AppFile', relative_path: 'translations/en.json', read: read_fixture_file('valid_en_multi_product.json'))]
+          [
+            double(
+              'AppFile',
+              relative_path: 'translations/en.json',
+              read: read_fixture_file('valid_en_multi_product.json')
+            )
+          ]
         end
 
         it 'should be valid' do
@@ -139,7 +150,7 @@ describe ZendeskAppsSupport::Validations::Translations do
 
         context 'when the product keys in en.json do not match the products specified in the manifest' do
           let(:location) do
-            { 
+            {
               support: {
                 new_ticket_sidebar: { url: Faker::Internet.url }
               }
@@ -147,7 +158,9 @@ describe ZendeskAppsSupport::Validations::Translations do
           end
 
           it 'should report the error' do
-            expect(subject[0].to_s).to match(/Products in manifest \(support\) do not match products in translations \(support, chat\)/)
+            expect(subject[0].to_s).to match(
+              /Products in manifest \(support\) do not match products in translations \(support, chat\)/
+            )
           end
         end
       end
