@@ -1,0 +1,16 @@
+{
+  "app": {
+  	"support": {
+	    "name": "App Name (support)",
+	    "description": "App description (support)",
+	    "installation_instructions": "How to install the app (support)",
+	    "long_description": "A longer version of the description (support)"
+  	},
+  	"chat": {  		
+	    "name": "App Name (chat)",
+	    "description": "App description (chat)",
+	    "installation_instructions": "How to install the app (chat)",
+	    "long_description": "A longer version of the description (chat)"
+  	}
+  }
+}

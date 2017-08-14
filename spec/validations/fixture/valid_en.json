@@ -1,5 +1,8 @@
 {
   "app": {
-    "name": "App Name"
+    "name": "App Name",
+    "description": "App description",
+    "installation_instructions": "How to install the app",
+    "long_description": "A longer version of the description"
   }
 }

@@ -1,12 +1,14 @@
 # frozen_string_literal: true
 require 'jshintrb'
 require 'json'
+require 'byebug'
 
 module ZendeskAppsSupport
   module Validations
     module Translations
       TRANSLATIONS_PATH = %r{^translations/(.*)\.json$}
       VALID_LOCALE      = /^[a-z]{2}(-\w{2,3})?$/
+      MANDATORY_KEYS = ['name', 'description', 'installation_instructions', 'long_description'].freeze
 
       class TranslationFormatError < StandardError
       end
@@ -17,7 +19,8 @@ module ZendeskAppsSupport
             path_match = TRANSLATIONS_PATH.match(file.relative_path)
             if path_match
               errors << locale_error(file, path_match[1]) << json_error(file)
-              errors << required_keys(file) if errors.compact.empty?
+              errors << validate_marketplace_content(file, package) if errors.compact.empty?
+              return errors.compact
             end
           end.compact
         end
@@ -48,12 +51,42 @@ module ZendeskAppsSupport
           ValidationError.new('translation.not_json', file: file.relative_path, errors: e)
         end
 
-        def required_keys(file)
-          return if file.relative_path != 'translations/en.json' || JSON.parse(file.read)['app']['name']
+        def validate_marketplace_content(file, package)
+          return if file.relative_path != 'translations/en.json'
 
-          ValidationError.new('translation.missing_required_key',
-                              file: file.relative_path,
-                              missing_key: 'app.name')
+          json = JSON.parse(file.read)
+          product_names = Product::PRODUCTS_AVAILABLE.map(&:name)
+          present_product_keys = json['app'].keys & product_names
+
+          if present_product_keys.empty?
+            # validate all mandatory keys are there 
+            if (json['app'].keys & MANDATORY_KEYS) != MANDATORY_KEYS
+              return ValidationError.new('translation.missing_required_key',
+                    file: file.relative_path,
+                    missing_key: 'app.name')
+            end
+          else
+            # validate product keys match manifest products
+            manifest_products = package.manifest.products.map(&:name)
+            if (present_product_keys.sort != manifest_products.sort)
+              return ValidationError.new('translation.products_do_not_match_manifest_products',
+                file: file.relative_path,
+                translation_products: present_product_keys.join(', '),
+                manifest_products: manifest_products.join(', '))
+            end
+
+            # validate each product key has required keys under it
+            present_product_keys.each do |product|
+              if (json['app'][product].keys & MANDATORY_KEYS) != MANDATORY_KEYS
+                missing_keys = MANDATORY_KEYS - json['app'][product].keys
+                return ValidationError.new('translation.missing_required_key_for_product',
+                  file: file.relative_path,
+                  product: product,
+                  missing_key: missing_keys.join(', '))
+              end
+            end
+          end
+          nil
         end
 
         def validate_translation_format(json)

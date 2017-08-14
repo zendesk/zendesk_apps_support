@@ -93,6 +93,8 @@ en:
               not_json: "%{file} is not valid JSON. %{errors}"
               not_json_object: "%{file} is not a JSON object."
               missing_required_key: 'Missing required key from %{file}: %{missing_key}'
+              missing_required_key_for_product: 'Missing required key from %{file} for %{product}: %{missing_key}'
+              products_do_not_match_manifest_products: 'Products in manifest (%{manifest_products}) do not match products in translations (%{translation_products}).'
             stylesheet_error: 'Sass error: %{sass_error}'
             invalid_type_parameter:
               one: "%{invalid_types} is an invalid parameter type."
