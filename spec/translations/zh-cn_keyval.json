@@ -4,6 +4,18 @@
     "short_description": {
       "title": "app description",
       "value": "从我们的 iPad 和 iPhone app 访问已添加书签的工单"
+    },
+    "description": {
+      "title": "从我们的 iPad 和 iPhone app 访问已添加书签的工单",
+      "value": "从我们的 iPad 和 iPhone app 访问已添加书签的工单"
+    },
+    "long_description": {
+      "title": "从我们的 iPad",
+      "value": "从我们的 iPad"
+    },
+    "installation_instructions": {
+      "title": "访问已添加书签的工单 big lever",
+      "value": "访问已添加书签的工单 big lever"
     }
   },
   "fetch": {
