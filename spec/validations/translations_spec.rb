@@ -21,11 +21,13 @@ describe ZendeskAppsSupport::Validations::Translations do
     }
   end
 
+  let(:private_app?) { true }
+
   let(:manifest_hash) do
     {
       name: Faker::App.name,
       version: Faker::App.version,
-      private: true,
+      private: private_app?,
       author: {
         name: Faker::App.author,
         email: Faker::Internet.email,
@@ -106,7 +108,7 @@ describe ZendeskAppsSupport::Validations::Translations do
       end
     end
 
-    context 'required keys are present' do
+    context 'whenthe name key is present' do
       let(:translation_files) do
         [double('AppFile', relative_path: 'translations/en.json', read: read_fixture_file('valid_en.json'))]
       end
@@ -116,51 +118,80 @@ describe ZendeskAppsSupport::Validations::Translations do
       end
     end
 
-    context 'when multiple products are specified' do
-      context 'when only some mandatory keys are specified on the product level' do
+    context 'for a public app' do
+      let(:private_app?) { false }
+
+      context 'given only the name key' do
         let(:translation_files) do
-          [
-            double(
-              'AppFile',
-              relative_path: 'translations/en.json',
-              read: read_fixture_file('invalid_en_multi_product_mixed.json')
-            )
-          ]
+          [double('AppFile', relative_path: 'translations/en.json', read: read_fixture_file('valid_en.json'))]
         end
 
         it 'should report the error' do
-          expect(subject[0].to_s).to match(%r{Missing required key from translations/en.json for support})
+          expect(subject.length).to eq(1)
+          expect(subject[0].to_s).to match(/Missing required key from/)
         end
       end
 
-      context 'when all mandatory keys are specified on the product level' do
+      context 'given all mandatory keys' do
         let(:translation_files) do
-          [
-            double(
-              'AppFile',
-              relative_path: 'translations/en.json',
-              read: read_fixture_file('valid_en_multi_product.json')
-            )
-          ]
+          [double('AppFile', relative_path: 'translations/en.json', read: read_fixture_file('valid_en_public.json'))]
         end
 
         it 'should be valid' do
           expect(subject.length).to eq(0)
         end
+      end
+    end
 
-        context 'when the product keys in en.json do not match the products specified in the manifest' do
-          let(:location) do
-            {
-              support: {
-                new_ticket_sidebar: { url: Faker::Internet.url }
-              }
-            }
+    context 'when multiple products are specified' do
+      context 'for a public app' do
+        let(:private_app?) { false }
+
+        context 'when only some mandatory keys are specified on the product level' do
+          let(:translation_files) do
+            [
+              double(
+                'AppFile',
+                relative_path: 'translations/en.json',
+                read: read_fixture_file('invalid_en_multi_product_mixed.json')
+              )
+            ]
           end
 
           it 'should report the error' do
-            expect(subject[0].to_s).to match(
-              /Products in manifest \(support\) do not match products in translations \(support, chat\)/
-            )
+            expect(subject[0].to_s).to match(%r{Missing required key from translations/en.json for support})
+          end
+        end
+
+        context 'when all mandatory keys are specified on the product level' do
+          let(:translation_files) do
+            [
+              double(
+                'AppFile',
+                relative_path: 'translations/en.json',
+                read: read_fixture_file('valid_en_multi_product.json')
+              )
+            ]
+          end
+
+          it 'should be valid' do
+            expect(subject.length).to eq(0)
+          end
+
+          context 'when the product keys in en.json do not match the products specified in the manifest' do
+            let(:location) do
+              {
+                support: {
+                  new_ticket_sidebar: { url: Faker::Internet.url }
+                }
+              }
+            end
+
+            it 'should report the error' do
+              expect(subject[0].to_s).to match(
+                /Products in manifest \(support\) do not match products in translations \(support, chat\)/
+              )
+            end
           end
         end
       end

@@ -7,7 +7,6 @@ module ZendeskAppsSupport
     module Translations
       TRANSLATIONS_PATH = %r{^translations/(.*)\.json$}
       VALID_LOCALE      = /^[a-z]{2}(-\w{2,3})?$/
-      MANDATORY_KEYS = %w(name description installation_instructions long_description).freeze
 
       class TranslationFormatError < StandardError
       end
@@ -23,6 +22,11 @@ module ZendeskAppsSupport
         end
 
         private
+
+        def mandatory_keys(package)
+          public_app_keys = %w(name description installation_instructions long_description)
+          package.manifest.private? ? ['name'] : public_app_keys
+        end
 
         def locale_error(file, locale)
           return nil if VALID_LOCALE =~ locale
@@ -57,17 +61,17 @@ module ZendeskAppsSupport
           present_product_keys = json['app'].keys & product_names
 
           if present_product_keys.empty?
-            errors << validate_top_level_required_keys(json, file.relative_path)
+            errors << validate_top_level_required_keys(json, package, file.relative_path)
           else
             errors << validate_products_match_manifest_products(present_product_keys, package, file.relative_path)
-            errors << validate_products_have_required_keys(json, present_product_keys, file.relative_path)
+            errors << validate_products_have_required_keys(json, package, present_product_keys, file.relative_path)
           end
           errors.compact
         end
 
-        def validate_top_level_required_keys(json, file_path)
-          return if (json['app'].keys & MANDATORY_KEYS).sort == MANDATORY_KEYS.sort
-          missing_keys = MANDATORY_KEYS - json['app'].keys
+        def validate_top_level_required_keys(json, package, file_path)
+          return if (json['app'].keys & mandatory_keys(package)).sort == mandatory_keys(package).sort
+          missing_keys = mandatory_keys(package) - json['app'].keys
           ValidationError.new(
             'translation.missing_required_key',
             file: file_path,
@@ -75,10 +79,10 @@ module ZendeskAppsSupport
           )
         end
 
-        def validate_products_have_required_keys(json, products, file_path)
+        def validate_products_have_required_keys(json, package, products, file_path)
           products.each do |product|
-            next unless (json['app'][product].keys & MANDATORY_KEYS).sort != MANDATORY_KEYS.sort
-            missing_keys = MANDATORY_KEYS - json['app'][product].keys
+            next unless (json['app'][product].keys & mandatory_keys(package)).sort != mandatory_keys(package).sort
+            missing_keys = mandatory_keys(package) - json['app'][product].keys
             return ValidationError.new(
               'translation.missing_required_key_for_product',
               file: file_path,
