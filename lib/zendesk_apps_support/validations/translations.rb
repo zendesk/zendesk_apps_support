@@ -18,7 +18,7 @@ module ZendeskAppsSupport
             path_match = TRANSLATIONS_PATH.match(file.relative_path)
             next unless path_match
             errors << locale_error(file, path_match[1]) << json_error(file)
-            errors << validate_marketplace_content(file, package) if errors.compact.empty?
+            errors.push(*validate_marketplace_content(file, package)) if errors.compact.empty?
           end.compact
         end
 
@@ -49,47 +49,57 @@ module ZendeskAppsSupport
         end
 
         def validate_marketplace_content(file, package)
-          return if file.relative_path != 'translations/en.json'
+          return [] if file.relative_path != 'translations/en.json'
 
+          errors = []
           json = JSON.parse(file.read)
           product_names = Product::PRODUCTS_AVAILABLE.map(&:name)
           present_product_keys = json['app'].keys & product_names
 
           if present_product_keys.empty?
-            # validate all mandatory keys are there
-            if (json['app'].keys & MANDATORY_KEYS).sort != MANDATORY_KEYS.sort
+            errors << validate_top_level_required_keys(json, file.relative_path)
+          else
+            errors << validate_products_match_manifest_products(present_product_keys, package, file.relative_path)
+            errors << validate_products_have_required_keys(json, present_product_keys, file.relative_path)
+          end
+          errors.compact
+        end
+
+        def validate_top_level_required_keys(json, file_path)
+           if (json['app'].keys & MANDATORY_KEYS).sort != MANDATORY_KEYS.sort
               missing_keys = MANDATORY_KEYS - json['app'].keys
               return ValidationError.new(
                 'translation.missing_required_key',
-                file: file.relative_path,
+                file: file_path,
                 missing_key: missing_keys.join(', ')
               )
             end
-          else
-            # validate product keys match manifest products
-            manifest_products = package.manifest.products.map(&:name)
-            if present_product_keys.sort != manifest_products.sort
-              return ValidationError.new(
-                'translation.products_do_not_match_manifest_products',
-                file: file.relative_path,
-                translation_products: present_product_keys.join(', '),
-                manifest_products: manifest_products.join(', ')
-              )
-            end
+        end
 
-            # validate each product key has required keys under it
-            present_product_keys.each do |product|
+        def validate_products_have_required_keys(json, products, file_path)
+            products.each do |product|
               next unless (json['app'][product].keys & MANDATORY_KEYS).sort != MANDATORY_KEYS.sort
               missing_keys = MANDATORY_KEYS - json['app'][product].keys
               return ValidationError.new(
                 'translation.missing_required_key_for_product',
-                file: file.relative_path,
+                file: file_path,
                 product: product,
                 missing_key: missing_keys.join(', ')
               )
             end
-          end
-          nil
+            nil
+        end
+
+        def validate_products_match_manifest_products(products, package, file_path)
+            manifest_products = package.manifest.products.map(&:name)
+            if products.sort != manifest_products.sort
+              return ValidationError.new(
+                'translation.products_do_not_match_manifest_products',
+                file: file_path,
+                translation_products: products.join(', '),
+                manifest_products: manifest_products.join(', ')
+              )
+            end
         end
 
         def validate_translation_format(json)
