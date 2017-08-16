@@ -49,7 +49,7 @@ module ZendeskAppsSupport
         end
 
         def required_keys(file)
-          return if file.relative_path != 'translations/en.json' || JSON.parse(file.read)['app']['name']
+          return if file.relative_path != 'translations/en.json' || JSON.parse(file.read).dig('app', 'name')
 
           ValidationError.new('translation.missing_required_key',
                               file: file.relative_path,
