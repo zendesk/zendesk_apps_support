@@ -52,7 +52,7 @@ module ZendeskAppsSupport
           errors = []
           json = JSON.parse(file.read)
           product_names = Product::PRODUCTS_AVAILABLE.map(&:name)
-          present_product_keys = json['app'].keys & product_names
+          present_product_keys = json['app'].is_a?(Hash) ? json['app'].keys & product_names : []
 
           if present_product_keys.empty?
             errors << validate_top_level_required_keys(json, package, file.relative_path)
