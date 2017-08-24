@@ -36,7 +36,7 @@ en:
               an array containing strings
             missing_requirements: Could not find requirements.json
             requirements_not_supported: App requirements are not supported for marketing-only
-              apps
+              apps or Chat-only apps
             manifest_keys:
               missing:
                 one: 'Missing required field in manifest: %{missing_keys}'

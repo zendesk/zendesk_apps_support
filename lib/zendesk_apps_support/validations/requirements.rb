@@ -8,7 +8,7 @@ module ZendeskAppsSupport
         def call(package)
           if package.manifest.requirements_only? && !package.has_requirements?
             return [ValidationError.new(:missing_requirements)]
-          elsif package.manifest.marketing_only? && package.has_requirements?
+          elsif !supports_requirements(package) && package.has_requirements?
             return [ValidationError.new(:requirements_not_supported)]
           elsif !package.has_requirements?
             return []
@@ -34,6 +34,10 @@ module ZendeskAppsSupport
         end
 
         private
+
+        def supports_requirements(package)
+          !package.manifest.marketing_only? && package.manifest.products != [Product::CHAT]
+        end
 
         def missing_required_fields(requirements)
           [].tap do |errors|

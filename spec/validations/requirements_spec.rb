@@ -53,6 +53,15 @@ describe ZendeskAppsSupport::Validations::Requirements do
     end
   end
 
+  context 'chat-only app' do
+    let(:manifest) { ZendeskAppsSupport::Manifest.new(File.read('spec/fixtures/chat_only_manifest.json')) }
+    let(:requirements_string) { read_fixture_file('requirements.json') }
+
+    it 'creates an error when the file exists' do
+      expect(errors.first.key).to eq(:requirements_not_supported)
+    end
+  end
+
   context 'there are more than 10 requirements' do
     let(:requirements_string) do
       requirements_content = {}
