@@ -1,5 +1,6 @@
 {
   "app": {
+    "name": "Bookmarks App",
     "short_description": "从我们的 iPad 和 iPhone app 访问已添加书签的工单"
   },
   "fetch": {
