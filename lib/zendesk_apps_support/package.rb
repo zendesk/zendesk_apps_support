@@ -222,7 +222,7 @@ module ZendeskAppsSupport
         return {} unless File.directory?(translation_dir)
 
         locale_path = "#{translation_dir}/#{manifest.default_locale}.json"
-        default_translations = process_translations(locale_path)
+        default_translations = process_translations(locale_path, default_locale: true)
 
         Dir["#{translation_dir}/*.json"].each_with_object({}) do |path, memo|
           locale = File.basename(path, File.extname(path))
@@ -249,9 +249,9 @@ module ZendeskAppsSupport
       result
     end
 
-    def process_translations(locale_path)
+    def process_translations(locale_path, default_locale: false)
       translations = File.exist?(locale_path) ? JSON.parse(File.read(locale_path)) : {}
-      translations['app'].delete('name') if translations.key?('app')
+      translations['app'].delete('name') if !default_locale && translations.key?('app')
       translations['app'].delete('package') if translations.key?('app')
       remove_zendesk_keys(translations)
     end
