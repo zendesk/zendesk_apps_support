@@ -17,11 +17,13 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'image_size'
   s.add_runtime_dependency 'erubis'
   s.add_runtime_dependency 'jshintrb', '~> 0.3.0'
+  s.add_runtime_dependency 'loofah'
 
   s.add_development_dependency 'rspec', '~> 3.4.0'
   s.add_development_dependency 'bump', '~> 0.5.1'
   s.add_development_dependency 'faker', '~> 1.6.6'
   s.add_development_dependency 'rubocop', '~> 0.46.0'
+  s.add_development_dependency 'byebug'
 
   s.files = Dir.glob('{lib,config}/**/*') + %w(README.md LICENSE)
 end
