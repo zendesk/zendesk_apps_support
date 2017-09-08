@@ -56,6 +56,12 @@ module ZendeskAppsSupport
         end
     end
 
+    def products_ignore_locations
+      locations.keys.map do |product_name|
+        Product.find_by(name: product_name)
+      end
+    end
+
     def location_options
       @location_options ||= locations.flat_map do |product_key, locations|
         product = Product.find_by(name: product_key)
@@ -138,12 +144,6 @@ module ZendeskAppsSupport
       location_options.map { |lo| lo.location.product_code }
                       .uniq
                       .map { |code| Product.find_by(code: code) }
-    end
-
-    def products_ignore_locations
-      locations.keys.map do |product_name|
-        Product.find_by(name: product_name)
-      end
     end
 
     def set_locations_and_hosts

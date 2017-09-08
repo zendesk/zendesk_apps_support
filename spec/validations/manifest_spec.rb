@@ -337,6 +337,32 @@ describe ZendeskAppsSupport::Validations::Manifest do
     end
   end
 
+  context 'locations hash is an array of locations in support' do
+    before do
+      allow(@package).to receive(:has_file?).with('assets/iframe.html').and_return(true)
+    end
+
+    describe 'when the locations in the array are valid' do
+      before do
+        @manifest_hash = { 'location' => %w(ticket_sidebar user_sidebar) }
+      end
+
+      it 'should not have an error' do
+        expect(@package).not_to have_error(/invalid location/)
+      end
+    end
+
+    describe 'when there is an invalid location in the array' do
+      before do
+        @manifest_hash = { 'location' => %w(ticket_sidebar user_sidebar invalid_location) }
+      end
+
+      it 'should have an error' do
+        expect(@package).to have_error(/invalid location/)
+      end
+    end
+  end
+
   context 'a v1 app with v2 locations' do
     before do
       @manifest_hash = {

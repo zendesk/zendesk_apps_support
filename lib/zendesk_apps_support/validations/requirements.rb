@@ -36,7 +36,7 @@ module ZendeskAppsSupport
         private
 
         def supports_requirements(package)
-          !package.manifest.marketing_only? && package.manifest.products != [Product::CHAT]
+          !package.manifest.marketing_only? && package.manifest.products_ignore_locations != [Product::CHAT]
         end
 
         def missing_required_fields(requirements)

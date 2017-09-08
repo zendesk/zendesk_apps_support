@@ -183,4 +183,13 @@ describe ZendeskAppsSupport::Validations::Requirements do
       expect(errors.first.data).to eq(field: 'manifest_url', identifier: 'channel_one')
     end
   end
+
+  context 'the locations are invalid' do
+    let(:manifest) { ZendeskAppsSupport::Manifest.new(File.read('spec/fixtures/invalid_location_manifest.json')) }
+    let(:requirements_string) { read_fixture_file('requirements.json') }
+
+    it 'does not return a requirements error' do
+      expect(errors).to be_empty
+    end
+  end
 end
