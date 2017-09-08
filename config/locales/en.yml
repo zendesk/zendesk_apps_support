@@ -13,45 +13,45 @@ en:
               used with framework version 2 or above. Set the autoLoad or autoHide
               property for each specific location instead. Learn more: %{link}.'
             no_parameters_required: Parameters can't be defined for marketing-only
-              apps
-            marketing_only_app_cant_be_private: Marketing-only apps must not be private
+              apps.
+            marketing_only_app_cant_be_private: Marketing-only apps must not be private.
             no_location_required: Locations can't be defined when you specify requirements
-              only
+              only.
             no_framework_version_required: Framework versions can't be set when you
-              specify requirements only
+              specify requirements only.
             no_app_js_required: Do not set your app to requirements only if you need
-              app.js
+              app.js.
             manifest_not_json: manifest is not proper JSON. %{errors}
-            missing_manifest: Could not find manifest.json
+            missing_manifest: Could not find manifest.json.
             nested_manifest: Could not find manifest.json in the root of the zip file,
               but %{found_path} was found. Try re-creating the archive from this directory.
-            symlink_in_zip: Symlinks are not allowed in the zip file
+            symlink_in_zip: Symlinks are not allowed in the zip file.
             invalid_experiment: 'Manifest specifies unknown or unavailable experiment:
-              %{experiment}'
+              %{experiment}.'
             unacceptable_hash: The manifest field %{field} needs to be key-value pairs
-              with string keys, but it was %{value}
+              with string keys, but it was %{value}.
             unacceptable_array: The manifest field %{field} needs to be an array,
-              but it was %{value}
+              but it was %{value}.
             unacceptable_array_of_strings: The manifest field %{field} need to be
-              an array containing strings
-            missing_requirements: Could not find requirements.json
+              an array containing strings.
+            missing_requirements: Could not find requirements.json.
             requirements_not_supported: App requirements are not supported for marketing-only
-              or Chat-only apps
+              or Chat-only apps.
             manifest_keys:
               missing:
-                one: 'Missing required field in manifest: %{missing_keys}'
-                other: 'Missing required fields in manifest: %{missing_keys}'
+                one: 'Missing required field in manifest: %{missing_keys}.'
+                other: 'Missing required fields in manifest: %{missing_keys}.'
             requirements_not_json: requirements.json is not proper JSON. %{errors}
             excessive_requirements: The requirements.json file contains too many requirements.
               The current limit is %{max} requirements. This app has %{count} requirements.
             missing_required_fields: 'Missing required fields in requirements.json:
-              "%{field}" is required in "%{identifier}"'
+              "%{field}" is required in "%{identifier}".'
             duplicate_requirements:
-              one: 'requirements.json contains a duplicate key: %{duplicate_keys}'
-              other: 'requirements.json contains duplicate keys: %{duplicate_keys}'
+              one: 'requirements.json contains a duplicate key: %{duplicate_keys}.'
+              other: 'requirements.json contains duplicate keys: %{duplicate_keys}.'
             invalid_requirements_types:
-              one: 'requirements.json contains an invalid type: %{invalid_types}'
-              other: 'requirements.json contains invalid types: %{invalid_types}'
+              one: 'requirements.json contains an invalid type: %{invalid_types}.'
+              other: 'requirements.json contains invalid types: %{invalid_types}.'
             multiple_channel_integrations: Specifying multiple channel integrations
               in requirements.json is not supported.
             banner:
@@ -59,15 +59,15 @@ en:
               invalid_size: Invalid banner image dimensions. Must be %{required_banner_width}x%{required_banner_height}px.
             oauth_keys:
               missing:
-                one: 'Missing required oauth field in manifest: %{missing_keys}'
-                other: 'Missing required oauth fields in manifest: %{missing_keys}'
-            missing_source: Could not find app.js
+                one: 'Missing required oauth field in manifest: %{missing_keys}.'
+                other: 'Missing required oauth fields in manifest: %{missing_keys}.'
+            missing_source: Could not find app.js.
             style_in_template: "<style> tag in %{template}. Use an app.css file instead."
             no_code_for_ifo_notemplate: Javascripts, stylesheets, and templates are
-              not allowed when an iframe URI or noTemplate is specified
+              not allowed when an iframe URI or noTemplate is specified.
             invalid_default_locale: "%{default_locale} is not a valid default locale."
             missing_translation_file: 'Missing translation file for locale ''%{default_locale}''.
-              Learn more: http://developer.zendesk.com/documentation/apps/i18n.html'
+              Learn more: http://developer.zendesk.com/documentation/apps/i18n.html.'
             invalid_host: "%{host_name} is an invalid host for apps."
             invalid_location:
               one: "%{invalid_locations} is an invalid location in %{host_name}."
@@ -78,7 +78,7 @@ en:
             duplicate_location:
               one: "%{duplicate_locations} is a duplicate location."
               other: "%{duplicate_locations} are duplicate locations."
-            name_as_parameter_name: Can't call a parameter 'name'
+            name_as_parameter_name: Can't call a parameter 'name'.
             invalid_hidden_parameter:
               one: "%{invalid_params} is set to hidden and cannot be required."
               other: "%{invalid_params} are set to hidden and cannot be required."
@@ -86,14 +86,14 @@ en:
               Available versions are: %{available_versions}."
             old_version: Iframe Only apps must target framework versions 2.0 or greater.
             parameters_not_an_array: App parameters must be an array.
-            duplicate_parameters: 'Duplicate app parameters defined: %{duplicate_parameters}'
+            duplicate_parameters: 'Duplicate app parameters defined: %{duplicate_parameters}.'
             translation:
               invalid_locale: "%{file} is not a valid locale."
               invalid_format: "%{field} is invalid for translation."
               not_json: "%{file} is not valid JSON. %{errors}"
               not_json_object: "%{file} is not a JSON object."
-              missing_required_key: 'Missing required key from %{file}: %{missing_key}'
-            stylesheet_error: 'Sass error: %{sass_error}'
+              missing_required_key: 'Missing required key from %{file}: %{missing_key}.'
+            stylesheet_error: 'Sass error: %{sass_error}.'
             invalid_type_parameter:
               one: "%{invalid_types} is an invalid parameter type."
               other: "%{invalid_types} are invalid parameter types."
