@@ -60,4 +60,18 @@ describe ZendeskAppsSupport::Validations::Svg do
     end
   end
 
+  context 'read-only error' do
+    let(:markup) { "<svg viewBox=\"0 0 26 26\" id=\"zd-svg-icon-26-app\" width=\"100%\" height=\"100%\"><path fill=\"none\" stroke=\"currentColor\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M4 8l9-5 9 5v9.7L13 23l-9-5.2zm9 5L4 8m9 5l9-5m-9 5v10\" onclick=\"alert(1)\"></path></svg>\n" }
+
+    before do
+      allow(IO).to receive(:write).and_raise('Failed to write to original file')
+    end
+
+    it 'raises an error when a file contains questionable markup but it fails to be overwritten' do
+      errors = ZendeskAppsSupport::Validations::Svg.call(package)
+      expect(errors.size).to eq(1)
+      expect(errors[0].key).to eq(:dirty_svg)
+      expect(errors[0].data).to eq(svg: svg.relative_path)
+    end
+  end
 end
