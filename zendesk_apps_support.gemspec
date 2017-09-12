@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = 'zendesk_apps_support'
-  s.version     = '4.2.0'
+  s.version     = '4.3.0'
   s.license     = 'Apache License Version 2.0'
   s.authors     = ['James A. Rosen', 'Likun Liu', 'Sean Caffery', 'Daniel Ribeiro']
   s.email       = ['dev@zendesk.com']
@@ -8,6 +8,7 @@ Gem::Specification.new do |s|
   s.summary     = 'Support to help you develop Zendesk Apps.'
   s.description = s.summary
 
+  s.required_ruby_version = '>= 2.1'
   s.required_rubygems_version = '>= 1.3.6'
 
   s.add_runtime_dependency 'i18n'
