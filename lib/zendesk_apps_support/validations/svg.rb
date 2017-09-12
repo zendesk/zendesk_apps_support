@@ -14,7 +14,7 @@ module ZendeskAppsSupport
 
             next if clean_markup == markup
             begin
-              clean_svg = IO.write(filepath, clean_markup)
+              IO.write(filepath, clean_markup)
               package.warnings << I18n.t('txt.apps.admin.warning.sanitised_svg', svg: filepath)
             rescue
               errors << ValidationError.new(:dirty_svg, svg: filepath)
