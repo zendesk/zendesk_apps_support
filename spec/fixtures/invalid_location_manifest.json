@@ -1,0 +1,18 @@
+{
+  "name": "full of errors",
+  "author": {
+    "name": "Po Chen",
+    "email": "po@zendesk.com"
+  },
+  "defaultLocale": "en",
+  "private": true,
+  "location": ["ticket_sidebar", "user_sidebar", "foo_sidebar"],
+  "version": "1.0",
+  "frameworkVersion": "1.0",
+  "parameters": [
+    {
+      "name": "testing_parameters",
+      "type": "wrong"
+    }
+  ]
+}
