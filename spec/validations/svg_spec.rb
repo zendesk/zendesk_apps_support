@@ -98,7 +98,8 @@ d="M4 8l9-5 9 5v9.7L13 23l-9-5.2zm9 5L4 8m9 5l9-5m-9 5v10"></path></svg onResize
       let(:markup) { markup }
       let(:empty_svg) { %(<svg></svg>\n) }
 
-      it 'empties the contents of malformed suspicious svg tags and notifies the user that the offending svgs were modified' do
+      it 'empties the contents of malformed suspicious svg tags and notifies the user that the offending svgs were \
+      modified' do
         errors = ZendeskAppsSupport::Validations::Svg.call(package)
         expect(IO).to have_received(:write).with(svg.relative_path, empty_svg)
         expect(package.warnings[0]).to eq(warning)
