@@ -40,11 +40,9 @@ module ZendeskAppsSupport
                    v2_only: true),
       Location.new(id: 10, orderable: false, name: 'ticket_editor', product_code: Product::SUPPORT.code,
                    v2_only: true),
-      Location.new(id: 11, orderable: false, name: 'nav_bar', product_code: Product::STANDALONE_CHAT.code,
-                   v2_only: false),
+      # nav_bar on standalone_chat (with id 11) has been deprecated
       Location.new(id: 12, orderable: false, name: 'system_top_bar', product_code: Product::SUPPORT.code),
-      Location.new(id: 13, orderable: false, name: 'system_top_bar', product_code: Product::STANDALONE_CHAT.code,
-                   v2_only: false),
+      # system_top_bar on standalone_chat (with id 13) has been deprecated
       Location.new(id: 14, orderable: false, name: 'background', product_code: Product::CHAT.code)
     ].freeze
   end
