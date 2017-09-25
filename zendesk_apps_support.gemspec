@@ -25,7 +25,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'bump', '~> 0.5.1'
   s.add_development_dependency 'faker', '~> 1.6.6'
   s.add_development_dependency 'rubocop', '~> 0.46.0'
-  s.add_development_dependency 'byebug'
+  s.add_development_dependency 'byebug', '~> 9.0.6'
 
   s.files = Dir.glob('{lib,config}/**/*') + %w(README.md LICENSE)
 end
