@@ -7,7 +7,7 @@ module ZendeskAppsSupport
       BANNER_WIDTH = 830
       BANNER_HEIGHT = 200
 
-      class << self
+      class <<self
         def call(package)
           File.open(package.path_to('assets/banner.png'), 'rb') do |fh|
             begin
