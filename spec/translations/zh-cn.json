@@ -3,7 +3,8 @@
     "short_description": "从我们的 iPad 和 iPhone app 访问已添加书签的工单",
     "description": "从我们的 iPad 和 iPhone app 访问已添加书签的工单",
     "long_description": "从我们的 iPad",
-    "installation_instructions": "访问已添加书签的工单 big lever"
+    "installation_instructions": "访问已添加书签的工单 big lever",
+    "name": "Bookmarks App"
   },
   "fetch": {
     "fail": "取回书签时出错",

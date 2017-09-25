@@ -53,6 +53,15 @@ describe ZendeskAppsSupport::Validations::Requirements do
     end
   end
 
+  context 'chat-only app' do
+    let(:manifest) { ZendeskAppsSupport::Manifest.new(File.read('spec/fixtures/chat_only_manifest.json')) }
+    let(:requirements_string) { read_fixture_file('requirements.json') }
+
+    it 'creates an error when the file exists' do
+      expect(errors.first.key).to eq(:requirements_not_supported)
+    end
+  end
+
   context 'there are more than 10 requirements' do
     let(:requirements_string) do
       requirements_content = {}
@@ -172,6 +181,15 @@ describe ZendeskAppsSupport::Validations::Requirements do
     it 'creates an error' do
       expect(errors.first.key).to eq(:missing_required_fields)
       expect(errors.first.data).to eq(field: 'manifest_url', identifier: 'channel_one')
+    end
+  end
+
+  context 'the locations are invalid' do
+    let(:manifest) { ZendeskAppsSupport::Manifest.new(File.read('spec/fixtures/invalid_location_manifest.json')) }
+    let(:requirements_string) { read_fixture_file('requirements.json') }
+
+    it 'does not return a requirements error' do
+      expect(errors).to be_empty
     end
   end
 end

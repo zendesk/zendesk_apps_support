@@ -165,12 +165,14 @@ describe ZendeskAppsSupport::Package do
   end
 
   describe '#translations' do
+    let(:name) { 'Bookmarks App' }
     let(:description) { 'Quickly access bookmarked tickets. Syncs with the iPad app.' }
     let(:custom1) { 'The first custom thing' }
     context 'with default locale' do
       it 'returns translations' do
         expected_translations = { 'en' => {
           'app' => {
+            'name' => name,
             'short_description' => description,
             'description' => 'Access bookmarks',
             'long_description' => 'Access bookmarks in your Zendesk',
