@@ -129,6 +129,10 @@ parts:
       title: "App builder job: Banner image invalid size error"
       value: "Invalid banner image dimensions. Must be %{required_banner_width}x%{required_banner_height}px."
   - translation:
+      key: "txt.apps.admin.error.app_build.dirty_svg"
+      title: "App builder job: invalid SVG markup error"
+      value: "%{svg} contains invalid markup and was unable to be automatically regenerated."
+  - translation:
       key: "txt.apps.admin.error.app_build.oauth_keys.missing.one"
       title: "App builder job: missing oauth fields error"
       value: "Missing required oauth field in manifest: %{missing_keys}"
@@ -202,6 +206,10 @@ parts:
       key: "txt.apps.admin.warning.app_build.deprecated_version"
       title: "App builder job: deprecated version specified"
       value: 'You are targeting a deprecated version of the framework. Your app will work, but it might break when the new framework version is deployed.'
+  - translation:
+      key: "txt.apps.admin.warning.app_build.sanitised_svg"
+      title: "App builder job: warning that contents of svg have been sanitised and overwritten"
+      value: "The markup in %{svg} has been edited for use in Zendesk, and may not display as intended."
   - translation:
       key: "txt.apps.admin.error.app_build.invalid_version"
       title: "App builder job: invalid framework version"
