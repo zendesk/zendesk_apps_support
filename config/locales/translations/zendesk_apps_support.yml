@@ -239,6 +239,14 @@ parts:
       title: "App builder job: required key missing from translation file"
       value: "Missing required key from %{file}: %{missing_key}"
   - translation:
+      key: "txt.apps.admin.error.app_build.translation.missing_required_key_for_product"
+      title: "App builder job: required key missing from translation file for a specific product"
+      value: "Missing required key from %{file} for %{product}: %{missing_key}"
+  - translation:
+      key: "txt.apps.admin.error.app_build.translation.products_do_not_match_manifest_products"
+      title: "App builder job: products specified in translation file don't match products in manifest"
+      value: "Products in manifest (%{manifest_products}) do not match products in translations (%{translation_products})"
+  - translation:
       key: "txt.apps.admin.error.app_build.stylesheet_error"
       title: "App builder job: invalid stylesheet syntax"
       value: "Sass error: %{sass_error}"
