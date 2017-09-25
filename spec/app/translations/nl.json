@@ -1,5 +1,8 @@
 {
   "app": {
-    "name": "Heilige machine"
+    "name": "Heilige machine",
+    "description": "Ich bin",
+    "long_description": "Ich bin ein Berliner",
+    "installation_instructions": "Pull ze big lever"
   }
 }

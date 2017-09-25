@@ -1,5 +1,7 @@
 {
   "app": {
-    "name": "Buddha Machine"
+    "description": "Play zentunes",
+    "long_description": "Play zentunes in your Zendesk",
+    "installation_instructions": "Pull the big lever"
   }
 }

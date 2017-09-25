@@ -15,10 +15,10 @@ module ZendeskAppsSupport
         def call(package)
           package.files.each_with_object([]) do |file, errors|
             path_match = TRANSLATIONS_PATH.match(file.relative_path)
-            if path_match
-              errors << locale_error(file, path_match[1]) << json_error(file)
-              errors << required_keys(file) if errors.compact.empty?
-            end
+            next unless path_match
+            errors << locale_error(file, path_match[1]) << json_error(file)
+            next unless errors.compact.empty?
+            errors.push(*validate_marketplace_content(file, package)) if file.relative_path == 'translations/en.json'
           end.compact
         end
 
@@ -48,14 +48,54 @@ module ZendeskAppsSupport
           ValidationError.new('translation.not_json', file: file.relative_path, errors: e)
         end
 
-        def required_keys(file)
-          return unless file.relative_path == 'translations/en.json'
+        def validate_marketplace_content(file, package)
+          errors = []
           json = JSON.parse(file.read)
-          return if json.is_a?(Hash) && json['app'].is_a?(Hash) && json['app']['name']
+          product_names = Product::PRODUCTS_AVAILABLE.map(&:name)
+          present_product_keys = json['app'].is_a?(Hash) ? json['app'].keys & product_names : []
 
-          ValidationError.new('translation.missing_required_key',
-                              file: file.relative_path,
-                              missing_key: 'app.name')
+          if present_product_keys.empty?
+            errors << validate_top_level_required_keys(json, package, file.relative_path)
+          else
+            errors << validate_products_match_manifest_products(present_product_keys, package, file.relative_path)
+            errors << validate_products_have_required_keys(json, package, present_product_keys, file.relative_path)
+          end
+          errors.compact
+        end
+
+        def validate_top_level_required_keys(json, package, file_path)
+          missing_keys = get_missing_keys(package, json['app'].keys)
+          return if missing_keys.empty?
+          ValidationError.new(
+            'translation.missing_required_key',
+            file: file_path,
+            missing_key: missing_keys.join(', ')
+          )
+        end
+
+        def validate_products_have_required_keys(json, package, products, file_path)
+          products.each do |product|
+            missing_keys = get_missing_keys(package, json['app'][product].keys)
+            next if missing_keys.empty?
+            return ValidationError.new(
+              'translation.missing_required_key_for_product',
+              file: file_path,
+              product: product,
+              missing_key: missing_keys.join(', ')
+            )
+          end
+          nil
+        end
+
+        def validate_products_match_manifest_products(products, package, file_path)
+          manifest_products = package.manifest.products.map(&:name)
+          return if (products - manifest_products).empty?
+          ValidationError.new(
+            'translation.products_do_not_match_manifest_products',
+            file: file_path,
+            translation_products: products.join(', '),
+            manifest_products: manifest_products.join(', ')
+          )
         end
 
         def validate_translation_format(json)
@@ -70,6 +110,19 @@ module ZendeskAppsSupport
               validate_translation_format(json[key])
             end
           end
+        end
+
+        def get_missing_keys(package, keys)
+          public_app_keys = %w(name short_description installation_instructions long_description)
+          mandatory_keys = package.manifest.private? ? ['name'] : public_app_keys
+
+          # since we support description as well as short_description for backwards compatibility,
+          # validate keys as if description == short_description
+          keys_to_validate = keys.map do |key|
+            key == 'description' ? 'short_description' : key
+          end
+
+          mandatory_keys - keys_to_validate
         end
       end
     end
