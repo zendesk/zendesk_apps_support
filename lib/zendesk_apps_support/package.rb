@@ -29,6 +29,7 @@ module ZendeskAppsSupport
 
     def validate(marketplace: true)
       [].tap do |errors|
+        begin
         errors << Validations::Manifest.call(self)
         if has_manifest?
           errors << Validations::Marketplace.call(self) if marketplace
@@ -43,6 +44,12 @@ module ZendeskAppsSupport
         end
 
         errors << Validations::Banner.call(self) if has_banner?
+
+        rescue JSON::ParserError => e
+          return [Validations::ValidationError.new(:manifest_not_json, errors: e)]
+        rescue ZendeskAppsSupport::Manifest::OverrideError => e
+          return [Validations::ValidationError.new(:duplicate_reference, key: e.key)]
+        end
 
         errors.flatten!.compact!
       end
