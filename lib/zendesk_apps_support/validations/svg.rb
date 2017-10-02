@@ -8,10 +8,9 @@ module ZendeskAppsSupport
         def call(package)
           errors = []
           package.svg_files.each do |svg|
-
             markup = Nokogiri::XML(svg.read).to_s.
-              # ignore extra whitespace in SVGs
-              tr("\n", '').squeeze(' ').gsub(/\>\s+\</, '><')
+                     # ignore extra whitespace in SVGs
+                     tr("\n", '').squeeze(' ').gsub(/\>\s+\</, '><')
 
             clean_markup = Loofah.scrub_xml_document(markup, :prune).to_html
             filepath = svg.relative_path
@@ -34,7 +33,7 @@ module ZendeskAppsSupport
           # This attribute is deprecated (https://www.w3.org/TR/filter-effects/#AccessBackgroundImage)
           # but is included in many of the test apps used in fixtures for tests in ZAM, ZAT etc.
           '//svg/@style:enable-background'
-        ]
+        ].freeze
 
         # to ignore the optional XML declaration at the top of a document
         def strip_declaration(markup_doc)
@@ -46,7 +45,7 @@ module ZendeskAppsSupport
           # see: http://www.nokogiri.org/tutorials/searching_a_xml_html_document.html
           filtered_markup_doc = Nokogiri::XML(markup).remove_namespaces!
 
-          WHITELISTED_ATTRS.map { |attr|
+          WHITELISTED_ATTRS.map do |attr|
             attr_path = attr.split(':')[0]
             attr_prop = attr.split(':')[1]
 
@@ -68,7 +67,7 @@ module ZendeskAppsSupport
             else
               filtered_markup_doc.xpath(attr_path).first.value = clean_attr
             end
-          }
+          end
 
           # skip the check if it isn't possible for the markup to contain a declaration
           return false unless filtered_markup_doc.root.children.length >= 1
