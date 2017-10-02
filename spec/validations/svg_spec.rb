@@ -53,6 +53,19 @@ y="0px"
   C0.1,4.1,0,4.4,0,4.7C0,5,0.1,5.3,0.3,5.5l3.1,3.2C3.8,9,4.1,9,4.2,9C4.6,9,4.9,8.9,5,8.7l6.6-6.7C12.1,1.5,12.1,0.8,\
   11.7,0.3z"
   fill="#78a300" />
+</svg>),
+      # markup containing deprecated attributes, e.g. as in the app fixtures in ZAM
+      %(<?xml version="1.0" encoding="utf-8"?>
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" \
+y="0px"
+   viewBox="0 0 18 18" style="enable-background:new 0 0 18 18;" xml:space="preserve">
+<path id="Fill-3" d="M1.5,6.1C1.3,5.9,1,6,1,6.4l0,7c0,0.3,0.2,0.7,0.5,0.9l6,3.6C7.8,18.1,8,18,8,17.6l0-7.1c0-0.3-0.2\
+-0.7-0.5-0.9
+  L1.5,6.1z"/>
+<path id="Fill-5" d="M10.5,17.9c-0.3,0.2-0.5,0-0.5-0.3l0-7c0-0.3,0.2-0.7,0.5-0.9l6-3.6C16.8,5.9,17,6,17,6.4l0,7.1
+  c0,0.3-0.2,0.7-0.5,0.9L10.5,17.9z"/>
+<path id="Fill-1" d="M2.2,3.7c-0.3,0.2-0.3,0.4,0,0.6l6.2,3.6C8.7,8,9.2,8,9.4,7.9l6.3-3.6c0.3-0.2,0.3-0.4,0-0.6L9.5,0.1
+  C9.2,0,8.8,0,8.5,0.1L2.2,3.7z"/>
 </svg>)
     ]
 
