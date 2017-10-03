@@ -5,7 +5,7 @@ describe ZendeskAppsSupport::Validations::Svg do
   let(:clean_markup) do
     %(<svg viewBox="0 0 26 26" id="zd-svg-icon-26-app" width="100%" height="100%"><path fill="none" \
 stroke="currentColor" stroke-linejoin="round" stroke-width="2" d="M4 8l9-5 9 5v9.7L13 23l-9-5.2zm9 5L4 8m9 \
-5l9-5m-9 5v10"></path></svg>\n)
+5l9-5m-9 5v10"/></svg>)
   end
   let(:svg) { double('AppFile', relative_path: 'assets/icon_nav_bar.svg', read: markup) }
   let(:package) { double('Package', svg_files: [svg], warnings: []) }
@@ -84,16 +84,16 @@ y="0px"
     dirty_markup_examples = [
       %(<svg viewBox="0 0 26 26" id="zd-svg-icon-26-app" width="100%" height="100%"><path fill="none" \
 stroke="currentColor" stroke-linejoin="round" stroke-width="2" d="M4 8l9-5 9 5v9.7L13 23l-9-5.2zm9 5L4 8m9 \
-5l9-5m-9 5v10" onclick="alert(1)"></path></svg>\n),
+5l9-5m-9 5v10" onclick="alert(1)"></path></svg>),
       %(<svg onload=alert&#x28;1&#x29 viewBox="0 0 26 26" id="zd-svg-icon-26-app" width="100%" height="100%"> \
 <path fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="2" d="M4 8l9-5 9 5v9.7L13 \
-23l-9-5.2zm9 5L4 8m9 5l9-5m-9 5v10"></path></svg>\n),
+23l-9-5.2zm9 5L4 8m9 5l9-5m-9 5v10"></path></svg>),
       %(<svg viewBox="0 0 26 26" id="zd-svg-icon-26-app" width="100%" height="100%"><path fill="none" \
 stroke="currentColor" stroke-linejoin="round" stroke-width="2" d="M4 8l9-5 9 5v9.7L13 23l-9-5.2zm9 5L4 8m9 \
-5l9-5m-9 5v10"><script type="text/javascript">alert(1);</script></path></svg>\n),
+5l9-5m-9 5v10"><script type="text/javascript">alert(1);</script></path></svg>),
       %(<svg viewBox="0 0 26 26" id="zd-svg-icon-26-app" width="100%" height="100%"><script>//&NewLine;confirm(1); \
 </script <path fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="2" d="M4 8l9-5 9 \
-5v9.7L13 23l-9-5.2zm9 5L4 8m9 5l9-5m-9 5v10"></path></svg>\n)
+5v9.7L13 23l-9-5.2zm9 5L4 8m9 5l9-5m-9 5v10"></path></svg>)
     ]
 
     dirty_markup_examples.map do |markup|
@@ -112,15 +112,15 @@ stroke="currentColor" stroke-linejoin="round" stroke-width="2" d="M4 8l9-5 9 5v9
       %(<svg onload=innerHTML=location.hash>#<script>alert(1)</script> viewBox="0 0 26 26" id="zd-svg-icon-26-app" \
 width="100%" height="100%"><path fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="2" \
 d="M4 8l9-5 9 5v9.7L13 23l-9-5.2zm9 5L4 8m9 5l9-5m-9 5v10"><script type="text/javascript">alert('XSS');</script> \
-      </path></svg>\n),
+      </path></svg>),
       %(<svg onResize svg onResize="javascript:javascript:alert(1)" viewBox="0 0 26 26" id="zd-svg-icon-26-app" \
 width="100%" height="100%"><path fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="2" \
-d="M4 8l9-5 9 5v9.7L13 23l-9-5.2zm9 5L4 8m9 5l9-5m-9 5v10"></path></svg onResize>\n)
+d="M4 8l9-5 9 5v9.7L13 23l-9-5.2zm9 5L4 8m9 5l9-5m-9 5v10"></path></svg onResize>)
     ]
 
     malformed_markup_examples.map do |markup|
       let(:markup) { markup }
-      let(:empty_svg) { %(<svg></svg>\n) }
+      let(:empty_svg) { %(<svg/>) }
 
       it 'empties the contents of malformed suspicious svg tags and notifies the user that the offending svgs were \
       modified' do
@@ -136,7 +136,7 @@ d="M4 8l9-5 9 5v9.7L13 23l-9-5.2zm9 5L4 8m9 5l9-5m-9 5v10"></path></svg onResize
     let(:markup) do
       %(<svg viewBox="0 0 26 26" id="zd-svg-icon-26-app" width="100%" height="100%"><path fill="none" \
 stroke="currentColor" stroke-linejoin="round" stroke-width="2" d="M4 8l9-5 9 5v9.7L13 23l-9-5.2zm9 5L4 8m9 \
-5l9-5m-9 5v10" onclick="alert(1)"></path></svg>\n)
+5l9-5m-9 5v10" onclick="alert(1)"></path></svg>)
     end
 
     before do
