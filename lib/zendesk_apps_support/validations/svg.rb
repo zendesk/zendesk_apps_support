@@ -4,38 +4,38 @@ require 'loofah'
 module ZendeskAppsSupport
   module Validations
     module Svg
+      @strip_declaration = Loofah::Scrubber.new do |node|
+        node.remove if node.name == 'xml' && node.children.empty?
+      end
+
+      @empty_malformed_markup = Loofah::Scrubber.new do |node|
+        node.next.remove while node.name == 'svg' && node.next
+      end
+
+      # CRUFT: ignore a (very specific) style attribute which Loofah would otherwise scrub.
+      # This attribute is deprecated (https://www.w3.org/TR/filter-effects/#AccessBackgroundImage)
+      # but is included in many of the test apps used in fixtures for tests in ZAM, ZAT etc.
+      @remove_enable_background = Loofah::Scrubber.new do |node|
+        match_pattern = Regexp.new("enable-background:.*?(\;|\z)")
+        if node.name == 'svg' && node['style']
+          node['style'] = node['style'].gsub(match_pattern, '')
+          node.attributes['style'].remove if node['style'].empty?
+        end
+      end
+
       class << self
         def call(package)
           errors = []
 
-          strip_declaration = Loofah::Scrubber.new do |node|
-            node.remove if node.name == 'xml' && node.children.empty?
-          end
-
-          empty_malformed_markup = Loofah::Scrubber.new do |node|
-            node.next.remove while node.name == 'svg' && node.next
-          end
-
-          # CRUFT: ignore a (very specific) style attribute which Loofah would otherwise scrub.
-          # This attribute is deprecated (https://www.w3.org/TR/filter-effects/#AccessBackgroundImage)
-          # but is included in many of the test apps used in fixtures for tests in ZAM, ZAT etc.
-          remove_enable_background = Loofah::Scrubber.new do |node|
-            if node.name == 'svg' && node['style']
-              match_pattern = Regexp.new("enable-background:.*?(\;|\z)")
-              node['style'] = node['style'].gsub(match_pattern, '')
-              node.attributes['style'].remove if node['style'].empty?
-            end
-          end
-
           package.svg_files.each do |svg|
             markup = Loofah.xml_fragment(svg.read)
-                           .scrub!(strip_declaration)
-                           .scrub!(remove_enable_background)
+                           .scrub!(@strip_declaration)
+                           .scrub!(@remove_enable_background)
                            .to_xml
 
             clean_markup = Loofah.xml_fragment(markup)
                                  .scrub!(:prune)
-                                 .scrub!(empty_malformed_markup)
+                                 .scrub!(@empty_malformed_markup)
                                  .to_xml
 
             filepath = svg.relative_path
