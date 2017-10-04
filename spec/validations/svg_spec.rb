@@ -42,7 +42,7 @@ y="0px"
   c0,0.3-0.2,0.7-0.5,0.9L10.5,17.9z"/>
 <path id="Fill-1" d="M2.2,3.7c-0.3,0.2-0.3,0.4,0,0.6l6.2,3.6C8.7,8,9.2,8,9.4,7.9l6.3-3.6c0.3-0.2,0.3-0.4,0-0.6L9.5,0.1
   C9.2,0,8.8,0,8.5,0.1L2.2,3.7z"/>
-</svg>),
+</svg>\n),
       # markup containing a doctype
       %(<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" \
@@ -53,7 +53,7 @@ y="0px"
   C0.1,4.1,0,4.4,0,4.7C0,5,0.1,5.3,0.3,5.5l3.1,3.2C3.8,9,4.1,9,4.2,9C4.6,9,4.9,8.9,5,8.7l6.6-6.7C12.1,1.5,12.1,0.8,\
   11.7,0.3z"
   fill="#78a300" />
-</svg>),
+</svg>\n),
       # markup containing deprecated attributes, e.g. as in the app fixtures in ZAM
       %(<?xml version="1.0" encoding="utf-8"?>
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" \
@@ -66,7 +66,7 @@ y="0px"
   c0,0.3-0.2,0.7-0.5,0.9L10.5,17.9z"/>
 <path id="Fill-1" d="M2.2,3.7c-0.3,0.2-0.3,0.4,0,0.6l6.2,3.6C8.7,8,9.2,8,9.4,7.9l6.3-3.6c0.3-0.2,0.3-0.4,0-0.6L9.5,0.1
   C9.2,0,8.8,0,8.5,0.1L2.2,3.7z"/>
-</svg>)
+</svg>\n)
     ]
 
     superfluous_markup.map do |markup|
@@ -84,16 +84,16 @@ y="0px"
     dirty_markup_examples = [
       %(<svg viewBox="0 0 26 26" id="zd-svg-icon-26-app" width="100%" height="100%"><path fill="none" \
 stroke="currentColor" stroke-linejoin="round" stroke-width="2" d="M4 8l9-5 9 5v9.7L13 23l-9-5.2zm9 5L4 8m9 \
-5l9-5m-9 5v10" onclick="alert(1)"></path></svg>),
+5l9-5m-9 5v10" onclick="alert(1)"></path></svg>\n),
       %(<svg onload=alert&#x28;1&#x29 viewBox="0 0 26 26" id="zd-svg-icon-26-app" width="100%" height="100%"> \
 <path fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="2" d="M4 8l9-5 9 5v9.7L13 \
-23l-9-5.2zm9 5L4 8m9 5l9-5m-9 5v10"></path></svg>),
+23l-9-5.2zm9 5L4 8m9 5l9-5m-9 5v10"></path></svg>\n),
       %(<svg viewBox="0 0 26 26" id="zd-svg-icon-26-app" width="100%" height="100%"><path fill="none" \
 stroke="currentColor" stroke-linejoin="round" stroke-width="2" d="M4 8l9-5 9 5v9.7L13 23l-9-5.2zm9 5L4 8m9 \
-5l9-5m-9 5v10"><script type="text/javascript">alert(1);</script></path></svg>),
+5l9-5m-9 5v10"><script type="text/javascript">alert(1);</script></path></svg>\n),
       %(<svg viewBox="0 0 26 26" id="zd-svg-icon-26-app" width="100%" height="100%"><script>//&NewLine;confirm(1); \
 </script <path fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="2" d="M4 8l9-5 9 \
-5v9.7L13 23l-9-5.2zm9 5L4 8m9 5l9-5m-9 5v10"></path></svg>)
+5v9.7L13 23l-9-5.2zm9 5L4 8m9 5l9-5m-9 5v10"></path></svg>\n)
     ]
 
     dirty_markup_examples.map do |markup|
@@ -112,10 +112,10 @@ stroke="currentColor" stroke-linejoin="round" stroke-width="2" d="M4 8l9-5 9 5v9
       %(<svg onload=innerHTML=location.hash>#<script>alert(1)</script> viewBox="0 0 26 26" id="zd-svg-icon-26-app" \
 width="100%" height="100%"><path fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="2" \
 d="M4 8l9-5 9 5v9.7L13 23l-9-5.2zm9 5L4 8m9 5l9-5m-9 5v10"><script type="text/javascript">alert('XSS');</script> \
-      </path></svg>),
+      </path></svg>\n),
       %(<svg onResize svg onResize="javascript:javascript:alert(1)" viewBox="0 0 26 26" id="zd-svg-icon-26-app" \
 width="100%" height="100%"><path fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="2" \
-d="M4 8l9-5 9 5v9.7L13 23l-9-5.2zm9 5L4 8m9 5l9-5m-9 5v10"></path></svg onResize>)
+d="M4 8l9-5 9 5v9.7L13 23l-9-5.2zm9 5L4 8m9 5l9-5m-9 5v10"></path></svg onResize>\n)
     ]
 
     malformed_markup_examples.map do |markup|
@@ -136,7 +136,7 @@ d="M4 8l9-5 9 5v9.7L13 23l-9-5.2zm9 5L4 8m9 5l9-5m-9 5v10"></path></svg onResize
     let(:markup) do
       %(<svg viewBox="0 0 26 26" id="zd-svg-icon-26-app" width="100%" height="100%"><path fill="none" \
 stroke="currentColor" stroke-linejoin="round" stroke-width="2" d="M4 8l9-5 9 5v9.7L13 23l-9-5.2zm9 5L4 8m9 \
-5l9-5m-9 5v10" onclick="alert(1)"></path></svg>)
+5l9-5m-9 5v10" onclick="alert(1)"></path></svg>\n)
     end
 
     before do

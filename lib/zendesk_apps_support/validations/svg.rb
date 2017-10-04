@@ -31,7 +31,7 @@ module ZendeskAppsSupport
             markup = Loofah.xml_fragment(svg.read)
                            .scrub!(@strip_declaration)
                            .scrub!(@remove_enable_background)
-                           .to_xml
+                           .to_xml.strip
 
             clean_markup = Loofah.xml_fragment(markup)
                                  .scrub!(:prune)
