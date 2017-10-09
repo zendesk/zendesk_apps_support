@@ -57,6 +57,8 @@ en:
             banner:
               invalid_format: Banner image must be a PNG file.
               invalid_size: Invalid banner image dimensions. Must be %{required_banner_width}x%{required_banner_height}px.
+            dirty_svg: "%{svg} contains invalid markup and was unable to be automatically
+              regenerated."
             oauth_keys:
               missing:
                 one: 'Missing required oauth field in manifest: %{missing_keys}'
@@ -120,3 +122,5 @@ en:
             deprecated_version: You are targeting a deprecated version of the framework.
               Your app will work, but it might break when the new framework version
               is deployed.
+            sanitised_svg: The markup in %{svg} has been edited for use in Zendesk,
+              and may not display as intended.
