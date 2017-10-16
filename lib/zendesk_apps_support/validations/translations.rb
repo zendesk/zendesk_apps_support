@@ -64,7 +64,8 @@ module ZendeskAppsSupport
         end
 
         def validate_top_level_required_keys(json, package, file_path)
-          missing_keys = get_missing_keys(package, json['app'].keys)
+          keys = json['app'].is_a?(Hash) ? json['app'].keys : []
+          missing_keys = get_missing_keys(package, keys)
           return if missing_keys.empty?
           ValidationError.new(
             'translation.missing_required_key',
