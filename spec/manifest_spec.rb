@@ -226,6 +226,22 @@ describe ZendeskAppsSupport::Manifest do
       ])
     end
 
+    context 'when products is a string that is not a location' do
+      before { manifest_hash[:location] = 'cool_location' }
+
+      it 'defaults to support without raising an error' do
+        expect(manifest.products).to eq([])
+      end
+    end
+
+    context 'when products is a string that matches a location' do
+      before { manifest_hash[:location] = 'ticket_sidebar' }
+
+      it 'defaults to support without raising an error' do
+        expect(manifest.products).to eq([ZendeskAppsSupport::Product::SUPPORT])
+      end
+    end
+
     context 'for a requirements only app' do
       before do
         manifest_hash.delete(:location)
