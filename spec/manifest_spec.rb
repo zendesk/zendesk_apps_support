@@ -229,7 +229,7 @@ describe ZendeskAppsSupport::Manifest do
     context 'when products is a string that is not a location' do
       before { manifest_hash[:location] = 'cool_location' }
 
-      it 'defaults to support without raising an error' do
+      it 'returns no products without raising an error' do
         expect(manifest.products).to eq([])
       end
     end

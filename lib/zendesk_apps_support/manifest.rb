@@ -141,7 +141,7 @@ module ZendeskAppsSupport
     attr_reader :locations
 
     def products_from_locations
-      location_options.map { |lo| lo.location&.product_code }
+      location_options.map { |lo| lo.location && lo.location.product_code }
                       .compact
                       .uniq
                       .map { |code| Product.find_by(code: code) }
