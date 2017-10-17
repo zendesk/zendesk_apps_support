@@ -143,6 +143,16 @@ describe ZendeskAppsSupport::Validations::Translations do
       end
     end
 
+    context 'for an empty translations object' do
+      let(:translation_files) do
+        [double('AppFile', relative_path: 'translations/en.json', read: '{}')]
+      end
+
+      it 'reports missing keys' do
+        expect(subject[0].to_s).to match(%r{Missing required key from translations/en.json})
+      end
+    end
+
     context 'when multiple products are specified' do
       context 'for a public app' do
         let(:private_app?) { false }
