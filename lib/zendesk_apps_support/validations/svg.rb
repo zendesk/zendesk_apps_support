@@ -4,23 +4,30 @@ require 'loofah'
 module ZendeskAppsSupport
   module Validations
     module Svg
-      @strip_declaration = Loofah::Scrubber.new do |node|
-        node.remove if node.name == 'xml' && node.children.empty?
-      end
-
-      @empty_malformed_markup = Loofah::Scrubber.new do |node|
-        node.next.remove while node.name == 'svg' && node.next
-      end
+      # whitelist elements and attributes used in Zendesk Garden assets
+      Loofah::HTML5::WhiteList::ALLOWED_ELEMENTS_WITH_LIBXML2.add 'symbol'
+      Loofah::HTML5::WhiteList::ACCEPTABLE_CSS_PROPERTIES.add 'position'
 
       # CRUFT: ignore a (very specific) style attribute which Loofah would otherwise scrub.
       # This attribute is deprecated (https://www.w3.org/TR/filter-effects/#AccessBackgroundImage)
       # but is included in many of the test apps used in fixtures for tests in ZAM, ZAT etc.
-      @remove_enable_background = Loofah::Scrubber.new do |node|
-        match_pattern = Regexp.new("enable-background:.*?(\;|\z)")
+      Loofah::HTML5::WhiteList::ACCEPTABLE_CSS_PROPERTIES.add 'enable-background'
+
+      @strip_declaration = Loofah::Scrubber.new do |node|
+        node.remove if node.name == 'xml' && node.children.empty?
+      end
+
+      # Loofah's default scrubber strips spaces between CSS attributes. Passing the input markup through this scrubber
+      # first ensures that this stripped whitespace in the output doesn't register as a diff.
+      @strip_spaces_between_css_attrs = Loofah::Scrubber.new do |node|
+        match_pattern = Regexp.new(/\;\s+/)
         if node.name == 'svg' && node['style']
-          node['style'] = node['style'].gsub(match_pattern, '')
-          node.attributes['style'].remove if node['style'].empty?
+          node['style'] = node['style'].gsub(match_pattern, ';')
         end
+      end
+
+      @empty_malformed_markup = Loofah::Scrubber.new do |node|
+        node.next.remove while node.name == 'svg' && node.next
       end
 
       class << self
@@ -30,7 +37,7 @@ module ZendeskAppsSupport
           package.svg_files.each do |svg|
             markup = Loofah.xml_fragment(svg.read)
                            .scrub!(@strip_declaration)
-                           .scrub!(@remove_enable_background)
+                           .scrub!(@strip_spaces_between_css_attrs)
                            .to_xml.strip
 
             clean_markup = Loofah.xml_fragment(markup)
