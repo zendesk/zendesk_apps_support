@@ -45,6 +45,10 @@ parts:
       title: "App builder job: manifest is invalid JSON error"
       value: "manifest is not proper JSON. %{errors}"
   - translation:
+      key: "txt.apps.admin.error.app_build.duplicate_manifest_keys"
+      title: "App builder job: duplicate keys in manifest"
+      value: "There are duplicate keys specified in the manifest.json file. %{errors}"
+  - translation:
       key: "txt.apps.admin.error.app_build.missing_manifest"
       title: "App builder job: missing manifest error"
       value: "Could not find manifest.json"

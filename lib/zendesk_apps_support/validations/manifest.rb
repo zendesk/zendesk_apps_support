@@ -24,6 +24,8 @@ module ZendeskAppsSupport
 
         rescue JSON::ParserError => e
           return [ValidationError.new(:manifest_not_json, errors: e)]
+        rescue ZendeskAppsSupport::Manifest::OverrideError => e
+          return [ValidationError.new(:duplicate_manifest_keys, errors: e.message)]
         end
 
         private

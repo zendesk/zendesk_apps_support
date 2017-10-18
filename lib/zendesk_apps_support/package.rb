@@ -31,7 +31,7 @@ module ZendeskAppsSupport
       [].tap do |errors|
         errors << Validations::Manifest.call(self)
 
-        if has_manifest?
+        if has_manifest? && errors.blank?
           errors << Validations::Marketplace.call(self) if marketplace
           errors << Validations::Source.call(self)
           errors << Validations::Translations.call(self)

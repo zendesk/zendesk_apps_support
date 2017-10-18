@@ -22,6 +22,8 @@ en:
             no_app_js_required: Do not set your app to requirements only if you need
               app.js
             manifest_not_json: manifest is not proper JSON. %{errors}
+            duplicate_manifest_keys: There are duplicate keys specified in the manifest.json
+              file. %{errors}
             missing_manifest: Could not find manifest.json
             nested_manifest: Could not find manifest.json in the root of the zip file,
               but %{found_path} was found. Try re-creating the archive from this directory.
