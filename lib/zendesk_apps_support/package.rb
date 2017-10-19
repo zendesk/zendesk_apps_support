@@ -28,26 +28,24 @@ module ZendeskAppsSupport
     end
 
     def validate(marketplace: true)
-      [].tap do |errors|
-        errors << Validations::Manifest.call(self)
+      errors = []
+      errors << Validations::Manifest.call(self)
+      if has_valid_manifest?(errors)
+        errors << Validations::Marketplace.call(self) if marketplace
+        errors << Validations::Source.call(self)
+        errors << Validations::Translations.call(self)
+        errors << Validations::Requirements.call(self)
 
-        if has_manifest?
-          errors << Validations::Marketplace.call(self) if marketplace
-          errors << Validations::Source.call(self)
-          errors << Validations::Translations.call(self)
-          errors << Validations::Requirements.call(self)
-
-          if !manifest.requirements_only? && !manifest.marketing_only? && !manifest.iframe_only?
-            errors << Validations::Templates.call(self)
-            errors << Validations::Stylesheets.call(self)
-          end
+        unless manifest.requirements_only? || manifest.marketing_only? || manifest.iframe_only?
+          errors << Validations::Templates.call(self)
+          errors << Validations::Stylesheets.call(self)
         end
-
-        errors << Validations::Banner.call(self) if has_banner?
-        errors << Validations::Svg.call(self) if has_svgs?
-
-        errors.flatten!.compact!
       end
+
+      errors << Validations::Banner.call(self) if has_banner?
+      errors << Validations::Svg.call(self) if has_svgs?
+
+      errors.flatten.compact
     end
 
     def validate!(marketplace: true)
@@ -249,6 +247,10 @@ module ZendeskAppsSupport
     end
 
     private
+
+    def has_valid_manifest?(errors)
+      has_manifest? && errors.flatten.empty?
+    end
 
     def runtime_translations(translations)
       result = translations.dup

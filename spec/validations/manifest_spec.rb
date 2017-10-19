@@ -424,7 +424,7 @@ describe ZendeskAppsSupport::Validations::Manifest do
   it 'should have an error when there are duplicate locations' do
     @manifest_hash = { 'location' => %w(ticket_sidebar ticket_sidebar) }
 
-    expect { @package.validate }.to raise_error(/Duplicate reference in manifest: "ticket_sidebar"/)
+    expect(@package).to have_error(/Duplicate reference in manifest: "ticket_sidebar"/)
   end
 
   it 'should have an error when the version is not supported' do
