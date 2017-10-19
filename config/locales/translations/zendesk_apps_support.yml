@@ -131,7 +131,7 @@ parts:
   - translation:
       key: "txt.apps.admin.error.app_build.dirty_svg"
       title: "App builder job: invalid SVG markup error"
-      value: "%{svg} contains invalid markup and was unable to be automatically regenerated."
+      value: "%{svg} contains invalid markup and could not be automatically regenerated."
   - translation:
       key: "txt.apps.admin.error.app_build.oauth_keys.missing.one"
       title: "App builder job: missing oauth fields error"
@@ -209,7 +209,7 @@ parts:
   - translation:
       key: "txt.apps.admin.warning.app_build.sanitised_svg"
       title: "App builder job: warning that contents of svg have been sanitised and overwritten"
-      value: "The markup in %{svg} has been edited for use in Zendesk, and may not display as intended."
+      value: "The markup in %{svg} has been edited for use in Zendesk and may not display as intended."
   - translation:
       key: "txt.apps.admin.error.app_build.invalid_version"
       title: "App builder job: invalid framework version"
