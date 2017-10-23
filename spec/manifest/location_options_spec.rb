@@ -28,11 +28,4 @@ describe ZendeskAppsSupport::Manifest::LocationOptions do
       expect(location_options.legacy).to be false
     end
   end
-
-  context 'when url is not a string' do
-    let(:options) { { 'url' => true } }
-    it 'coerces to string' do
-      expect(location_options.url).to eq('true')
-    end
-  end
 end

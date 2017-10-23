@@ -24,7 +24,6 @@ module ZendeskAppsSupport
         RUBY_TO_JSON.each do |ruby, json|
           instance_variable_set(:"@#{ruby}", options[json])
         end
-        @url = @url.to_s
         @legacy ||= @url == ZendeskAppsSupport::Manifest::LEGACY_URI_STUB
         @auto_load = options.fetch('autoLoad', true)
         @auto_hide ||= false

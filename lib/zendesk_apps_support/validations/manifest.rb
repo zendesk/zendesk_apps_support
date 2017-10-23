@@ -228,7 +228,7 @@ module ZendeskAppsSupport
         def invalid_location_error(package)
           errors = []
           package.manifest.location_options.each do |location_options|
-            if location_options.url && !location_options.url.empty?
+            if location_options.url.is_a?(String) && !location_options.url.empty?
               errors << invalid_location_uri_error(package, location_options.url)
             elsif location_options.auto_load?
               errors << ValidationError.new(:blank_location_uri, location: location_options.location.name)
