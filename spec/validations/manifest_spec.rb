@@ -270,8 +270,6 @@ describe ZendeskAppsSupport::Validations::Manifest do
     end
 
     it 'should have a location error' do
-      require 'byebug'
-      byebug
       expect(@package).to have_error(/location does not specify a URI/)
     end
   end
