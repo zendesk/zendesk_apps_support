@@ -274,7 +274,6 @@ describe ZendeskAppsSupport::Validations::Manifest do
     end
   end
 
-
   context 'location uri is blank' do
     before do
       @manifest_hash = { 'location' => { 'zendesk' => { 'ticket_sidebar' => '' } } }
