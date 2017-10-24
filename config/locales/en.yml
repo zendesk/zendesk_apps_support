@@ -22,7 +22,7 @@ en:
             no_app_js_required: Do not set your app to requirements only if you need
               app.js
             manifest_not_json: manifest is not proper JSON. %{errors}
-            duplicate_manifest_keys: There are duplicate keys specified in the manifest.json
+            duplicate_manifest_keys: Duplicate keys are specified in the manifest.json
               file. %{errors}
             missing_manifest: Could not find manifest.json
             nested_manifest: Could not find manifest.json in the root of the zip file,
@@ -59,7 +59,7 @@ en:
             banner:
               invalid_format: Banner image must be a PNG file.
               invalid_size: Invalid banner image dimensions. Must be %{required_banner_width}x%{required_banner_height}px.
-            dirty_svg: "%{svg} contains invalid markup and was unable to be automatically
+            dirty_svg: "%{svg} contains invalid markup and could not be automatically
               regenerated."
             oauth_keys:
               missing:
@@ -124,5 +124,5 @@ en:
             deprecated_version: You are targeting a deprecated version of the framework.
               Your app will work, but it might break when the new framework version
               is deployed.
-            sanitised_svg: The markup in %{svg} has been edited for use in Zendesk,
+            sanitised_svg: The markup in %{svg} has been edited for use in Zendesk
               and may not display as intended.

@@ -5,7 +5,7 @@ describe ZendeskAppsSupport::Validations::Svg do
   let(:svg) { double('AppFile', relative_path: 'assets/icon_nav_bar.svg', read: markup) }
   let(:package) { double('Package', svg_files: [svg], warnings: []) }
   let(:warning) do
-    'The markup in assets/icon_nav_bar.svg has been edited for use in Zendesk, and may not display as intended.'
+    'The markup in assets/icon_nav_bar.svg has been edited for use in Zendesk and may not display as intended.'
   end
 
   before do
