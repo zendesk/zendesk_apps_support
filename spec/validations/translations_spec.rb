@@ -169,7 +169,7 @@ describe ZendeskAppsSupport::Validations::Translations do
           end
 
           it 'should report the error' do
-            expect(subject[0].to_s).to match(%r{Missing required key from translations/en.json for support})
+            expect(subject[0].to_s).to match(%r{Missing required key from translations/en.json for Support})
           end
         end
 
@@ -199,7 +199,7 @@ describe ZendeskAppsSupport::Validations::Translations do
 
             it 'should report the error' do
               expect(subject[0].to_s).to match(
-                /Products in manifest \(support\) do not match products in translations \(support, chat\)/
+                /Products in manifest \(Support\) do not match products in translations \(Support, Chat\)/
               )
             end
           end

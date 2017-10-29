@@ -81,7 +81,7 @@ module ZendeskAppsSupport
             return ValidationError.new(
               'translation.missing_required_key_for_product',
               file: file_path,
-              product: product,
+              product: product.capitalize,
               missing_key: missing_keys.join(', ')
             )
           end
@@ -94,8 +94,8 @@ module ZendeskAppsSupport
           ValidationError.new(
             'translation.products_do_not_match_manifest_products',
             file: file_path,
-            translation_products: products.join(', '),
-            manifest_products: manifest_products.join(', ')
+            translation_products: products.map(&:capitalize).join(', '),
+            manifest_products: manifest_products.map(&:capitalize).join(', ')
           )
         end
 

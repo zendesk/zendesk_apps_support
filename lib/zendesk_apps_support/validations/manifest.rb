@@ -242,7 +242,7 @@ module ZendeskAppsSupport
             next if invalid_locations.empty?
             errors << ValidationError.new(:invalid_location,
                                           invalid_locations: invalid_locations.join(', '),
-                                          host_name: product.name,
+                                          host_name: product.name.capitalize,
                                           count: invalid_locations.length)
           end
 
