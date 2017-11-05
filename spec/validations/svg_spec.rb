@@ -2,7 +2,10 @@
 require 'spec_helper'
 
 describe ZendeskAppsSupport::Validations::Svg do
-  let(:svg) { double('AppFile', relative_path: 'assets/icon_nav_bar.svg', read: markup) }
+  let(:svg) do
+    double('AppFile', relative_path: 'assets/icon_nav_bar.svg',
+                      absolute_path: '~/tmp/apps/test_app/assets/icon_nav_bar.svg', read: markup)
+  end
   let(:package) { double('Package', svg_files: [svg], warnings: []) }
   let(:warning) do
     'The markup in assets/icon_nav_bar.svg has been edited for use in Zendesk and may not display as intended.'
@@ -115,7 +118,7 @@ stroke="currentColor" stroke-linejoin="round" stroke-width="2" d="M4 8l9-5 9 5v9
       end
       it 'sanitises questionable markup and notifies the user that the offending svgs were modified' do
         errors = ZendeskAppsSupport::Validations::Svg.call(package)
-        expect(IO).to have_received(:write).with(svg.relative_path, clean_markup)
+        expect(IO).to have_received(:write).with(svg.absolute_path, clean_markup)
         expect(package.warnings[0]).to eq(warning)
         expect(errors).to be_empty
       end
@@ -140,7 +143,7 @@ d="M4 8l9-5 9 5v9.7L13 23l-9-5.2zm9 5L4 8m9 5l9-5m-9 5v10"></path></svg onResize
       it 'empties the contents of malformed suspicious svg tags and notifies the user that the offending svgs were \
       modified' do
         errors = ZendeskAppsSupport::Validations::Svg.call(package)
-        expect(IO).to have_received(:write).with(svg.relative_path, empty_svg)
+        expect(IO).to have_received(:write).with(svg.absolute_path, empty_svg)
         expect(package.warnings[0]).to eq(warning)
         expect(errors).to be_empty
       end

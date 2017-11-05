@@ -45,15 +45,13 @@ module ZendeskAppsSupport
                                  .scrub!(@empty_malformed_markup)
                                  .to_xml
 
-            filepath = svg.relative_path
-
             next if clean_markup == markup
             begin
               compressed_clean_markup = clean_markup.tr("\n", '').squeeze(' ').gsub(/\>\s+\</, '><')
-              IO.write(filepath, compressed_clean_markup)
-              package.warnings << I18n.t('txt.apps.admin.warning.app_build.sanitised_svg', svg: filepath)
+              IO.write(svg.absolute_path, compressed_clean_markup)
+              package.warnings << I18n.t('txt.apps.admin.warning.app_build.sanitised_svg', svg: svg.relative_path)
             rescue
-              errors << ValidationError.new(:dirty_svg, svg: filepath)
+              errors << ValidationError.new(:dirty_svg, svg: svg.relative_path)
             end
           end
           errors
