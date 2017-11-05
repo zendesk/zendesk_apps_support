@@ -2,8 +2,10 @@
 require 'spec_helper'
 
 describe ZendeskAppsSupport::Validations::Svg do
-  let(:svg) { double('AppFile', relative_path: 'assets/icon_nav_bar.svg',
-    absolute_path: '~/tmp/apps/test_app/assets/icon_nav_bar.svg', read: markup) }
+  let(:svg) do
+    double('AppFile', relative_path: 'assets/icon_nav_bar.svg',
+                      absolute_path: '~/tmp/apps/test_app/assets/icon_nav_bar.svg', read: markup)
+  end
   let(:package) { double('Package', svg_files: [svg], warnings: []) }
   let(:warning) do
     'The markup in assets/icon_nav_bar.svg has been edited for use in Zendesk and may not display as intended.'
