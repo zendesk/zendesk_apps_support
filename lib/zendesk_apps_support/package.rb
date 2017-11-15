@@ -126,6 +126,7 @@ module ZendeskAppsSupport
         source: source,
         app_class_properties: manifest.app_class_properties,
         asset_url_prefix: asset_url_prefix,
+        logo_asset_hash: generate_logo_hash(manifest.products),
         location_icons: location_icons,
         app_class_name: app_class_name,
         author: manifest.author,
@@ -247,6 +248,15 @@ module ZendeskAppsSupport
     end
 
     private
+
+    def generate_logo_hash(products)
+      {}.tap do |logo_hash|
+        products.each do |product|
+          product_prefix = products.count > 1 ? "#{product.name.downcase}/" : ''
+          logo_hash[product.name.downcase] = "#{product_prefix}logo-small.png"
+        end
+      end
+    end
 
     def has_valid_manifest?(errors)
       has_manifest? && errors.flatten.empty?
