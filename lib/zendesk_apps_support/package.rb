@@ -299,34 +299,35 @@ module ZendeskAppsSupport
 
           host = location_options.location.product.name
           location = location_options.location.name
-          location_icons[host][location] = build_location_icons_hash(location)
+          product_prefix = manifest.products.count > 1 ? "#{host}/" : ""
+          location_icons[host][location] = build_location_icons_hash(location, product_prefix)
         end
       end
     end
 
-    def build_location_icons_hash(location)
+    def build_location_icons_hash(location, product_prefix)
       inactive_png = "icon_#{location}_inactive.png"
-      if has_file?("assets/icon_#{location}.svg")
-        build_svg_icon_hash(location)
-      elsif has_file?("assets/#{inactive_png}")
-        build_png_icons_hash(location)
+      if has_file?("assets/#{product_prefix}icon_#{location}.svg")
+        build_svg_icon_hash(location, product_prefix)
+      elsif has_file?("assets/#{product_prefix}#{inactive_png}")
+        build_png_icons_hash(location, product_prefix)
       else
         {}
       end
     end
 
-    def build_svg_icon_hash(location)
+    def build_svg_icon_hash(location, product_prefix)
       cache_busting_param = "?#{Time.now.to_i}" unless @is_cached
-      { 'svg' => "icon_#{location}.svg#{cache_busting_param}" }
+      { 'svg' => "#{product_prefix}icon_#{location}.svg#{cache_busting_param}" }
     end
 
-    def build_png_icons_hash(location)
-      inactive_png = "icon_#{location}_inactive.png"
+    def build_png_icons_hash(location, product_prefix)
+      inactive_png = "#{product_prefix}icon_#{location}_inactive.png"
       {
         'inactive' => inactive_png
       }.tap do |icon_state_hash|
         %w(active hover).each do |state|
-          specific_png = "icon_#{location}_#{state}.png"
+          specific_png = "#{product_prefix}icon_#{location}_#{state}.png"
           selected_png = has_file?("assets/#{specific_png}") ? specific_png : inactive_png
           icon_state_hash[state] = selected_png
         end
