@@ -79,6 +79,13 @@ describe ZendeskAppsSupport::Package do
       expect(js).to eq(expected)
     end
 
+    it 'should generate js for an iframe app with multiple locations across products' do
+      @package = ZendeskAppsSupport::Package.new('spec/fixtures/multi_product_iframe_only_app')
+      js = @package.compile(app_name: 'ABC', app_id: 0, assets_dir: 'http://localhost:4567/0/')
+      expected = File.read('spec/fixtures/multi_product_iframe_app.js')
+      expect(js).to eq(expected)
+    end
+
     it 'should generate js with manifest noTemplate set to array' do
       allow(@package.manifest).to receive(:no_template) { ['ticket_sidebar'] }
       js = @package.compile(app_name: 'ABC', app_id: 0, assets_dir: 'http://localhost:4567/0/')

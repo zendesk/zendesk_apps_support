@@ -299,7 +299,7 @@ module ZendeskAppsSupport
 
           host = location_options.location.product.name
           location = location_options.location.name
-          product_prefix = manifest.products.count > 1 ? "#{host}/" : ""
+          product_prefix = manifest.products.count > 1 ? "#{host}/" : ''
           location_icons[host][location] = build_location_icons_hash(location, product_prefix)
         end
       end
