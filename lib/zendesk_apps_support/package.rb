@@ -252,8 +252,8 @@ module ZendeskAppsSupport
     def generate_logo_hash(products)
       {}.tap do |logo_hash|
         products.each do |product|
-          product_prefix = products.count > 1 ? "#{product.name.downcase}/" : ''
-          logo_hash[product.name.downcase] = "#{product_prefix}logo-small.png"
+          product_directory = products.count > 1 ? "#{product.name.downcase}/" : ''
+          logo_hash[product.name.downcase] = "#{product_directory}logo-small.png"
         end
       end
     end
@@ -299,35 +299,35 @@ module ZendeskAppsSupport
 
           host = location_options.location.product.name
           location = location_options.location.name
-          product_prefix = manifest.products.count > 1 ? "#{host}/" : ''
-          location_icons[host][location] = build_location_icons_hash(location, product_prefix)
+          product_directory = manifest.products.count > 1 ? "#{host}/" : ''
+          location_icons[host][location] = build_location_icons_hash(location, product_directory)
         end
       end
     end
 
-    def build_location_icons_hash(location, product_prefix)
+    def build_location_icons_hash(location, product_directory)
       inactive_png = "icon_#{location}_inactive.png"
-      if has_file?("assets/#{product_prefix}icon_#{location}.svg")
-        build_svg_icon_hash(location, product_prefix)
-      elsif has_file?("assets/#{product_prefix}#{inactive_png}")
-        build_png_icons_hash(location, product_prefix)
+      if has_file?("assets/#{product_directory}icon_#{location}.svg")
+        build_svg_icon_hash(location, product_directory)
+      elsif has_file?("assets/#{product_directory}#{inactive_png}")
+        build_png_icons_hash(location, product_directory)
       else
         {}
       end
     end
 
-    def build_svg_icon_hash(location, product_prefix)
+    def build_svg_icon_hash(location, product_directory)
       cache_busting_param = "?#{Time.now.to_i}" unless @is_cached
-      { 'svg' => "#{product_prefix}icon_#{location}.svg#{cache_busting_param}" }
+      { 'svg' => "#{product_directory}icon_#{location}.svg#{cache_busting_param}" }
     end
 
-    def build_png_icons_hash(location, product_prefix)
-      inactive_png = "#{product_prefix}icon_#{location}_inactive.png"
+    def build_png_icons_hash(location, product_directory)
+      inactive_png = "#{product_directory}icon_#{location}_inactive.png"
       {
         'inactive' => inactive_png
       }.tap do |icon_state_hash|
         %w(active hover).each do |state|
-          specific_png = "#{product_prefix}icon_#{location}_#{state}.png"
+          specific_png = "#{product_directory}icon_#{location}_#{state}.png"
           selected_png = has_file?("assets/#{specific_png}") ? specific_png : inactive_png
           icon_state_hash[state] = selected_png
         end
