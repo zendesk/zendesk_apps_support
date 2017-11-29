@@ -126,3 +126,5 @@ en:
               is deployed.
             sanitised_svg: The markup in %{svg} has been edited for use in Zendesk
               and may not display as intended.
+            bitmap_in_svg: "%{svg} contains an embedded bitmap and cannot be used
+              as an app icon. It has been replaced with a default placeholder icon."
