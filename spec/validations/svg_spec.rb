@@ -8,7 +8,7 @@ describe ZendeskAppsSupport::Validations::Svg do
   end
   let(:package) { double('Package', svg_files: [svg], warnings: []) }
   let(:warning) do
-    'The markup in assets/icon_nav_bar.svg has been edited for use in Zendesk and may not display as intended.'
+    %(The markup in assets/icon_nav_bar.svg has been edited for use in Zendesk and may not display as intended.)
   end
 
   before do
@@ -116,7 +116,7 @@ stroke="currentColor" stroke-linejoin="round" stroke-width="2" d="M4 8l9-5 9 5v9
 stroke="currentColor" stroke-linejoin="round" stroke-width="2" d="M4 8l9-5 9 5v9.7L13 23l-9-5.2zm9 5L4 8m9 \
 5l9-5m-9 5v10"/></svg>)
       end
-      it 'sanitises questionable markup and notifies the user that the offending svgs were modified' do
+      it 'sanitises questionable markup and notifies the developer that the offending svgs were modified' do
         errors = ZendeskAppsSupport::Validations::Svg.call(package)
         expect(IO).to have_received(:write).with(svg.absolute_path, clean_markup)
         expect(package.warnings[0]).to eq(warning)
@@ -140,13 +140,31 @@ d="M4 8l9-5 9 5v9.7L13 23l-9-5.2zm9 5L4 8m9 5l9-5m-9 5v10"></path></svg onResize
       let(:markup) { markup }
       let(:empty_svg) { %(<svg/>) }
 
-      it 'empties the contents of malformed suspicious svg tags and notifies the user that the offending svgs were \
-      modified' do
+      it 'empties the contents of malformed suspicious svg tags and notifies the developer that offending svgs were modified' do
         errors = ZendeskAppsSupport::Validations::Svg.call(package)
         expect(IO).to have_received(:write).with(svg.absolute_path, empty_svg)
         expect(package.warnings[0]).to eq(warning)
         expect(errors).to be_empty
       end
+    end
+  end
+
+  context 'markup containing an embedded bitmap' do
+    let(:markup) do
+      %(<svg viewBox="0 0 26 26" id="1px-white-square" width="100%" height="100%"><image width="1" height="1" x="0" \
+y="0" xlink:href="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs="/></svg>)
+    end
+    let(:warning) do
+      %(assets/icon_nav_bar.svg contains an embedded bitmap and cannot be used as an app icon. It has been replaced \
+with a default placeholder icon.)
+    end
+
+    it 'warns the developer of an embedded bitmap, and overwrites the svg with a placeholder image' do
+      errors = ZendeskAppsSupport::Validations::Svg.call(package)
+      expect(IO).to have_received(:write).with(svg.absolute_path,
+                                               ZendeskAppsSupport::Validations::Svg::PLACEHOLDER_SVG_MARKUP)
+      expect(package.warnings[0]).to eq(warning)
+      expect(errors).to be_empty
     end
   end
 
