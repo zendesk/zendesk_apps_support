@@ -15,7 +15,7 @@ describe ZendeskAppsSupport::Validations::Svg do
     allow(IO).to receive(:write)
   end
 
-  context 'clean markup' do
+  context 'svgs containing markup that is clean' do
     clean_markup = [
         %(<svg viewBox="0 0 26 26" id="zd-svg-icon-26-app" width="100%" height="100%"><path fill="none" \
 stroke="currentColor" stroke-linejoin="round" stroke-width="2" d="M4 8l9-5 9 5v9.7L13 23l-9-5.2zm9 5L4 8m9 \
@@ -32,7 +32,7 @@ stroke-linecap="round" d="M1.5 1.5h11m-10 8h9m-7-2h5m-5 4h5m-8-6h11m-8-2h5"></pa
 
     clean_markup.map do |markup|
       let(:markup) { markup }
-      it 'leaves the original svg files unchanged when they contain well-formed, clean markup' do
+      it 'are left unchanged with no warnings or errors' do
         errors = ZendeskAppsSupport::Validations::Svg.call(package)
         expect(IO).not_to have_received(:write)
         expect(package.warnings).to be_empty
@@ -41,7 +41,7 @@ stroke-linecap="round" d="M1.5 1.5h11m-10 8h9m-7-2h5m-5 4h5m-8-6h11m-8-2h5"></pa
     end
   end
 
-  context 'non-suspicious but superfluous markup' do
+  context 'svgs containing non-suspicious but superfluous markup' do
     superfluous_markup = [
       # markup containing a leading XML declaration
       %(<?xml version="1.0" encoding="utf-8"?>
@@ -84,7 +84,7 @@ y="0px"
 
     superfluous_markup.map do |markup|
       let(:markup) { markup }
-      it 'leaves the original svg files unchanged when they contain some superfluous but otherwise clean markup' do
+      it 'are left unchanged with no warnings or errors' do
         errors = ZendeskAppsSupport::Validations::Svg.call(package)
         expect(IO).not_to have_received(:write)
         expect(package.warnings).to be_empty
@@ -93,7 +93,7 @@ y="0px"
     end
   end
 
-  context 'dirty markup' do
+  context 'svgs containing dirty markup' do
     dirty_markup_examples = [
       %(<svg viewBox="0 0 26 26" id="zd-svg-icon-26-app" width="100%" height="100%"><path fill="none" \
 stroke="currentColor" stroke-linejoin="round" stroke-width="2" d="M4 8l9-5 9 5v9.7L13 23l-9-5.2zm9 5L4 8m9 \
@@ -116,7 +116,7 @@ stroke="currentColor" stroke-linejoin="round" stroke-width="2" d="M4 8l9-5 9 5v9
 stroke="currentColor" stroke-linejoin="round" stroke-width="2" d="M4 8l9-5 9 5v9.7L13 23l-9-5.2zm9 5L4 8m9 \
 5l9-5m-9 5v10"/></svg>)
       end
-      it 'sanitises questionable markup and notifies the developer that the offending svgs were modified' do
+      it 'are sanitised, with a warning that the offending svgs were modified' do
         errors = ZendeskAppsSupport::Validations::Svg.call(package)
         expect(IO).to have_received(:write).with(svg.absolute_path, clean_markup)
         expect(package.warnings[0]).to eq(warning)
@@ -125,7 +125,7 @@ stroke="currentColor" stroke-linejoin="round" stroke-width="2" d="M4 8l9-5 9 5v9
     end
   end
 
-  context 'malformed, suspicious markup' do
+  context 'svgs containing malformed, suspicious markup' do
     malformed_markup_examples = [
       %(<svg onload=innerHTML=location.hash>#<script>alert(1)</script> viewBox="0 0 26 26" id="zd-svg-icon-26-app" \
 width="100%" height="100%"><path fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="2" \
@@ -140,7 +140,7 @@ d="M4 8l9-5 9 5v9.7L13 23l-9-5.2zm9 5L4 8m9 5l9-5m-9 5v10"></path></svg onResize
       let(:markup) { markup }
       let(:empty_svg) { %(<svg/>) }
 
-      it 'empties the contents of malformed suspicious svg tags and notifies the developer that offending svgs were modified' do
+      it 'have the contents of their svg tags emptied, with a warning that the offending svgs were modified' do
         errors = ZendeskAppsSupport::Validations::Svg.call(package)
         expect(IO).to have_received(:write).with(svg.absolute_path, empty_svg)
         expect(package.warnings[0]).to eq(warning)
@@ -149,7 +149,7 @@ d="M4 8l9-5 9 5v9.7L13 23l-9-5.2zm9 5L4 8m9 5l9-5m-9 5v10"></path></svg onResize
     end
   end
 
-  context 'markup containing an embedded bitmap' do
+  context 'svgs that contain embedded bitmap(s)' do
     let(:markup) do
       %(<svg viewBox="0 0 26 26" id="1px-white-square" width="100%" height="100%"><image width="1" height="1" x="0" \
 y="0" xlink:href="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs="/></svg>)
@@ -159,7 +159,7 @@ y="0" xlink:href="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAAC
 with a default placeholder icon.)
     end
 
-    it 'warns the developer of an embedded bitmap, and overwrites the svg with a placeholder image' do
+    it 'generate a warning, and are overwritten with a placeholder image' do
       errors = ZendeskAppsSupport::Validations::Svg.call(package)
       expect(IO).to have_received(:write).with(svg.absolute_path,
                                                ZendeskAppsSupport::Validations::Svg::PLACEHOLDER_SVG_MARKUP)
@@ -168,7 +168,7 @@ with a default placeholder icon.)
     end
   end
 
-  context 'read-only error' do
+  context 'svgs with questionable markup which are read-only' do
     let(:markup) do
       %(<svg viewBox="0 0 26 26" id="zd-svg-icon-26-app" width="100%" height="100%"><path fill="none" \
 stroke="currentColor" stroke-linejoin="round" stroke-width="2" d="M4 8l9-5 9 5v9.7L13 23l-9-5.2zm9 5L4 8m9 \
@@ -179,7 +179,7 @@ stroke="currentColor" stroke-linejoin="round" stroke-width="2" d="M4 8l9-5 9 5v9
       allow(IO).to receive(:write).and_raise('Failed to write to original file')
     end
 
-    it 'raises an error when a file contains questionable markup but it fails to be overwritten' do
+    it 'raise an error on failing to be overwritten' do
       errors = ZendeskAppsSupport::Validations::Svg.call(package)
       expect(errors.size).to eq(1)
       expect(errors[0].key).to eq(:dirty_svg)
