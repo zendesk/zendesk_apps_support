@@ -40,7 +40,7 @@ d="M10.5,17.9c-0.3,0.2-0.5,0-0.5-0.3l0-7c0-0.3,0.2-0.7,0.5-0.9l6-3.6C16.8,5.9,17
 
       class << self
         def contains_embedded_bitmap?(markup)
-          Nokogiri::XML(markup).css('image').any?
+          Nokogiri::XML(markup).xpath('//image').any?
         end
 
         def rewrite_svg(svg, new_markup, package, errors)
