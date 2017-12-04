@@ -45,7 +45,8 @@ module ZendeskAppsSupport
                            end
 
           package.warnings << I18n.t(warning_string, svg: svg.relative_path)
-          IO.write(svg.absolute_path, new_markup)
+          compressed_new_markup = new_markup.tr("\n", '').squeeze(' ').gsub(/\>\s+\</, '><')
+          IO.write(svg.absolute_path, compressed_new_markup)
         rescue
           errors << ValidationError.new(:dirty_svg, svg: svg.relative_path)
         end
@@ -68,8 +69,7 @@ module ZendeskAppsSupport
                                    .to_xml
 
               next if clean_markup == markup
-              compressed_clean_markup = clean_markup.tr("\n", '').squeeze(' ').gsub(/\>\s+\</, '><')
-              rewrite_svg(svg, compressed_clean_markup, package, errors)
+              rewrite_svg(svg, clean_markup, package, errors)
             end
           end
           errors
