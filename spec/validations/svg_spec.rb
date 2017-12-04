@@ -6,6 +6,7 @@ describe ZendeskAppsSupport::Validations::Svg do
     double('AppFile', relative_path: 'assets/icon_nav_bar.svg',
                       absolute_path: '~/tmp/apps/test_app/assets/icon_nav_bar.svg', read: markup)
   end
+  let(:subject) { ZendeskAppsSupport::Validations::Svg }
   let(:package) { double('Package', svg_files: [svg], warnings: []) }
   let(:warning) do
     %(The markup in assets/icon_nav_bar.svg has been edited for use in Zendesk and may not display as intended.)
@@ -33,7 +34,7 @@ stroke-linecap="round" d="M1.5 1.5h11m-10 8h9m-7-2h5m-5 4h5m-8-6h11m-8-2h5"></pa
     clean_markup.map do |markup|
       let(:markup) { markup }
       it 'are left unchanged with no warnings or errors' do
-        errors = ZendeskAppsSupport::Validations::Svg.call(package)
+        errors = subject.call(package)
         expect(IO).not_to have_received(:write)
         expect(package.warnings).to be_empty
         expect(errors).to be_empty
@@ -85,7 +86,7 @@ y="0px"
     superfluous_markup.map do |markup|
       let(:markup) { markup }
       it 'are left unchanged with no warnings or errors' do
-        errors = ZendeskAppsSupport::Validations::Svg.call(package)
+        errors = subject.call(package)
         expect(IO).not_to have_received(:write)
         expect(package.warnings).to be_empty
         expect(errors).to be_empty
@@ -117,7 +118,7 @@ stroke="currentColor" stroke-linejoin="round" stroke-width="2" d="M4 8l9-5 9 5v9
 5l9-5m-9 5v10"/></svg>)
       end
       it 'are sanitised, with a warning that the offending svgs were modified' do
-        errors = ZendeskAppsSupport::Validations::Svg.call(package)
+        errors = subject.call(package)
         expect(IO).to have_received(:write).with(svg.absolute_path, clean_markup)
         expect(package.warnings[0]).to eq(warning)
         expect(errors).to be_empty
@@ -141,7 +142,7 @@ d="M4 8l9-5 9 5v9.7L13 23l-9-5.2zm9 5L4 8m9 5l9-5m-9 5v10"></path></svg onResize
       let(:empty_svg) { %(<svg/>) }
 
       it 'have the contents of their svg tags emptied, with a warning that the offending svgs were modified' do
-        errors = ZendeskAppsSupport::Validations::Svg.call(package)
+        errors = subject.call(package)
         expect(IO).to have_received(:write).with(svg.absolute_path, empty_svg)
         expect(package.warnings[0]).to eq(warning)
         expect(errors).to be_empty
@@ -159,10 +160,13 @@ y="0" xlink:href="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAAC
 with a default placeholder icon.)
     end
 
-    it 'generate a warning, and are overwritten with a placeholder image' do
-      errors = ZendeskAppsSupport::Validations::Svg.call(package)
-      expect(IO).to have_received(:write).with(svg.absolute_path,
-                                               ZendeskAppsSupport::Validations::Svg::PLACEHOLDER_SVG_MARKUP)
+    before do
+      allow(subject).to receive(:rewrite_svg).and_call_original
+    end
+
+    it 'generate a warns the developer, and overwrites the svg with a placeholder image' do
+      errors = subject.call(package)
+      expect(subject).to have_received(:rewrite_svg).with(svg, subject::PLACEHOLDER_SVG_MARKUP, package, errors)
       expect(package.warnings[0]).to eq(warning)
       expect(errors).to be_empty
     end
@@ -180,7 +184,7 @@ stroke="currentColor" stroke-linejoin="round" stroke-width="2" d="M4 8l9-5 9 5v9
     end
 
     it 'raise an error on failing to be overwritten' do
-      errors = ZendeskAppsSupport::Validations::Svg.call(package)
+      errors = subject.call(package)
       expect(errors.size).to eq(1)
       expect(errors[0].key).to eq(:dirty_svg)
       expect(errors[0].data).to eq(svg: svg.relative_path)
