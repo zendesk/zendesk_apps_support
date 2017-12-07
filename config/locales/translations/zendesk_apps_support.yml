@@ -215,6 +215,10 @@ parts:
       title: "App builder job: warning that contents of svg have been sanitised and overwritten"
       value: "The markup in %{svg} has been edited for use in Zendesk and may not display as intended."
   - translation:
+      key: "txt.apps.admin.warning.app_build.bitmap_in_svg"
+      title: "App builder job: warning that svg contains an embedded bitmap image and cannot be used"
+      value: "%{svg} contains an embedded bitmap and cannot be used as an app icon. It has been replaced with a default placeholder icon."
+  - translation:
       key: "txt.apps.admin.error.app_build.invalid_version"
       title: "App builder job: invalid framework version"
       value: "%{target_version} is not a valid framework version. Available versions are: %{available_versions}."

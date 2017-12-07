@@ -4,6 +4,8 @@ require 'loofah'
 module ZendeskAppsSupport
   module Validations
     module Svg
+      PLACEHOLDER_SVG_MARKUP = File.read(File.expand_path('../../assets/default_app_logo.svg', __FILE__))
+
       # whitelist elements and attributes used in Zendesk Garden assets
       Loofah::HTML5::WhiteList::ALLOWED_ELEMENTS_WITH_LIBXML2.add 'symbol'
       Loofah::HTML5::WhiteList::ACCEPTABLE_CSS_PROPERTIES.add 'position'
@@ -31,27 +33,43 @@ module ZendeskAppsSupport
       end
 
       class << self
+        def contains_embedded_bitmap?(markup)
+          Nokogiri::XML(markup).xpath('//image').any?
+        end
+
+        def rewrite_svg(svg, new_markup, package, errors)
+          warning_string = if contains_embedded_bitmap?(svg.read)
+                             'txt.apps.admin.warning.app_build.bitmap_in_svg'
+                           else
+                             'txt.apps.admin.warning.app_build.sanitised_svg'
+                           end
+
+          package.warnings << I18n.t(warning_string, svg: svg.relative_path)
+          compressed_new_markup = new_markup.tr("\n", '').squeeze(' ').gsub(/\>\s+\</, '><')
+          IO.write(svg.absolute_path, compressed_new_markup)
+        rescue
+          errors << ValidationError.new(:dirty_svg, svg: svg.relative_path)
+        end
+
         def call(package)
           errors = []
 
           package.svg_files.each do |svg|
-            markup = Loofah.xml_fragment(svg.read)
-                           .scrub!(@strip_declaration)
-                           .scrub!(@strip_spaces_between_css_attrs)
-                           .to_xml.strip
+            if contains_embedded_bitmap?(svg.read)
+              rewrite_svg(svg, PLACEHOLDER_SVG_MARKUP, package, errors)
+            else
+              markup = Loofah.xml_fragment(svg.read)
+                             .scrub!(@strip_declaration)
+                             .scrub!(@strip_spaces_between_css_attrs)
+                             .to_xml.strip
 
-            clean_markup = Loofah.xml_fragment(markup)
-                                 .scrub!(:prune)
-                                 .scrub!(@empty_malformed_markup)
-                                 .to_xml
+              clean_markup = Loofah.xml_fragment(markup)
+                                   .scrub!(:prune)
+                                   .scrub!(@empty_malformed_markup)
+                                   .to_xml
 
-            next if clean_markup == markup
-            begin
-              compressed_clean_markup = clean_markup.tr("\n", '').squeeze(' ').gsub(/\>\s+\</, '><')
-              IO.write(svg.absolute_path, compressed_clean_markup)
-              package.warnings << I18n.t('txt.apps.admin.warning.app_build.sanitised_svg', svg: svg.relative_path)
-            rescue
-              errors << ValidationError.new(:dirty_svg, svg: svg.relative_path)
+              next if clean_markup == markup
+              rewrite_svg(svg, clean_markup, package, errors)
             end
           end
           errors
