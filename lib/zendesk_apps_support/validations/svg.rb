@@ -34,7 +34,7 @@ module ZendeskAppsSupport
 
       class << self
         def contains_embedded_bitmap?(markup)
-          Nokogiri::XML(markup).xpath('//image').any?
+          Nokogiri::XML(markup).css('//image').any?
         end
 
         def rewrite_svg(svg, new_markup, package, errors)
