@@ -1,0 +1,29 @@
+{
+  "name": "ABC",
+  "version": "1.0.0",
+  "author": {
+    "name": "John Smith",
+    "email": "john@example.com"
+  },
+  "defaultLocale": "en",
+  "private": true,
+  "location": {
+    "support": {
+      "top_bar": {
+        "url": "assets/support/index.html"
+      },
+      "nav_bar": {
+        "url": "assets/support/index.html"
+      }
+    },
+    "chat": {
+      "chat_sidebar": {
+        "url": "assets/chat/index.html"
+      }
+    }
+  },
+  "experiments": {
+    "hashParams": true
+  },
+  "frameworkVersion": "2.0"
+}

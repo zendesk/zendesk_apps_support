@@ -21,6 +21,7 @@ var app = ZendeskApps.defineApp(<%= iframe_only ? 'null' : 'source' %>)
     appVersion: <%= version.to_json %>,
     locationIcons: <%= location_icons.to_json %>,
     assetUrlPrefix: <%= asset_url_prefix.to_json %>,
+    logoAssetHash: <%= logo_asset_hash.to_json %>,
     appClassName: <%= app_class_name.to_json %>,
     author: {
       name: <%= author['name'].to_json %>,

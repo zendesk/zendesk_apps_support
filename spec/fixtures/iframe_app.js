@@ -5,6 +5,7 @@ var app = ZendeskApps.defineApp(null)
     appVersion: "1.0.0",
     locationIcons: {},
     assetUrlPrefix: "http://localhost:4567/0/",
+    logoAssetHash: {"chat":"logo-small.png"},
     appClassName: "app-0",
     author: {
       name: "John Smith",

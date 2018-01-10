@@ -43,6 +43,7 @@ var app = ZendeskApps.defineApp(source)
     appVersion: "1.0.0",
     locationIcons: {},
     assetUrlPrefix: "http://localhost:4567/2/",
+    logoAssetHash: {"support":"logo-small.png"},
     appClassName: "app-1",
     author: {
       name: "John Smith",
