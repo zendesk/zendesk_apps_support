@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    zendesk_apps_support (4.8.0)
+    zendesk_apps_support (4.9.0)
       erubis
       i18n
       image_size
@@ -36,7 +36,7 @@ GEM
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
     mini_portile2 (2.1.0)
-    multi_json (1.12.2)
+    multi_json (1.13.1)
     nokogiri (1.6.8.1)
       mini_portile2 (~> 2.1.0)
     parser (2.3.3.0)
@@ -67,7 +67,7 @@ GEM
       ruby-progressbar (~> 1.7)
       unicode-display_width (~> 1.0, >= 1.0.1)
     ruby-progressbar (1.8.1)
-    sass (3.5.3)
+    sass (3.5.5)
       sass-listen (~> 4.0.0)
     sass-listen (4.0.0)
       rb-fsevent (~> 0.9, >= 0.9.4)
@@ -90,4 +90,4 @@ DEPENDENCIES
   zendesk_apps_support!
 
 BUNDLED WITH
-   1.15.4
+   1.16.1
