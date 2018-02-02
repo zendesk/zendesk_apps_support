@@ -255,6 +255,11 @@ parts:
       title: "App builder job: required key missing from translation file"
       value: "Missing required key from %{file}: %{missing_key}"
   - translation:
+      key: "txt.apps.admin.error.app_build.translation.missing_required_key_on_leaf"
+      title: "App builder job: required key missing from translation file."
+      screenshot: "https://zendesk.box.com/s/m6yr2j0vai0a7qkimj2gcqiy61jznmn4"
+      value: "Missing required key %{missing_key} on leaf %{leaf} from %{file}"
+  - translation:
       key: "txt.apps.admin.error.app_build.translation.missing_required_key_for_product"
       title: "App builder job: required key missing from translation file for a specific product"
       value: "Missing required key from %{file} for %{product}: %{missing_key}"

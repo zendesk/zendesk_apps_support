@@ -16,7 +16,7 @@ module ZendeskAppsSupport
           package.files.each_with_object([]) do |file, errors|
             path_match = TRANSLATIONS_PATH.match(file.relative_path)
             next unless path_match
-            errors << locale_error(file, path_match[1]) << json_error(file)
+            errors << locale_error(file, path_match[1]) << json_error(file) << format_error(file)
             next unless errors.compact.empty?
             errors.push(*validate_marketplace_content(file, package)) if file.relative_path == 'translations/en.json'
           end.compact
@@ -29,9 +29,23 @@ module ZendeskAppsSupport
           ValidationError.new('translation.invalid_locale', file: file.relative_path)
         end
 
+        def format_error(file)
+          with_valid_json(file) do |json|
+            if json['app'] && json['app']['parameters']
+              parameters_node = json['app']['parameters']
+              parameters_node.keys.map do |param|
+                unless parameters_node[param].is_a?(Hash) && parameters_node[param].keys.include?('label')
+                  return ValidationError.new('translation.missing_required_key_on_leaf',
+                                             file: file.relative_path, missing_key: 'label', leaf: param)
+                end
+              end
+            end
+          end
+          nil
+        end
+
         def json_error(file)
-          json = JSON.parse(file.read)
-          if json.is_a?(Hash)
+          with_valid_json(file) do |json|
             if json['app'] && json['app']['package']
               json['app'].delete('package')
               begin
@@ -41,6 +55,13 @@ module ZendeskAppsSupport
                 ValidationError.new('translation.invalid_format', field: e.message)
               end
             end
+          end
+        end
+
+        def with_valid_json(file)
+          json = JSON.parse(file.read)
+          if json.is_a?(Hash)
+            yield json
           else
             ValidationError.new('translation.not_json_object', file: file.relative_path)
           end
