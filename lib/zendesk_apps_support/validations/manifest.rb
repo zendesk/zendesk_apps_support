@@ -297,7 +297,7 @@ module ZendeskAppsSupport
           valid_to_serve = AppVersion::TO_BE_SERVED
           target_version = manifest.framework_version
 
-          if target_version == AppVersion::DEPRECATED
+          if AppVersion::DEPRECATED.include?(target_version)
             package.warnings << I18n.t('txt.apps.admin.warning.app_build.deprecated_version')
           end
 

@@ -30,8 +30,9 @@ describe ZendeskAppsSupport::AppVersion do
   end
 
   describe 'the deprecated version' do
+    let(:sample_version) { ZendeskAppsSupport::AppVersion::DEPRECATED.sample }
     subject do
-      ZendeskAppsSupport::AppVersion.new(ZendeskAppsSupport::AppVersion::DEPRECATED)
+      ZendeskAppsSupport::AppVersion.new(sample_version)
     end
 
     it { is_expected.to be_frozen }
@@ -42,17 +43,17 @@ describe ZendeskAppsSupport::AppVersion do
     it { is_expected.not_to be_blank }
     it { is_expected.to be_deprecated }
     it { is_expected.not_to be_obsolete }
-    it { is_expected.to eq(ZendeskAppsSupport::AppVersion.new(ZendeskAppsSupport::AppVersion::DEPRECATED)) }
+    it { is_expected.to eq(ZendeskAppsSupport::AppVersion.new(sample_version)) }
     it { is_expected.not_to eq(ZendeskAppsSupport::AppVersion.new('0.2')) }
 
     describe '#to_s' do
       subject { super().to_s }
-      it { is_expected.to eq(ZendeskAppsSupport::AppVersion::DEPRECATED) }
+      it { is_expected.to eq(sample_version) }
     end
 
     describe '#to_json' do
       subject { super().to_json }
-      it { is_expected.to eq(ZendeskAppsSupport::AppVersion::DEPRECATED.to_json) }
+      it { is_expected.to eq(sample_version.to_json) }
     end
   end
 
