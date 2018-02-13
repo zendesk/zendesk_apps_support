@@ -130,7 +130,7 @@ module ZendeskAppsSupport
         location_icons: location_icons,
         app_class_name: app_class_name,
         author: manifest.author,
-        translations: runtime_translations(translations_for(locale)),
+        translations: manifest.iframe_only? ? nil : runtime_translations(translations_for(locale)),
         framework_version: manifest.framework_version,
         templates: templates,
         modules: commonjs_modules,
