@@ -58,7 +58,7 @@ module ZendeskAppsSupport
             errors << invalid_v1_location(package)
             errors << missing_framework_version(manifest)
             errors << location_framework_mismatch(manifest)
-            errors << invalid_version_error(manifest, package)
+            errors << invalid_version_error(manifest)
           end
 
           errors << ban_no_template(manifest) if manifest.iframe_only?
@@ -293,13 +293,9 @@ module ZendeskAppsSupport
           missing_keys_validation_error([RUBY_TO_JSON[:framework_version]]) if manifest.framework_version.nil?
         end
 
-        def invalid_version_error(manifest, package)
+        def invalid_version_error(manifest)
           valid_to_serve = AppVersion::TO_BE_SERVED
           target_version = manifest.framework_version
-
-          if AppVersion::DEPRECATED.include?(target_version)
-            package.warnings << I18n.t('txt.apps.admin.warning.app_build.deprecated_version')
-          end
 
           unless valid_to_serve.include?(target_version)
             return ValidationError.new(:invalid_version,
