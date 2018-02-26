@@ -97,6 +97,8 @@ en:
               not_json: "%{file} is not valid JSON. %{errors}"
               not_json_object: "%{file} is not a JSON object."
               missing_required_key: 'Missing required key from %{file}: %{missing_key}'
+              missing_required_key_on_leaf: Missing required key %{missing_key} on
+                leaf %{leaf} from %{file}
               missing_required_key_for_product: 'Missing required key from %{file}
                 for %{product}: %{missing_key}'
               products_do_not_match_manifest_products: Products in manifest (%{manifest_products})

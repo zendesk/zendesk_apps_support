@@ -208,6 +208,30 @@ describe ZendeskAppsSupport::Validations::Translations do
     end
   end
 
+  context 'validate translation format when "parameters" is defined inside "app"' do
+    context 'when the leaf nodes do not have a "label"' do
+      let(:translation_files) do
+        [double('AppFile', relative_path: 'translations/pt-br.json', read: read_fixture_file('invalid_pt-br.json'))]
+      end
+
+      it 'should report the error' do
+        expect(subject.length).to eq(1)
+        expect(subject[0].to_s).to \
+          eq('Missing required key label on leaf description from translations/pt-br.json')
+      end
+    end
+
+    context 'when the leaf nodes have "label"' do
+      let(:translation_files) do
+        [double('AppFile', relative_path: 'translations/pt-br.json', read: read_fixture_file('valid_pt-br.json'))]
+      end
+
+      it 'should be valid' do
+        expect(subject.length).to eq(0)
+      end
+    end
+  end
+
   context 'validate translation format when "package" is defined inside "app"' do
     context 'all the leaf nodes have defined "title" and "value"' do
       let(:translation_files) do
