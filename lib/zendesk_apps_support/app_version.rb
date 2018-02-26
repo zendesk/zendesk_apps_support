@@ -11,12 +11,12 @@ module ZendeskAppsSupport
   #                  newly created or updates apps MAY target it, but it
   #                  may change without notice
   class AppVersion
-    DEPRECATED = '0.5'
-    SUNSETTING = '1.0'
+    DEPRECATED = ['0.5', '1.0'].freeze
+    SUNSETTING = nil
     CURRENT    = '2.0'
     FUTURE     = nil
 
-    TO_BE_SERVED     = [DEPRECATED, SUNSETTING, CURRENT, FUTURE].compact.freeze
+    TO_BE_SERVED     = [DEPRECATED, SUNSETTING, CURRENT, FUTURE].flatten.compact.freeze
     VALID_FOR_UPDATE = [SUNSETTING, CURRENT, FUTURE].compact.freeze
     VALID_FOR_CREATE = [CURRENT, FUTURE].compact.freeze
 
@@ -41,7 +41,7 @@ module ZendeskAppsSupport
     end
 
     def deprecated?
-      @version == DEPRECATED
+      DEPRECATED.include?(@version)
     end
 
     def sunsetting?
