@@ -222,9 +222,9 @@ describe ZendeskAppsSupport::Manifest do
 
     it 'derives the products from the locations' do
       expect(manifest.products).to eq([
-        ZendeskAppsSupport::Product::SUPPORT,
-        ZendeskAppsSupport::Product::CHAT
-      ])
+                                        ZendeskAppsSupport::Product::SUPPORT,
+                                        ZendeskAppsSupport::Product::CHAT
+                                      ])
     end
 
     context 'when products is a string that is not a location' do
@@ -276,9 +276,9 @@ describe ZendeskAppsSupport::Manifest do
 
         it 'returns the products specified in the manifest' do
           expect(manifest.products).to eq([
-            ZendeskAppsSupport::Product::SUPPORT,
-            ZendeskAppsSupport::Product::CHAT
-          ])
+                                            ZendeskAppsSupport::Product::SUPPORT,
+                                            ZendeskAppsSupport::Product::CHAT
+                                          ])
         end
       end
     end

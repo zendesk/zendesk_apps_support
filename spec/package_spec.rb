@@ -187,7 +187,7 @@ describe ZendeskAppsSupport::Package do
             'installation_instructions' => 'Pull the big lever'
           },
           'custom1' => custom1
-          } }
+        } }
         expect(package.send(:translations)).to eq(expected_translations)
         expect(package.locales).to eq(['en'])
       end
@@ -247,7 +247,7 @@ describe ZendeskAppsSupport::Package do
             'installation_instructions' => 'Pull the big lever'
           },
           'custom1' => custom1
-          } }
+        } }
         expect(package.send(:translations)).to eq(expected_translations)
         expect(package.locales).to eq(['en'])
       end
