@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'zendesk_apps_support'
 require 'i18n'
 

@@ -1,13 +1,14 @@
 # rubocop:disable ModuleLength
 # frozen_string_literal: true
+
 require 'uri'
 
 module ZendeskAppsSupport
   module Validations
     module Manifest
       RUBY_TO_JSON = ZendeskAppsSupport::Manifest::RUBY_TO_JSON
-      REQUIRED_MANIFEST_FIELDS = RUBY_TO_JSON.select { |k| %i(author default_locale).include? k }.freeze
-      OAUTH_REQUIRED_FIELDS = %w(client_id client_secret authorize_uri access_token_uri).freeze
+      REQUIRED_MANIFEST_FIELDS = RUBY_TO_JSON.select { |k| %i[author default_locale].include? k }.freeze
+      OAUTH_REQUIRED_FIELDS = %w[client_id client_secret authorize_uri access_token_uri].freeze
       PARAMETER_TYPES = ZendeskAppsSupport::Manifest::Parameter::TYPES
 
       class << self
@@ -21,7 +22,6 @@ module ZendeskAppsSupport
           end
 
           collate_manifest_errors(package)
-
         rescue JSON::ParserError => e
           return [ValidationError.new(:manifest_not_json, errors: e)]
         rescue ZendeskAppsSupport::Manifest::OverrideError => e
@@ -94,20 +94,20 @@ module ZendeskAppsSupport
         end
 
         def string_error(manifest)
-          manifest_strings = %i(
+          manifest_strings = %i[
             default_locale
             version
             framework_version
             remote_installation_url
             terms_conditions_url
             google_analytics_code
-          )
+          ]
           errors = manifest_strings.map do |field|
             validate_string(manifest.public_send(field), field)
           end
 
           if manifest.author
-            author_strings = %w(name email url)
+            author_strings = %w[name email url]
             errors << (author_strings.map do |field|
               validate_string(manifest.author[field], "author #{field}")
             end)
@@ -116,7 +116,7 @@ module ZendeskAppsSupport
         end
 
         def boolean_error(manifest)
-          booleans = %i(requirements_only marketing_only single_install signed_urls private)
+          booleans = %i[requirements_only marketing_only single_install signed_urls private]
           errors = []
           RUBY_TO_JSON.each do |ruby, json|
             if booleans.include? ruby

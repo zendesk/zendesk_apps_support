@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Gem::Specification.new do |s|
   s.name        = 'zendesk_apps_support'
   s.version     = '4.9.0'
@@ -27,5 +29,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'rubocop', '~> 0.49.0'
   s.add_development_dependency 'byebug', '~> 9.0.6'
 
-  s.files = Dir.glob('{lib,config}/**/*') + %w(README.md LICENSE)
+  s.files = Dir.glob('{lib,config}/**/*') + %w[README.md LICENSE]
 end

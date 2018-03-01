@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'spec_helper'
 
 describe ZendeskAppsSupport::StylesheetCompiler do
@@ -10,10 +11,10 @@ describe ZendeskAppsSupport::StylesheetCompiler do
 
     let(:css) do
       <<-EOC
-a { color: ##{color}; }
-.submit {
-  background: app-asset-url("#{asset_name}");
-}
+        a { color: ##{color}; }
+        .submit {
+          background: app-asset-url("#{asset_name}");
+        }
 EOC
     end
 

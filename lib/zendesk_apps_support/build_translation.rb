@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module ZendeskAppsSupport
   module BuildTranslation
     I18N_TITLE_KEY = 'title'

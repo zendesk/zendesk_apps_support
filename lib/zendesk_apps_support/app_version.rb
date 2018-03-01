@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module ZendeskAppsSupport
   # At any point in time, we support up to four versions:
   #  * deprecated -- we will still serve apps targeting the deprecated version,

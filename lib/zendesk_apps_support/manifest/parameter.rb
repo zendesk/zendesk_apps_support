@@ -1,9 +1,10 @@
 # frozen_string_literal: true
+
 module ZendeskAppsSupport
   class Manifest
     class Parameter
-      TYPES = %w(text password checkbox url number multiline hidden).freeze
-      ATTRIBUTES = %i(name type required secure default).freeze
+      TYPES = %w[text password checkbox url number multiline hidden].freeze
+      ATTRIBUTES = %i[name type required secure default].freeze
       attr_reader(*ATTRIBUTES)
       def default?
         @has_default

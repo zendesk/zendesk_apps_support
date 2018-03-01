@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'sass'
 require 'sassc'
 require 'zendesk_apps_support/sass_functions'

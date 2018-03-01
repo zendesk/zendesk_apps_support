@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'pathname'
 require 'erubis'
 require 'json'
@@ -15,7 +16,7 @@ module ZendeskAppsSupport
     DEFAULT_SCSS   = File.read(File.expand_path('../assets/default_styles.scss', __FILE__))
     SRC_TEMPLATE   = Erubis::Eruby.new(File.read(File.expand_path('../assets/src.js.erb', __FILE__)))
 
-    LOCATIONS_WITH_ICONS = %w(top_bar nav_bar system_top_bar ticket_editor).freeze
+    LOCATIONS_WITH_ICONS = %w[top_bar nav_bar system_top_bar ticket_editor].freeze
 
     attr_reader :lib_root, :root, :warnings
 
@@ -326,7 +327,7 @@ module ZendeskAppsSupport
       {
         'inactive' => inactive_png
       }.tap do |icon_state_hash|
-        %w(active hover).each do |state|
+        %w[active hover].each do |state|
           specific_png = "#{product_directory}icon_#{location}_#{state}.png"
           selected_png = has_file?("assets/#{specific_png}") ? specific_png : inactive_png
           icon_state_hash[state] = selected_png
