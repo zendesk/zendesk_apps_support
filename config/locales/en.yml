@@ -79,6 +79,7 @@ en:
             blank_location_uri: "%{location} location does not specify a URI."
             invalid_location_uri: "%{uri} is either an invalid location URI, refers
               to a missing asset, or does not use HTTPS."
+            signed_setting_uri: "%{uri} cannot use a setting because it is signed"
             duplicate_location:
               one: "%{duplicate_locations} is a duplicate location."
               other: "%{duplicate_locations} are duplicate locations."

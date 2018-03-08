@@ -185,6 +185,10 @@ parts:
       title: "App builder job: invalid URI for an iframe in the manifest"
       value: "%{uri} is either an invalid location URI, refers to a missing asset, or does not use HTTPS."
   - translation:
+      key: "txt.apps.admin.error.app_build.signed_setting_uri"
+      title: "App builder job: invalid URI for an iframe in the manifest"
+      value: "%{uri} cannot use a setting because it is signed"
+  - translation:
       key: "txt.apps.admin.error.app_build.duplicate_location.one"
       title: "App builder job: duplicate locations"
       value: "%{duplicate_locations} is a duplicate location."
