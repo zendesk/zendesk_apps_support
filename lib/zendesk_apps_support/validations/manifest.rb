@@ -231,7 +231,7 @@ module ZendeskAppsSupport
           errors = []
           package.manifest.location_options.each do |location_options|
             if location_options.url.is_a?(String) && !location_options.url.empty?
-              errors << invalid_location_uri_error(package, location_options.url)
+              errors << invalid_location_uri_error(package, location_options)
             elsif location_options.auto_load?
               errors << ValidationError.new(:blank_location_uri, location: location_options.location.name)
             end
@@ -270,8 +270,12 @@ module ZendeskAppsSupport
           end
         end
 
-        def invalid_location_uri_error(package, path)
+        def invalid_location_uri_error(package, location_options)
+          path = location_options.url
           return nil if path == ZendeskAppsSupport::Manifest::LEGACY_URI_STUB
+          if path.include?('{{setting.')
+            return location_options.signed ? ValidationError.new(:signed_setting_uri) : nil
+          end
           validation_error = ValidationError.new(:invalid_location_uri, uri: path)
           uri = URI.parse(path)
           unless uri.absolute? ? valid_absolute_uri?(uri) : valid_relative_uri?(package, uri)
