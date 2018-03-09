@@ -187,7 +187,7 @@ parts:
   - translation:
       key: "txt.apps.admin.error.app_build.signed_setting_uri"
       title: "App builder job: invalid URI for an iframe in the manifest"
-      value: "%{uri} cannot use a setting because it is signed"
+      value: "the url (%{uri}) cannot use a setting because it is a signed url"
   - translation:
       key: "txt.apps.admin.error.app_build.duplicate_location.one"
       title: "App builder job: duplicate locations"
