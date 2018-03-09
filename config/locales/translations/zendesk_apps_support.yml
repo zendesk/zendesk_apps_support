@@ -187,7 +187,7 @@ parts:
   - translation:
       key: "txt.apps.admin.error.app_build.signed_setting_uri"
       title: "App builder job: invalid URI for an iframe in the manifest. The `manifest` is a setting file, the `signed url` is https://cloud.google.com/storage/docs/access-control/signed-urls"
-      value: "the url (%{uri}) cannot use a setting because it is a signed url"
+      value: "The url (%{uri}) cannot use a setting because it is a signed url."
       screenshot: "https://drive.google.com/open?id=1oQmBeGfNT5EDaEH3oEQoNjaCzBw5XAvL"
   - translation:
       key: "txt.apps.admin.error.app_build.duplicate_location.one"
