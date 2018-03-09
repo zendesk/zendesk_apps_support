@@ -129,7 +129,7 @@ describe ZendeskAppsSupport::Validations::Manifest do
     package = create_package('defaultLocale' => 'en')
     allow(package.manifest.location_options.first).to receive(:url) { '{{setting.test}}' }
 
-    expect(package).not_to have_error(/%{uri} cannot use a setting because it is signed/)
+    expect(package).not_to have_error(/the url (.*) cannot use a setting because it is a signed url/)
   end
 
   it 'should error when using {{setting.}} with a signed url' do
@@ -137,7 +137,7 @@ describe ZendeskAppsSupport::Validations::Manifest do
     allow(package.manifest.location_options.first).to receive(:url) { '{{setting.test}}' }
     allow(package.manifest.location_options.first).to receive(:signed) { true }
 
-    expect(package).to have_error(/%{uri} cannot use a setting because it is signed/)
+    expect(package).to have_error(/the url (.*) cannot use a setting because it is a signed url/)
   end
 
   context 'with a marketing only app' do
