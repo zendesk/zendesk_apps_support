@@ -79,6 +79,8 @@ en:
             blank_location_uri: "%{location} location does not specify a URI."
             invalid_location_uri: "%{uri} is either an invalid location URI, refers
               to a missing asset, or does not use HTTPS."
+            signed_setting_uri: the url (%{uri}) cannot use a setting because it is
+              a signed url
             duplicate_location:
               one: "%{duplicate_locations} is a duplicate location."
               other: "%{duplicate_locations} are duplicate locations."
@@ -97,6 +99,8 @@ en:
               not_json: "%{file} is not valid JSON. %{errors}"
               not_json_object: "%{file} is not a JSON object."
               missing_required_key: 'Missing required key from %{file}: %{missing_key}'
+              missing_required_key_on_leaf: Missing required key %{missing_key} on
+                leaf %{leaf} from %{file}
               missing_required_key_for_product: 'Missing required key from %{file}
                 for %{product}: %{missing_key}'
               products_do_not_match_manifest_products: Products in manifest (%{manifest_products})

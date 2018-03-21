@@ -58,7 +58,7 @@ module ZendeskAppsSupport
             errors << invalid_v1_location(package)
             errors << missing_framework_version(manifest)
             errors << location_framework_mismatch(manifest)
-            errors << invalid_version_error(manifest, package)
+            errors << invalid_version_error(manifest)
           end
 
           errors << ban_no_template(manifest) if manifest.iframe_only?
@@ -231,7 +231,7 @@ module ZendeskAppsSupport
           errors = []
           package.manifest.location_options.each do |location_options|
             if location_options.url.is_a?(String) && !location_options.url.empty?
-              errors << invalid_location_uri_error(package, location_options.url)
+              errors << invalid_location_uri_error(package, location_options)
             elsif location_options.auto_load?
               errors << ValidationError.new(:blank_location_uri, location: location_options.location.name)
             end
@@ -270,8 +270,12 @@ module ZendeskAppsSupport
           end
         end
 
-        def invalid_location_uri_error(package, path)
+        def invalid_location_uri_error(package, location_options)
+          path = location_options.url
           return nil if path == ZendeskAppsSupport::Manifest::LEGACY_URI_STUB
+          if path.include?('{{setting.')
+            return location_options.signed ? ValidationError.new(:signed_setting_uri, uri: path) : nil
+          end
           validation_error = ValidationError.new(:invalid_location_uri, uri: path)
           uri = URI.parse(path)
           unless uri.absolute? ? valid_absolute_uri?(uri) : valid_relative_uri?(package, uri)
@@ -293,13 +297,9 @@ module ZendeskAppsSupport
           missing_keys_validation_error([RUBY_TO_JSON[:framework_version]]) if manifest.framework_version.nil?
         end
 
-        def invalid_version_error(manifest, package)
+        def invalid_version_error(manifest)
           valid_to_serve = AppVersion::TO_BE_SERVED
           target_version = manifest.framework_version
-
-          if target_version == AppVersion::DEPRECATED
-            package.warnings << I18n.t('txt.apps.admin.warning.app_build.deprecated_version')
-          end
 
           unless valid_to_serve.include?(target_version)
             return ValidationError.new(:invalid_version,

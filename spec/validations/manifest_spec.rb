@@ -126,6 +126,21 @@ describe ZendeskAppsSupport::Validations::Manifest do
     expect(@package).to have_error(/Missing translation file/)
   end
 
+  it 'should not error when using {{setting.}}' do
+    package = create_package('defaultLocale' => 'en')
+    allow(package.manifest.location_options.first).to receive(:url) { '{{setting.test}}' }
+
+    expect(package).not_to have_error(/the url (.*) cannot use a setting because it is a signed url/)
+  end
+
+  it 'should error when using {{setting.}} with a signed url' do
+    package = create_package('defaultLocale' => 'en')
+    allow(package.manifest.location_options.first).to receive(:url) { '{{setting.test}}' }
+    allow(package.manifest.location_options.first).to receive(:signed) { true }
+
+    expect(package).to have_error(/the url (.*) cannot use a setting because it is a signed url/)
+  end
+
   context 'with a marketing only app' do
     it 'should not have any errors' do
       @package = ZendeskAppsSupport::Package.new('spec/fixtures/marketing_only_app')
