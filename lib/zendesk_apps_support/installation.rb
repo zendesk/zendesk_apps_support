@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module ZendeskAppsSupport
   class Installation
     attr_accessor :id, :app_id, :app_name, :requirements, :settings, :enabled, :collapsible, :updated_at, :created_at

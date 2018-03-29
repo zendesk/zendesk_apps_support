@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 if Object.const_defined?(:Rails) && Rails.const_defined?(:Engine)
 
   module ZendeskAppsSupport

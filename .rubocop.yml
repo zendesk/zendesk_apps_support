@@ -1,9 +1,9 @@
 AllCops:
   TargetRubyVersion: 2.3
-  Includes:
+  Include:
     - 'Gemfile'
     - 'Rakefile'
-  Excludes:
+  Exclude:
     - 'vendor/**/*'
 
 ClassLength:
@@ -21,17 +21,22 @@ SpaceInsideBrackets:
 Style/Alias:
   Enabled: false
 
-Style/IndentArray:
-  Enabled: false
-
-Style/IndentHash:
+Layout/IndentArray:
   Enabled: false
 
 HashSyntax:
   EnforcedStyle: ruby19
 
-LineLength:
+Metrics/LineLength:
   Max: 120
+
+Metrics/BlockLength:
+  Exclude:
+    - 'spec/**/*.rb'
+  
+Metrics/ModuleLength:
+  CountComments: false  # count full line comments?
+  Max: 130
 
 CommentAnnotation:
   Keywords:

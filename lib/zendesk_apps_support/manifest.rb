@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module ZendeskAppsSupport
   class Manifest
     LEGACY_URI_STUB = '_legacy'
@@ -82,7 +83,7 @@ module ZendeskAppsSupport
         noTemplate: no_template_locations,
         singleInstall: single_install?,
         signedUrls: signed_urls?
-      }.select { |_k, v| !v.nil? }
+      }.reject { |_k, v| v.nil? }
     end
 
     def unknown_locations(host)

@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'spec_helper'
 require 'tmpdir'
 
@@ -188,7 +189,7 @@ describe ZendeskAppsSupport::Validations::Manifest do
 
   context 'a v1 app with an invalid location' do
     before do
-      @manifest_hash = { 'location' => %w(ticket_sidebar an_invalid_location) }
+      @manifest_hash = { 'location' => %w[ticket_sidebar an_invalid_location] }
     end
 
     it 'should have an error' do
@@ -377,7 +378,7 @@ describe ZendeskAppsSupport::Validations::Manifest do
 
     describe 'when the locations in the array are valid' do
       before do
-        @manifest_hash = { 'location' => %w(ticket_sidebar user_sidebar) }
+        @manifest_hash = { 'location' => %w[ticket_sidebar user_sidebar] }
       end
 
       it 'should not have an error' do
@@ -387,7 +388,7 @@ describe ZendeskAppsSupport::Validations::Manifest do
 
     describe 'when there is an invalid location in the array' do
       before do
-        @manifest_hash = { 'location' => %w(ticket_sidebar user_sidebar invalid_location) }
+        @manifest_hash = { 'location' => %w[ticket_sidebar user_sidebar invalid_location] }
       end
 
       it 'should have an error' do
@@ -455,7 +456,7 @@ describe ZendeskAppsSupport::Validations::Manifest do
   end
 
   it 'should have an error when there are duplicate locations' do
-    @manifest_hash = { 'location' => %w(ticket_sidebar ticket_sidebar) }
+    @manifest_hash = { 'location' => %w[ticket_sidebar ticket_sidebar] }
 
     expect(@package).to have_error(/Duplicate reference in manifest: "ticket_sidebar"/)
   end

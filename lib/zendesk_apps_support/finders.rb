@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module ZendeskAppsSupport
   module Finders
     class RecordNotFound < StandardError

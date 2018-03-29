@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module ZendeskAppsSupport
   require 'zendesk_apps_support/engine'
 

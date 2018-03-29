@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'spec_helper'
 require 'tmpdir'
 
@@ -14,8 +15,8 @@ describe ZendeskAppsSupport::Package do
 
   describe 'files' do
     it 'should return all the files within the app folder excluding files in tmp folder' do
-      files = %w(app.css app.js assets/logo-small.png assets/logo.png lib/a.js lib/a.txt
-                 lib/nested/b.js manifest.json templates/layout.hdbs translations/en.json translations/nl.json)
+      files = %w[app.css app.js assets/logo-small.png assets/logo.png lib/a.js lib/a.txt
+                 lib/nested/b.js manifest.json templates/layout.hdbs translations/en.json translations/nl.json]
       expect(@package.files.map(&:relative_path)).to match_array(files)
     end
 
@@ -29,19 +30,19 @@ describe ZendeskAppsSupport::Package do
 
   describe 'template_files' do
     it 'should return all the files in the templates folder within the app folder' do
-      expect(@package.template_files.map(&:relative_path)).to eq(%w(templates/layout.hdbs))
+      expect(@package.template_files.map(&:relative_path)).to eq(%w[templates/layout.hdbs])
     end
   end
 
   describe 'translation_files' do
     it 'should return all the files in the translations folder within the app folder' do
-      expect(@package.translation_files.map(&:relative_path).sort).to eq(%w(translations/en.json translations/nl.json))
+      expect(@package.translation_files.map(&:relative_path).sort).to eq(%w[translations/en.json translations/nl.json])
     end
   end
 
   describe 'lib_files' do
     it 'should return all the javascript files in the lib folder within the app folder' do
-      expect(@package.lib_files.map(&:relative_path)).to eq(%w(lib/a.js lib/nested/b.js))
+      expect(@package.lib_files.map(&:relative_path)).to eq(%w[lib/a.js lib/nested/b.js])
     end
   end
 
@@ -186,7 +187,7 @@ describe ZendeskAppsSupport::Package do
             'installation_instructions' => 'Pull the big lever'
           },
           'custom1' => custom1
-          } }
+        } }
         expect(package.send(:translations)).to eq(expected_translations)
         expect(package.locales).to eq(['en'])
       end
@@ -246,7 +247,7 @@ describe ZendeskAppsSupport::Package do
             'installation_instructions' => 'Pull the big lever'
           },
           'custom1' => custom1
-          } }
+        } }
         expect(package.send(:translations)).to eq(expected_translations)
         expect(package.locales).to eq(['en'])
       end

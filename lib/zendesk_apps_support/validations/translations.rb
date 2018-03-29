@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'jshintrb'
 require 'json'
 
@@ -135,7 +136,7 @@ module ZendeskAppsSupport
         end
 
         def get_missing_keys(package, keys)
-          public_app_keys = %w(name short_description installation_instructions long_description)
+          public_app_keys = %w[name short_description installation_instructions long_description]
           mandatory_keys = package.manifest.private? ? ['name'] : public_app_keys
 
           # since we support description as well as short_description for backwards compatibility,

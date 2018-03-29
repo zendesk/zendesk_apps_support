@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'spec_helper'
 
 describe ZendeskAppsSupport::Validations::Stylesheets do
@@ -9,9 +10,9 @@ describe ZendeskAppsSupport::Validations::Stylesheets do
 
   it 'does not return errors for valid css' do
     valid_css = <<-CSS
-.my-class {
-  border: solid 1px black;
-}
+      .my-class {
+        border: solid 1px black;
+      }
     CSS
     package = double(app_css: valid_css)
 
@@ -21,9 +22,9 @@ describe ZendeskAppsSupport::Validations::Stylesheets do
 
   it 'returns style sheet validation error for invalid css' do
     invalid_css = <<-CSS
-.my-class {
-  border: }
-}
+      .my-class {
+        border: }
+      }
     CSS
     package = double(app_css: invalid_css)
 

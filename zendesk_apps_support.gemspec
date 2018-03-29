@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Gem::Specification.new do |s|
   s.name        = 'zendesk_apps_support'
   s.version     = '4.10.0'
@@ -18,14 +20,14 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'image_size'
   s.add_runtime_dependency 'erubis'
   s.add_runtime_dependency 'jshintrb', '~> 0.3.0'
-  s.add_runtime_dependency 'loofah'
-  s.add_runtime_dependency 'nokogiri', '~> 1.6.8'
+  s.add_runtime_dependency 'loofah', '~> 2.2.1'
+  s.add_runtime_dependency 'nokogiri', '~> 1.8.1'
 
   s.add_development_dependency 'rspec', '~> 3.4.0'
   s.add_development_dependency 'bump', '~> 0.5.1'
   s.add_development_dependency 'faker', '~> 1.6.6'
-  s.add_development_dependency 'rubocop', '~> 0.46.0'
+  s.add_development_dependency 'rubocop', '~> 0.49.0'
   s.add_development_dependency 'byebug', '~> 9.0.6'
 
-  s.files = Dir.glob('{lib,config}/**/*') + %w(README.md LICENSE)
+  s.files = Dir.glob('{lib,config}/**/*') + %w[README.md LICENSE]
 end

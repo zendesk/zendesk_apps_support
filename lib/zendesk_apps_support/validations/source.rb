@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'jshintrb'
 
 module ZendeskAppsSupport
@@ -15,8 +16,8 @@ module ZendeskAppsSupport
         sub: true,
 
         # predefined globals:
-        predef: %w(_ console services helpers alert confirm self
-                   JSON Base64 require module exports moment),
+        predef: %w[_ console services helpers alert confirm self
+                   JSON Base64 require module exports moment],
 
         browser: true
       }.freeze
