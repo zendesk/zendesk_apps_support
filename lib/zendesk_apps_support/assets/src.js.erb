@@ -31,7 +31,8 @@ var app = ZendeskApps.defineApp(<%= iframe_only ? 'null' : 'source' %>)
     translations: <%= translations.to_json %>,
     templates: <%= templates.to_json %>,
     <% end %>
-    frameworkVersion: <%= framework_version.to_json %>
+    frameworkVersion: <%= framework_version.to_json %>,
+    private: <%= private.to_json %>
   });
 
 ZendeskApps[<%= name.to_json %>] = app;

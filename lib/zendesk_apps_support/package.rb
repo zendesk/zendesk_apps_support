@@ -135,7 +135,8 @@ module ZendeskAppsSupport
         framework_version: manifest.framework_version,
         templates: templates,
         modules: commonjs_modules,
-        iframe_only: manifest.iframe_only?
+        iframe_only: manifest.iframe_only?,
+        private: manifest.private?
       )
     end
 
