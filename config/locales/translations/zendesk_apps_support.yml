@@ -8,7 +8,7 @@ packages:
 
 parts:
   - translation:
-      key: "txt.apps.admin.error.app_build.jshint.one"
+      key: "txt.apps.admin.error.app_build.jshint.one" 
       title: "App builder job: JSHint error message"
       value: "JSHint error in %{file}: %{errors}"
   - translation:
