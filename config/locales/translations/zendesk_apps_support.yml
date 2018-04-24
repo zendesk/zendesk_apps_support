@@ -8,7 +8,7 @@ packages:
 
 parts:
   - translation:
-      key: "txt.apps.admin.error.app_build.jshint.one"
+      key: "txt.apps.admin.error.app_build.jshint.one" 
       title: "App builder job: JSHint error message"
       value: "JSHint error in %{file}: %{errors}"
   - translation:
@@ -158,7 +158,7 @@ parts:
   - translation:
       key: "txt.apps.admin.error.app_build.missing_translation_file"
       title: "App builder job: missing translation file"
-      value: "Missing translation file for locale '%{default_locale}'. Learn more: http://developer.zendesk.com/documentation/apps/i18n.html"
+      value: "Missing translation file for locale '%{default_locale}'. Learn more: https://developer.zendesk.com/apps/docs/developer-guide/deploying#app-internationalization"
   - translation:
       key: "txt.apps.admin.error.app_build.invalid_host"
       title: "App builder job: invalid host application for apps"

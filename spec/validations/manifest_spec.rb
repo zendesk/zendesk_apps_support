@@ -138,7 +138,7 @@ describe ZendeskAppsSupport::Validations::Manifest do
     allow(package.manifest.location_options.first).to receive(:url) { '{{setting.test}}' }
     allow(package.manifest.location_options.first).to receive(:signed) { true }
 
-    expect(package).to have_error(/the url (.*) cannot use a setting because it is a signed url/)
+    expect(package).to have_error(/The url (.*) cannot use a setting because it is a signed url/)
   end
 
   context 'with a marketing only app' do

@@ -19,8 +19,6 @@ en:
               only
             no_framework_version_required: Framework versions can't be set when you
               specify requirements only
-            no_app_js_required: Do not set your app to requirements only if you need
-              app.js
             manifest_not_json: manifest is not proper JSON. %{errors}
             duplicate_manifest_keys: Duplicate keys are specified in the manifest.json
               file. %{errors}
@@ -71,7 +69,7 @@ en:
               not allowed when an iframe URI or noTemplate is specified
             invalid_default_locale: "%{default_locale} is not a valid default locale."
             missing_translation_file: 'Missing translation file for locale ''%{default_locale}''.
-              Learn more: http://developer.zendesk.com/documentation/apps/i18n.html'
+              Learn more: https://developer.zendesk.com/apps/docs/developer-guide/deploying#app-internationalization'
             invalid_host: "%{host_name} is an invalid host for apps."
             invalid_location:
               one: "%{invalid_locations} is an invalid location in %{host_name}."
@@ -79,11 +77,8 @@ en:
             blank_location_uri: "%{location} location does not specify a URI."
             invalid_location_uri: "%{uri} is either an invalid location URI, refers
               to a missing asset, or does not use HTTPS."
-            signed_setting_uri: the url (%{uri}) cannot use a setting because it is
-              a signed url
-            duplicate_location:
-              one: "%{duplicate_locations} is a duplicate location."
-              other: "%{duplicate_locations} are duplicate locations."
+            signed_setting_uri: The url (%{uri}) cannot use a setting because it is
+              a signed url.
             name_as_parameter_name: Can't call a parameter 'name'
             invalid_hidden_parameter:
               one: "%{invalid_params} is set to hidden and cannot be required."
