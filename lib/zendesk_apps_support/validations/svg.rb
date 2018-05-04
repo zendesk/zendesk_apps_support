@@ -20,6 +20,10 @@ module ZendeskAppsSupport
         node.remove if node.name == 'xml' && node.children.empty?
       end
 
+      @remove_fill_colors = Loofah::Scrubber.new do |node|
+        node.delete('fill') unless node['fill'] == 'none' || node['fill'] == 'currentColor'
+      end
+
       # Loofah's default scrubber strips spaces between CSS attributes. Passing the input markup through this scrubber
       # first ensures that this stripped whitespace in the output doesn't register as a diff.
       @strip_spaces_between_css_attrs = Loofah::Scrubber.new do |node|
@@ -67,6 +71,7 @@ module ZendeskAppsSupport
               clean_markup = Loofah.xml_fragment(markup)
                                    .scrub!(:prune)
                                    .scrub!(@empty_malformed_markup)
+                                   .scrub!(@remove_fill_colors)
                                    .to_xml
 
               next if clean_markup == markup

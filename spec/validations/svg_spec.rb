@@ -173,6 +173,24 @@ with a default placeholder icon.)
     end
   end
 
+  context 'svgs that contain fill colours' do
+    let(:markup) do
+      %(<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 20 20">\
+<circle fill="#78A300" cx="10" cy="10" r="5"/></svg>)
+    end
+    let(:clean_markup) do
+      %(<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 20 20">\
+<circle cx="10" cy="10" r="5"/></svg>)
+    end
+
+    it 'are rewritten without any fill attributes' do
+      errors = subject.call(package)
+      expect(IO).to have_received(:write).with(svg.absolute_path, clean_markup)
+      expect(package.warnings[0]).to eq(warning)
+      expect(errors).to be_empty
+    end
+  end
+
   context 'svgs with questionable markup which are read-only' do
     let(:markup) do
       %(<svg viewBox="0 0 26 26" id="zd-svg-icon-26-app" width="100%" height="100%"><path fill="none" \
