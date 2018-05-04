@@ -165,7 +165,7 @@ with a default placeholder icon.)
       allow(subject).to receive(:rewrite_svg).and_call_original
     end
 
-    it 'generate a warns the developer, and overwrites the svg with a placeholder image' do
+    it 'generates a warning for the developer, and overwrites the svg with a placeholder image' do
       errors = subject.call(package)
       expect(subject).to have_received(:rewrite_svg).with(svg, subject::PLACEHOLDER_SVG_MARKUP, package, errors)
       expect(package.warnings[0]).to eq(warning)
