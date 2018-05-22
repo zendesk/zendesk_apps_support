@@ -384,6 +384,11 @@ describe ZendeskAppsSupport::Manifest do
   end
 
   describe '#iframe_only?' do
+    it 'returns false for an app that has a nil framework version' do
+      manifest_hash[:frameworkVersion] = nil
+      expect(manifest.iframe_only?).to be_falsey
+    end
+
     it 'returns false for an app that has a framework version less than 2' do
       manifest_hash[:frameworkVersion] = '1.0'
       expect(manifest.iframe_only?).to be_falsey
