@@ -103,7 +103,7 @@ module ZendeskAppsSupport
     end
 
     def iframe_only?
-      Gem::Version.new(framework_version) >= Gem::Version.new('2')
+      framework_version && Gem::Version.new(framework_version) >= Gem::Version.new('2')
     end
 
     def parameters
