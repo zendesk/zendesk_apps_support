@@ -42,7 +42,8 @@ describe ZendeskAppsSupport::Validations::Translations do
 
   let(:manifest) { ZendeskAppsSupport::Manifest.new(JSON.dump(manifest_hash)) }
   let(:package) { double('Package', files: translation_files, manifest: manifest) }
-  subject { ZendeskAppsSupport::Validations::Translations.call(package) }
+  let(:opts) { {} }
+  subject { ZendeskAppsSupport::Validations::Translations.call(package, opts) }
 
   context 'when there are no translation files' do
     let(:translation_files) { [] }
@@ -130,6 +131,20 @@ describe ZendeskAppsSupport::Validations::Translations do
         it 'should report the error' do
           expect(subject.length).to eq(1)
           expect(subject[0].to_s).to match(/Missing required key from/)
+        end
+
+        describe 'when the skip_marketplace_translations option is set to true' do
+          let(:translation_files) do
+            [double('AppFile',
+                    relative_path: 'translations/en.json',
+                    read: read_fixture_file('name_only_en.json'),
+                    to_s: 'translations/en.json')]
+          end
+          let(:opts) { {skip_marketplace_translations: true} }
+
+          it 'should be valid' do
+            expect(subject.length).to eq(0)
+          end
         end
       end
 
