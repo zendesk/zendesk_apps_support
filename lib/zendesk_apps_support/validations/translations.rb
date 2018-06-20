@@ -19,7 +19,10 @@ module ZendeskAppsSupport
             next unless path_match
             errors << locale_error(file, path_match[1]) << json_error(file) << format_error(file)
             next unless errors.compact.empty?
-            errors.push(*validate_marketplace_content(file, package, opts[:skip_marketplace_translations])) if file.relative_path == 'translations/en.json'
+            if file.relative_path == 'translations/en.json'
+              # rubocop:disable Metrics/LineLength
+              errors.push(*validate_marketplace_content(file, package, opts.fetch(:skip_marketplace_translations, false)))
+            end
           end.compact
         end
 
@@ -78,17 +81,22 @@ module ZendeskAppsSupport
           skip_marketplace_strings = package.manifest.private? || skip_marketplace_translations
 
           if present_product_keys.empty?
-            errors << validate_top_level_required_keys(json, package, file.relative_path, skip_marketplace_strings)
+            errors << validate_top_level_required_keys(json, file.relative_path, skip_marketplace_strings)
           else
             errors << validate_products_match_manifest_products(present_product_keys, package, file.relative_path)
-            errors << validate_products_have_required_keys(json, package, present_product_keys, file.relative_path, skip_marketplace_strings)
+            errors << validate_products_have_required_keys(
+              json,
+              present_product_keys,
+              file.relative_path,
+              skip_marketplace_strings
+            )
           end
           errors.compact
         end
 
-        def validate_top_level_required_keys(json, package, file_path, skip_marketplace_strings)
+        def validate_top_level_required_keys(json, file_path, skip_marketplace_strings)
           keys = json['app'].is_a?(Hash) ? json['app'].keys : []
-          missing_keys = get_missing_keys(package, keys, skip_marketplace_strings)
+          missing_keys = get_missing_keys(keys, skip_marketplace_strings)
           return if missing_keys.empty?
           ValidationError.new(
             'translation.missing_required_key',
@@ -97,9 +105,9 @@ module ZendeskAppsSupport
           )
         end
 
-        def validate_products_have_required_keys(json, package, products, file_path, skip_marketplace_strings)
+        def validate_products_have_required_keys(json, products, file_path, skip_marketplace_strings)
           products.each do |product|
-            missing_keys = get_missing_keys(package, json['app'][product].keys, skip_marketplace_strings)
+            missing_keys = get_missing_keys(json['app'][product].keys, skip_marketplace_strings)
             next if missing_keys.empty?
             return ValidationError.new(
               'translation.missing_required_key_for_product',
@@ -136,7 +144,7 @@ module ZendeskAppsSupport
           end
         end
 
-        def get_missing_keys(package, keys, skip_marketplace_strings)
+        def get_missing_keys(keys, skip_marketplace_strings)
           public_app_keys = %w[name short_description installation_instructions long_description]
           mandatory_keys = skip_marketplace_strings ? ['name'] : public_app_keys
           # since we support description as well as short_description for backwards compatibility,

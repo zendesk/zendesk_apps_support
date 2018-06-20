@@ -140,7 +140,7 @@ describe ZendeskAppsSupport::Validations::Translations do
                     read: read_fixture_file('name_only_en.json'),
                     to_s: 'translations/en.json')]
           end
-          let(:opts) { {skip_marketplace_translations: true} }
+          let(:opts) { { skip_marketplace_translations: true } }
 
           it 'should be valid' do
             expect(subject.length).to eq(0)
