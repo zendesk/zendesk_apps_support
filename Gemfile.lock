@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    zendesk_apps_support (4.11.1)
+    zendesk_apps_support (4.11.2)
       erubis
       i18n
       image_size
@@ -24,7 +24,7 @@ GEM
     execjs (2.7.0)
     faker (1.6.6)
       i18n (~> 0.5)
-    ffi (1.9.23)
+    ffi (1.9.25)
     i18n (0.7.0)
     image_size (2.0.0)
     jshintrb (0.3.0)
@@ -37,7 +37,7 @@ GEM
       nokogiri (>= 1.5.9)
     mini_portile2 (2.3.0)
     multi_json (1.13.1)
-    nokogiri (1.8.2)
+    nokogiri (1.8.3)
       mini_portile2 (~> 2.3.0)
     parallel (1.12.1)
     parser (2.5.0.2)
@@ -93,4 +93,4 @@ DEPENDENCIES
   zendesk_apps_support!
 
 BUNDLED WITH
-   1.16.1
+   1.16.2
