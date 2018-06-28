@@ -5,7 +5,7 @@ module ZendeskAppsSupport
     module Requirements
       MAX_REQUIREMENTS = 5000
 
-      class <<self
+      class << self
         def call(package)
           if package.manifest.requirements_only? && !package.has_requirements?
             return [ValidationError.new(:missing_requirements)]
@@ -26,6 +26,7 @@ module ZendeskAppsSupport
             errors << excessive_requirements(requirements)
             errors << invalid_channel_integrations(requirements)
             errors << invalid_custom_fields(requirements)
+            errors << invalid_custom_resources_schema(requirements)
             errors << missing_required_fields(requirements)
             errors.flatten!
             errors.compact!
@@ -43,10 +44,12 @@ module ZendeskAppsSupport
         def missing_required_fields(requirements)
           [].tap do |errors|
             requirements.each do |requirement_type, requirement|
-              next if requirement_type == 'channel_integrations'
+              next if %w[channel_integrations custom_resources_schema].include? requirement_type
               requirement.each do |identifier, fields|
                 next if fields.include? 'title'
-                errors << ValidationError.new(:missing_required_fields, field: 'title', identifier: identifier)
+                errors << ValidationError.new(:missing_required_fields,
+                                              field: 'title',
+                                              identifier: identifier)
               end
             end
           end
@@ -65,7 +68,9 @@ module ZendeskAppsSupport
             [user_fields, organization_fields].compact.each do |field_group|
               field_group.each do |identifier, fields|
                 next if fields.include? 'key'
-                errors << ValidationError.new(:missing_required_fields, field: 'key', identifier: identifier)
+                errors << ValidationError.new(:missing_required_fields,
+                                              field: 'key',
+                                              identifier: identifier)
               end
             end
           end
@@ -76,19 +81,40 @@ module ZendeskAppsSupport
           return unless channel_integrations
           [].tap do |errors|
             if channel_integrations.size > 1
-              errors << ValidationError.new(:multiple_channel_integrations, count: channel_integrations.size)
+              errors << ValidationError.new(:multiple_channel_integrations)
             end
             channel_integrations.each do |identifier, fields|
-              unless fields.include? 'manifest_url'
-                errors << ValidationError.new(:missing_required_fields, field: 'manifest_url', identifier: identifier)
-              end
+              next if fields.include? 'manifest_url'
+              errors << ValidationError.new(:missing_required_fields,
+                                            field: 'manifest_url',
+                                            identifier: identifier)
+            end
+          end
+        end
+
+        def invalid_custom_resources_schema(requirements)
+          custom_resources_schema = requirements['custom_resources_schema']
+          return unless custom_resources_schema
+          valid_schema_keys = %w[resource_types relationship_types]
+          [].tap do |errors|
+            invalid_keys = custom_resources_schema.keys - valid_schema_keys
+            unless invalid_keys.empty?
+              errors << ValidationError.new(:invalid_cr_schema_keys,
+                                            invalid_keys: invalid_keys.join(', '),
+                                            count: invalid_keys.length)
+            end
+
+            valid_schema_keys.each do |required_key|
+              next if custom_resources_schema.keys.include? required_key
+              errors << ValidationError.new(:missing_required_fields,
+                                            field: required_key,
+                                            identifier: 'custom_resources_schema')
             end
           end
         end
 
         def invalid_requirements_types(requirements)
           invalid_types = requirements.keys - ZendeskAppsSupport::AppRequirement::TYPES
-
           unless invalid_types.empty?
             ValidationError.new(:invalid_requirements_types,
                                 invalid_types: invalid_types.join(', '),
