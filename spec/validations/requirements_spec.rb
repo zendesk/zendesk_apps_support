@@ -193,49 +193,4 @@ describe ZendeskAppsSupport::Validations::Requirements do
       expect(errors).to be_empty
     end
   end
-
-  context 'there is a valid custom resources schema defined' do
-    let(:requirements_string) do
-      JSON.generate(
-        'custom_resources_schema' => { 'resource_types': [], 'relationship_types': [] }
-      )
-    end
-
-    it 'does not return an error' do
-      expect(errors).to be_empty
-    end
-  end
-
-  context 'a custom resources schema contains invalid keys' do
-    let(:requirements_string) do
-      JSON.generate(
-        'custom_resources_schema' => {
-          'resource_types': [], 'relationship_types': [], 'resources': [], 'relationships': []
-        }
-      )
-    end
-
-    it 'creates an error' do
-      expect(errors.first.key).to eq(:invalid_cr_schema_keys)
-      expect(errors.first.data).to eq(invalid_keys: 'resources, relationships', count: 2)
-    end
-  end
-
-  context 'a custom resources schema is missing resource_types' do
-    let(:requirements_string) { JSON.generate('custom_resources_schema' => { 'relationship_types': [] }) }
-
-    it 'creates an error' do
-      expect(errors.first.key).to eq(:missing_required_fields)
-      expect(errors.first.data).to eq(field: 'resource_types', identifier: 'custom_resources_schema')
-    end
-  end
-
-  context 'a custom resources schema is missing relationship_types' do
-    let(:requirements_string) { JSON.generate('custom_resources_schema' => { 'resource_types': [] }) }
-
-    it 'creates an error' do
-      expect(errors.first.key).to eq(:missing_required_fields)
-      expect(errors.first.data).to eq(field: 'relationship_types', identifier: 'custom_resources_schema')
-    end
-  end
 end

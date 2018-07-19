@@ -54,9 +54,6 @@ en:
               other: 'requirements.json contains invalid types: %{invalid_types}'
             multiple_channel_integrations: Specifying multiple channel integrations
               in requirements.json is not supported.
-            invalid_cr_schema_keys:
-              one: 'Custom resources schema contains an invalid key: %{invalid_keys}'
-              other: 'Custom resources schema contains invalid keys: %{invalid_keys}'
             banner:
               invalid_format: Banner image must be a PNG file.
               invalid_size: Invalid banner image dimensions. Must be %{required_banner_width}x%{required_banner_height}px.
