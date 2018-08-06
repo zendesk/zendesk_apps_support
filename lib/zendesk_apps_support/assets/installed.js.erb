@@ -2,8 +2,6 @@
   var self = this;
   var reporter = window.ZendeskReporter ? new window.ZendeskReporter() : {};
   function wrapped$() {
-    console.log('AppScope Violated!');
-    console.log('Sending hostname:' + self.location.hostname + ' to DD');
     reporter.increment && reporter.increment(
       'app_framework.app_scope.violated',
       1,
@@ -17,7 +15,14 @@
   wrappedWindow.top = wrappedWindow;
 
   <% appsjs.each do |appjs| %>
-    <%= appjs %>
+    <% if zaf_naughty_v1_logging %>
+      <%= appjs.gsub(
+        /}\(\)\)\;*\s*;*\s*}\s*var\s*app\s*=\s*ZendeskApps\.defineApp\(source\)/mx,
+        "}.bind(wrappedWindow)());\n}\n\nvar app = ZendeskApps.defineApp(source)"
+      ) %>
+    <% else %>
+      <%= appjs %>
+    <% end %>
   <% end %>
 
   <% installations.each do |installation| %>

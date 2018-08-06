@@ -17,7 +17,8 @@ module ZendeskAppsSupport
         appsjs: @appsjs,
         installations: @installations,
         installation_orders: options.fetch(:installation_orders, {}),
-        rollbar_zaf_access_token: options.fetch(:rollbar_zaf_access_token, '')
+        rollbar_zaf_access_token: options.fetch(:rollbar_zaf_access_token, ''),
+        zaf_naughty_v1_logging: options.fetch(:zaf_naughty_v1_logging, '')
       )
     end
 
