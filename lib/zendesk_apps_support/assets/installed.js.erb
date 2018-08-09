@@ -18,7 +18,7 @@
     <% if apps_zaf_naughty_v1_logging %>
       <%= appjs.gsub(
         /}\(\)\)\;*\s*;*\s*}\s*var\s*app\s*=\s*ZendeskApps\.defineApp\(source\)/mx,
-        "}.bind(wrappedWindow)());\n}\n\nvar app = ZendeskApps.defineApp(source)"
+        "}.bind(wrappedWindow)());\n;\n}\n\nvar app = ZendeskApps.defineApp(source)"
       ) %>
     <% else %>
       <%= appjs %>
