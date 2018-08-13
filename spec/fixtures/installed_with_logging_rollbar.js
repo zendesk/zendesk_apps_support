@@ -1,6 +1,10 @@
 (function() {
   var self = this;
   var reporter = window.ZendeskReporter ? new window.ZendeskReporter() : {};
+
+  // This is just defining a wrapped version of jQuery which simply makes a
+  // pass through call to global window.jQuery and adds logging information
+  // about the origin of the page to Datadog.
   function wrapped$() {
     reporter.increment && reporter.increment(
       'app_framework.app_scope.violated',
@@ -10,10 +14,15 @@
     return self.$.apply(null, arguments);
   }
 
+  // Adding the wrapped version of jQeury to a clone of window object, which
+  // will be used to bind the app's scope.
   var wrappedWindow = this.$.extend(true, {}, self, { $: wrapped$ });
   wrappedWindow.window = wrappedWindow;
   wrappedWindow.top = wrappedWindow;
 
+  // Trying to match a v1 apps self executing function here and bind it to the
+  // wrappedWindow instance defined above.
+  // }()); ==> }.bind(wrappedWindow)());
   with( ZendeskApps.AppScope.create() ) {
     require.modules = {
         "a.js": function(exports, require, module) {
