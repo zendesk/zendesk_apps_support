@@ -16,7 +16,7 @@
 
   // Adding the wrapped version of jQeury to a clone of window object, which
   // will be used to bind the app's scope.
-  var wrappedWindow = this.$.extend(true, {}, self, { $: wrapped$ });
+  var wrappedWindow = this.$.extend({}, self, { $: wrapped$ });
   wrappedWindow.window = wrappedWindow;
   wrappedWindow.top = wrappedWindow;
 
