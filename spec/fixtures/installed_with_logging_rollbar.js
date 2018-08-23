@@ -2,23 +2,33 @@
   var self = this;
   var reporter = window.ZendeskReporter ? new window.ZendeskReporter() : {};
 
-  // This is just defining a wrapped version of jQuery which simply makes a
-  // pass through call to global window.jQuery and adds logging information
-  // about the origin of the page to Datadog.
-  function wrapped$() {
-    reporter.increment && reporter.increment(
-      'app_framework.app_scope.violated',
-      1,
-      ['origin:' + self.location.hostname]
-    );
-    return self.$.apply(null, arguments);
+  function getWrappedWindow(appName) {
+    // This is just defining a wrapped version of jQuery which simply makes a
+    // pass through call to global window.jQuery and adds logging information
+    // about the origin of the page to Datadog.
+    function wrapped$() {
+      reporter.increment && reporter.increment(
+        'app_framework.app_scope.violated',
+        1,
+        ['origin:' + self.location.hostname, 'app_name:' + appName]
+      );
+      
+      return self.$.apply(null, arguments);
+    }
+
+    // Adding the wrapped version of jQeury to a clone of window object, which
+    // will be used to bind the app's scope.
+    var wrappedWindow = this.$.extend({}, self, { $: wrapped$ });
+    wrappedWindow.window = wrappedWindow;
+    wrappedWindow.top = wrappedWindow;
+
+    return wrappedWindow;
   }
 
-  // Adding the wrapped version of jQeury to a clone of window object, which
-  // will be used to bind the app's scope.
-  var wrappedWindow = this.$.extend({}, self, { $: wrapped$ });
-  wrappedWindow.window = wrappedWindow;
-  wrappedWindow.top = wrappedWindow;
+  // Find the appName from source
+  var appName = "UNKNOWN";
+
+  appName = "ABC";
 
   // Trying to match a v1 apps self executing function here and bind it to the
   // wrappedWindow instance defined above.
@@ -58,7 +68,7 @@
       }
     };
 
-  }.bind(wrappedWindow)());
+  }.bind(getWrappedWindow(appName))());
   ;
   }
   var app = ZendeskApps.defineApp(source)
