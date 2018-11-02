@@ -3,7 +3,7 @@
 module ZendeskAppsSupport
   module Validations
     module Templates
-      class <<self
+      class << self
         def call(package)
           errors = []
           package.template_files.each do |template|

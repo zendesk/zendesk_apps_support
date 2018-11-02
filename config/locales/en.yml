@@ -60,6 +60,10 @@ en:
             banner:
               invalid_format: Banner image must be a PNG file.
               invalid_size: Invalid banner image dimensions. Must be %{required_banner_width}x%{required_banner_height}px.
+            screenshots:
+              excessive_files: Assets directory contains %{file_count} screenshots,
+                but only %{supported_count} are supported.
+              invalid_size: Invalid screenshot dimensions. %{file} must be %{required_screenshot_width}x%{required_screenshot_height}px.
             dirty_svg: "%{svg} contains invalid markup and could not be automatically
               regenerated."
             oauth_keys:

@@ -28,6 +28,7 @@ module ZendeskAppsSupport
     autoload :Stylesheets,           'zendesk_apps_support/validations/stylesheets'
     autoload :Requirements,          'zendesk_apps_support/validations/requirements'
     autoload :Banner,                'zendesk_apps_support/validations/banner'
+    autoload :Screenshots,           'zendesk_apps_support/validations/screenshots'
     autoload :Svg,                   'zendesk_apps_support/validations/svg'
   end
 

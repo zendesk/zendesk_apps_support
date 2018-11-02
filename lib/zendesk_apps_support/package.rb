@@ -44,6 +44,7 @@ module ZendeskAppsSupport
       end
 
       errors << Validations::Banner.call(self) if has_banner?
+      errors << Validations::Screenshots.call(self) if has_screenshots?
       errors << Validations::Svg.call(self) if has_svgs?
 
       errors.flatten.compact
@@ -53,12 +54,6 @@ module ZendeskAppsSupport
       errors = validate(marketplace: marketplace, skip_marketplace_translations: skip_marketplace_translations)
       raise errors.first if errors.any?
       true
-    end
-
-    def assets
-      @assets ||= Dir.chdir(root) do
-        Dir['assets/**/*'].select { |f| File.file?(f) }
-      end
     end
 
     def path_to(file)
@@ -94,6 +89,10 @@ module ZendeskAppsSupport
 
     def svg_files
       @svg_files ||= files.select { |f| f =~ %r{^assets/.*\.svg$} }
+    end
+
+    def screenshot_files
+      @screenshot_files ||= files.select { |f| f =~ %r{^assets/screenshot-\d.png$} }
     end
 
     def template_files
@@ -185,6 +184,10 @@ module ZendeskAppsSupport
 
     def has_file?(path)
       File.file?(path_to(path))
+    end
+
+    def has_screenshots?
+      screenshot_files.any?
     end
 
     def has_svgs?

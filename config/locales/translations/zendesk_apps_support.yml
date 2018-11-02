@@ -131,12 +131,20 @@ parts:
       screenshot: "https://drive.google.com/open?id=1iEx7f7PYnum_qDQESD3Gz2PwLDza3zI0"
   - translation:
       key: "txt.apps.admin.error.app_build.banner.invalid_format"
-      title: "App builder job: Banner image invalid format error"
+      title: "App builder job: banner image invalid format error"
       value: "Banner image must be a PNG file."
   - translation:
       key: "txt.apps.admin.error.app_build.banner.invalid_size"
-      title: "App builder job: Banner image invalid size error"
+      title: "App builder job: banner image invalid size error"
       value: "Invalid banner image dimensions. Must be %{required_banner_width}x%{required_banner_height}px."
+  - translation:
+      key: "txt.apps.admin.error.app_build.screenshots.excessive_files"
+      title: "App builder job: package contains too many screenshots"
+      value: "Assets directory contains %{file_count} screenshots, but only %{supported_count} are supported."
+  - translation:
+      key: "txt.apps.admin.error.app_build.screenshots.invalid_size"
+      title: "App builder job: screenshot image invalid size error"
+      value: "Invalid screenshot dimensions. %{file} must be %{required_screenshot_width}x%{required_screenshot_height}px."
   - translation:
       key: "txt.apps.admin.error.app_build.dirty_svg"
       title: "App builder job: invalid SVG markup error"
