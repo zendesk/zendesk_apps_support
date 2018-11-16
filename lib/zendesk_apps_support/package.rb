@@ -31,13 +31,14 @@ module ZendeskAppsSupport
     def validate(marketplace: true, skip_marketplace_translations: false)
       errors = []
       errors << Validations::Manifest.call(self)
+
       if has_valid_manifest?(errors)
         errors << Validations::Marketplace.call(self) if marketplace
         errors << Validations::Source.call(self)
         errors << Validations::Translations.call(self, skip_marketplace_translations: skip_marketplace_translations)
         errors << Validations::Requirements.call(self)
 
-        unless manifest.requirements_only? || manifest.marketing_only? || manifest.iframe_only?
+        unless requirements_marketing_iframe_only_app?(manifest)
           errors << Validations::Templates.call(self)
           errors << Validations::Stylesheets.call(self)
         end
@@ -269,6 +270,10 @@ module ZendeskAppsSupport
 
     def has_valid_manifest?(errors)
       has_manifest? && errors.flatten.empty?
+    end
+
+    def requirements_marketing_iframe_only_app?(manifest)
+      manifest.requirements_only? || manifest.marketing_only? || manifest.iframe_only?
     end
 
     def runtime_translations(translations)
