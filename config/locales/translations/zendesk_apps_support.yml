@@ -166,6 +166,14 @@ parts:
       title: "App builder job: <style> tags in template error"
       value: "<style> tag in %{template}. Use an app.css file instead."
   - translation:
+      key: "txt.apps.admin.error.app_build.garden_cdn_reference"
+      title: "App builder job: Zendesk Garden CSS CDN reference in iframe template"
+      value: "Deprecated Zendesk Garden CSS referenced in %{file}. Update <link> to %{reference} to load from jsDelivr instead. See: https://jsdelivr.com/?query=zendeskgarden"
+  - translation:
+      key: "txt.apps.admin.error.app_build.legacy_sdk_url_reference"
+      title: "App builder job: legacy ZAF SDK url reference in iframe template"
+      value: "Deprecated Zendesk App Framework SDK referenced in %{file}. Update <script> for %{reference} to %{current_sdk_url}"
+  - translation:
       key: "txt.apps.admin.error.app_build.no_code_for_ifo_notemplate"
       title: "App builder job: code included for a type of app that shouldn't have code"
       value: "Javascripts, stylesheets, and templates are not allowed when an iframe URI or noTemplate is specified"

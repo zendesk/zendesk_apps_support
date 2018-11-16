@@ -43,6 +43,7 @@ module ZendeskAppsSupport
         end
       end
 
+      errors << Validations::Libraries.call(self)
       errors << Validations::Banner.call(self) if has_banner?
       errors << Validations::Screenshots.call(self) if has_screenshots?
       errors << Validations::Svg.call(self) if has_svgs?
@@ -97,6 +98,10 @@ module ZendeskAppsSupport
 
     def template_files
       files.select { |f| f =~ %r{^templates/.*\.hdbs$} }
+    end
+
+    def html_files
+      files.select { |f| f =~ %r{^assets/.*\.html$} }
     end
 
     def translation_files

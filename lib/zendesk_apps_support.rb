@@ -18,18 +18,19 @@ module ZendeskAppsSupport
   autoload :StylesheetCompiler,     'zendesk_apps_support/stylesheet_compiler'
 
   module Validations
-    autoload :ValidationError,       'zendesk_apps_support/validations/validation_error'
+    autoload :Banner,                'zendesk_apps_support/validations/banner'
+    autoload :JSHintValidationError, 'zendesk_apps_support/validations/validation_error'
+    autoload :Libraries,             'zendesk_apps_support/validations/libraries'
     autoload :Manifest,              'zendesk_apps_support/validations/manifest'
     autoload :Marketplace,           'zendesk_apps_support/validations/marketplace'
+    autoload :Requirements,          'zendesk_apps_support/validations/requirements'
+    autoload :Screenshots,           'zendesk_apps_support/validations/screenshots'
     autoload :Source,                'zendesk_apps_support/validations/source'
+    autoload :Stylesheets,           'zendesk_apps_support/validations/stylesheets'
+    autoload :Svg,                   'zendesk_apps_support/validations/svg'
     autoload :Templates,             'zendesk_apps_support/validations/templates'
     autoload :Translations,          'zendesk_apps_support/validations/translations'
-    autoload :JSHintValidationError, 'zendesk_apps_support/validations/validation_error'
-    autoload :Stylesheets,           'zendesk_apps_support/validations/stylesheets'
-    autoload :Requirements,          'zendesk_apps_support/validations/requirements'
-    autoload :Banner,                'zendesk_apps_support/validations/banner'
-    autoload :Screenshots,           'zendesk_apps_support/validations/screenshots'
-    autoload :Svg,                   'zendesk_apps_support/validations/svg'
+    autoload :ValidationError,       'zendesk_apps_support/validations/validation_error'
   end
 
   class Manifest
