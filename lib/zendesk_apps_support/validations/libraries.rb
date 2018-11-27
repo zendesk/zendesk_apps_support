@@ -3,6 +3,9 @@
 module ZendeskAppsSupport
   module Validations
     module Libraries
+      # As we transition away from assets hosted on assets.zendesk.com, these validations are intended
+      # to redirect developers towards the current asset sources on S3 (static.zdassets.com) and jsDelivr.
+      # These rules should be removed once assets.zendesk.com is deprecated.
       LEGACY_ASSETS = %r{https?://\S*assets\.zendesk\.com}
       GARDEN_CDN_URL = /<link\s.*href="(#{LEGACY_ASSETS.source}\S*zendesk_garden\.css).*>/
       LEGACY_SDK_URL = %r{<script\s.*src="(#{LEGACY_ASSETS.source}\S*\/((\d(\.\d+){1,2})|latest)\/zaf_sdk\.js).*>}
