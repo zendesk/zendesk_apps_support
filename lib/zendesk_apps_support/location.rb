@@ -49,7 +49,9 @@ module ZendeskAppsSupport
       Location.new(id: 13, name: 'system_top_bar',
                    product_code: Product::STANDALONE_CHAT.code, v2_only: false),
       Location.new(id: 14, name: 'background',
-                   product_code: Product::CHAT.code)
+                   product_code: Product::CHAT.code),
+      Location.new(id: 15, name: 'background',
+                   product_code: Product::GUIDE.code)
     ].freeze
   end
 end
