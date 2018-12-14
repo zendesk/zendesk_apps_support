@@ -141,10 +141,12 @@ parts:
       key: "txt.apps.admin.error.app_build.screenshots.excessive_files"
       title: "App builder job: package contains too many screenshots"
       value: "Assets directory contains %{file_count} screenshots, but only %{supported_count} are supported."
+      screenshot: "https://drive.google.com/file/d/1bx2jASZM768ySp7Atza2alCkj_GKN6Cg"
   - translation:
       key: "txt.apps.admin.error.app_build.screenshots.invalid_size"
       title: "App builder job: screenshot image invalid size error"
       value: "Invalid screenshot dimensions. %{file} must be %{required_screenshot_width}x%{required_screenshot_height}px."
+      screenshot: "https://drive.google.com/file/d/1wp7q2EFt3h1D0TGcjv8l_Ix0mUS5p2Xo"
   - translation:
       key: "txt.apps.admin.error.app_build.dirty_svg"
       title: "App builder job: invalid SVG markup error"
@@ -169,10 +171,12 @@ parts:
       key: "txt.apps.admin.error.app_build.garden_cdn_reference"
       title: "App builder job: Zendesk Garden CSS CDN reference in iframe template"
       value: "Deprecated Zendesk Garden CSS referenced in %{file}. Update <link> to %{reference} to load from jsDelivr instead. See: https://jsdelivr.com/?query=zendeskgarden"
+      screenshot: "https://drive.google.com/file/d/1Waqh_DDHciuBznEnLJDq7eMnlUsPfHcX"
   - translation:
       key: "txt.apps.admin.error.app_build.legacy_sdk_url_reference"
       title: "App builder job: legacy ZAF SDK url reference in iframe template"
       value: "Deprecated Zendesk App Framework SDK referenced in %{file}. Update <script> for %{reference} to %{current_sdk_url}"
+      screenshot:  "https://drive.google.com/file/d/1DBK-AARcQidYzxyHx6XRwJHW9FGPAXJf"
   - translation:
       key: "txt.apps.admin.error.app_build.no_code_for_ifo_notemplate"
       title: "App builder job: code included for a type of app that shouldn't have code"
