@@ -61,5 +61,6 @@
 
 }());
 
+ZendeskApps.rollbarAccessToken = "test token";
 
 ZendeskApps.trigger && ZendeskApps.trigger('ready');
