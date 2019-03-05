@@ -7,8 +7,8 @@ PATH
       image_size
       jshintrb (~> 0.3.0)
       json
-      loofah (~> 2.2.1)
-      nokogiri (~> 1.8.1)
+      loofah (~> 2.2.3)
+      nokogiri (~> 1.8.5)
       sass
       sassc (~> 1.11.2)
 
@@ -93,4 +93,4 @@ DEPENDENCIES
   zendesk_apps_support!
 
 BUNDLED WITH
-   1.16.2
+   1.16.3
