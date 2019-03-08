@@ -57,7 +57,12 @@
 
   ZendeskApps[0] = app;
 
-
+  if (ZendeskApps[0]) {
+    ZendeskApps[0].install({"id":10,"app_id":0,"app_name":"ABC"});
+  }
+  if (ZendeskApps[0]) {
+    ZendeskApps[0].install({"id":20,"app_id":0,"app_name":"EFC"});
+  }
 
 }());
 
