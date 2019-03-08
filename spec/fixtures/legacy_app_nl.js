@@ -54,4 +54,4 @@ var app = ZendeskApps.defineApp(source)
     frameworkVersion: "0.5"
   });
 
-ZendeskApps["EFG"] = app;
+ZendeskApps[1] = app;

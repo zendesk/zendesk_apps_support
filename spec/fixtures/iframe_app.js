@@ -14,4 +14,4 @@ var app = ZendeskApps.defineApp(null)
     frameworkVersion: "2.0"
   });
 
-ZendeskApps["ABC"] = app;
+ZendeskApps[0] = app;
