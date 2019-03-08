@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.summary     = 'Support to help you develop Zendesk Apps.'
   s.description = s.summary
 
-  s.required_ruby_version = '>= 2.0'
+  s.required_ruby_version = '>= 2.1'
   s.required_rubygems_version = '>= 1.3.6'
 
   s.add_runtime_dependency 'i18n'
@@ -19,6 +19,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'json'
   s.add_runtime_dependency 'image_size'
   s.add_runtime_dependency 'erubis'
+  s.add_runtime_dependency 'rb-inotify', '< 0.10.0'
   s.add_runtime_dependency 'jshintrb', '~> 0.3.0'
   s.add_runtime_dependency 'loofah', '~> 2.2.1'
   s.add_runtime_dependency 'nokogiri', '~> 1.8.1'
