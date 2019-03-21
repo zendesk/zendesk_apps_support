@@ -9,6 +9,7 @@ PATH
       json
       loofah (~> 2.2.3)
       nokogiri (~> 1.8.5)
+      rb-inotify (< 0.10.0)
       sass
       sassc (~> 1.11.2)
 
