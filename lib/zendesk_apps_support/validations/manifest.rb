@@ -273,6 +273,7 @@ module ZendeskAppsSupport
         def invalid_location_uri_error(package, location_options)
           path = location_options.url
           return nil if path == ZendeskAppsSupport::Manifest::LEGACY_URI_STUB
+          return nil if path.include?('{{setting.')
           validation_error = ValidationError.new(:invalid_location_uri, uri: path)
           uri = URI.parse(path)
           unless uri.absolute? ? valid_absolute_uri?(uri) : valid_relative_uri?(package, uri)

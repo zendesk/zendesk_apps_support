@@ -128,9 +128,11 @@ describe ZendeskAppsSupport::Validations::Manifest do
 
   it 'should not error when using {{setting.}}' do
     package = create_package('defaultLocale' => 'en')
-    allow(package.manifest.location_options.first).to receive(:url) { '{{setting.test}}' }
+    translation_files = double('AppFile', relative_path: 'translations/en.json')
+    allow(@package).to receive_messages(translation_files: [translation_files])
+    allow(package.manifest.location_options.first).to receive(:url) { 'https://zen.{{setting.test}}.com/apps' }
 
-    expect(package).not_to have_error(/the url (.*) cannot use a setting because it is a signed url/)
+    expect(package).not_to have_error
   end
 
   context 'with a marketing only app' do
