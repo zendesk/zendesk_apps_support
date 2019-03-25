@@ -194,6 +194,7 @@ parts:
       title: "App builder job: invalid URI for an iframe in the manifest. The `manifest` is a setting file, the `signed url` is https://cloud.google.com/storage/docs/access-control/signed-urls"
       value: "The url (%{uri}) cannot use a setting because it is a signed url."
       screenshot: "https://drive.google.com/open?id=1oQmBeGfNT5EDaEH3oEQoNjaCzBw5XAvL"
+      obsolete: '2019-04-10'
   - translation:
       key: "txt.apps.admin.error.app_build.name_as_parameter_name"
       title: "App builder job: error message when developer names a parameter 'name'"
