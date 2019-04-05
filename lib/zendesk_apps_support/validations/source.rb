@@ -46,6 +46,7 @@ module ZendeskAppsSupport
           return false if package.manifest.marketing_only?
           return false if package.manifest.requirements_only?
           return false if package.manifest.iframe_only?
+          return false if package.manifest.package_only?
           true
         end
 

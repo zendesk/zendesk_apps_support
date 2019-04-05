@@ -37,7 +37,7 @@ module ZendeskAppsSupport
         errors << Validations::Translations.call(self, skip_marketplace_translations: skip_marketplace_translations)
         errors << Validations::Requirements.call(self)
 
-        unless manifest.requirements_only? || manifest.marketing_only? || manifest.iframe_only?
+        unless manifest.requirements_only? || manifest.marketing_only? || manifest.iframe_only? || manifest.package_only?
           errors << Validations::Templates.call(self)
           errors << Validations::Stylesheets.call(self)
         end

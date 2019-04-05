@@ -49,7 +49,7 @@ module ZendeskAppsSupport
             errors << name_as_parameter_name_error(manifest)
           end
 
-          if manifest.requirements_only? || manifest.marketing_only?
+          if manifest.requirements_only? || manifest.marketing_only? || manifest.package_only?
             errors << ban_location(manifest)
             errors << ban_framework_version(manifest)
           else

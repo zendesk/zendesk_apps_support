@@ -7,6 +7,7 @@ module ZendeskAppsSupport
     RUBY_TO_JSON = {
       requirements_only: 'requirementsOnly',
       marketing_only: 'marketingOnly',
+      package_only: 'packageOnly',
       version: 'version',
       author: 'author',
       name: 'name', # currently only used in ZAT
@@ -30,6 +31,7 @@ module ZendeskAppsSupport
 
     alias_method :requirements_only?, :requirements_only
     alias_method :marketing_only?, :marketing_only
+    alias_method :package_only?, :package_only
     alias_method :signed_urls?, :signed_urls
     alias_method :single_install?, :single_install
     alias_method :private?, :private
