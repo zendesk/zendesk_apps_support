@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'erubis'
-require 'json'
 
 module ZendeskAppsSupport
   class Installed
