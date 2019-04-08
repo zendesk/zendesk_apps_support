@@ -122,7 +122,6 @@ module ZendeskAppsSupport
       templates = manifest.no_template == true ? {} : compiled_templates(app_id, asset_url_prefix)
 
       SRC_TEMPLATE.result(
-        id: app_id,
         name: name,
         version: manifest.version,
         source: source,

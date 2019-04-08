@@ -34,4 +34,4 @@ var app = ZendeskApps.defineApp(<%= iframe_only ? 'null' : 'source' %>)
     frameworkVersion: <%= framework_version.to_json %>
   });
 
-ZendeskApps[<%= id.to_json %>] = app;
+ZendeskApps[<%= name.to_json %>] = app;
