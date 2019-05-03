@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |s|
   s.name        = 'zendesk_apps_support'
-  s.version     = '4.15.0'
+  s.version     = '4.15.1'
   s.license     = 'Apache License Version 2.0'
   s.authors     = ['James A. Rosen', 'Likun Liu', 'Sean Caffery', 'Daniel Ribeiro']
   s.email       = ['dev@zendesk.com']
@@ -22,6 +22,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'jshintrb', '~> 0.3.0'
   s.add_runtime_dependency 'loofah', '~> 2.2.3'
   s.add_runtime_dependency 'nokogiri', '~> 1.8.5'
+  s.add_runtime_dependency 'rb-inotify', '0.9.10'
 
   s.add_development_dependency 'rspec', '~> 3.4.0'
   s.add_development_dependency 'bump', '~> 0.5.1'

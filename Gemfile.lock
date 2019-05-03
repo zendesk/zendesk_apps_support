@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    zendesk_apps_support (4.15.0)
+    zendesk_apps_support (4.15.1)
       erubis
       i18n
       image_size
@@ -9,6 +9,7 @@ PATH
       json
       loofah (~> 2.2.3)
       nokogiri (~> 1.8.5)
+      rb-inotify (= 0.9.10)
       sass
       sassc (~> 1.11.2)
 
