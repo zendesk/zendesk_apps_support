@@ -53,6 +53,15 @@ module ZendeskAppsSupport
       true
     end
 
+    def curl_zam_svg_validation_endpoint
+      begin
+        require 'net/http'
+        response = Net::HTTP.get_response(URI("https://appsubmission.zendesk.com/apps/zat_validation?params=#{self}"))
+        raise "There was an error in validation of svgs" if response.status != 200
+        true
+      end
+    end
+
     def assets
       @assets ||= Dir.chdir(root) do
         Dir['assets/**/*'].select { |f| File.file?(f) }
