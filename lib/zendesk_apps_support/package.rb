@@ -44,7 +44,7 @@ module ZendeskAppsSupport
       end
 
       errors << Validations::Banner.call(self) if has_banner?
-      errors << Validations::Svg.call(self) if has_svgs?
+      errors << Validations::Svg.call(self) if marketplace && has_svgs?
 
       errors.flatten.compact
     end
