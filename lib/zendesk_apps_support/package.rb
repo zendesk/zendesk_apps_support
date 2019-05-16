@@ -44,8 +44,6 @@ module ZendeskAppsSupport
       end
 
       errors << Validations::Banner.call(self) if has_banner?
-      errors << Validations::Svg.call(self) if marketplace && has_svgs?
-
       errors.flatten.compact
     end
 
@@ -90,10 +88,6 @@ module ZendeskAppsSupport
 
     def lib_files
       @lib_files ||= js_files.select { |f| f =~ %r{^lib/} }
-    end
-
-    def svg_files
-      @svg_files ||= files.select { |f| f =~ %r{^assets/.*\.svg$} }
     end
 
     def template_files
@@ -185,10 +179,6 @@ module ZendeskAppsSupport
 
     def has_file?(path)
       File.file?(path_to(path))
-    end
-
-    def has_svgs?
-      svg_files.any?
     end
 
     def has_requirements?
