@@ -3,6 +3,7 @@
 require 'pathname'
 require 'erubis'
 require 'json'
+require 'filemagic'
 
 module ZendeskAppsSupport
   class Package
@@ -33,6 +34,7 @@ module ZendeskAppsSupport
       errors << Validations::Manifest.call(self)
       if has_valid_manifest?(errors)
         errors << Validations::Marketplace.call(self) if marketplace
+        errors << Validations::Secrets.call(self)
         errors << Validations::Source.call(self)
         errors << Validations::Translations.call(self, skip_marketplace_translations: skip_marketplace_translations)
         errors << Validations::Requirements.call(self)
@@ -82,6 +84,10 @@ module ZendeskAppsSupport
         files << AppFile.new(self, relative_file_name)
       end
       files
+    end
+
+    def text_files
+      files.select { |f| text_file?(f) }
     end
 
     def js_files
@@ -364,6 +370,13 @@ module ZendeskAppsSupport
     def read_json(path, parser_opts = {})
       file = read_file(path)
       JSON.parse(read_file(path), parser_opts) unless file.nil?
+    end
+
+    def text_file?(file)
+      fm = FileMagic.new(FileMagic::MAGIC_MIME)
+      fm.file(file.absolute_path) =~ /^text\/|json/
+    ensure
+      fm.close
     end
   end
 end
