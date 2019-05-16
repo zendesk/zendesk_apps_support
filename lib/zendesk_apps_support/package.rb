@@ -44,8 +44,6 @@ module ZendeskAppsSupport
       end
 
       errors << Validations::Banner.call(self) if has_banner?
-      errors << Validations::Svg.call(self) if has_svgs?
-
       errors.flatten.compact
     end
 
@@ -53,6 +51,15 @@ module ZendeskAppsSupport
       errors = validate(marketplace: marketplace, skip_marketplace_translations: skip_marketplace_translations)
       raise errors.first if errors.any?
       true
+    end
+
+    def curl_zam_svg_validation_endpoint
+      begin
+        require 'net/http'
+        response = Net::HTTP.get_response(URI("https://appsubmission.zendesk.com/apps/zat_validation?params=#{self}"))
+        raise "There was an error in validation of svgs" if response.status != 200
+        true
+      end
     end
 
     def assets
@@ -90,10 +97,6 @@ module ZendeskAppsSupport
 
     def lib_files
       @lib_files ||= js_files.select { |f| f =~ %r{^lib/} }
-    end
-
-    def svg_files
-      @svg_files ||= files.select { |f| f =~ %r{^assets/.*\.svg$} }
     end
 
     def template_files
@@ -185,10 +188,6 @@ module ZendeskAppsSupport
 
     def has_file?(path)
       File.file?(path_to(path))
-    end
-
-    def has_svgs?
-      svg_files.any?
     end
 
     def has_requirements?
