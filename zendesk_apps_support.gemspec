@@ -17,7 +17,6 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'sassc', '~> 1.11.2'
   s.add_runtime_dependency 'sass' # remove explicit dependency when all compilation uses SassC
   s.add_runtime_dependency 'json'
-  s.add_runtime_dependency 'ruby-filemagic'
   s.add_runtime_dependency 'image_size'
   s.add_runtime_dependency 'erubis'
   s.add_runtime_dependency 'jshintrb', '~> 0.3.0'

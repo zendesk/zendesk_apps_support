@@ -3,7 +3,6 @@
 require 'pathname'
 require 'erubis'
 require 'json'
-require 'filemagic'
 
 module ZendeskAppsSupport
   class Package
@@ -87,7 +86,7 @@ module ZendeskAppsSupport
     end
 
     def text_files
-      files.select { |f| text_file?(f) }
+      @text_files ||= files.select { |f| f =~ %r{.*((ht|x)ml?|js(on)?)$} } # match .html, .xml, .js and .json
     end
 
     def js_files
@@ -370,13 +369,6 @@ module ZendeskAppsSupport
     def read_json(path, parser_opts = {})
       file = read_file(path)
       JSON.parse(read_file(path), parser_opts) unless file.nil?
-    end
-
-    def text_file?(file)
-      fm = FileMagic.new(FileMagic::MAGIC_MIME)
-      fm.file(file.absolute_path) =~ /^text\/|json/
-    ensure
-      fm.close
     end
   end
 end
