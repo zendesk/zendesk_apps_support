@@ -58,7 +58,7 @@ module ZendeskAppsSupport
             APPLICATION_SECRETS.each do |secret_type, regex_str|
               next unless contents =~ Regexp.new(regex_str)
               package.warnings << I18n.t('txt.apps.admin.warning.app_build.application_secret',
-                                         file: file,
+                                         file: file.relative_path,
                                          secret_type: secret_type)
             end
 
@@ -70,7 +70,7 @@ module ZendeskAppsSupport
                                        files: compromised_files.join(', '),
                                        count: compromised_files.count)
           end
-          nil
+          []
         end
       end
     end
