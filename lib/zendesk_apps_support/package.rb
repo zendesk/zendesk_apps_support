@@ -86,7 +86,7 @@ module ZendeskAppsSupport
     end
 
     def text_files
-      @text_files ||= files.select { |f| f =~ %r{.*((ht|x)ml?|js(on)?)$} } # match .html, .xml, .js and .json
+      @text_files ||= files.select { |f| f =~ %r{.*(html?|xml|js|json?)$} }
     end
 
     def js_files

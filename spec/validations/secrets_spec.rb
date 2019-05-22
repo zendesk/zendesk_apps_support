@@ -6,7 +6,7 @@ json_base = '{"name":"App","author":{},"location":{},"version":"1.0"}'
 html_base = '<html><body><script src="zaf_sdk.js"></script></body></html>'
 js_base = 'const client = ZAFClient.init();'
 
-describe ZendeskAppsSupport::Validations::Svg do
+describe ZendeskAppsSupport::Validations::Secrets do
   let(:mock_json) { json_base }
   let(:mock_html) { html_base }
   let(:mock_js) { js_base }

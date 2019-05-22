@@ -50,9 +50,7 @@ module ZendeskAppsSupport
 
       class << self
         def call(package)
-          compromised_files = []
-
-          package.text_files.each do |file|
+          compromised_files = package.text_files.map do |file|
             contents = file.read
 
             APPLICATION_SECRETS.each do |secret_type, regex_str|
@@ -62,8 +60,8 @@ module ZendeskAppsSupport
                                          secret_type: secret_type)
             end
 
-            compromised_files << file.relative_path if contents =~ Regexp.union(SECRET_KEYWORDS)
-          end
+            file.relative_path if contents =~ Regexp.union(SECRET_KEYWORDS)
+          end.compact
 
           if compromised_files.any?
             package.warnings << I18n.t('txt.apps.admin.warning.app_build.generic_secrets',
