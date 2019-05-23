@@ -24,11 +24,6 @@ describe ZendeskAppsSupport::Validations::Secrets do
       expect(package.warnings.length).to eq(1)
       expect(package.warnings[0]).to include('secrets found', 'manifest.json')
     end
-
-    it 'do not raise any errors' do
-      errors = subject.call(package)
-      expect(errors).to be_empty
-    end
   end
 
   context 'multiple text files containing generic secret keyword(s)' do
@@ -38,11 +33,6 @@ describe ZendeskAppsSupport::Validations::Secrets do
       subject.call(package)
       expect(package.warnings.length).to eq(1)
       expect(package.warnings[0]).to include('secrets found', 'manifest.json', 'assets/iframe.html')
-    end
-
-    it 'do not raise any errors' do
-      errors = subject.call(package)
-      expect(errors).to be_empty
     end
   end
 
@@ -54,11 +44,6 @@ describe ZendeskAppsSupport::Validations::Secrets do
       subject.call(package)
       expect(package.warnings[0]).to include('Github Token found', 'manifest.json')
       expect(package.warnings[1]).to include('AWS Access Key ID found', 'assets/app.js')
-    end
-
-    it 'do not raise any errors' do
-      errors = subject.call(package)
-      expect(errors).to be_empty
     end
   end
 end

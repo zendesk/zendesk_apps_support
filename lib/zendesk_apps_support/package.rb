@@ -31,9 +31,9 @@ module ZendeskAppsSupport
     def validate(marketplace: true, skip_marketplace_translations: false)
       errors = []
       errors << Validations::Manifest.call(self)
+
       if has_valid_manifest?(errors)
         errors << Validations::Marketplace.call(self) if marketplace
-        errors << Validations::Secrets.call(self)
         errors << Validations::Source.call(self)
         errors << Validations::Translations.call(self, skip_marketplace_translations: skip_marketplace_translations)
         errors << Validations::Requirements.call(self)
@@ -46,6 +46,9 @@ module ZendeskAppsSupport
 
       errors << Validations::Banner.call(self) if has_banner?
       errors << Validations::Svg.call(self) if has_svgs?
+
+      # warning only validators
+      Validations::Secrets.call(self)
 
       errors.flatten.compact
     end

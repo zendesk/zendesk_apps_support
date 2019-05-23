@@ -63,12 +63,10 @@ module ZendeskAppsSupport
             file.relative_path if contents =~ Regexp.union(SECRET_KEYWORDS)
           end.compact
 
-          if compromised_files.any?
-            package.warnings << I18n.t('txt.apps.admin.warning.app_build.generic_secrets',
-                                       files: compromised_files.join(', '),
-                                       count: compromised_files.count)
-          end
-          []
+          return unless compromised_files.any?
+          package.warnings << I18n.t('txt.apps.admin.warning.app_build.generic_secrets',
+                                     files: compromised_files.join(', '),
+                                     count: compromised_files.count)
         end
       end
     end
