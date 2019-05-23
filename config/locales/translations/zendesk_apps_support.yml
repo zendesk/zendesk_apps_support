@@ -220,6 +220,30 @@ parts:
       title: "App builder job: warning that svg contains an embedded bitmap image and cannot be used"
       value: "%{svg} contains an embedded bitmap and cannot be used as an app icon. It has been replaced with a default placeholder icon."
   - translation:
+      key: "txt.apps.admin.warning.app_build.generic_secrets.one"
+      title: "App builder job: warning for generic secrets found in app text files"
+      value: "Possible secrets found in %{files}. Consider reviewing the contents of this file before submitting your app."
+  - translation:
+      key: "txt.apps.admin.warning.app_build.generic_secrets.other"
+      title: "App builder job: warning for generic secrets found in app text files"
+      value: "Possible secrets found in %{files}. Consider reviewing the contents of these files before submitting your app."
+  - translation:
+      key: "txt.apps.admin.warning.app_build.application_secret"
+      title: "App builder job: warning for secrets found in app text files"
+      value: "Possible %{secret_type} found in %{file}. Consider reviewing the contents of this file before submitting your app."
+  - translation:
+      key: "txt.apps.admin.warning.app_build.generic_secrets.one"
+      title: "App builder job: warning for generic secrets found in app text files"
+      value: "Possible secrets found in %{files}. Consider reviewing the contents of this file before submitting your app."
+  - translation:
+      key: "txt.apps.admin.warning.app_build.generic_secrets.other"
+      title: "App builder job: warning for generic secrets found in app text files"
+      value: "Possible secrets found in %{files}. Consider reviewing the contents of these files before submitting your app."
+  - translation:
+      key: "txt.apps.admin.warning.app_build.application_secret"
+      title: "App builder job: warning for secrets found in app text files"
+      value: "Possible %{secret_type} found in %{file}. Consider reviewing the contents of this file before submitting your app."
+  - translation:
       key: "txt.apps.admin.error.app_build.invalid_version"
       title: "App builder job: invalid framework version"
       value: "%{target_version} is not a valid framework version. Available versions are: %{available_versions}."

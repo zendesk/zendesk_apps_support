@@ -80,6 +80,8 @@ en:
             blank_location_uri: "%{location} location does not specify a URI."
             invalid_location_uri: "%{uri} is either an invalid location URI, refers
               to a missing asset, or does not use HTTPS."
+            signed_setting_uri: The url (%{uri}) cannot use a setting because it is
+              a signed url.
             name_as_parameter_name: Can't call a parameter 'name'
             invalid_hidden_parameter:
               one: "%{invalid_params} is set to hidden and cannot be required."
@@ -128,3 +130,10 @@ en:
               and may not display as intended.
             bitmap_in_svg: "%{svg} contains an embedded bitmap and cannot be used
               as an app icon. It has been replaced with a default placeholder icon."
+            generic_secrets:
+              one: Possible secrets found in %{files}. Consider reviewing the contents
+                of this file before submitting your app.
+              other: Possible secrets found in %{files}. Consider reviewing the contents
+                of these files before submitting your app.
+            application_secret: Possible %{secret_type} found in %{file}. Consider
+              reviewing the contents of this file before submitting your app.
