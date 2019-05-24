@@ -65,7 +65,9 @@ module ZendeskAppsSupport
 
           return unless compromised_files.any?
           package.warnings << I18n.t('txt.apps.admin.warning.app_build.generic_secrets',
-                                     files: compromised_files.join(', '),
+                                     files: compromised_files.join(
+                                       I18n.t('txt.apps.admin.error.app_build.listing_comma')
+                                     ),
                                      count: compromised_files.count)
         end
       end
