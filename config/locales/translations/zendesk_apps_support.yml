@@ -8,6 +8,10 @@ packages:
 
 parts:
   - translation:
+      key: "txt.apps.admin.error.app_build.listing_comma"
+      title: "Punctuation for separating lists of items in a sentence"
+      value: ", "
+  - translation:
       key: "txt.apps.admin.error.app_build.jshint.one"
       title: "App builder job: JSHint error message"
       value: "JSHint error in %{file}: %{errors}"
@@ -219,6 +223,21 @@ parts:
       key: "txt.apps.admin.warning.app_build.bitmap_in_svg"
       title: "App builder job: warning that svg contains an embedded bitmap image and cannot be used"
       value: "%{svg} contains an embedded bitmap and cannot be used as an app icon. It has been replaced with a default placeholder icon."
+  - translation:
+      key: "txt.apps.admin.warning.app_build.generic_secrets.one"
+      title: "App builder job: warning for generic secrets found in app text files. %{files} will be replaced with one file name"
+      value: "Possible secrets found in %{files}. Consider reviewing the contents of this file before submitting your app."
+      screenshot: "https://drive.google.com/file/d/179IMwzJvXD1m5u-0K499Ul3-qRBXAxnT"
+  - translation:
+      key: "txt.apps.admin.warning.app_build.generic_secrets.other"
+      title: "App builder job: warning for generic secrets found in app text files. %{files} will be replaced with multiple file names"
+      value: "Possible secrets found in %{files}. Consider reviewing the contents of these files before submitting your app."
+      screenshot: "https://drive.google.com/file/d/179IMwzJvXD1m5u-0K499Ul3-qRBXAxnT"
+  - translation:
+      key: "txt.apps.admin.warning.app_build.application_secret"
+      title: "App builder job: warning for secrets found in app text files"
+      value: "Possible %{secret_type} found in %{file}. Consider reviewing the contents of this file before submitting your app."
+      screenshot: "https://drive.google.com/file/d/1LoN9-IlRbiz6uv1-CQ933mh-WY8XY5o2"
   - translation:
       key: "txt.apps.admin.error.app_build.invalid_version"
       title: "App builder job: invalid framework version"
