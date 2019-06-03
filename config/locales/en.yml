@@ -61,6 +61,10 @@ en:
             banner:
               invalid_format: Banner image must be a PNG file.
               invalid_size: Invalid banner image dimensions. Must be %{required_banner_width}x%{required_banner_height}px.
+            screenshots:
+              excessive_files: Assets directory contains %{file_count} screenshots,
+                but only %{supported_count} are supported.
+              invalid_size: Invalid screenshot dimensions. %{file} must be %{required_screenshot_width}x%{required_screenshot_height}px.
             dirty_svg: "%{svg} contains invalid markup and could not be automatically
               regenerated."
             oauth_keys:
@@ -69,6 +73,10 @@ en:
                 other: 'Missing required oauth fields in manifest: %{missing_keys}'
             missing_source: Could not find app.js
             style_in_template: "<style> tag in %{template}. Use an app.css file instead."
+            garden_cdn_reference: 'Deprecated Zendesk Garden CSS referenced in %{file}.
+              Update <link> to %{reference} to load from jsDelivr instead. See: https://jsdelivr.com/?query=zendeskgarden'
+            legacy_sdk_url_reference: Deprecated Zendesk App Framework SDK referenced
+              in %{file}. Update <script> for %{reference} to %{current_sdk_url}
             no_code_for_ifo_notemplate: Javascripts, stylesheets, and templates are
               not allowed when an iframe URI or noTemplate is specified
             invalid_default_locale: "%{default_locale} is not a valid default locale."

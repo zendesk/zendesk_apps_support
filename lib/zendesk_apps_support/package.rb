@@ -31,19 +31,22 @@ module ZendeskAppsSupport
     def validate(marketplace: true, skip_marketplace_translations: false)
       errors = []
       errors << Validations::Manifest.call(self)
+
       if has_valid_manifest?(errors)
         errors << Validations::Marketplace.call(self) if marketplace
         errors << Validations::Source.call(self)
         errors << Validations::Translations.call(self, skip_marketplace_translations: skip_marketplace_translations)
         errors << Validations::Requirements.call(self)
 
-        unless manifest.requirements_only? || manifest.marketing_only? || manifest.iframe_only?
+        unless requirements_marketing_iframe_only_app?(manifest)
           errors << Validations::Templates.call(self)
           errors << Validations::Stylesheets.call(self)
         end
       end
 
+      errors << Validations::Libraries.call(self)
       errors << Validations::Banner.call(self) if has_banner?
+      errors << Validations::Screenshots.call(self) if has_screenshots?
       errors << Validations::Svg.call(self) if has_svgs?
 
       errors.flatten.compact
@@ -53,12 +56,6 @@ module ZendeskAppsSupport
       errors = validate(marketplace: marketplace, skip_marketplace_translations: skip_marketplace_translations)
       raise errors.first if errors.any?
       true
-    end
-
-    def assets
-      @assets ||= Dir.chdir(root) do
-        Dir['assets/**/*'].select { |f| File.file?(f) }
-      end
     end
 
     def path_to(file)
@@ -96,8 +93,16 @@ module ZendeskAppsSupport
       @svg_files ||= files.select { |f| f =~ %r{^assets/.*\.svg$} }
     end
 
+    def screenshot_files
+      @screenshot_files ||= files.select { |f| f =~ %r{^assets/screenshot-\d.png$} }
+    end
+
     def template_files
       files.select { |f| f =~ %r{^templates/.*\.hdbs$} }
+    end
+
+    def html_files
+      files.select { |f| f =~ %r{^assets/.*\.html$} }
     end
 
     def translation_files
@@ -187,6 +192,10 @@ module ZendeskAppsSupport
       File.file?(path_to(path))
     end
 
+    def has_screenshots?
+      screenshot_files.any?
+    end
+
     def has_svgs?
       svg_files.any?
     end
@@ -261,6 +270,10 @@ module ZendeskAppsSupport
 
     def has_valid_manifest?(errors)
       has_manifest? && errors.flatten.empty?
+    end
+
+    def requirements_marketing_iframe_only_app?(manifest)
+      manifest.requirements_only? || manifest.marketing_only? || manifest.iframe_only?
     end
 
     def runtime_translations(translations)
