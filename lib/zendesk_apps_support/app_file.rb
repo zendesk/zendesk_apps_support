@@ -15,6 +15,10 @@ module ZendeskAppsSupport
       File.read @file.path
     end
 
+    def extension
+      File.extname relative_path
+    end
+
     def =~(regex)
       relative_path =~ regex
     end
