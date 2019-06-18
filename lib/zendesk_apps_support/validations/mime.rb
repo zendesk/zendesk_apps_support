@@ -29,13 +29,11 @@ module ZendeskAppsSupport
         end
 
         def mime_type_warning(file_names)
-          # TODO: replace string with block below - pluralism is handled - reminder to update tests
-          # ValidationError.new(
-          #   :unsupported_mime_type_detected,
-          #   file_names: file_names.join(', '),
-          #   count: file_names.count
-          # )
-          "Unsupported MIME Type(s) detected in #{file_names.join(', ')}."
+          ValidationError.new(
+            :unsupported_mime_type_detected,
+            file_names: file_names.join(', '),
+            count: file_names.count
+          )
         end
       end
     end
