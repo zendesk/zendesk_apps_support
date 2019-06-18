@@ -120,6 +120,16 @@ parts:
       title: "App builder job: requirements file contains invalid types error"
       value: "requirements.json contains invalid types: %{invalid_types}"
   - translation:
+      key: "txt.apps.admin.error.app_build.unsupported_mime_type_detected.one"
+      title: "App builder job: directory contains unsupported mime type. MIME is an abbreviation for Multipurpose Internet Mail Extensions. https://en.wikipedia.org/wiki/MIME"
+      value: "Unsupported MIME type detected in %{file_names}."
+      screenshot: "https://drive.google.com/open?id=13sG5kRWrcVPZiFzDLYo-WavY4WbsHdvX"
+  - translation:
+      key: "txt.apps.admin.error.app_build.unsupported_mime_type_detected.other"
+      title: "App builder job: directory contains unsupported mime type. MIME is an abbreviation for Multipurpose Internet Mail Extensions. https://en.wikipedia.org/wiki/MIME"
+      value: "Unsupported MIME types detected in %{file_names}."
+      screenshot: "https://drive.google.com/open?id=1Ht4Nq4ZcQ0DMfcm6JphF66QI3e1FT8Wn"
+  - translation:
       key: "txt.apps.admin.error.app_build.multiple_channel_integrations"
       title: "App builder job: requirements file contains multiple channel integrations, leave requirements.json as is (file name)"
       value: "Specifying multiple channel integrations in requirements.json is not supported."

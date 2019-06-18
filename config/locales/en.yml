@@ -53,6 +53,9 @@ en:
             invalid_requirements_types:
               one: 'requirements.json contains an invalid type: %{invalid_types}'
               other: 'requirements.json contains invalid types: %{invalid_types}'
+            unsupported_mime_type_detected:
+              one: 'Unsupported MIME type detected in %{file_names}'
+              other: 'Unsupported MIME types detected in %{file_names}'
             multiple_channel_integrations: Specifying multiple channel integrations
               in requirements.json is not supported.
             invalid_cr_schema_keys:
