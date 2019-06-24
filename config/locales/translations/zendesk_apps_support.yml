@@ -244,6 +244,31 @@ parts:
       value: "Possible secrets found in %{files}. Consider reviewing the contents of these files before submitting your app."
       screenshot: "https://drive.google.com/file/d/179IMwzJvXD1m5u-0K499Ul3-qRBXAxnT"
   - translation:
+      key: "txt.apps.admin.warning.app_build.insecure_http_request"
+      title: "App builder job: warning on detecting an insecure http request call in app source files"
+      value: "Possible insecure HTTP request to %{uri} in %{file}. Consider instead using the HTTPS protocol."
+      screenshot:
+  - translation:
+      key: "txt.apps.admin.error.app_build.blocked_request"
+      title: "App builder job: error on detecting a forbidden http request call in app source files"
+      value: "Possible request to a %{type} ip %{uri} in %{file}."
+      screenshot:
+  - translation:
+      key: "txt.apps.admin.error.app_build.blocked_request_private"
+      title: "App builder job: forbidden http request call ip type: private"
+      value: "private"
+      screenshot:
+  - translation:
+      key: "txt.apps.admin.error.app_build.blocked_request_loopback"
+      title: "App builder job: forbidden http request call ip type: loopback"
+      value: "loopback"
+      screenshot:
+  - translation:
+      key: "txt.apps.admin.error.app_build.blocked_request_link_local"
+      title: "App builder job: forbidden http request call ip type: link-local"
+      value: "link-local"
+      screenshot:
+  - translation:
       key: "txt.apps.admin.warning.app_build.application_secret"
       title: "App builder job: warning for secrets found in app text files"
       value: "Possible %{secret_type} found in %{file}. Consider reviewing the contents of this file before submitting your app."
