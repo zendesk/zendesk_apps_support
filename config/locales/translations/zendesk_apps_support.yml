@@ -247,27 +247,24 @@ parts:
       key: "txt.apps.admin.warning.app_build.insecure_http_request"
       title: "App builder job: warning on detecting an insecure http request call in app source files"
       value: "Possible insecure HTTP request to %{uri} in %{file}. Consider instead using the HTTPS protocol."
-      screenshot:
+      screenshot: "https://drive.google.com/file/d/1V-lXrVoAXAZEtBoekq7XLyetomUZRqY-"
   - translation:
       key: "txt.apps.admin.error.app_build.blocked_request"
       title: "App builder job: error on detecting a forbidden http request call in app source files"
       value: "Possible request to a %{type} ip %{uri} in %{file}."
-      screenshot:
+      screenshot: "https://drive.google.com/file/d/1hiTwbQi5aj6PnEtfuA7QTALs6AryDmj_"
   - translation:
       key: "txt.apps.admin.error.app_build.blocked_request_private"
-      title: "App builder job: forbidden http request call ip type: private"
+      title: "App builder job: forbidden http request call ip type: private. See https://en.wikipedia.org/wiki/Private_network"
       value: "private"
-      screenshot:
   - translation:
       key: "txt.apps.admin.error.app_build.blocked_request_loopback"
-      title: "App builder job: forbidden http request call ip type: loopback"
+      title: "App builder job: forbidden http request call ip type: loopback. See https://en.wikipedia.org/wiki/Loopback"
       value: "loopback"
-      screenshot:
   - translation:
       key: "txt.apps.admin.error.app_build.blocked_request_link_local"
-      title: "App builder job: forbidden http request call ip type: link-local"
+      title: "App builder job: forbidden http request call ip type: link-local. See https://en.wikipedia.org/wiki/Link-local_address"
       value: "link-local"
-      screenshot:
   - translation:
       key: "txt.apps.admin.warning.app_build.application_secret"
       title: "App builder job: warning for secrets found in app text files"
