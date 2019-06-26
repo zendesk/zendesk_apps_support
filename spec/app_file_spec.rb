@@ -25,4 +25,10 @@ describe ZendeskAppsSupport::AppFile do
       expect(@file.to_s).to eq('layout.hdbs')
     end
   end
+
+  describe 'extension' do
+    it 'returns file extension' do
+      expect(@file.extension).to eq('.hdbs')
+    end
+  end
 end

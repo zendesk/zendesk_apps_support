@@ -8,6 +8,7 @@ PATH
       jshintrb (~> 0.3.0)
       json
       loofah (~> 2.2.3)
+      mimemagic (~> 0.3.3)
       nokogiri (~> 1.8.5)
       rb-inotify (= 0.9.10)
       sass
@@ -36,6 +37,7 @@ GEM
     loofah (2.2.3)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
+    mimemagic (0.3.3)
     mini_portile2 (2.3.0)
     multi_json (1.13.1)
     nokogiri (1.8.5)

@@ -46,6 +46,7 @@ module ZendeskAppsSupport
 
       errors << Validations::Banner.call(self) if has_banner?
       errors << Validations::Svg.call(self) if has_svgs?
+      errors << Validations::Mime.call(self)
 
       # warning only validators
       Validations::Secrets.call(self)
