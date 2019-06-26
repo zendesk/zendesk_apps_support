@@ -53,6 +53,9 @@ en:
             invalid_requirements_types:
               one: 'requirements.json contains an invalid type: %{invalid_types}'
               other: 'requirements.json contains invalid types: %{invalid_types}'
+            unsupported_mime_type_detected:
+              one: 'Unsupported MIME type detected in %{file_names}'
+              other: 'Unsupported MIME types detected in %{file_names}'
             multiple_channel_integrations: Specifying multiple channel integrations
               in requirements.json is not supported.
             invalid_cr_schema_keys:
@@ -87,6 +90,10 @@ en:
             invalid_hidden_parameter:
               one: "%{invalid_params} is set to hidden and cannot be required."
               other: "%{invalid_params} are set to hidden and cannot be required."
+            blocked_request: Possible request to a %{type} ip %{uri} in %{file}.
+            blocked_request_private: private
+            blocked_request_loopback: loopback
+            blocked_request_link_local: link-local
             invalid_version: "%{target_version} is not a valid framework version.
               Available versions are: %{available_versions}."
             old_version: Iframe Only apps must target framework versions 2.0 or greater.
@@ -136,5 +143,7 @@ en:
                 of this file before submitting your app.
               other: Possible secrets found in %{files}. Consider reviewing the contents
                 of these files before submitting your app.
+            insecure_http_request: Possible insecure HTTP request to %{uri} in %{file}.
+              Consider instead using the HTTPS protocol.
             application_secret: Possible %{secret_type} found in %{file}. Consider
               reviewing the contents of this file before submitting your app.

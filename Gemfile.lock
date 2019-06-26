@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    zendesk_apps_support (4.15.1)
+    zendesk_apps_support (4.16.0)
       erubis
       i18n
       image_size
@@ -28,7 +28,7 @@ GEM
       i18n (~> 0.5)
     ffi (1.9.25)
     i18n (0.7.0)
-    image_size (2.0.0)
+    image_size (2.0.1)
     jshintrb (0.3.0)
       execjs
       multi_json (>= 1.3)
