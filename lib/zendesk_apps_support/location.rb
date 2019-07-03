@@ -54,7 +54,8 @@ module ZendeskAppsSupport
       Location.new(id: 16, name: 'contact_card', product_code: Product::SELL.code),
       Location.new(id: 17, name: 'lead_card', product_code: Product::SELL.code),
       Location.new(id: 18, name: 'dashboard', product_code: Product::SELL.code),
-      Location.new(id: 19, name: 'background', product_code: Product::SELL.code)
+      Location.new(id: 19, name: 'background', product_code: Product::SELL.code),
+      Location.new(id: 20, name: 'modal', product_code: Product::SELL.code)
     ].freeze
   end
 end
