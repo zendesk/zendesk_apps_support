@@ -50,12 +50,16 @@ module ZendeskAppsSupport
                    product_code: Product::STANDALONE_CHAT.code, v2_only: false),
       Location.new(id: 14, name: 'background',
                    product_code: Product::CHAT.code),
-      Location.new(id: 15, name: 'deal_card', product_code: Product::SELL.code),
-      Location.new(id: 16, name: 'contact_card', product_code: Product::SELL.code),
-      Location.new(id: 17, name: 'lead_card', product_code: Product::SELL.code),
-      Location.new(id: 18, name: 'dashboard', product_code: Product::SELL.code),
-      Location.new(id: 19, name: 'background', product_code: Product::SELL.code),
-      Location.new(id: 20, name: 'modal', product_code: Product::SELL.code)
+      Location.new(id: 15, name: 'top_bar', product_code: Product::SELL.code),
+      Location.new(id: 16, name: 'nav_bar', product_code: Product::SELL.code),
+      Location.new(id: 17, name: 'deal_card', product_code: Product::SELL.code, collapsible: true),
+      Location.new(id: 18, name: 'contact_card', product_code: Product::SELL.code, collapsible: true),
+      Location.new(id: 19, name: 'lead_card', product_code: Product::SELL.code, collapsible: true),
+      Location.new(id: 20, name: 'background', product_code: Product::SELL.code),
+      Location.new(id: 21, name: 'modal', product_code: Product::SELL.code),
+      Location.new(id: 22, name: 'dashboard', product_code: Product::SELL.code),
+      Location.new(id: 23, name: 'settings', product_code: Product::SELL.code),
+      Location.new(id: 24, name: 'notes_editor', product_code: Product::SELL.code)
     ].freeze
   end
 end
