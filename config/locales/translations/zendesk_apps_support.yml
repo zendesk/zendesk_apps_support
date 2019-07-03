@@ -246,7 +246,7 @@ parts:
   - translation:
       key: "txt.apps.admin.warning.app_build.insecure_http_request"
       title: "App builder job: warning on detecting an insecure http request call in app source files"
-      value: "Possible insecure HTTP request to %{uri} in %{file}. Consider instead using the HTTPS protocol."
+      value: "Possible insecure HTTP request to %{uri} in %{file}. Consider using the HTTPS protocol instead."
       screenshot: "https://drive.google.com/file/d/1V-lXrVoAXAZEtBoekq7XLyetomUZRqY-"
   - translation:
       key: "txt.apps.admin.error.app_build.blocked_request"
