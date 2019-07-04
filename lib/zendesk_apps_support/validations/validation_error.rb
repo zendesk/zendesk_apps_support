@@ -73,32 +73,5 @@ module ZendeskAppsSupport
         end
       end
     end
-
-    class JSHintValidationError < ValidationError
-      attr_reader :filename, :jshint_errors
-
-      def self.vivify(hash)
-        new(hash['filename'], hash['jshint_errors'])
-      end
-
-      def initialize(filename, jshint_errors)
-        errors = jshint_errors.compact.map { |err| "\n  L#{err['line']}: #{err['reason']}" }.join('')
-        @filename = filename
-        @jshint_errors = jshint_errors
-        super(:jshint, {
-          file: filename,
-          errors: errors,
-          count: jshint_errors.length
-        })
-      end
-
-      def as_json(*)
-        {
-          'class' => self.class.to_s,
-          'filename' => filename,
-          'jshint_errors' => jshint_errors
-        }
-      end
-    end
   end
 end
