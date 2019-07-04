@@ -94,7 +94,7 @@ module ZendeskAppsSupport
     end
 
     def js_files
-      @js_files ||= files.select { |f| f =~ %r{^(app|lib\/.*)\.js$} }
+      @js_files ||= files.select { |f| f =~ %r{^.*\.jsx?$} }
     end
 
     def lib_files
