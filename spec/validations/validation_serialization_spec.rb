@@ -50,30 +50,6 @@ describe ZendeskAppsSupport::Validations::ValidationError do
       end
     end
 
-    context 'for a JSHint error' do
-      let(:hash) do
-        {
-          'class'         => 'ZendeskAppsSupport::Validations::JSHintValidationError',
-          'file'          => 'foo.js',
-          'jshint_errors' => [{ 'line' => 55, 'reason' => 'Yuck' }]
-        }
-      end
-
-      it { is_expected.to be_a(ZendeskAppsSupport::Validations::JSHintValidationError) }
-
-      describe '#key' do
-        subject { super().key }
-        it { is_expected.to eq(:jshint) }
-      end
-
-      describe '#jshint_errors' do
-        subject { super().jshint_errors }
-        it do
-          is_expected.to eq([{ 'line' => 55, 'reason' => 'Yuck' }])
-        end
-      end
-    end
-
     context 'for a non-ValidationError hash' do
       let(:hash) do
         {

@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'jshintrb'
 require 'json'
 
 module ZendeskAppsSupport
