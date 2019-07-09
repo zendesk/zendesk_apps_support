@@ -37,6 +37,7 @@ module ZendeskAppsSupport
         errors << Validations::Source.call(self)
         errors << Validations::Translations.call(self, skip_marketplace_translations: skip_marketplace_translations)
         errors << Validations::Requirements.call(self)
+        errors << Validations::Requests.call(self)
 
         unless manifest.requirements_only? || manifest.marketing_only? || manifest.iframe_only?
           errors << Validations::Templates.call(self)
@@ -95,6 +96,10 @@ module ZendeskAppsSupport
 
     def js_files
       @js_files ||= files.select { |f| f =~ %r{^.*\.jsx?$} }
+    end
+
+    def html_files
+      @html_files ||= files.select { |f| f =~ %r{.*\.html?$} }
     end
 
     def lib_files

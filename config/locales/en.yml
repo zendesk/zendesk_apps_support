@@ -54,8 +54,8 @@ en:
               one: 'requirements.json contains an invalid type: %{invalid_types}'
               other: 'requirements.json contains invalid types: %{invalid_types}'
             unsupported_mime_type_detected:
-              one: 'Unsupported MIME type detected in %{file_names}'
-              other: 'Unsupported MIME types detected in %{file_names}'
+              one: Unsupported MIME type detected in %{file_names}.
+              other: Unsupported MIME types detected in %{file_names}.
             multiple_channel_integrations: Specifying multiple channel integrations
               in requirements.json is not supported.
             invalid_cr_schema_keys:
@@ -144,6 +144,6 @@ en:
               other: Possible secrets found in %{files}. Consider reviewing the contents
                 of these files before submitting your app.
             insecure_http_request: Possible insecure HTTP request to %{uri} in %{file}.
-              Consider instead using the HTTPS protocol.
+              Consider using the HTTPS protocol instead.
             application_secret: Possible %{secret_type} found in %{file}. Consider
               reviewing the contents of this file before submitting your app.

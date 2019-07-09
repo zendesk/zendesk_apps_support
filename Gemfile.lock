@@ -5,6 +5,7 @@ PATH
       erubis
       i18n
       image_size
+      ipaddress_2 (~> 0.13.0)
       json
       loofah (~> 2.2.3)
       mimemagic (~> 0.3.3)
@@ -27,6 +28,7 @@ GEM
     ffi (1.9.25)
     i18n (0.7.0)
     image_size (2.0.1)
+    ipaddress_2 (0.13.0)
     json (2.2.0)
     loofah (2.2.3)
       crass (~> 1.0.2)
