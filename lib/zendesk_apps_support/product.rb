@@ -20,7 +20,7 @@ module ZendeskAppsSupport
       Product.new(code: 1, name: 'support', legacy_name: 'zendesk'),
       Product.new(code: 2, name: 'chat', legacy_name: 'zopim'),
       Product.new(code: 3, name: 'standalone_chat', legacy_name: 'lotus_box'),
-      Product.new(code: 4, name: 'sell', legacy_name: 'base')
+      Product.new(code: 4, name: 'sell', legacy_name: 'sell')
     ].freeze
 
     SUPPORT = find_by!(name: 'support')
