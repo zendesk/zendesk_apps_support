@@ -20,6 +20,7 @@ module ZendeskAppsSupport
   module Validations
     autoload :ValidationError,       'zendesk_apps_support/validations/validation_error'
     autoload :Manifest,              'zendesk_apps_support/validations/manifest'
+    autoload :SecureSettings,        'zendesk_apps_support/validations/secure_settings'
     autoload :Marketplace,           'zendesk_apps_support/validations/marketplace'
     autoload :Mime,                  'zendesk_apps_support/validations/mime'
     autoload :Secrets,               'zendesk_apps_support/validations/secrets'

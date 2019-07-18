@@ -19,7 +19,7 @@ describe ZendeskAppsSupport::Validations::Source do
     it 'returns validation error if package contains source files' do
       package.js_files << 'random_js_file.js'
 
-      expect(validation_error).to receive(:new).with(:no_code_for_ifo_notemplate)
+      expect(validation_error).to receive(:new).with(:no_source_required_apps)
     end
 
     it 'returns no validation error if package has no source files' do
@@ -37,7 +37,7 @@ describe ZendeskAppsSupport::Validations::Source do
     it 'returns validation error if package contains source files' do
       package.template_files << 'random_template.html'
 
-      expect(validation_error).to receive(:new).with(:no_code_for_ifo_notemplate)
+      expect(validation_error).to receive(:new).with(:no_source_required_apps)
     end
 
     it 'returns no validation error if package has no source files' do
