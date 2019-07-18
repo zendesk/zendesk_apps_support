@@ -15,10 +15,12 @@ parts:
       key: "txt.apps.admin.error.app_build.jshint.one"
       title: "App builder job: JSHint error message"
       value: "JSHint error in %{file}: %{errors}"
+      obsolete: "2019-11-01"
   - translation:
       key: "txt.apps.admin.error.app_build.jshint.other"
       title: "App builder job: JSHint error messages"
       value: "JSHint errors in %{file}: %{errors}"
+      obsolete: "2019-11-01"
   - translation:
       key: "txt.apps.admin.error.app_build.no_template_deprecated_in_v2"
       title: "App builder job: prevent using noTemplate in v2 apps and give advice on how to migrate. Leave noTemplate and autoHide as is (do not localize)"
@@ -167,6 +169,7 @@ parts:
       key: "txt.apps.admin.error.app_build.missing_source"
       title: "App builder job: missing app.js error"
       value: "Could not find app.js"
+      obsolete: "2019-11-01"
   - translation:
       key: "txt.apps.admin.error.app_build.style_in_template"
       title: "App builder job: <style> tags in template error"
@@ -175,6 +178,12 @@ parts:
       key: "txt.apps.admin.error.app_build.no_code_for_ifo_notemplate"
       title: "App builder job: code included for a type of app that shouldn't have code"
       value: "Javascripts, stylesheets, and templates are not allowed when an iframe URI or noTemplate is specified"
+      obsolete: "2019-11-01"
+  - translation:
+      key: "txt.apps.admin.error.app_build.no_source_required_apps"
+      title: "Inform users that no source files are required when uploading marketingOnly and requirementsOnly apps. marketingOnly and requirementsOnly are Manifest properties and always English. https://developer.zendesk.com/apps/docs/developer-guide/manifest Also refer https://en.wikipedia.org/wiki/Style_sheet_(web_development) for stylesheets."
+      value: "Javascripts, stylesheets, and templates are not required for marketingOnly or requirementsOnly apps"
+      screenshot: "https://drive.google.com/open?id=12B7CMtErshVxI2b-Eo-DjexOqer27oxV"
   - translation:
       key: "txt.apps.admin.error.app_build.invalid_default_locale"
       title: "App builder job: invalid default locale"
@@ -204,12 +213,6 @@ parts:
       title: "App builder job: invalid URI for an iframe in the manifest"
       value: "%{uri} is either an invalid location URI, refers to a missing asset, or does not use HTTPS."
   - translation:
-      key: "txt.apps.admin.error.app_build.signed_setting_uri"
-      title: "App builder job: invalid URI for an iframe in the manifest. The `manifest` is a setting file, the `signed url` is https://cloud.google.com/storage/docs/access-control/signed-urls"
-      value: "The url (%{uri}) cannot use a setting because it is a signed url."
-      screenshot: "https://drive.google.com/open?id=1oQmBeGfNT5EDaEH3oEQoNjaCzBw5XAvL"
-      obsolete: '2019-04-10'
-  - translation:
       key: "txt.apps.admin.error.app_build.name_as_parameter_name"
       title: "App builder job: error message when developer names a parameter 'name'"
       value: "Can't call a parameter 'name'"
@@ -224,7 +227,8 @@ parts:
   - translation:
       key: "txt.apps.admin.warning.app_build.deprecated_version"
       title: "App builder job: deprecated version specified"
-      value: 'You are targeting a deprecated version of the framework. Your app will work, but it might break when the new framework version is deployed.'
+      value: "You are targeting a deprecated version of the framework. Your app will work, but it might break when the new framework version is deployed."
+      obsolete: "2019-11-01"
   - translation:
       key: "txt.apps.admin.warning.app_build.sanitised_svg"
       title: "App builder job: warning that contents of svg have been sanitised and overwritten"
@@ -278,6 +282,7 @@ parts:
       key: "txt.apps.admin.error.app_build.old_version"
       title: "App builder job: old framework version"
       value: "Iframe Only apps must target framework versions 2.0 or greater."
+      obsolete: "2019-11-01"
   - translation:
       key: "txt.apps.admin.error.app_build.parameters_not_an_array"
       title: "App builder job: app parameters must be an array"
@@ -319,6 +324,11 @@ parts:
       key: "txt.apps.admin.error.app_build.translation.products_do_not_match_manifest_products"
       title: "App builder job: products specified in translation file don't match products in manifest"
       value: "Products in manifest (%{manifest_products}) do not match products in translations (%{translation_products})"
+  - translation:
+      key: "txt.apps.admin.error.app_build.translation.insecure_token_parameter_in_manifest"
+      title: "Validation message to indicate missing secure(true) field in manifest's token parameter. secure and true are always English. Do not translate. Secure(true) in manifest refers to https://developer.zendesk.com/apps/docs/developer-guide/using_sdk#using-secure-settings"
+      value: "Make sure to set secure to true when using keys in Settings. Learn more: %{link}"
+      screenshot: "https://drive.google.com/open?id=1ss3nNN2RG29R7StjCtiH8qjuwFBlRApJ"
   - translation:
       key: "txt.apps.admin.error.app_build.stylesheet_error"
       title: "App builder job: invalid stylesheet syntax"
