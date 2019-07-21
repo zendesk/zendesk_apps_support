@@ -182,7 +182,7 @@ parts:
   - translation:
       key: "txt.apps.admin.error.app_build.no_source_required_apps"
       title: "Inform users that no source files are required when uploading marketingOnly and requirementsOnly apps. Do not translate 'marketingOnly' and 'requirementsOnly', these are Manifest properties (https://developer.zendesk.com/apps/docs/developer-guide/manifest). Also refer to https://en.wikipedia.org/wiki/Style_sheet_(web_development) for stylesheets."
-      value: "Javascripts, stylesheets, and templates are not required for marketingOnly or requirementsOnly apps"
+      value: "JavaScripts, stylesheets, and templates are not required for marketingOnly or requirementsOnly apps"
       screenshot: "https://drive.google.com/open?id=12B7CMtErshVxI2b-Eo-DjexOqer27oxV"
   - translation:
       key: "txt.apps.admin.error.app_build.invalid_default_locale"
@@ -269,6 +269,11 @@ parts:
       key: "txt.apps.admin.error.app_build.blocked_request_link_local"
       title: "App builder job: forbidden http request call ip type: link-local. See https://en.wikipedia.org/wiki/Link-local_address"
       value: "link-local"
+  - translation:
+      key: "txt.apps.admin.warning.app_build.unrecognised_urls_detected"
+      title: "App builder job: Message to indicate that there is unrecognised URL detected. URL refers to Uniform Resource Locator, See https://en.wikipedia.org/wiki/URL"
+      value: "Detecting possible requests to %{uri} in %{file}"
+      screenshot: "https://drive.google.com/open?id=12kTVSZPQ0oulsW1DzULcCCziTttv8-tx"
   - translation:
       key: "txt.apps.admin.warning.app_build.application_secret"
       title: "App builder job: warning for secrets found in app text files"

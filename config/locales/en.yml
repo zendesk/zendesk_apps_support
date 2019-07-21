@@ -148,5 +148,6 @@ en:
                 of these files before submitting your app.
             insecure_http_request: Possible insecure HTTP request to %{uri} in %{file}.
               Consider using the HTTPS protocol instead.
+            unrecognised_urls_detected: Detecting possible requests to %{uri} in %{file}
             application_secret: Possible %{secret_type} found in %{file}. Consider
               reviewing the contents of this file before submitting your app.
