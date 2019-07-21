@@ -181,7 +181,7 @@ parts:
       obsolete: "2019-11-01"
   - translation:
       key: "txt.apps.admin.error.app_build.no_source_required_apps"
-      title: "Inform users that no source files are required when uploading marketingOnly and requirementsOnly apps. marketingOnly and requirementsOnly are Manifest properties and always English. https://developer.zendesk.com/apps/docs/developer-guide/manifest Also refer https://en.wikipedia.org/wiki/Style_sheet_(web_development) for stylesheets."
+      title: "Inform users that no source files are required when uploading marketingOnly and requirementsOnly apps. Do not translate 'marketingOnly' and 'requirementsOnly', these are Manifest properties (https://developer.zendesk.com/apps/docs/developer-guide/manifest). Also refer to https://en.wikipedia.org/wiki/Style_sheet_(web_development) for stylesheets."
       value: "Javascripts, stylesheets, and templates are not required for marketingOnly or requirementsOnly apps"
       screenshot: "https://drive.google.com/open?id=12B7CMtErshVxI2b-Eo-DjexOqer27oxV"
   - translation:
@@ -326,7 +326,7 @@ parts:
       value: "Products in manifest (%{manifest_products}) do not match products in translations (%{translation_products})"
   - translation:
       key: "txt.apps.admin.error.app_build.translation.insecure_token_parameter_in_manifest"
-      title: "Validation message to indicate missing secure(true) field in manifest's token parameter. secure and true are always English. Do not translate. Secure(true) in manifest refers to https://developer.zendesk.com/apps/docs/developer-guide/using_sdk#using-secure-settings"
+      title: "Validation message to indicate missing secure(true) field in manifest's token parameter. Do not translate 'secure' and 'true'. Secure(true) in manifest refers to https://developer.zendesk.com/apps/docs/developer-guide/using_sdk#using-secure-settings"
       value: "Make sure to set secure to true when using keys in Settings. Learn more: %{link}"
       screenshot: "https://drive.google.com/open?id=1ss3nNN2RG29R7StjCtiH8qjuwFBlRApJ"
   - translation:
