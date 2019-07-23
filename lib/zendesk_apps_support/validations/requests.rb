@@ -1,56 +1,68 @@
 # frozen_string_literal: true
 
-require 'uri'
 require 'ipaddress_2'
+require 'uri'
 
 module ZendeskAppsSupport
   module Validations
     module Requests
       class << self
-        HTTP_REQUEST_METHODS = %w[GET HEAD POST PUT DELETE CONNECT OPTIONS TRACE].freeze
-
-        REQUEST_CALLS = [
-          /\w+\.request\(['"](.*)['"]/i, # ZAF request
-          /(?:\$|jQuery)\.(?:ajax|get|post|getJSON)\(['"](.*)['"]/i, # jQuery request
-          /\w+\.open\(['"](?:#{Regexp.union(HTTP_REQUEST_METHODS).source})['"],\s?['"](.*)['"]/i, # XMLHttpRequest
-          /fetch\(['"](.*)['"]/i # fetch
-        ].freeze
+        IP_ADDRESS = /\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/
 
         def call(package)
           errors = []
           files = package.js_files + package.html_files
 
           files.each do |file|
-            contents = file.read
-            REQUEST_CALLS.each do |request_pattern|
-              request = contents.match(request_pattern)
-              next unless request
-              uri = URI(request.captures[0])
-              if uri.scheme == 'http'
-                package.warnings << I18n.t('txt.apps.admin.warning.app_build.insecure_http_request',
-                                           uri: uri,
-                                           file: file.relative_path)
-              end
+            file_content = file.read
 
-              next unless IPAddress.valid? uri.host
-              ip = IPAddress.parse uri.host
+            http_protocol_urls = find_address_containing_http(file_content)
+            if http_protocol_urls.any?
+              package.warnings << I18n.t(
+                'txt.apps.admin.warning.app_build.insecure_http_request',
+                uri: http_protocol_urls.join(I18n.t('txt.apps.admin.error.app_build.listing_comma')),
+                file: file.relative_path
+              )
+            end
 
-              blocked_ip_type = if ip.private?
-                                  I18n.t('txt.apps.admin.error.app_build.blocked_request_private')
-                                elsif ip.loopback?
-                                  I18n.t('txt.apps.admin.error.app_build.blocked_request_loopback')
-                                elsif ip.link_local?
-                                  I18n.t('txt.apps.admin.error.app_build.blocked_request_link_local')
-                                end
-
-              next unless blocked_ip_type
-              errors << I18n.t('txt.apps.admin.error.app_build.blocked_request',
-                               type: blocked_ip_type,
-                               uri: uri.host,
-                               file: file.relative_path)
+            ip_addresses = file_content.scan(IP_ADDRESS)
+            if ip_addresses.any?
+              errors << blocked_ips_validation(file.relative_path, ip_addresses)
             end
           end
+
           errors
+        end
+
+        private
+
+        def blocked_ips_validation(file_path, ip_addresses)
+          ip_addresses.each_with_object([]) do |ip_address, error_messages|
+            blocked_type = blocked_ip_type(ip_address)
+            next unless blocked_type
+
+            error_messages << I18n.t(
+              'txt.apps.admin.error.app_build.blocked_request',
+              type: blocked_type,
+              uri:  ip_address,
+              file: file_path
+            )
+          end
+        end
+
+        def blocked_ip_type(ip_address)
+          block_type =
+            case IPAddress.parse(ip_address)
+            when proc(&:private?) then 'private'
+            when proc(&:loopback?) then 'loopback'
+            when proc(&:link_local?) then 'link_local'
+            end
+
+          block_type && I18n.t("txt.apps.admin.error.app_build.blocked_request_#{block_type}")
+        end
+
+        def find_address_containing_http(file_content)
+          file_content.scan(URI.regexp(['http'])).map(&:compact).map(&:last)
         end
       end
     end
