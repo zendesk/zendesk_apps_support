@@ -3,7 +3,6 @@
 require 'spec_helper'
 
 describe ZendeskAppsSupport::Validations::Mime do
-  let(:subject) { ZendeskAppsSupport::Validations::Mime }
   let(:package) { double('Package', files: []) }
 
   def add_to_package(pathname)

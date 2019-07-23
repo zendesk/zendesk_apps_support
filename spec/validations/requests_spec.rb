@@ -2,75 +2,52 @@
 
 require 'spec_helper'
 
-def request_function(style, address)
-  case style
-  when 'ZAF'
-    "function request() { client.request('#{address}') }"
-  when 'jQuery'
-    "function request() { jQuery.get('#{address}') }"
-  when 'jQuery$'
-    "function request() { $.ajax('#{address}') }"
-  when 'XMLHttpRequest'
-    "function request() { xhr.open('get', '#{address}') }"
-  when 'fetch'
-    "function request() { fetch('#{address}') }"
-  end
-end
-
-request_function_styles = %w[ZAF jQuery jQuery$ XMLHttpRequest fetch]
-
-shared_examples 'an insecure request' do |file_path, function_style|
-  address = 'http://foo.com'
-  let(:markup) { request_function(function_style, address) }
-
-  it "and raise a warning inside #{function_style} style requests" do
-    errors = subject.call(package)
-    expect(package.warnings[0]).to include('insecure HTTP request', address, file_path)
-    expect(errors).to be_empty
-  end
-end
-
-blocked_ips = {
-  private: {
-    range: '10.0.0.0/8, 172.16.0.0/12, or 192.168.0.0/16',
-    example: '192.168.0.1'
-  },
-  loopback: {
-    range: '127.0.0.0/8',
-    example: '127.0.0.1'
-  },
-  link_local: {
-    range: '169.254.0.0/16',
-    example: '169.254.0.1'
-  }
-}
-
-shared_examples 'a blocked ip' do |file_path, function_style, ip_type, ip|
-  let(:markup) { request_function(function_style, "https://#{ip}") }
-
-  it "and throw a #{ip_type} ip error inside #{function_style} style request calls" do
-    errors = subject.call(package)
-    expect(package.warnings).to be_empty
-    expect(errors[0]).to include("request to a #{ip_type} ip", ip, file_path)
-  end
-end
-
 describe ZendeskAppsSupport::Validations::Requests do
-  app_js_path = 'assets/app.js'
-  let(:app_js) { double('AppFile', relative_path: app_js_path, read: markup) }
-  let(:subject) { ZendeskAppsSupport::Validations::Requests }
-  let(:package) { double('Package', js_files: [app_js], html_files: [], warnings: []) }
+  let(:package) { double('Package', warnings: [], html_files: []) }
+  let(:app_file) { double('AppFile', relative_path: 'app_file.js') }
 
-  describe 'using the http protocol' do
-    request_function_styles.each { |function_style| it_behaves_like 'an insecure request', app_js_path, function_style }
+  before { allow(package).to receive(:js_files) { [app_file] } }
+
+  context 'http protocols check' do
+    it 'returns no warnings for files that contain https urls' do
+      allow(app_file).to receive(:read) { "client.instance(\"https://foo-bar.com\");\r\n\t" }
+
+      subject.call(package)
+      expect(package.warnings).to be_empty
+    end
+
+    it 'returns warning with request information when files contain http url' do
+      allow(app_file).to receive(:read) { "client.instance(\"http://foo-bar.com\");\r\n\t" }
+
+      subject.call(package)
+      expect(package.warnings[0]).to include(
+        'Possible insecure HTTP request',
+        'foo-bar.com',
+        'in app_file.js',
+        'Consider using the HTTPS protocol instead.'
+      )
+    end
   end
 
-  blocked_ips.each do |type, ip|
-    describe "to #{ip[:range]} range ips" do
-      request_function_styles.each do |function_style|
-        type_localised = ZendeskAppsSupport::I18n.t("txt.apps.admin.error.app_build.blocked_request_#{type}")
-        it_behaves_like 'a blocked ip', app_js_path, function_style, type_localised, ip[:example]
-      end
+  context 'IPs check' do
+    it 'returns no validation error when scanning regular IP' do
+      allow(app_file).to receive(:read) { "client.instance(\"64.233.191.255\");\r\n\t" }
+      expect(subject.call(package).flatten).to be_empty
+    end
+
+    it 'returns a validation error when scanning private IP' do
+      allow(app_file).to receive(:read) { "//var x = '192.168.0.1'\r\n \tclient.get(x)" }
+      expect(subject.call(package).flatten[0]).to include('request to a private ip 192.168.0.1')
+    end
+
+    it 'returns a validation error when scanning loopback IP' do
+      allow(app_file).to receive(:read) { "//var x = '127.0.0.1'\r\n \tclient.get(x)" }
+      expect(subject.call(package).flatten[0]).to include('request to a loopback ip 127.0.0.1')
+    end
+
+    it 'returns a validation error when scanning link_local IP' do
+      allow(app_file).to receive(:read) { "//var x = '169.254.0.1'\r\n \tclient.get(x)" }
+      expect(subject.call(package).flatten[0]).to include('request to a link-local ip 169.254.0.1')
     end
   end
 end
