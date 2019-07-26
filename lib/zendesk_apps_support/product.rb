@@ -20,12 +20,14 @@ module ZendeskAppsSupport
       Product.new(code: 1, name: 'support', legacy_name: 'zendesk'),
       Product.new(code: 2, name: 'chat', legacy_name: 'zopim'),
       Product.new(code: 3, name: 'standalone_chat', legacy_name: 'lotus_box'),
-      Product.new(code: 4, name: 'sell', legacy_name: 'sell')
+      Product.new(code: 4, name: 'sell', legacy_name: 'sell'),
+      Product.new(code: 5, name: 'central_admin', legacy_name: 'central_admin')
     ].freeze
 
     SUPPORT = find_by!(name: 'support')
     CHAT = find_by!(name: 'chat')
     STANDALONE_CHAT = find_by!(name: 'standalone_chat')
     SELL = find_by!(name: 'sell')
+    CENTRAL_ADMIN = find_by!(name: 'central_admin')
   end
 end
