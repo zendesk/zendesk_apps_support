@@ -6,7 +6,7 @@ module ZendeskAppsSupport
       class << self
         def call(package)
           if app_doesnt_require_source?(package.manifest) && contain_source_files?(package)
-            ValidationError.new(:no_code_for_ifo_notemplate)
+            ValidationError.new(:no_source_required_apps)
           end
         end
 

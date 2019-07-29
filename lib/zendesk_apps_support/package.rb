@@ -39,6 +39,9 @@ module ZendeskAppsSupport
         errors << Validations::Requirements.call(self)
         errors << Validations::Requests.call(self)
 
+        # only adds warnings
+        Validations::SecureSettings.call(self)
+
         unless manifest.requirements_only? || manifest.marketing_only? || manifest.iframe_only?
           errors << Validations::Templates.call(self)
           errors << Validations::Stylesheets.call(self)
@@ -49,7 +52,7 @@ module ZendeskAppsSupport
       errors << Validations::Svg.call(self) if has_svgs?
       errors << Validations::Mime.call(self)
 
-      # warning only validators
+      # only adds warnings
       Validations::Secrets.call(self)
 
       errors.flatten.compact
