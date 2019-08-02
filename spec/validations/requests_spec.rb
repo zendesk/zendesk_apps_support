@@ -30,24 +30,38 @@ describe ZendeskAppsSupport::Validations::Requests do
   end
 
   context 'IPs check' do
+    let(:validation_error_class) { ZendeskAppsSupport::Validations::ValidationError }
+    define_method(:script_containing_ip) { |ip_address_type| "client.request(\"#{ip_address_type}\");\r\n\t" }
+
+    after { subject.call(package) }
+
     it 'returns no validation error when scanning regular IP' do
-      allow(app_file).to receive(:read) { "client.instance(\"64.233.191.255\");\r\n\t" }
-      expect(subject.call(package).flatten).to be_empty
+      allow(app_file).to receive(:read) { script_containing_ip('64.233.191.255') }
+      expect(validation_error_class).to_not receive(:new)
     end
 
     it 'returns a validation error when scanning private IP' do
-      allow(app_file).to receive(:read) { "//var x = '192.168.0.1'\r\n \tclient.get(x)" }
-      expect(subject.call(package).flatten[0]).to include('request to a private ip 192.168.0.1')
+      private_ip = '192.168.0.1'
+      allow(app_file).to receive(:read) { script_containing_ip(private_ip) }
+      expect(validation_error_class)
+        .to receive(:new)
+        .with(:blocked_request, type: 'private', uri: private_ip, file: app_file.relative_path)
     end
 
     it 'returns a validation error when scanning loopback IP' do
-      allow(app_file).to receive(:read) { "//var x = '127.0.0.1'\r\n \tclient.get(x)" }
-      expect(subject.call(package).flatten[0]).to include('request to a loopback ip 127.0.0.1')
+      loopback_ip = '127.0.0.1'
+      allow(app_file).to receive(:read) { script_containing_ip(loopback_ip) }
+      expect(validation_error_class)
+        .to receive(:new)
+        .with(:blocked_request, type: 'loopback', uri: loopback_ip, file: app_file.relative_path)
     end
 
     it 'returns a validation error when scanning link_local IP' do
-      allow(app_file).to receive(:read) { "//var x = '169.254.0.1'\r\n \tclient.get(x)" }
-      expect(subject.call(package).flatten[0]).to include('request to a link-local ip 169.254.0.1')
+      link_local_ip = '169.254.0.1'
+      allow(app_file).to receive(:read) { script_containing_ip(link_local_ip) }
+      expect(validation_error_class)
+        .to receive(:new)
+        .with(:blocked_request, type: 'link-local', uri: link_local_ip, file: app_file.relative_path)
     end
   end
 end
