@@ -41,8 +41,8 @@ module ZendeskAppsSupport
             blocked_type = blocked_ip_type(ip_address)
             next unless blocked_type
 
-            error_messages << I18n.t(
-              'txt.apps.admin.error.app_build.blocked_request',
+            error_messages << ValidationError.new(
+              :blocked_request,
               type: blocked_type,
               uri:  ip_address,
               file: file_path
