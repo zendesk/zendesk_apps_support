@@ -7,7 +7,8 @@ module ZendeskAppsSupport
   module Validations
     module Requests
       class << self
-        IP_ADDRESS = /\b(?:(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\.){3}(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\b/
+        IP_ADDRESS =
+          /\b(?:(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\.){3}(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\b/
 
         def call(package)
           errors = []

@@ -40,6 +40,11 @@ describe ZendeskAppsSupport::Validations::Requests do
       expect(validation_error_class).to_not receive(:new)
     end
 
+    it 'returns no validation error when scanning invalid IP' do
+      allow(app_file).to receive(:read) { script_containing_ip('128.664.299.002') }
+      expect(validation_error_class).to_not receive(:new)
+    end
+
     it 'returns a validation error when scanning private IP' do
       private_ip = '192.168.0.1'
       allow(app_file).to receive(:read) { script_containing_ip(private_ip) }
