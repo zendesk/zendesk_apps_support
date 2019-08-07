@@ -60,7 +60,8 @@ module ZendeskAppsSupport
                                          secret_type: secret_type)
             end
 
-            file.relative_path if contents =~ Regexp.union(SECRET_KEYWORDS)
+            match = Regexp.union(SECRET_KEYWORDS).match(contents)
+            "#{file.relative_path} ('#{match[0]}...')" if match
           end.compact
 
           return unless compromised_files.any?
