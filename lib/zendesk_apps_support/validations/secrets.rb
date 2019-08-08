@@ -4,8 +4,8 @@ module ZendeskAppsSupport
   module Validations
     module Secrets
       SECRET_KEYWORDS = %w[
-        pass password secret secretToken secret_token auth_key
-        authKey auth_pass authPass auth_user AuthUser username api_key
+        password secret secretToken secret_token auth_key
+        authKey auth_pass authPass auth_user AuthUser api_key
       ].freeze
 
       APPLICATION_SECRETS = {
@@ -60,7 +60,8 @@ module ZendeskAppsSupport
                                          secret_type: secret_type)
             end
 
-            file.relative_path if contents =~ Regexp.union(SECRET_KEYWORDS)
+            match = Regexp.union(SECRET_KEYWORDS).match(contents)
+            "#{file.relative_path} ('#{match[0]}...')" if match
           end.compact
 
           return unless compromised_files.any?

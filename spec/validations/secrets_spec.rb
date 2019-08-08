@@ -22,7 +22,7 @@ describe ZendeskAppsSupport::Validations::Secrets do
     it 'raises an appropriate generic secret warning' do
       subject.call(package)
       expect(package.warnings.length).to eq(1)
-      expect(package.warnings[0]).to include('secrets found', 'manifest.json')
+      expect(package.warnings[0]).to include('secrets found', 'manifest.json', 'api_key')
     end
   end
 
@@ -32,7 +32,7 @@ describe ZendeskAppsSupport::Validations::Secrets do
     it 'raise a single generic grouped warning' do
       subject.call(package)
       expect(package.warnings.length).to eq(1)
-      expect(package.warnings[0]).to include('secrets found', 'manifest.json', 'assets/iframe.html')
+      expect(package.warnings[0]).to include('secrets found', 'manifest.json', 'assets/iframe.html', 'api_key')
     end
   end
 
