@@ -59,6 +59,8 @@ module ZendeskAppsSupport
             end
 
           block_type && I18n.t("txt.apps.admin.error.app_build.blocked_request_#{block_type}")
+        rescue ArgumentError
+          nil # Ignore numbers which are not an IP address
         end
 
         def find_address_containing_http(file_content)
