@@ -11,7 +11,16 @@ with( ZendeskApps.AppScope.create() ) {
   };
   <% end %>
 
-  var source = <%= source %>;
+  var source = {
+    events: {
+      'app.created': 'noMoreV1Apps'
+    },
+
+    noMoreV1Apps: function() {
+      this.switchTo('noMoreV1Apps');
+    }
+
+  };
 }
 <% end %>
 var app = ZendeskApps.defineApp(<%= iframe_only ? 'null' : 'source' %>)
@@ -29,7 +38,7 @@ var app = ZendeskApps.defineApp(<%= iframe_only ? 'null' : 'source' %>)
     },
     <% unless iframe_only %>
     translations: <%= translations.to_json %>,
-    templates: <%= templates.to_json %>,
+    templates: {"noMoreV1Apps":"No more v1 app message", "layout":"<header><span class="logo"/><h3>{{setting "name"}}</h3></header><section data-main/>"},
     <% end %>
     frameworkVersion: <%= framework_version.to_json %>
   });
