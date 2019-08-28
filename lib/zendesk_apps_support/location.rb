@@ -51,11 +51,15 @@ module ZendeskAppsSupport
       Location.new(id: 14, name: 'background',
                    product_code: Product::CHAT.code),
       Location.new(id: 15, name: 'deal_card', product_code: Product::SELL.code, collapsible: true),
-      Location.new(id: 16, name: 'contact_card', product_code: Product::SELL.code, collapsible: true),
-      Location.new(id: 17, name: 'lead_card', product_code: Product::SELL.code, collapsible: true),
-      Location.new(id: 18, name: 'background', product_code: Product::SELL.code),
-      Location.new(id: 19, name: 'modal', product_code: Product::SELL.code),
-      Location.new(id: 20, name: 'dashboard', product_code: Product::SELL.code)
+      Location.new(id: 16, name: 'person_card', product_code: Product::SELL.code, collapsible: true),
+      Location.new(id: 17, name: 'company_card', product_code: Product::SELL.code, collapsible: true),
+      Location.new(id: 18, name: 'lead_card', product_code: Product::SELL.code, collapsible: true),
+      Location.new(id: 19, name: 'background', product_code: Product::SELL.code),
+      Location.new(id: 20, name: 'modal', product_code: Product::SELL.code),
+      Location.new(id: 21, name: 'dashboard', product_code: Product::SELL.code),
+      Location.new(id: 22, name: 'note_editor', product_code: Product::SELL.code),
+      Location.new(id: 23, name: 'call_log_editor', product_code: Product::SELL.code),
+      Location.new(id: 24, name: 'email_editor', product_code: Product::SELL.code)
     ].freeze
   end
 end
