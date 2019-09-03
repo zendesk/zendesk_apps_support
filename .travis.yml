@@ -11,6 +11,9 @@ branches:
   only: [master]
 env:
   - COMMAND=rake
+before_install:
+  - gem update --system
+  - gem install bundler
 matrix:
   include:
     - rvm: 2.4.0
