@@ -9,10 +9,16 @@ This repo is owned and maintained by the Zendesk Apps team. You can reach us on 
 ## Getting Started
 When you want to help **develop** this tool, you will need to clone this repo.
 
+Since ZAS is used in ZAT, which supports Ruby 2.1, the Bundler Gem Version 1.17.3 is required for bundling dependencies. If you are working with a version that is higher than `1.17.3`, you will need to downgrade it.
+```
+  $ gem install bundler --version 1.17.3
+  $ bundle install
+```
+
 Very likely you want to try out your changes with the use of ZAT. See [ZAT](https://github.com/zendesk/zendesk_apps_tools/) for how to get ZAT/ZAS in development.
 
 ## Testing
-This project uses rspec, which can be run with `bundle exec rake`.
+This project uses Rspec, which can be run with `bundle exec rake`.
 
 ## Contribute
 * Put up a PR into the master branch.

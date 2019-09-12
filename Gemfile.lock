@@ -84,6 +84,7 @@ PLATFORMS
 
 DEPENDENCIES
   bump (~> 0.5.1)
+  bundler (= 1.17.3)
   byebug (~> 9.0.6)
   faker (~> 1.6.6)
   rspec (~> 3.4.0)
@@ -91,4 +92,4 @@ DEPENDENCIES
   zendesk_apps_support!
 
 BUNDLED WITH
-   2.0.1
+   1.17.3
