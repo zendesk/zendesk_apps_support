@@ -202,6 +202,13 @@ module ZendeskAppsSupport
             validate_boolean(parameter.secure, "parameters.#{parameter.name}.secure")
           end.compact
           return invalid_secure if invalid_secure.any?
+
+          (manifest.original_parameters || []).each do |parameter|
+            updated_parameter = manifest.parameters.find { |p| p.name == parameter.name }
+            if updated_parameter.secure != parameter.secure
+              return ValidationError.new(:invalid_parameter_secure_update, name: parameter.name)
+            end
+          end
         end
 
         def missing_keys_error(manifest)
