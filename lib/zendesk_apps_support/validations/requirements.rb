@@ -26,7 +26,7 @@ module ZendeskAppsSupport
             errors << excessive_requirements(requirements)
             errors << invalid_channel_integrations(requirements)
             errors << invalid_custom_fields(requirements)
-            errors << invalid_custom_resources_schema(requirements)
+            errors << invalid_custom_objects(requirements)
             errors << missing_required_fields(requirements)
             errors.flatten!
             errors.compact!
@@ -44,7 +44,7 @@ module ZendeskAppsSupport
         def missing_required_fields(requirements)
           [].tap do |errors|
             requirements.each do |requirement_type, requirement|
-              next if %w[channel_integrations custom_resources_schema].include? requirement_type
+              next if %w[channel_integrations custom_objects].include? requirement_type
               requirement.each do |identifier, fields|
                 next if fields.include? 'title'
                 errors << ValidationError.new(:missing_required_fields,
@@ -92,23 +92,22 @@ module ZendeskAppsSupport
           end
         end
 
-        def invalid_custom_resources_schema(requirements)
-          custom_resources_schema = requirements['custom_resources_schema']
-          return unless custom_resources_schema
-          valid_schema_keys = %w[resource_types relationship_types]
-          [].tap do |errors|
-            invalid_keys = custom_resources_schema.keys - valid_schema_keys
-            unless invalid_keys.empty?
-              errors << ValidationError.new(:invalid_cr_schema_keys,
-                                            invalid_keys: invalid_keys.join(', '),
-                                            count: invalid_keys.length)
-            end
+        def invalid_custom_objects(requirements)
+          custom_objects = requirements['custom_objects']
+          return unless custom_objects
 
-            valid_schema_keys.each do |required_key|
-              next if custom_resources_schema.keys.include? required_key
-              errors << ValidationError.new(:missing_required_fields,
-                                            field: required_key,
-                                            identifier: 'custom_resources_schema')
+          valid_schema = {
+            'custom_object_types' => ['key', 'schema'],
+            'custom_object_relationship_types' => ['key', 'source', 'target']
+          }
+
+          [].tap do |errors|
+            validate_custom_objects_keys(custom_objects.keys, valid_schema.keys, 'custom_objects', errors)
+
+            valid_schema.keys.each do |requirement_type|
+              (custom_objects[requirement_type] || []).each do |requirement|
+                validate_custom_objects_keys(requirement.keys, valid_schema[requirement_type], requirement_type, errors)
+              end
             end
           end
         end
@@ -119,6 +118,23 @@ module ZendeskAppsSupport
             ValidationError.new(:invalid_requirements_types,
                                 invalid_types: invalid_types.join(', '),
                                 count: invalid_types.length)
+          end
+        end
+
+        private
+
+        def validate_custom_objects_keys(keys, expected_keys, identifier, errors=[])
+          invalid_keys = keys - expected_keys
+          unless invalid_keys.empty?
+            errors << ValidationError.new(:invalid_cr_schema_keys, # TODO: update error translations
+                                          invalid_keys: invalid_keys.join(', '),
+                                          count: invalid_keys.length)
+          end
+          missing_keys = expected_keys - keys
+          missing_keys.each do |key|
+            errors << ValidationError.new(:missing_required_fields,
+                                          field: key,
+                                          identifier: identifier)
           end
         end
       end
