@@ -201,9 +201,10 @@ describe ZendeskAppsSupport::Validations::Requirements do
           'custom_objects' => {
             'custom_object_types' => [
               'key' => 'foo',
-              'schema' => {},
+              'schema' => {}
             ],
-            'custom_object_relationship_types' => [] }
+            'custom_object_relationship_types' => []
+          }
         )
       end
 
@@ -229,7 +230,10 @@ describe ZendeskAppsSupport::Validations::Requirements do
       let(:requirements_string) do
         JSON.generate(
           'custom_objects' => {
-            'custom_object_types' => [], 'custom_object_relationship_types' => [], 'resources' => [], 'relationships' => []
+            'custom_object_types' => [],
+            'custom_object_relationship_types' => [],
+            'resources' => [],
+            'relationships' => []
           }
         )
       end

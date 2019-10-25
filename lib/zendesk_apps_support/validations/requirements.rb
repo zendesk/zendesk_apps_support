@@ -97,8 +97,8 @@ module ZendeskAppsSupport
           return unless custom_objects
 
           valid_schema = {
-            'custom_object_types' => ['key', 'schema'],
-            'custom_object_relationship_types' => ['key', 'source', 'target']
+            'custom_object_types' => %w[key schema],
+            'custom_object_relationship_types' => %w[key source target]
           }
 
           [].tap do |errors|
@@ -121,9 +121,7 @@ module ZendeskAppsSupport
           end
         end
 
-        private
-
-        def validate_custom_objects_keys(keys, expected_keys, identifier, errors=[])
+        def validate_custom_objects_keys(keys, expected_keys, identifier, errors = [])
           invalid_keys = keys - expected_keys
           unless invalid_keys.empty?
             errors << ValidationError.new(:invalid_cr_schema_keys, # TODO: update error translations
