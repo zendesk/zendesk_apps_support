@@ -140,10 +140,22 @@ parts:
       title: "App builder job: custom resources schema contains invalid key error"
       value: "Custom resources schema contains an invalid key: %{invalid_keys}"
       screenshot: "https://drive.google.com/open?id=1-CHVDcmr5mf1DKKeWqiOuGWrW25gDY4y"
+      obsolete: "2020-01-01"
   - translation:
       key: "txt.apps.admin.error.app_build.invalid_cr_schema_keys.other"
       title: "App builder job: custom resources schema contains invalid keys error"
       value: "Custom resources schema contains invalid keys: %{invalid_keys}"
+      screenshot: "https://drive.google.com/open?id=1iEx7f7PYnum_qDQESD3Gz2PwLDza3zI0"
+      obsolete: "2020-01-01"
+  - translation:
+      key: "txt.apps.admin.error.app_build.invalid_custom_objects_schema_keys.one"
+      title: "App builder job: custom objects schema contains invalid key error"
+      value: "Custom objects schema contains an invalid key: %{invalid_keys}"
+      screenshot: "https://drive.google.com/open?id=1-CHVDcmr5mf1DKKeWqiOuGWrW25gDY4y"
+  - translation:
+      key: "txt.apps.admin.error.app_build.invalid_custom_objects_schema_keys.other"
+      title: "App builder job: custom objects schema contains invalid keys error"
+      value: "Custom objects schema contains invalid keys: %{invalid_keys}"
       screenshot: "https://drive.google.com/open?id=1iEx7f7PYnum_qDQESD3Gz2PwLDza3zI0"
   - translation:
       key: "txt.apps.admin.error.app_build.banner.invalid_format"
