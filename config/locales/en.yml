@@ -62,6 +62,9 @@ en:
             invalid_cr_schema_keys:
               one: 'Custom resources schema contains an invalid key: %{invalid_keys}'
               other: 'Custom resources schema contains invalid keys: %{invalid_keys}'
+            invalid_custom_objects_schema_keys:
+              one: 'Custom objects schema contains an invalid key: %{invalid_keys}'
+              other: 'Custom objects schema contains invalid keys: %{invalid_keys}'
             banner:
               invalid_format: Banner image must be a PNG file.
               invalid_size: Invalid banner image dimensions. Must be %{required_banner_width}x%{required_banner_height}px.
