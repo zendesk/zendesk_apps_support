@@ -103,7 +103,7 @@ parts:
       value: "The requirements.json file contains too many requirements. The current limit is %{max} requirements. This app has %{count} requirements."
   - translation:
       key: "txt.apps.admin.error.app_build.excessive_custom_objects_requirements"
-      title: "App builder job: requirements file contains too many custom objects requirements"
+      title: "App builder job: requirements file contains too many custom objects requirements. Leave requirements.json as is (do not localize)"
       value: "The requirements.json file contains too many custom objects requirements. The current limit is %{max} requirements. This app has %{count} requirements."
   - translation:
       key: "txt.apps.admin.error.app_build.missing_required_fields"
