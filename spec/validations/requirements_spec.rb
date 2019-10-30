@@ -81,6 +81,35 @@ describe ZendeskAppsSupport::Validations::Requirements do
     end
   end
 
+  context 'there are more than 10 custom objects requirements' do
+    let(:requirements_string) do
+      requirements_content = {
+        custom_objects: {
+          custom_object_types: [],
+          custom_object_relationships: []
+        }
+      }
+      5.times do
+        requirements_content[:custom_objects][:custom_object_types] << {
+          key: 'foo',
+          schema: {}
+        }
+      end
+      6.times do
+        requirements_content[:custom_objects][:custom_object_relationships] << {
+          key: 'foo',
+          source: 'bar',
+          target: 'baz'
+        }
+      end
+      JSON.generate(requirements_content)
+    end
+
+    it 'creates an error' do
+      expect(errors.first.key).to eq(:excessive_custom_objects_requirements)
+    end
+  end
+
   context 'a requirement field missing a "key"' do
     let(:requirements_string) { JSON.generate('targets' => { 'abc' => {} }) }
 

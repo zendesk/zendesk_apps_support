@@ -4,6 +4,7 @@ module ZendeskAppsSupport
   module Validations
     module Requirements
       MAX_REQUIREMENTS = 5000
+      MAX_CUSTOM_OBJECTS_REQUIREMENTS = 10
 
       class << self
         def call(package)
@@ -24,6 +25,7 @@ module ZendeskAppsSupport
           [].tap do |errors|
             errors << invalid_requirements_types(requirements)
             errors << excessive_requirements(requirements)
+            errors << excessive_custom_objects_requirements(requirements)
             errors << invalid_channel_integrations(requirements)
             errors << invalid_custom_fields(requirements)
             errors << invalid_custom_objects(requirements)
@@ -60,6 +62,16 @@ module ZendeskAppsSupport
             req.is_a?(Hash) ? req.values : req
           end.flatten.size
           ValidationError.new(:excessive_requirements, max: MAX_REQUIREMENTS, count: count) if count > MAX_REQUIREMENTS
+        end
+
+        def excessive_custom_objects_requirements(requirements)
+          custom_objects = requirements['custom_objects']
+          return if custom_objects.nil?
+          count = custom_objects.values.flatten.size
+          if count > MAX_CUSTOM_OBJECTS_REQUIREMENTS
+            ValidationError.new(:excessive_custom_objects_requirements, max: MAX_CUSTOM_OBJECTS_REQUIREMENTS,
+                                                                        count: count)
+          end
         end
 
         def invalid_custom_fields(requirements)
