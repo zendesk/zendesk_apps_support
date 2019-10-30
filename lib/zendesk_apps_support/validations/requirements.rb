@@ -126,7 +126,7 @@ module ZendeskAppsSupport
         def validate_custom_objects_keys(keys, expected_keys, identifier, errors = [])
           invalid_keys = keys - expected_keys
           unless invalid_keys.empty?
-            errors << ValidationError.new(:invalid_cr_schema_keys, # TODO: update error translations
+            errors << ValidationError.new(:invalid_custom_objects_schema_keys,
                                           invalid_keys: invalid_keys.join(', '),
                                           count: invalid_keys.length)
           end

@@ -239,7 +239,7 @@ describe ZendeskAppsSupport::Validations::Requirements do
       end
 
       it 'creates an error' do
-        expect(errors.first.key).to eq(:invalid_cr_schema_keys)
+        expect(errors.first.key).to eq(:invalid_custom_objects_schema_keys)
         expect(errors.first.data).to eq(invalid_keys: 'resources, relationships', count: 2)
       end
     end
