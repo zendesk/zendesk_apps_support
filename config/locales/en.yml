@@ -46,6 +46,9 @@ en:
             requirements_not_json: requirements.json is not proper JSON. %{errors}
             excessive_requirements: The requirements.json file contains too many requirements.
               The current limit is %{max} requirements. This app has %{count} requirements.
+            excessive_custom_objects_requirements: The requirements.json file contains
+              too many custom objects requirements. The current limit is %{max} requirements.
+              This app has %{count} requirements.
             missing_required_fields: 'Missing required fields in requirements.json:
               "%{field}" is required in "%{identifier}"'
             duplicate_requirements:
