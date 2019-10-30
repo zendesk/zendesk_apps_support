@@ -46,7 +46,7 @@ module ZendeskAppsSupport
             requirements.each do |requirement_type, requirement|
               next if %w[channel_integrations custom_objects].include? requirement_type
               requirement.each do |identifier, fields|
-                next if fields.include? 'title'
+                next if fields.nil? || fields.include?('title')
                 errors << ValidationError.new(:missing_required_fields,
                                               field: 'title',
                                               identifier: identifier)
@@ -56,7 +56,9 @@ module ZendeskAppsSupport
         end
 
         def excessive_requirements(requirements)
-          count = requirements.values.map(&:values).flatten.size
+          count = requirements.values.map do |req|
+            req.is_a?(Hash) ? req.values : req
+          end.flatten.size
           ValidationError.new(:excessive_requirements, max: MAX_REQUIREMENTS, count: count) if count > MAX_REQUIREMENTS
         end
 
