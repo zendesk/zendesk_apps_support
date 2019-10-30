@@ -105,6 +105,7 @@ parts:
       key: "txt.apps.admin.error.app_build.excessive_custom_objects_requirements"
       title: "App builder job: requirements file contains too many custom objects requirements. Leave requirements.json as is (do not localize)"
       value: "The requirements.json file contains too many custom objects requirements. The current limit is %{max} requirements. This app has %{count} requirements."
+      screenshot: "https://drive.google.com/open?id=18yac8rV7kMe5qm49ERVFVCA7WOZl8vcP"
   - translation:
       key: "txt.apps.admin.error.app_build.missing_required_fields"
       title: "App builder job: required key missing in requirements, e.g. \"title\" is required in \"my_custom_email_target\""
