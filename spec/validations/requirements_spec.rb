@@ -89,13 +89,13 @@ describe ZendeskAppsSupport::Validations::Requirements do
           custom_object_relationships: []
         }
       }
-      5.times do
+      25.times do
         requirements_content[:custom_objects][:custom_object_types] << {
           key: 'foo',
           schema: {}
         }
       end
-      6.times do
+      26.times do
         requirements_content[:custom_objects][:custom_object_relationships] << {
           key: 'foo',
           source: 'bar',
