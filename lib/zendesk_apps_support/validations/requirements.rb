@@ -136,12 +136,6 @@ module ZendeskAppsSupport
         end
 
         def validate_custom_objects_keys(keys, expected_keys, identifier, errors = [])
-          invalid_keys = keys - expected_keys
-          unless invalid_keys.empty?
-            errors << ValidationError.new(:invalid_custom_objects_schema_keys,
-                                          invalid_keys: invalid_keys.join(', '),
-                                          count: invalid_keys.length)
-          end
           missing_keys = expected_keys - keys
           missing_keys.each do |key|
             errors << ValidationError.new(:missing_required_fields,

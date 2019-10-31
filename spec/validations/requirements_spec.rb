@@ -255,24 +255,6 @@ describe ZendeskAppsSupport::Validations::Requirements do
       end
     end
 
-    context 'a custom objects schema contains invalid keys' do
-      let(:requirements_string) do
-        JSON.generate(
-          'custom_objects' => {
-            'custom_object_types' => [],
-            'custom_object_relationship_types' => [],
-            'resources' => [],
-            'relationships' => []
-          }
-        )
-      end
-
-      it 'creates an error' do
-        expect(errors.first.key).to eq(:invalid_custom_objects_schema_keys)
-        expect(errors.first.data).to eq(invalid_keys: 'resources, relationships', count: 2)
-      end
-    end
-
     context 'a custom objects schema is missing custom_object_types' do
       let(:requirements_string) { JSON.generate('custom_objects' => { 'custom_object_relationship_types' => [] }) }
 
