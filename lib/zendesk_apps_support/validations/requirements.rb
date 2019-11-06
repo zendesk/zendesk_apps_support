@@ -66,7 +66,8 @@ module ZendeskAppsSupport
 
         def excessive_custom_objects_requirements(requirements)
           custom_objects = requirements['custom_objects']
-          return if custom_objects.nil?
+          return unless custom_objects
+
           count = custom_objects.values.flatten.size
           if count > MAX_CUSTOM_OBJECTS_REQUIREMENTS
             ValidationError.new(:excessive_custom_objects_requirements, max: MAX_CUSTOM_OBJECTS_REQUIREMENTS,
