@@ -109,7 +109,7 @@ module ZendeskAppsSupport
 
         def invalid_custom_objects(requirements)
           custom_objects = requirements['custom_objects']
-          return unless custom_objects
+          return if custom_objects.nil?
 
           valid_schema = {
             'custom_object_types' => %w[key schema],
