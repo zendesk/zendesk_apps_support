@@ -12,6 +12,15 @@ module ZendeskAppsSupport
       @installations = installations
     end
 
+    def obj(options = {})
+      {
+        apps: @appsjs,
+        installation_orders: options.fetch(:installation_orders, {}),
+        installations: @installations,
+        rollbar_zaf_access_token: options.fetch(:rollbar_zaf_access_token, '')
+      }
+    end
+
     def compile(options = {})
       INSTALLED_TEMPLATE.result(
         appsjs: @appsjs,

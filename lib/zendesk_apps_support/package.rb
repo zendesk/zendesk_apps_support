@@ -121,6 +121,37 @@ module ZendeskAppsSupport
       files.select { |f| f =~ %r{^translations/} }
     end
 
+    def obj(options)
+      begin
+        app_id = options.fetch(:app_id)
+        asset_url_prefix = options.fetch(:assets_dir)
+        name = options.fetch(:app_name)
+      rescue KeyError => e
+        raise ArgumentError, e.message
+      end
+
+      locale = options.fetch(:locale, 'en')
+
+      source = manifest.iframe_only? ? nil : app_js
+      app_class_name = "app-#{app_id}"
+      # if no_template is an array, we still need the templates
+      templates = manifest.no_template == true ? {} : compiled_templates(app_id, asset_url_prefix)
+
+      {
+        app_class_name: app_class_name,
+        app_class_properties: manifest.app_class_properties,
+        asset_url_prefix: asset_url_prefix,
+        author: manifest.author,
+        framework_version: manifest.framework_version,
+        id: app_id,
+        iframe_only: manifest.iframe_only?,
+        location_icons: location_icons,
+        logo_asset_hash: generate_logo_hash(manifest.products),
+        name: name,
+        version: manifest.version
+      }
+    end
+
     # this is not really compile_js, it compiles the whole app including scss for v1 apps
     def compile(options)
       begin
