@@ -267,9 +267,8 @@ describe ZendeskAppsSupport::Validations::Requirements do
     context 'a custom objects schema is missing custom_object_relationship_types' do
       let(:requirements_string) { JSON.generate('custom_objects' => { 'custom_object_types' => [] }) }
 
-      it 'creates an error' do
-        expect(errors.first.key).to eq(:missing_required_fields)
-        expect(errors.first.data).to eq(field: 'custom_object_relationship_types', identifier: 'custom_objects')
+      it 'does not create an error' do
+        expect(errors).to be_empty
       end
     end
   end

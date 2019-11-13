@@ -111,13 +111,17 @@ module ZendeskAppsSupport
           custom_objects = requirements['custom_objects']
           return if custom_objects.nil?
 
-          valid_schema = {
-            'custom_object_types' => %w[key schema],
-            'custom_object_relationship_types' => %w[key source target]
-          }
-
           [].tap do |errors|
-            validate_custom_objects_keys(custom_objects.keys, valid_schema.keys, 'custom_objects', errors)
+            unless custom_objects.key?('custom_object_types')
+              errors << ValidationError.new(:missing_required_fields,
+                                            field: 'custom_object_types',
+                                            identifier: 'custom_objects')
+            end
+
+            valid_schema = {
+              'custom_object_types' => %w[key schema],
+              'custom_object_relationship_types' => %w[key source target]
+            }
 
             valid_schema.keys.each do |requirement_type|
               (custom_objects[requirement_type] || []).each do |requirement|
