@@ -4,6 +4,7 @@ module ZendeskAppsSupport
   module Validations
     module Requirements
       MAX_REQUIREMENTS = 5000
+      MAX_CUSTOM_OBJECTS_REQUIREMENTS = 50
 
       class << self
         def call(package)
@@ -24,9 +25,10 @@ module ZendeskAppsSupport
           [].tap do |errors|
             errors << invalid_requirements_types(requirements)
             errors << excessive_requirements(requirements)
+            errors << excessive_custom_objects_requirements(requirements)
             errors << invalid_channel_integrations(requirements)
             errors << invalid_custom_fields(requirements)
-            errors << invalid_custom_resources_schema(requirements)
+            errors << invalid_custom_objects(requirements)
             errors << missing_required_fields(requirements)
             errors.flatten!
             errors.compact!
@@ -44,9 +46,9 @@ module ZendeskAppsSupport
         def missing_required_fields(requirements)
           [].tap do |errors|
             requirements.each do |requirement_type, requirement|
-              next if %w[channel_integrations custom_resources_schema].include? requirement_type
+              next if %w[channel_integrations custom_objects].include? requirement_type
               requirement.each do |identifier, fields|
-                next if fields.include? 'title'
+                next if fields.nil? || fields.include?('title')
                 errors << ValidationError.new(:missing_required_fields,
                                               field: 'title',
                                               identifier: identifier)
@@ -56,8 +58,21 @@ module ZendeskAppsSupport
         end
 
         def excessive_requirements(requirements)
-          count = requirements.values.map(&:values).flatten.size
+          count = requirements.values.map do |req|
+            req.is_a?(Hash) ? req.values : req
+          end.flatten.size
           ValidationError.new(:excessive_requirements, max: MAX_REQUIREMENTS, count: count) if count > MAX_REQUIREMENTS
+        end
+
+        def excessive_custom_objects_requirements(requirements)
+          custom_objects = requirements['custom_objects']
+          return unless custom_objects
+
+          count = custom_objects.values.flatten.size
+          if count > MAX_CUSTOM_OBJECTS_REQUIREMENTS
+            ValidationError.new(:excessive_custom_objects_requirements, max: MAX_CUSTOM_OBJECTS_REQUIREMENTS,
+                                                                        count: count)
+          end
         end
 
         def invalid_custom_fields(requirements)
@@ -92,23 +107,26 @@ module ZendeskAppsSupport
           end
         end
 
-        def invalid_custom_resources_schema(requirements)
-          custom_resources_schema = requirements['custom_resources_schema']
-          return unless custom_resources_schema
-          valid_schema_keys = %w[resource_types relationship_types]
+        def invalid_custom_objects(requirements)
+          custom_objects = requirements['custom_objects']
+          return if custom_objects.nil?
+
           [].tap do |errors|
-            invalid_keys = custom_resources_schema.keys - valid_schema_keys
-            unless invalid_keys.empty?
-              errors << ValidationError.new(:invalid_cr_schema_keys,
-                                            invalid_keys: invalid_keys.join(', '),
-                                            count: invalid_keys.length)
+            unless custom_objects.key?('custom_object_types')
+              errors << ValidationError.new(:missing_required_fields,
+                                            field: 'custom_object_types',
+                                            identifier: 'custom_objects')
             end
 
-            valid_schema_keys.each do |required_key|
-              next if custom_resources_schema.keys.include? required_key
-              errors << ValidationError.new(:missing_required_fields,
-                                            field: required_key,
-                                            identifier: 'custom_resources_schema')
+            valid_schema = {
+              'custom_object_types' => %w[key schema],
+              'custom_object_relationship_types' => %w[key source target]
+            }
+
+            valid_schema.keys.each do |requirement_type|
+              (custom_objects[requirement_type] || []).each do |requirement|
+                validate_custom_objects_keys(requirement.keys, valid_schema[requirement_type], requirement_type, errors)
+              end
             end
           end
         end
@@ -119,6 +137,15 @@ module ZendeskAppsSupport
             ValidationError.new(:invalid_requirements_types,
                                 invalid_types: invalid_types.join(', '),
                                 count: invalid_types.length)
+          end
+        end
+
+        def validate_custom_objects_keys(keys, expected_keys, identifier, errors = [])
+          missing_keys = expected_keys - keys
+          missing_keys.each do |key|
+            errors << ValidationError.new(:missing_required_fields,
+                                          field: key,
+                                          identifier: identifier)
           end
         end
       end

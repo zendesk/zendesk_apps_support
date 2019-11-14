@@ -36,7 +36,7 @@ Metrics/BlockLength:
   
 Metrics/ModuleLength:
   CountComments: false  # count full line comments?
-  Max: 130
+  Max: 200
 
 CommentAnnotation:
   Keywords:

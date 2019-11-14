@@ -81,6 +81,35 @@ describe ZendeskAppsSupport::Validations::Requirements do
     end
   end
 
+  context 'there are more than 10 custom objects requirements' do
+    let(:requirements_string) do
+      requirements_content = {
+        custom_objects: {
+          custom_object_types: [],
+          custom_object_relationships: []
+        }
+      }
+      25.times do
+        requirements_content[:custom_objects][:custom_object_types] << {
+          key: 'foo',
+          schema: {}
+        }
+      end
+      26.times do
+        requirements_content[:custom_objects][:custom_object_relationships] << {
+          key: 'foo',
+          source: 'bar',
+          target: 'baz'
+        }
+      end
+      JSON.generate(requirements_content)
+    end
+
+    it 'creates an error' do
+      expect(errors.first.key).to eq(:excessive_custom_objects_requirements)
+    end
+  end
+
   context 'a requirement field missing a "key"' do
     let(:requirements_string) { JSON.generate('targets' => { 'abc' => {} }) }
 
@@ -194,48 +223,53 @@ describe ZendeskAppsSupport::Validations::Requirements do
     end
   end
 
-  context 'there is a valid custom resources schema defined' do
-    let(:requirements_string) do
-      JSON.generate(
-        'custom_resources_schema' => { 'resource_types' => [], 'relationship_types' => [] }
-      )
+  context 'custom object requirements validations' do
+    context 'there is a valid custom objects schema defined' do
+      let(:requirements_string) do
+        JSON.generate(
+          'custom_objects' => {
+            'custom_object_types' => [
+              'key' => 'foo',
+              'schema' => {}
+            ],
+            'custom_object_relationship_types' => []
+          }
+        )
+      end
+
+      it 'does not return an error' do
+        expect(errors).to be_empty
+      end
     end
 
-    it 'does not return an error' do
-      expect(errors).to be_empty
+    context 'a custom objects schema contains invalid type-level keys' do
+      let(:requirements_string) do
+        JSON.generate(
+          'custom_objects' => { 'custom_object_types' => [{}], 'custom_object_relationship_types' => [] }
+        )
+      end
+
+      it 'creates an error' do
+        expect(errors.first.key).to eq(:missing_required_fields)
+        expect(errors.first.data).to eq(field: 'key', identifier: 'custom_object_types')
+      end
     end
-  end
 
-  context 'a custom resources schema contains invalid keys' do
-    let(:requirements_string) do
-      JSON.generate(
-        'custom_resources_schema' => {
-          'resource_types' => [], 'relationship_types' => [], 'resources' => [], 'relationships' => []
-        }
-      )
+    context 'a custom objects schema is missing custom_object_types' do
+      let(:requirements_string) { JSON.generate('custom_objects' => { 'custom_object_relationship_types' => [] }) }
+
+      it 'creates an error' do
+        expect(errors.first.key).to eq(:missing_required_fields)
+        expect(errors.first.data).to eq(field: 'custom_object_types', identifier: 'custom_objects')
+      end
     end
 
-    it 'creates an error' do
-      expect(errors.first.key).to eq(:invalid_cr_schema_keys)
-      expect(errors.first.data).to eq(invalid_keys: 'resources, relationships', count: 2)
-    end
-  end
+    context 'a custom objects schema is missing custom_object_relationship_types' do
+      let(:requirements_string) { JSON.generate('custom_objects' => { 'custom_object_types' => [] }) }
 
-  context 'a custom resources schema is missing resource_types' do
-    let(:requirements_string) { JSON.generate('custom_resources_schema' => { 'relationship_types' => [] }) }
-
-    it 'creates an error' do
-      expect(errors.first.key).to eq(:missing_required_fields)
-      expect(errors.first.data).to eq(field: 'resource_types', identifier: 'custom_resources_schema')
-    end
-  end
-
-  context 'a custom resources schema is missing relationship_types' do
-    let(:requirements_string) { JSON.generate('custom_resources_schema' => { 'resource_types' => [] }) }
-
-    it 'creates an error' do
-      expect(errors.first.key).to eq(:missing_required_fields)
-      expect(errors.first.data).to eq(field: 'relationship_types', identifier: 'custom_resources_schema')
+      it 'does not create an error' do
+        expect(errors).to be_empty
+      end
     end
   end
 end
