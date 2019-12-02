@@ -46,6 +46,7 @@ module ZendeskAppsSupport
             errors << parameters_error(manifest)
             errors << invalid_hidden_parameter_error(manifest)
             errors << invalid_type_error(manifest)
+            errors << too_many_oauth_parameters(manifest)
             errors << name_as_parameter_name_error(manifest)
           end
 
@@ -334,6 +335,16 @@ module ZendeskAppsSupport
             ValidationError.new(:invalid_type_parameter,
                                 invalid_types: invalid_types.join(', '),
                                 count: invalid_types.length)
+          end
+        end
+
+        def too_many_oauth_parameters(manifest)
+          oauth_parameters = manifest.parameters.select do |parameter|
+            parameter.type == "oauth"
+          end
+
+          if oauth_parameters.count > 1
+            ValidationError.new(:too_many_oauth_parameters)
           end
         end
 

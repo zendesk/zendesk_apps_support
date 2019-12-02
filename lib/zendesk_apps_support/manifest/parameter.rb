@@ -3,7 +3,7 @@
 module ZendeskAppsSupport
   class Manifest
     class Parameter
-      TYPES = %w[text password checkbox url number multiline hidden].freeze
+      TYPES = %w[text password checkbox url number multiline hidden oauth].freeze
       ATTRIBUTES = %i[name type required secure default].freeze
       attr_reader(*ATTRIBUTES)
       def default?
