@@ -13,6 +13,74 @@ describe ZendeskAppsSupport::Package do
     end
   end
 
+  describe 'has_custom_object_requirements?' do
+    it 'should return true when custom object types are present' do
+      requirements_hash = {
+        'custom_objects' => {
+          'custom_object_types' => [
+            {
+              'key' => 'product',
+              'schema' => { 'properties' => { 'id' => { 'type' => 'string' } } }
+            }
+          ]
+        }
+      }
+      expect(described_class.has_custom_object_requirements?(requirements_hash)).to be(true)
+    end
+
+    it 'should return true when custom object relationships are present' do
+      requirements_hash = {
+        'custom_objects' => {
+          'custom_object_relationship_types' => [
+            { 'key' => 'a', 'source' => 'b', 'target' => 'a' }
+          ]
+        }
+      }
+
+      expect(described_class.has_custom_object_requirements?(requirements_hash)).to be(true)
+    end
+
+    it 'should return false when custom object types are not present' do
+      requirements_hash = {
+        'custom_objects' => {
+          'custom_object_types' => []
+        }
+      }
+
+      expect(described_class.has_custom_object_requirements?(requirements_hash)).to be(false)
+    end
+
+    it 'should return false when custom object relationships are not present' do
+      requirements_hash = {
+        'custom_objects' => {
+          'custom_object_relationship_types' => []
+        }
+      }
+
+      expect(described_class.has_custom_object_requirements?(requirements_hash)).to be(false)
+    end
+
+    it 'should return false when custom requirements empty' do
+      requirements_hash = {
+        'custom_objects' => {}
+      }
+
+      expect(described_class.has_custom_object_requirements?(requirements_hash)).to be(false)
+    end
+
+    it 'should return false when custom requirements are not present' do
+      requirements_hash = {}
+
+      expect(described_class.has_custom_object_requirements?(requirements_hash)).to be(false)
+    end
+
+    it 'should return false when requirements are not present' do
+      requirements_hash = nil
+
+      expect(described_class.has_custom_object_requirements?(requirements_hash)).to be(false)
+    end
+  end
+
   describe 'files' do
     it 'should return all the files within the app folder excluding files in tmp folder' do
       files = %w[app.css app.js assets/logo-small.png assets/logo.png lib/a.js lib/a.txt
