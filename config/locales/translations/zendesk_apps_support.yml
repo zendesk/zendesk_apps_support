@@ -183,6 +183,11 @@ parts:
       title: "App builder job: missing oauth fields error"
       value: "Missing required oauth fields in manifest: %{missing_keys}"
   - translation:
+      key: "txt.apps.admin.error.app_build.too_many_oauth_parameters"
+      title: "App builder job: too_many_oauth_parameters"
+      value: "Too many parameters with type 'oauth': one permitted"
+      screenshot: "https://drive.google.com/file/d/1L3h2fmhJ_9HtYMG1nsinm2gcl-L28IN3/view"
+  - translation:
       key: "txt.apps.admin.error.app_build.missing_source"
       title: "App builder job: missing app.js error"
       value: "Could not find app.js"
