@@ -60,6 +60,35 @@ describe ZendeskAppsSupport::Package do
       expect(described_class.has_custom_object_requirements?(requirements_hash)).to be(false)
     end
 
+    it 'should return true when custom object types are present but relationships types are not defined' do
+      requirements_hash = {
+        'custom_objects' => {
+          'custom_object_types' => [
+            {
+              'key' => 'product',
+              'schema' => { 'properties' => { 'id' => { 'type' => 'string' } } }
+            }
+          ],
+          'custom_object_relationship_types' => []
+        }
+      }
+
+      expect(described_class.has_custom_object_requirements?(requirements_hash)).to be(true)
+    end
+
+    it 'should return true when custom object relationship types are present but custom object types are not defined' do
+      requirements_hash = {
+        'custom_objects' => {
+          'custom_object_types' => [],
+          'custom_object_relationship_types' => [
+            { 'key' => 'a', 'source' => 'b', 'target' => 'a' }
+          ]
+        }
+      }
+
+      expect(described_class.has_custom_object_requirements?(requirements_hash)).to be(true)
+    end
+
     it 'should return false when custom requirements empty' do
       requirements_hash = {
         'custom_objects' => {}
