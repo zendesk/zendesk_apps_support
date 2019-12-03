@@ -216,13 +216,13 @@ module ZendeskAppsSupport
     end
 
     def self.has_custom_object_requirements?(requirements_hash)
-      custom_objects = requirements_hash && requirements_hash[CUSTOM_OBJECTS_REQUIREMENT_KEY] || {}
-      types = custom_objects[CUSTOM_OBJECTS_REQUIREMENT_TYPE_KEY]
-      relationships = custom_objects[CUSTOM_OBJECTS_RELATIONSHIP_TYPE_KEY]
+      return false if requirements_hash.nil?
 
-      return true if types && types.any?
-      return true if relationships && relationships.any?
-      false
+      custom_object_requirements = requirements_hash.fetch(CUSTOM_OBJECTS_REQUIREMENT_KEY, {})
+      types = custom_object_requirements.fetch(CUSTOM_OBJECTS_REQUIREMENT_TYPE_KEY, [])
+      relationships = custom_object_requirements.fetch(CUSTOM_OBJECTS_RELATIONSHIP_TYPE_KEY, [])
+
+      (types | relationships).any?
     end
 
     def app_css
