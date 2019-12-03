@@ -220,7 +220,9 @@ module ZendeskAppsSupport
       types = custom_objects[CUSTOM_OBJECTS_REQUIREMENT_TYPE_KEY]
       relationships = custom_objects[CUSTOM_OBJECTS_RELATIONSHIP_TYPE_KEY]
 
-      (types && types.any?) || (relationships && relationships.any?)
+      return true if types && types.any?
+      return true if relationships && relationships.any?
+      false
     end
 
     def app_css
