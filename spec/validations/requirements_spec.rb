@@ -86,7 +86,7 @@ describe ZendeskAppsSupport::Validations::Requirements do
       requirements_content = {
         custom_objects: {
           custom_object_types: [],
-          custom_object_relationships: []
+          custom_object_relationship_types: []
         }
       }
       25.times do
@@ -96,7 +96,7 @@ describe ZendeskAppsSupport::Validations::Requirements do
         }
       end
       26.times do
-        requirements_content[:custom_objects][:custom_object_relationships] << {
+        requirements_content[:custom_objects][:custom_object_relationship_types] << {
           key: 'foo',
           source: 'bar',
           target: 'baz'
