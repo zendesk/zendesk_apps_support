@@ -130,12 +130,7 @@ module ZendeskAppsSupport
         raise ArgumentError, e.message
       end
 
-      locale = options.fetch(:locale, 'en')
-
-      source = manifest.iframe_only? ? nil : app_js
       app_class_name = "app-#{app_id}"
-      # if no_template is an array, we still need the templates
-      templates = manifest.no_template == true ? {} : compiled_templates(app_id, asset_url_prefix)
 
       {
         app_class_name: app_class_name,
@@ -144,7 +139,6 @@ module ZendeskAppsSupport
         author: manifest.author,
         framework_version: manifest.framework_version,
         id: app_id,
-        iframe_only: manifest.iframe_only?,
         location_icons: location_icons,
         logo_asset_hash: generate_logo_hash(manifest.products),
         name: name,
