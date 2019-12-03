@@ -65,7 +65,7 @@ module ZendeskAppsSupport
         end
 
         def excessive_custom_objects_requirements(requirements)
-          custom_objects = requirements['custom_objects']
+          custom_objects = requirements[AppRequirement::CUSTOM_OBJECTS_KEY]
           return unless custom_objects
 
           count = custom_objects.values.flatten.size
@@ -108,19 +108,19 @@ module ZendeskAppsSupport
         end
 
         def invalid_custom_objects(requirements)
-          custom_objects = requirements['custom_objects']
+          custom_objects = requirements[AppRequirement::CUSTOM_OBJECTS_KEY]
           return if custom_objects.nil?
 
           [].tap do |errors|
-            unless custom_objects.key?('custom_object_types')
+            unless custom_objects.key?(AppRequirement::CUSTOM_OBJECTS_TYPE_KEY)
               errors << ValidationError.new(:missing_required_fields,
-                                            field: 'custom_object_types',
-                                            identifier: 'custom_objects')
+                                            field: AppRequirement::CUSTOM_OBJECTS_TYPE_KEY,
+                                            identifier: AppRequirement::CUSTOM_OBJECTS_KEY)
             end
 
             valid_schema = {
-              'custom_object_types' => %w[key schema],
-              'custom_object_relationship_types' => %w[key source target]
+              AppRequirement::CUSTOM_OBJECTS_TYPE_KEY => %w[key schema],
+              AppRequirement::CUSTOM_OBJECTS_RELATIONSHIP_TYPE_KEY => %w[key source target]
             }
 
             valid_schema.keys.each do |requirement_type|

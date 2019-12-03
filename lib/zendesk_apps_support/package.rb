@@ -212,6 +212,16 @@ module ZendeskAppsSupport
       has_file?(REQUIREMENTS_FILENAME)
     end
 
+    def self.has_custom_object_requirements?(requirements_hash)
+      return false if requirements_hash.nil?
+
+      custom_object_requirements = requirements_hash.fetch(AppRequirement::CUSTOM_OBJECTS_KEY, {})
+      types = custom_object_requirements.fetch(AppRequirement::CUSTOM_OBJECTS_TYPE_KEY, [])
+      relationships = custom_object_requirements.fetch(AppRequirement::CUSTOM_OBJECTS_RELATIONSHIP_TYPE_KEY, [])
+
+      (types | relationships).any?
+    end
+
     def app_css
       return File.read(path_to('app.scss')) if has_file?('app.scss')
       return File.read(path_to('app.css')) if has_file?('app.css')
