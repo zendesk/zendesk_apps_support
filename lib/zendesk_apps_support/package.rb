@@ -12,8 +12,8 @@ module ZendeskAppsSupport
     MANIFEST_FILENAME = 'manifest.json'
     REQUIREMENTS_FILENAME = 'requirements.json'
     CUSTOM_OBJECTS_REQUIREMENT_KEY = 'custom_objects'
-    CUSTOM_OBJECTS_REQUIREMENT_TYPE = 'custom_object_types'
-    CUSTOM_OBJECTS_RELATIONSHIP_TYPE = 'custom_object_relationship_types'
+    CUSTOM_OBJECTS_REQUIREMENT_TYPE_KEY = 'custom_object_types'
+    CUSTOM_OBJECTS_RELATIONSHIP_TYPE_KEY = 'custom_object_relationship_types'
 
     DEFAULT_LAYOUT = Erubis::Eruby.new(File.read(File.expand_path('../assets/default_template.html.erb', __FILE__)))
     DEFAULT_SCSS   = File.read(File.expand_path('../assets/default_styles.scss', __FILE__))
@@ -217,12 +217,10 @@ module ZendeskAppsSupport
 
     def self.has_custom_object_requirements?(requirements_hash)
       custom_objects = requirements_hash && requirements_hash[CUSTOM_OBJECTS_REQUIREMENT_KEY] || {}
-      types = custom_objects[CUSTOM_OBJECTS_REQUIREMENT_TYPE]
-      relationships = custom_objects[CUSTOM_OBJECTS_RELATIONSHIP_TYPE]
+      types = custom_objects[CUSTOM_OBJECTS_REQUIREMENT_TYPE_KEY]
+      relationships = custom_objects[CUSTOM_OBJECTS_RELATIONSHIP_TYPE_KEY]
 
-      return true if types && types.any?
-      return true if relationships && relationships.any?
-      false
+      (types && types.any?) || (relationships && relationships.any?)
     end
 
     def app_css
