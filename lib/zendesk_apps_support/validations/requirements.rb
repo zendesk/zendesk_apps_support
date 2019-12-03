@@ -65,7 +65,7 @@ module ZendeskAppsSupport
         end
 
         def excessive_custom_objects_requirements(requirements)
-          custom_objects = requirements[Package::CUSTOM_OBJECTS_REQUIREMENT_KEY]
+          custom_objects = requirements[AppRequirement::CUSTOM_OBJECTS_KEY]
           return unless custom_objects
 
           count = custom_objects.values.flatten.size
@@ -108,19 +108,19 @@ module ZendeskAppsSupport
         end
 
         def invalid_custom_objects(requirements)
-          custom_objects = requirements[Package::CUSTOM_OBJECTS_REQUIREMENT_KEY]
+          custom_objects = requirements[AppRequirement::CUSTOM_OBJECTS_KEY]
           return if custom_objects.nil?
 
           [].tap do |errors|
-            unless custom_objects.key?(Package::CUSTOM_OBJECTS_REQUIREMENT_TYPE_KEY)
+            unless custom_objects.key?(AppRequirement::CUSTOM_OBJECTS_TYPE_KEY)
               errors << ValidationError.new(:missing_required_fields,
-                                            field: Package::CUSTOM_OBJECTS_REQUIREMENT_TYPE_KEY,
-                                            identifier: Package::CUSTOM_OBJECTS_REQUIREMENT_KEY)
+                                            field: AppRequirement::CUSTOM_OBJECTS_TYPE_KEY,
+                                            identifier: AppRequirement::CUSTOM_OBJECTS_KEY)
             end
 
             valid_schema = {
-              Package::CUSTOM_OBJECTS_REQUIREMENT_TYPE_KEY => %w[key schema],
-              Package::CUSTOM_OBJECTS_RELATIONSHIP_TYPE_KEY => %w[key source target]
+              AppRequirement::CUSTOM_OBJECTS_TYPE_KEY => %w[key schema],
+              AppRequirement::CUSTOM_OBJECTS_RELATIONSHIP_TYPE_KEY => %w[key source target]
             }
 
             valid_schema.keys.each do |requirement_type|
