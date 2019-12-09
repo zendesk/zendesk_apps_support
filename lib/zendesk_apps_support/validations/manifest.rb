@@ -40,8 +40,7 @@ module ZendeskAppsSupport
           errors << default_locale_error(manifest, package)
 
           if manifest.marketing_only?
-            errors << ban_parameters(manifest)
-            errors << private_marketing_app_error(manifest)
+            errors.push(*marketing_only_errors(manifest))
           else
             errors << parameters_error(manifest)
             errors << invalid_hidden_parameter_error(manifest)
@@ -65,6 +64,13 @@ module ZendeskAppsSupport
           errors << ban_no_template(manifest) if manifest.iframe_only?
 
           errors.flatten.compact
+        end
+
+        def marketing_only_errors(manifest)
+          [].tap do |errors|
+            errors << ban_parameters(manifest)
+            errors << private_marketing_app_error(manifest)
+          end
         end
 
         def type_checks(manifest)
@@ -340,7 +346,7 @@ module ZendeskAppsSupport
 
         def too_many_oauth_parameters(manifest)
           oauth_parameters = manifest.parameters.select do |parameter|
-            parameter.type == "oauth"
+            parameter.type == 'oauth'
           end
 
           if oauth_parameters.count > 1
