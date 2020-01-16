@@ -197,14 +197,19 @@ module ZendeskAppsSupport
 
         def oauth_error(manifest)
           return unless manifest.oauth
-
+          oauth_errors = []
           missing = OAUTH_REQUIRED_FIELDS.select do |key|
             manifest.oauth[key].nil? || manifest.oauth[key].empty?
           end
 
           if missing.any?
-            ValidationError.new('oauth_keys.missing', missing_keys: missing.join(', '), count: missing.length)
+            oauth_errors << \
+              ValidationError.new('oauth_keys.missing', missing_keys: missing.join(', '), count: missing.length)
           end
+
+          oauth_errors << ValidationError.new('oauth_parameter_required', link: 'http://google.com') \
+            unless manifest.parameters.any? { |param| param.type == 'oauth' }
+          oauth_errors
         end
 
         def parameters_error(manifest)
