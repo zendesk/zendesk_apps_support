@@ -16,7 +16,10 @@ module ZendeskAppsSupport
     DEFAULT_SCSS   = File.read(File.expand_path('../assets/default_styles.scss', __FILE__))
     SRC_TEMPLATE   = Erubis::Eruby.new(File.read(File.expand_path('../assets/src.js.erb', __FILE__)))
 
-    LOCATIONS_WITH_ICONS = %w[top_bar nav_bar system_top_bar ticket_editor].freeze
+    LOCATIONS_WITH_ICONS_PER_PRODUCT = {
+      Product::SUPPORT => %w[top_bar nav_bar system_top_bar ticket_editor].freeze,
+      Product::SELL => %w[top_bar].freeze
+    }.freeze
 
     attr_reader :lib_root, :root, :warnings
 
@@ -321,14 +324,17 @@ module ZendeskAppsSupport
     def location_icons
       Hash.new { |h, k| h[k] = {} }.tap do |location_icons|
         manifest.location_options.each do |location_options|
-          next unless location_options.location &&
-                      LOCATIONS_WITH_ICONS.include?(location_options.location.name) &&
-                      location_options.location.product == Product::SUPPORT
+          # no location information in the manifest
+          next unless location_options.location
+
+          product = location_options.location.product
+          location_name = location_options.location.name
+          # the location on the product does not support icons
+          next unless LOCATIONS_WITH_ICONS_PER_PRODUCT.fetch(product, []).include?(location_name)
 
           host = location_options.location.product.name
-          location = location_options.location.name
           product_directory = manifest.products.count > 1 ? "#{host}/" : ''
-          location_icons[host][location] = build_location_icons_hash(location, product_directory)
+          location_icons[host][location_name] = build_location_icons_hash(location_name, product_directory)
         end
       end
     end
