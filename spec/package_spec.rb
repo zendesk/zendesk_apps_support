@@ -480,7 +480,11 @@ describe ZendeskAppsSupport::Package do
 
   describe '#location_icons' do
     before do
-      allow(package.manifest).to receive(:locations) {
+      allow(package.manifest).to receive(:locations).and_return(mocked_locations)
+    end
+
+    context 'when a product does not support location icons' do
+      let(:mocked_locations) do
         {
           'chat' => { 'other_location' => { 'url' => '' } },
           'support' => {
@@ -489,26 +493,92 @@ describe ZendeskAppsSupport::Package do
             'ticket_sidebar' => { 'url' => 'last_url' }
           }
         }
-      }
+      end
+
+      it 'discards that product quietly' do
+        allow(package).to receive(:has_file?) do |file|
+          file == 'assets/icon_top_bar.svg' || file == 'assets/icon_nav_bar.svg'
+        end
+        expect(package.send(:location_icons).keys).not_to include('chat')
+      end
     end
 
-    context 'when it has an svg' do
+    context 'when an app is multi-product and has location icons' do
+      let(:mocked_locations) do
+        {
+          'chat' => { 'other_location' => { 'url' => '' } },
+          'support' => {
+            'top_bar' => { 'url' => 'some_url' },
+            'nav_bar' => { 'url' => 'other_url' },
+            'ticket_sidebar' => { 'url' => 'last_url' }
+          },
+          'sell' => {
+            'top_bar' => { 'url' => 'some_url' }
+          }
+        }
+      end
+
+      it 'scopes the assets by product name' do
+        allow(package).to receive(:has_file?) do |file|
+          file =~ %r{assets/(sell|support)/icon_(top|nav)_bar.svg}
+        end
+        expect(package.send(:location_icons)).to eq('support' => {
+                                                      'top_bar' => { 'svg' => 'support/icon_top_bar.svg' },
+                                                      'nav_bar' => { 'svg' => 'support/icon_nav_bar.svg' }
+                                                    }, 'sell' => {
+                                                      'top_bar' => { 'svg' => 'sell/icon_top_bar.svg' }
+                                                    })
+      end
+    end
+
+    context 'when it has an svg and product is support' do
+      let(:mocked_locations) do
+        {
+          'support' => {
+            'top_bar' => { 'url' => 'some_url' },
+            'nav_bar' => { 'url' => 'other_url' },
+            'ticket_sidebar' => { 'url' => 'last_url' }
+          }
+        }
+      end
+
       it 'returns correct location_icons hash for top_bar' do
         allow(package).to receive(:has_file?) do |file|
           file == 'assets/icon_top_bar.svg' || file == 'assets/icon_nav_bar.svg'
         end
         expect(package.send(:location_icons)).to eq('support' => {
-                                                      'top_bar' => {
-                                                        'svg' => 'icon_top_bar.svg'
-                                                      },
-                                                      'nav_bar' => {
-                                                        'svg' => 'icon_nav_bar.svg'
-                                                      }
+                                                      'top_bar' => { 'svg' => 'icon_top_bar.svg' },
+                                                      'nav_bar' => { 'svg' => 'icon_nav_bar.svg' }
                                                     })
       end
     end
 
+    context 'when it has an svg and product is sell' do
+      let(:mocked_locations) do
+        {
+          'sell' => { 'top_bar' => { 'url' => 'some_url' } }
+        }
+      end
+
+      it 'returns correct location_icons hash for top_bar' do
+        allow(package).to receive(:has_file?) do |file|
+          file == 'assets/icon_top_bar.svg'
+        end
+        expect(package.send(:location_icons)).to eq('sell' => { 'top_bar' => { 'svg' => 'icon_top_bar.svg' } })
+      end
+    end
+
     context 'when it has three pngs' do
+      let(:mocked_locations) do
+        {
+          'support' => {
+            'top_bar' => { 'url' => 'some_url' },
+            'nav_bar' => { 'url' => 'other_url' },
+            'ticket_sidebar' => { 'url' => 'last_url' }
+          }
+        }
+      end
+
       it 'returns correct location_icons hash' do
         allow(package).to receive(:has_file?) do |file|
           file != 'assets/icon_top_bar.svg' && file != 'assets/icon_nav_bar.svg'
@@ -529,6 +599,16 @@ describe ZendeskAppsSupport::Package do
     end
 
     context 'when it only has inactive pngs' do
+      let(:mocked_locations) do
+        {
+          'support' => {
+            'top_bar' => { 'url' => 'some_url' },
+            'nav_bar' => { 'url' => 'other_url' },
+            'ticket_sidebar' => { 'url' => 'last_url' }
+          }
+        }
+      end
+
       it 'returns correct location_icons hash' do
         allow(package).to receive(:has_file?) do |file|
           file == 'assets/icon_top_bar_inactive.png' || file == 'assets/icon_nav_bar_inactive.png'
@@ -549,6 +629,16 @@ describe ZendeskAppsSupport::Package do
     end
 
     context 'when it has pngs and svgs' do
+      let(:mocked_locations) do
+        {
+          'support' => {
+            'top_bar' => { 'url' => 'some_url' },
+            'nav_bar' => { 'url' => 'other_url' },
+            'ticket_sidebar' => { 'url' => 'last_url' }
+          }
+        }
+      end
+
       it 'returns correct location_icons hash' do
         allow(package).to receive(:has_file?) { true }
         expect(package.send(:location_icons)).to eq('support' => {
@@ -563,6 +653,16 @@ describe ZendeskAppsSupport::Package do
     end
 
     context 'when it has no images' do
+      let(:mocked_locations) do
+        {
+          'support' => {
+            'top_bar' => { 'url' => 'some_url' },
+            'nav_bar' => { 'url' => 'other_url' },
+            'ticket_sidebar' => { 'url' => 'last_url' }
+          }
+        }
+      end
+
       it 'returns correct location_icons hash' do
         allow(package).to receive(:has_file?) { false }
         expect(package.send(:location_icons)).to eq('support' => {

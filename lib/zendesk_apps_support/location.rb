@@ -63,7 +63,8 @@ module ZendeskAppsSupport
       Location.new(id: 21, name: 'dashboard', product_code: Product::SELL.code, visible: true),
       Location.new(id: 22, name: 'note_editor', product_code: Product::SELL.code, visible: true),
       Location.new(id: 23, name: 'call_log_editor', product_code: Product::SELL.code, visible: true),
-      Location.new(id: 24, name: 'email_editor', product_code: Product::SELL.code, visible: true)
+      Location.new(id: 24, name: 'email_editor', product_code: Product::SELL.code, visible: true),
+      Location.new(id: 25, name: 'top_bar', product_code: Product::SELL.code, visible: true)
     ].freeze
   end
 end
