@@ -62,7 +62,6 @@ en:
               other: Unsupported MIME types detected in %{file_names}.
             multiple_channel_integrations: Specifying multiple channel integrations
               in requirements.json is not supported.
-            too_many_oauth_parameters: "Too many parameters with type 'oauth': one permitted"
             oauth_parameter_required: "Please upgrade to our new oauth format. Learn more: %{link}"
             invalid_cr_schema_keys:
               one: 'Custom resources schema contains an invalid key: %{invalid_keys}'

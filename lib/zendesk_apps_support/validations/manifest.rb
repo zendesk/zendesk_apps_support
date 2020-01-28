@@ -10,6 +10,7 @@ module ZendeskAppsSupport
       REQUIRED_MANIFEST_FIELDS = RUBY_TO_JSON.select { |k| %i[author default_locale].include? k }.freeze
       OAUTH_REQUIRED_FIELDS = %w[client_id client_secret authorize_uri access_token_uri].freeze
       PARAMETER_TYPES = ZendeskAppsSupport::Manifest::Parameter::TYPES
+      OAUTH_MANIFEST_LINK = 'https://developer.zendesk.com/apps/docs/developer-guide/manifest#oauth'
 
       class << self
         def call(package)
@@ -207,8 +208,10 @@ module ZendeskAppsSupport
               ValidationError.new('oauth_keys.missing', missing_keys: missing.join(', '), count: missing.length)
           end
 
-          oauth_errors << ValidationError.new('oauth_parameter_required', link: 'http://google.com') \
-            unless manifest.parameters.any? { |param| param.type == 'oauth' }
+          unless manifest.parameters.any? { |param| param.type == 'oauth' }
+            oauth_errors << ValidationError.new('oauth_parameter_required',
+                                                link: OAUTH_MANIFEST_LINK)
+          end
           oauth_errors
         end
 
