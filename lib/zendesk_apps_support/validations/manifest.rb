@@ -37,7 +37,6 @@ module ZendeskAppsSupport
           errors << missing_keys_error(manifest)
           errors << type_checks(manifest)
           errors << oauth_error(manifest)
-          errors << default_locale_error(manifest, package)
 
           if manifest.marketing_only?
             errors.push(*marketing_only_errors(manifest))

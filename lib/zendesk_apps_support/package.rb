@@ -38,7 +38,6 @@ module ZendeskAppsSupport
       if has_valid_manifest?(errors)
         errors << Validations::Marketplace.call(self) if marketplace
         errors << Validations::Source.call(self)
-        errors << Validations::Translations.call(self, skip_marketplace_translations: skip_marketplace_translations)
         errors << Validations::Requirements.call(self)
         errors << Validations::Requests.call(self)
 
