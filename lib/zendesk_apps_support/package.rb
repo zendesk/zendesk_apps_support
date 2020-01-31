@@ -139,8 +139,8 @@ module ZendeskAppsSupport
         author: manifest.author,
         framework_version: manifest.framework_version,
         id: app_id,
-        location_icons: location_icons,
-        logo_asset_hash: generate_logo_hash(manifest.products),
+        location_options: manifest.location_options,
+        products: manifest.products,
         name: name,
         version: manifest.version
       }
