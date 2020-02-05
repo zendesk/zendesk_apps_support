@@ -16,9 +16,9 @@ module ZendeskAppsSupport
     DEFAULT_SCSS   = File.read(File.expand_path('../assets/default_styles.scss', __FILE__))
     SRC_TEMPLATE   = Erubis::Eruby.new(File.read(File.expand_path('../assets/src.js.erb', __FILE__)))
 
+    # do NOT add more, this is only for backwards compatibility!
     LOCATIONS_WITH_ICONS_PER_PRODUCT = {
-      Product::SUPPORT => %w[top_bar nav_bar system_top_bar ticket_editor].freeze,
-      Product::SELL => %w[top_bar].freeze
+      Product::SUPPORT => %w[top_bar nav_bar system_top_bar ticket_editor].freeze
     }.freeze
 
     attr_reader :lib_root, :root, :warnings
