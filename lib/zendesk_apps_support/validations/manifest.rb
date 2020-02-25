@@ -42,12 +42,7 @@ module ZendeskAppsSupport
           if manifest.marketing_only?
             errors.push(*marketing_only_errors(manifest))
           else
-            errors << parameters_error(manifest)
-            errors << invalid_hidden_parameter_error(manifest)
-            errors << invalid_type_error(manifest)
-            errors << too_many_oauth_parameters(manifest)
-            errors << name_as_parameter_name_error(manifest)
-            errors << invalid_use_of_bundle(manifest)
+            errors.push(*non_marketing_only_errors(manifest))
           end
 
           if manifest.requirements_only? || manifest.marketing_only?
@@ -74,19 +69,41 @@ module ZendeskAppsSupport
           end
         end
 
+        def non_marketing_only_errors(manifest)
+          [].tap do |errors|
+            errors << parameters_error(manifest)
+            errors << invalid_hidden_parameter_error(manifest)
+            errors << invalid_type_error(manifest)
+            errors << too_many_oauth_parameters(manifest)
+            errors << name_as_parameter_name_error(manifest)
+            errors << invalid_use_of_bundle(manifest)
+            errors << cant_use_oauth_and_bundle(manifest)
+          end
+        end
+
         def invalid_use_of_bundle(manifest)
           errors = []
-          bundle_oauth_parameters = manifest.parameters.select{ |x| x.type == 'bundle_oauth' }
-          bundle_integration_key_parameters = manifest.parameters.select{ |x| x.type == 'bundle_integration_key' }
+          bundle_oauth_params = manifest.parameters.select { |x| x.type == 'bundle_oauth' }
+          bundle_integration_key_params = manifest.parameters.select { |x| x.type == 'bundle_integration_key' }
 
-          errors << ValidationError.new(:too_many_bundle_oauth) if bundle_oauth_parameters.count > 1
-          errors << ValidationError.new(:too_many_bundle_integration_key) if bundle_integration_key_parameters.count > 1
+          errors << ValidationError.new(:too_many_bundle_oauth) if bundle_oauth_params.count > 1
+          errors << ValidationError.new(:too_many_bundle_integration_key) if bundle_integration_key_params.count > 1
 
-          if bundle_oauth_parameters.count != bundle_integration_key_parameters.count
-            errors << ValidationError.new(:missing_bundle_oauth) if bundle_oauth_parameters.count == 0
-            errors << ValidationError.new(:missing_bundle_integration_key) if bundle_integration_key_parameters.count == 0
+          if bundle_oauth_params.count != bundle_integration_key_params.count
+            errors << ValidationError.new(:missing_bundle_oauth) if bundle_oauth_params.count.zero?
+            errors << ValidationError.new(:missing_bundle_integration_key) if bundle_integration_key_params.count.zero?
           end
           errors
+        end
+
+        def cant_use_oauth_and_bundle(manifest)
+          oauth = manifest.parameters.select { |x| x.type == 'oauth' }
+          bundle_oauth = manifest.parameters.select { |x| x.type == 'bundle_oauth' }
+          bundle_integration_key = manifest.parameters.select { |x| x.type == 'bundle_integration_key' }
+
+          if !oauth.count.zero? && (!bundle_oauth.count.zero? || !bundle_integration_key.count.zero?)
+            return ValidationError.new(:invalid_use_of_oauth)
+          end
         end
 
         def type_checks(manifest)
