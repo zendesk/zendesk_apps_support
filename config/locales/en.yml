@@ -63,6 +63,10 @@ en:
             multiple_channel_integrations: Specifying multiple channel integrations
               in requirements.json is not supported.
             too_many_oauth_parameters: "Too many parameters with type 'oauth': one permitted"
+            too_many_bundle_oauth: "Too many parameters with type 'bundle_oauth': one permitted"
+            too_many_bundle_integration_key: "Too many parameters with type 'bundle_integration_key': one permitted"
+            missing_bundle_oauth: "Parameter of type 'bundle_integration_key' exist without 'bundle_oauth'"
+            missing_bundle_integration_key: "Parameter of type 'bundle_oauth' exist without 'bundle_integration_key'"
             invalid_cr_schema_keys:
               one: 'Custom resources schema contains an invalid key: %{invalid_keys}'
               other: 'Custom resources schema contains invalid keys: %{invalid_keys}'

@@ -47,6 +47,7 @@ module ZendeskAppsSupport
             errors << invalid_type_error(manifest)
             errors << too_many_oauth_parameters(manifest)
             errors << name_as_parameter_name_error(manifest)
+            errors << invalid_use_of_bundle(manifest)
           end
 
           if manifest.requirements_only? || manifest.marketing_only?
@@ -71,6 +72,21 @@ module ZendeskAppsSupport
             errors << ban_parameters(manifest)
             errors << private_marketing_app_error(manifest)
           end
+        end
+
+        def invalid_use_of_bundle(manifest)
+          errors = []
+          bundle_oauth_parameters = manifest.parameters.select{ |x| x.type == 'bundle_oauth' }
+          bundle_integration_key_parameters = manifest.parameters.select{ |x| x.type == 'bundle_integration_key' }
+
+          errors << ValidationError.new(:too_many_bundle_oauth) if bundle_oauth_parameters.count > 1
+          errors << ValidationError.new(:too_many_bundle_integration_key) if bundle_integration_key_parameters.count > 1
+
+          if bundle_oauth_parameters.count != bundle_integration_key_parameters.count
+            errors << ValidationError.new(:missing_bundle_oauth) if bundle_oauth_parameters.count == 0
+            errors << ValidationError.new(:missing_bundle_integration_key) if bundle_integration_key_parameters.count == 0
+          end
+          errors
         end
 
         def type_checks(manifest)
