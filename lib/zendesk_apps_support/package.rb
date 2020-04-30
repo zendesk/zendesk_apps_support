@@ -278,6 +278,24 @@ module ZendeskAppsSupport
       end
     end
 
+    def location_icons
+      Hash.new { |h, k| h[k] = {} }.tap do |location_icons|
+        manifest.location_options.each do |location_options|
+          # no location information in the manifest
+          next unless location_options.location
+
+          product = location_options.location.product
+          location_name = location_options.location.name
+          # the location on the product does not support icons
+          next unless LOCATIONS_WITH_ICONS_PER_PRODUCT.fetch(product, []).include?(location_name)
+
+          host = location_options.location.product.name
+          product_directory = manifest.products.count > 1 ? "#{host}/" : ''
+          location_icons[host][location_name] = build_location_icons_hash(location_name, product_directory)
+        end
+      end
+    end
+
     private
 
     def generate_logo_hash(products)
@@ -319,24 +337,6 @@ module ZendeskAppsSupport
 
     def has_banner?
       has_file?('assets/banner.png')
-    end
-
-    def location_icons
-      Hash.new { |h, k| h[k] = {} }.tap do |location_icons|
-        manifest.location_options.each do |location_options|
-          # no location information in the manifest
-          next unless location_options.location
-
-          product = location_options.location.product
-          location_name = location_options.location.name
-          # the location on the product does not support icons
-          next unless LOCATIONS_WITH_ICONS_PER_PRODUCT.fetch(product, []).include?(location_name)
-
-          host = location_options.location.product.name
-          product_directory = manifest.products.count > 1 ? "#{host}/" : ''
-          location_icons[host][location_name] = build_location_icons_hash(location_name, product_directory)
-        end
-      end
     end
 
     def build_location_icons_hash(location, product_directory)
