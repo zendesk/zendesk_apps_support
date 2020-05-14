@@ -1,19 +1,17 @@
 
-💐
+🐕
 
 /cc @zendesk/dingo
 
 ### Description
 
 ### References
-* JIRA: https://zendesk.atlassian.net/browse/
+Link to a JIRA or GitHub issue here if relevant
 
 #### Before merging this PR
 - [ ] Fill out the Risks section
-- [ ] Get two approvals from the Apps teams
+- [ ] Think about performance and security issues
 
 ### Risks
-* [RUNTIME] Does this change touch the apps runtime?
-* [HIGH | medium | low] Are there any performance implications?
-* [HIGH | medium | low] Any security risks?
+* [RUNTIME] Can this change affect apps rendering for a user?
 * [HIGH | medium | low] What features does this touch?
