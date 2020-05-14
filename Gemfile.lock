@@ -7,7 +7,7 @@ PATH
       image_size
       ipaddress_2 (~> 0.13.0)
       json
-      loofah (~> 2.2.3)
+      loofah (>= 2.2.3, < 2.6.0)
       mimemagic (~> 0.3.3)
       nokogiri (~> 1.8.5)
       rb-inotify (= 0.9.10)
@@ -30,10 +30,10 @@ GEM
     image_size (2.0.2)
     ipaddress_2 (0.13.0)
     json (2.3.0)
-    loofah (2.2.3)
+    loofah (2.5.0)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
-    mimemagic (0.3.4)
+    mimemagic (0.3.5)
     mini_portile2 (2.3.0)
     nokogiri (1.8.5)
       mini_portile2 (~> 2.3.0)
@@ -44,7 +44,7 @@ GEM
     rainbow (2.2.2)
       rake
     rake (12.3.0)
-    rb-fsevent (0.10.3)
+    rb-fsevent (0.10.4)
     rb-inotify (0.9.10)
       ffi (>= 0.5.0, < 2)
     rspec (3.4.0)
