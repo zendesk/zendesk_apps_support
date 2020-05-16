@@ -617,5 +617,93 @@ describe ZendeskAppsSupport::Validations::Manifest do
       package = create_package(parameter_hash)
       expect(package).to have_error "Too many parameters with type 'oauth': one permitted"
     end
+
+    context 'bundle' do
+      it 'should have only one bundle_oauth in parameter list' do
+        parameter_hash = {
+          'parameters' =>
+          [
+            {
+              'name' => 'bundle_token',
+              'type' => 'bundle_oauth'
+            },
+            {
+              'name' => 'bundle_token_2',
+              'type' => 'bundle_oauth'
+            }
+          ]
+        }
+        package = create_package(parameter_hash)
+        expect(package).to have_error "Too many parameters with type 'bundle_oauth': one permitted"
+      end
+
+      it 'should have only one bundle_integration_key in parameter list' do
+        parameter_hash = {
+          'parameters' =>
+          [
+            {
+              'name' => 'bundle_integration_key',
+              'type' => 'bundle_integration_key'
+            },
+            {
+              'name' => 'bundle_integration_key_2',
+              'type' => 'bundle_integration_key'
+            }
+          ]
+        }
+        package = create_package(parameter_hash)
+        expect(package).to have_error "Too many parameters with type 'bundle_integration_key': one permitted"
+      end
+
+      it 'should have a bundle_oauth if a bundle_integration_key exist' do
+        parameter_hash = {
+          'parameters' =>
+          [
+            {
+              'name' => 'bundle_integration_key',
+              'type' => 'bundle_integration_key'
+            }
+          ]
+        }
+        package = create_package(parameter_hash)
+        expect(package).to have_error "Parameter of type 'bundle_integration_key' exist without 'bundle_oauth'"
+      end
+
+      it 'should have a bundle_oauth if a bundle_oauth exist' do
+        parameter_hash = {
+          'parameters' =>
+          [
+            {
+              'name' => 'bundle_token',
+              'type' => 'bundle_oauth'
+            }
+          ]
+        }
+        package = create_package(parameter_hash)
+        expect(package).to have_error "Parameter of type 'bundle_oauth' exist without 'bundle_integration_key'"
+      end
+    end
+
+    it 'should not be exist if oauth exist' do
+      parameter_hash = {
+        'parameters' =>
+        [
+          {
+            'name' => 'bundle_token',
+            'type' => 'bundle_oauth'
+          },
+          {
+            'name' => 'bundle_integration_key',
+            'type' => 'bundle_integration_key'
+          },
+          {
+            'name' => 'valid parameter',
+            'type' => 'oauth'
+          }
+        ]
+      }
+      package = create_package(parameter_hash)
+      expect(package).to have_error "Parameter 'oauth' can't exist with 'bundle_integration_key' or 'bundle_oauth'"
+    end
   end
 end
