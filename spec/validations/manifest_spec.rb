@@ -617,5 +617,20 @@ describe ZendeskAppsSupport::Validations::Manifest do
       package = create_package(parameter_hash)
       expect(package).to have_error "Too many parameters with type 'oauth': one permitted"
     end
+
+    it 'should have only one oauth type for parameter' do
+      parameter_hash = {
+        'parameters' =>
+        [
+          {
+            'name' => 'valid parameter',
+            'type' => 'oauth',
+            'secure' => true
+          }
+        ]
+      }
+      package = create_package(parameter_hash)
+      expect(package).to have_error "oauth parameter cannot be secure"
+    end
   end
 end

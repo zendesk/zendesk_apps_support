@@ -46,6 +46,7 @@ module ZendeskAppsSupport
             errors << invalid_hidden_parameter_error(manifest)
             errors << invalid_type_error(manifest)
             errors << too_many_oauth_parameters(manifest)
+            errors << oauth_cannot_be_secure(manifest)
             errors << name_as_parameter_name_error(manifest)
           end
 
@@ -64,6 +65,15 @@ module ZendeskAppsSupport
           errors << ban_no_template(manifest) if manifest.iframe_only?
 
           errors.flatten.compact
+        end
+
+        def oauth_cannot_be_secure(manifest)
+          errors = []
+          manifest.parameters.map do |parameter|
+            if parameter.type == 'oauth' && parameter.secure
+              errors << ValidationError.new('oauth_parameter_cannot_be_secure')
+            end
+          end
         end
 
         def marketing_only_errors(manifest)
