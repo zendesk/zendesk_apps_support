@@ -399,3 +399,7 @@ parts:
       key: "txt.apps.admin.error.app_build.invalid_v1_location.other"
       title: "The locations listed are not available in framework v1."
       value: "%{invalid_locations} are invalid locations in framework v1."
+  - translation:
+      key: "txt.apps.admin.error.app_build.oauth_parameter_cannot_be_secure"
+      title: "oauth parameter cannot be set to be secure."
+      value: "oauth parameter cannot be set to be secure."
