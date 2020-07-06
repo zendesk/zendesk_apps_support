@@ -62,6 +62,7 @@ module ZendeskAppsSupport
           errors << invalid_location_error(package)
           errors << invalid_v1_location(package)
           errors << location_framework_mismatch(manifest)
+          errors
         end
 
         def validate_parameters(manifest)
@@ -76,6 +77,7 @@ module ZendeskAppsSupport
             errors << oauth_cannot_be_secure(manifest)
             errors << name_as_parameter_name_error(manifest)
           end
+          errors
         end
 
         def oauth_cannot_be_secure(manifest)
