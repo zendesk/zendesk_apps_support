@@ -139,6 +139,7 @@ en:
             invalid_v1_location:
               one: "%{invalid_locations} is an invalid location in framework v1."
               other: "%{invalid_locations} are invalid locations in framework v1."
+            oauth_parameter_cannot_be_secure: oauth parameter cannot be secure
         warning:
           app_build:
             deprecated_version: You are targeting a deprecated version of the framework.
