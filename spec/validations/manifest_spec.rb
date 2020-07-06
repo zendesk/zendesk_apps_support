@@ -630,7 +630,7 @@ describe ZendeskAppsSupport::Validations::Manifest do
         ]
       }
       package = create_package(parameter_hash)
-      expect(package).to have_error "oauth parameter cannot be secure"
+      expect(package).to have_error 'oauth parameter cannot be secure'
     end
   end
 end
