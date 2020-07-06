@@ -39,6 +39,33 @@ module ZendeskAppsSupport
           errors << oauth_error(manifest)
           errors << default_locale_error(manifest, package)
 
+          errors << validate_parameters(manifest)
+
+          if manifest.requirements_only? || manifest.marketing_only?
+            errors << ban_location(manifest)
+            errors << ban_framework_version(manifest)
+          else
+            errors << validate_location(package)
+            errors << missing_framework_version(manifest)
+            errors << invalid_version_error(manifest)
+          end
+
+          errors << ban_no_template(manifest) if manifest.iframe_only?
+
+          errors.flatten.compact
+        end
+
+        def validate_location(package)
+          manifest = package.manifest
+          errors = []
+          errors << missing_location_error(package)
+          errors << invalid_location_error(package)
+          errors << invalid_v1_location(package)
+          errors << location_framework_mismatch(manifest)
+        end
+
+        def validate_parameters(manifest)
+          errors = []
           if manifest.marketing_only?
             errors.push(*marketing_only_errors(manifest))
           else
@@ -49,29 +76,12 @@ module ZendeskAppsSupport
             errors << oauth_cannot_be_secure(manifest)
             errors << name_as_parameter_name_error(manifest)
           end
-
-          if manifest.requirements_only? || manifest.marketing_only?
-            errors << ban_location(manifest)
-            errors << ban_framework_version(manifest)
-          else
-            errors << missing_location_error(package)
-            errors << invalid_location_error(package)
-            errors << invalid_v1_location(package)
-            errors << missing_framework_version(manifest)
-            errors << location_framework_mismatch(manifest)
-            errors << invalid_version_error(manifest)
-          end
-
-          errors << ban_no_template(manifest) if manifest.iframe_only?
-
-          errors.flatten.compact
         end
 
         def oauth_cannot_be_secure(manifest)
-          errors = []
           manifest.parameters.map do |parameter|
             if parameter.type == 'oauth' && parameter.secure
-              errors << ValidationError.new('oauth_parameter_cannot_be_secure')
+              return ValidationError.new('oauth_parameter_cannot_be_secure')
             end
           end
         end
