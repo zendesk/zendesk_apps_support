@@ -33,25 +33,22 @@ module ZendeskAppsSupport
         def collate_manifest_errors(package)
           manifest = package.manifest
 
-          errors = []
-          errors << missing_keys_error(manifest)
-          errors << type_checks(manifest)
-          errors << oauth_error(manifest)
-          errors << default_locale_error(manifest, package)
-
-          errors << validate_parameters(manifest)
-
-          if manifest.requirements_only? || manifest.marketing_only?
-            errors << ban_location(manifest)
-            errors << ban_framework_version(manifest)
-          else
-            errors << validate_location(package)
-            errors << missing_framework_version(manifest)
-            errors << invalid_version_error(manifest)
-          end
-
-          errors << ban_no_template(manifest) if manifest.iframe_only?
-
+          errors = [
+            missing_keys_error(manifest),
+            type_checks(manifest),
+            oauth_error(manifest),
+            default_locale_error(manifest, package),
+            validate_parameters(manifest),
+            if manifest.requirements_only? || manifest.marketing_only?
+              [ ban_location(manifest),
+                ban_framework_version(manifest) ]
+            else
+              [ validate_location(package),
+                missing_framework_version(manifest),
+                invalid_version_error(manifest) ]
+            end,
+            manifest.iframe_only? && ban_no_template(manifest)
+          ]
           errors.flatten.compact
         end
 
