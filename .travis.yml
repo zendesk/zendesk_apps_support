@@ -3,10 +3,10 @@ language: ruby
 sudo: false
 dist: trusty
 rvm:
+  - 2.6.0
+  - 2.5.0
   - 2.4.0
   - 2.3.3
-  - 2.2.6
-  - 2.1
 branches:
   only: [master]
 env:
