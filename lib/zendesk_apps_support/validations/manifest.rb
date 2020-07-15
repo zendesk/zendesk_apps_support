@@ -33,51 +33,71 @@ module ZendeskAppsSupport
         def collate_manifest_errors(package)
           manifest = package.manifest
 
-          errors = []
-          errors << missing_keys_error(manifest)
-          errors << type_checks(manifest)
-          errors << oauth_error(manifest)
-          errors << default_locale_error(manifest, package)
-
-          if manifest.marketing_only?
-            errors.push(*marketing_only_errors(manifest))
-          else
-            errors << parameters_error(manifest)
-            errors << invalid_hidden_parameter_error(manifest)
-            errors << invalid_type_error(manifest)
-            errors << too_many_oauth_parameters(manifest)
-            errors << name_as_parameter_name_error(manifest)
-          end
-
-          if manifest.requirements_only? || manifest.marketing_only?
-            errors << ban_location(manifest)
-            errors << ban_framework_version(manifest)
-          else
-            errors << missing_location_error(package)
-            errors << invalid_location_error(package)
-            errors << invalid_v1_location(package)
-            errors << missing_framework_version(manifest)
-            errors << location_framework_mismatch(manifest)
-            errors << invalid_version_error(manifest)
-          end
-
-          errors << ban_no_template(manifest) if manifest.iframe_only?
-
+          errors = [
+            missing_keys_error(manifest),
+            type_checks(manifest),
+            oauth_error(manifest),
+            default_locale_error(manifest, package),
+            validate_parameters(manifest),
+            if manifest.requirements_only? || manifest.marketing_only?
+              [ ban_location(manifest),
+                ban_framework_version(manifest) ]
+            else
+              [ validate_location(package),
+                missing_framework_version(manifest),
+                invalid_version_error(manifest) ]
+            end,
+            ban_no_template(manifest)
+          ]
           errors.flatten.compact
         end
 
-        def marketing_only_errors(manifest)
-          [].tap do |errors|
-            errors << ban_parameters(manifest)
-            errors << private_marketing_app_error(manifest)
+        def validate_location(package)
+          manifest = package.manifest
+          [
+            missing_location_error(package),
+            invalid_location_error(package),
+            invalid_v1_location(package),
+            location_framework_mismatch(manifest)
+          ]
+        end
+
+        def validate_parameters(manifest)
+          if manifest.marketing_only?
+            marketing_only_errors(manifest)
+          else
+            [
+              parameters_error(manifest),
+              invalid_hidden_parameter_error(manifest),
+              invalid_type_error(manifest),
+              too_many_oauth_parameters(manifest),
+              oauth_cannot_be_secure(manifest),
+              name_as_parameter_name_error(manifest)
+            ]
           end
         end
 
+        def oauth_cannot_be_secure(manifest)
+          manifest.parameters.map do |parameter|
+            if parameter.type == 'oauth' && parameter.secure
+              return ValidationError.new('oauth_parameter_cannot_be_secure')
+            end
+          end
+        end
+
+        def marketing_only_errors(manifest)
+          [
+            ban_parameters(manifest),
+            private_marketing_app_error(manifest)
+          ]
+        end
+
         def type_checks(manifest)
-          errors = []
-          errors << boolean_error(manifest)
-          errors << string_error(manifest)
-          errors << no_template_format_error(manifest)
+          errors = [
+            boolean_error(manifest),
+            string_error(manifest),
+            no_template_format_error(manifest)
+          ]
           unless manifest.experiments.is_a?(Hash)
             errors << ValidationError.new(
               :unacceptable_hash,
@@ -152,6 +172,7 @@ module ZendeskAppsSupport
         end
 
         def ban_no_template(manifest)
+          return unless manifest.iframe_only?
           no_template_migration_link = 'https://developer.zendesk.com/apps/docs/apps-v2/manifest#location'
           if manifest.no_template? || !manifest.no_template_locations.empty?
             ValidationError.new(:no_template_deprecated_in_v2, link: no_template_migration_link)
