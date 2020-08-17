@@ -10,6 +10,7 @@ module ZendeskAppsSupport
       REQUIRED_MANIFEST_FIELDS = RUBY_TO_JSON.select { |k| %i[author default_locale].include? k }.freeze
       OAUTH_REQUIRED_FIELDS = %w[client_id client_secret authorize_uri access_token_uri].freeze
       PARAMETER_TYPES = ZendeskAppsSupport::Manifest::Parameter::TYPES
+      OAUTH_MANIFEST_LINK = 'https://developer.zendesk.com/apps/docs/developer-guide/manifest#oauth'
 
       class << self
         def call(package)
@@ -197,14 +198,21 @@ module ZendeskAppsSupport
 
         def oauth_error(manifest)
           return unless manifest.oauth
-
+          oauth_errors = []
           missing = OAUTH_REQUIRED_FIELDS.select do |key|
             manifest.oauth[key].nil? || manifest.oauth[key].empty?
           end
 
           if missing.any?
-            ValidationError.new('oauth_keys.missing', missing_keys: missing.join(', '), count: missing.length)
+            oauth_errors << \
+              ValidationError.new('oauth_keys.missing', missing_keys: missing.join(', '), count: missing.length)
           end
+
+          unless manifest.parameters.any? { |param| param.type == 'oauth' }
+            oauth_errors << ValidationError.new('oauth_parameter_required',
+                                                link: OAUTH_MANIFEST_LINK)
+          end
+          oauth_errors
         end
 
         def parameters_error(manifest)

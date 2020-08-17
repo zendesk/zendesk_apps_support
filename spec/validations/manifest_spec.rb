@@ -499,6 +499,27 @@ describe ZendeskAppsSupport::Validations::Manifest do
     expect(create_package('noTemplate' => ['ticket_sidebar', 'someplace else'])).to have_error(:invalid_no_template)
   end
 
+  context 'when the app has oauth' do
+    context 'without a parameter with the kind "oauth"' do
+      it 'requires a parameter with the kind "oauth"' do
+        @manifest_hash = {
+          'author' => 'rspec',
+          'parameters' => [{
+            'name' => 'token',
+            'kind' => 'string'
+          }],
+          'oauth' => {
+            'client_id' => '1',
+            'client_secret' => '2',
+            'authorize_uri' => '3',
+            'access_token_uri' => '4'
+          }
+        }
+        expect(@package).to have_error(/Please upgrade to our new oauth format/)
+      end
+    end
+  end
+
   context 'with invalid parameters' do
     before do
       allow(ZendeskAppsSupport::Validations::Manifest).to receive(:default_locale_error)
