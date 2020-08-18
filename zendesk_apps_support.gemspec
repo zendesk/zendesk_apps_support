@@ -17,7 +17,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'sassc', '~> 1.11.2'
   s.add_runtime_dependency 'sass' # remove explicit dependency when all compilation uses SassC
   s.add_runtime_dependency 'json'
-  s.add_runtime_dependency 'image_size'
+  s.add_runtime_dependency 'image_size', '~> 2.0.2'
   s.add_runtime_dependency 'erubis'
   s.add_runtime_dependency 'loofah', '~> 2.2.3'
   s.add_runtime_dependency 'nokogiri', '>= 1.8.5', '< 1.11.0'
