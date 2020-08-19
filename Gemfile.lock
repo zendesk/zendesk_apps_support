@@ -7,7 +7,7 @@ PATH
       image_size (~> 2.0.2)
       ipaddress_2 (~> 0.13.0)
       json
-      loofah (~> 2.2.3)
+      loofah (>= 2.2.3, < 2.7.0)
       mimemagic (~> 0.3.3)
       nokogiri (>= 1.8.5, < 1.11.0)
       rb-inotify (= 0.9.10)
@@ -30,7 +30,7 @@ GEM
     image_size (2.0.2)
     ipaddress_2 (0.13.0)
     json (2.3.1)
-    loofah (2.2.3)
+    loofah (2.6.0)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
     mimemagic (0.3.5)
