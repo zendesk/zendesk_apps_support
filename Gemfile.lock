@@ -1,10 +1,10 @@
 PATH
   remote: .
   specs:
-    zendesk_apps_support (4.29.4)
+    zendesk_apps_support (4.29.5)
       erubis
       i18n
-      image_size
+      image_size (~> 2.0.2)
       ipaddress_2 (~> 0.13.0)
       json
       loofah (~> 2.2.3)
