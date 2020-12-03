@@ -14,7 +14,7 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = '>= 1.3.6'
 
   s.add_runtime_dependency 'i18n'
-  s.add_runtime_dependency 'sassc', '~> 1.11.2'
+  s.add_runtime_dependency 'sassc'
   s.add_runtime_dependency 'sass' # remove explicit dependency when all compilation uses SassC
   s.add_runtime_dependency 'json'
   s.add_runtime_dependency 'image_size', '~> 2.0.2'
@@ -29,7 +29,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'faker', '~> 1.6.6'
   s.add_development_dependency 'rubocop', '~> 0.49.0'
   s.add_development_dependency 'byebug', '~> 9.0.6'
-  s.add_development_dependency 'bundler', '1.17.3'
+  s.add_development_dependency 'bundler', '2.1.4'
 
   s.files = Dir.glob('{lib,config}/**/*') + %w[README.md LICENSE]
 end
