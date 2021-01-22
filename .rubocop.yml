@@ -1,5 +1,5 @@
 AllCops:
-  TargetRubyVersion: 2.3
+  TargetRubyVersion: 2.5
   Include:
     - 'Gemfile'
     - 'Rakefile'
@@ -33,7 +33,7 @@ Metrics/LineLength:
 Metrics/BlockLength:
   Exclude:
     - 'spec/**/*.rb'
-  
+
 Metrics/ModuleLength:
   CountComments: false  # count full line comments?
   Max: 200

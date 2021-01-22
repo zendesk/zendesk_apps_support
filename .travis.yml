@@ -5,15 +5,13 @@ dist: trusty
 rvm:
   - 2.6.0
   - 2.5.0
-  - 2.4.0
-  - 2.3.3
 branches:
   only: [master]
 env:
   - COMMAND=rake
 matrix:
   include:
-    - rvm: 2.4.0
+    - rvm: 2.5.0
       env: COMMAND=rubocop
 before_install:
   - gem uninstall -v '>= 2' -i $(rvm gemdir)@global -ax bundler || true
