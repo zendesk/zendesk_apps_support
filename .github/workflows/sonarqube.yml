@@ -1,0 +1,38 @@
+name: SonarQube
+
+on:
+  push:
+    branches: master
+  pull_request:
+    branches: master
+
+jobs:
+  main:
+    runs-on: zendesk-stable
+    steps:
+    - uses: zendesk/checkout@v2
+    - name: SonarQube scan Master
+      if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+      run: |
+        sonar-scanner \
+        -Dsonar.host.url=${{ secrets.SONARQUBE_HOST }} \
+        -Dsonar.login=${{ secrets.SONARQUBE_TOKEN }} \
+        -Dsonar.sourceEncoding=UTF-8 \
+        -Dsonar.branch.name=master
+    - name: SonarQube scan PR
+      if: github.event_name == 'pull_request'
+      run: |
+        sonar-scanner \
+        -Dsonar.host.url=${{ secrets.SONARQUBE_HOST }} \
+        -Dsonar.login=${{ secrets.SONARQUBE_TOKEN }} \
+        -Dsonar.sourceEncoding=UTF-8 \
+        -Dsonar.pullrequest.branch=$PR_BRANCH \
+        -Dsonar.pullrequest.base=$BASE_BRANCH \
+        -Dsonar.pullrequest.key=$PR_ID \
+        -Dsonar.pullrequest.provider=github \
+        -Dsonar.pullrequest.github.repository=zendesk/${{ github.event.repository.name }} \
+        -Dsonar.scm.revision=${{ github.event.pull_request.head.sha }}
+      env:
+        PR_BRANCH: ${{ github.head_ref }}
+        BASE_BRANCH: ${{ github.base_ref }}
+        PR_ID: ${{ github.event.number }}
