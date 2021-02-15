@@ -10,8 +10,6 @@ jobs:
   main:
     runs-on: ubuntu-latest
     steps:
-    - name: Setup SonarQube
-      uses: warchant/setup-sonar-scanner@v3
     - name: SonarQube scan Master
       uses: zendesk/checkout@v2
       if: github.event_name == 'push' && github.ref == 'refs/heads/master'
