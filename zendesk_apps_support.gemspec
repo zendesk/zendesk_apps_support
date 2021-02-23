@@ -19,7 +19,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'json'
   s.add_runtime_dependency 'image_size', '~> 2.0.2'
   s.add_runtime_dependency 'erubis'
-  s.add_runtime_dependency 'loofah', '~> 2.2.3'
+  s.add_runtime_dependency 'loofah', '~> 2.3.1'
   s.add_runtime_dependency 'nokogiri', '>= 1.8.5', '< 1.11.0'
   s.add_runtime_dependency 'rb-inotify', '0.9.10'
   s.add_runtime_dependency 'mimemagic', '~> 0.3.3'
