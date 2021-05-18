@@ -30,6 +30,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'rubocop', '~> 0.49.0'
   s.add_development_dependency 'byebug', '~> 9.0.6'
   s.add_development_dependency 'bundler', '1.17.3'
+  s.add_development_dependency 'parallel', '1.12.1'
 
   s.files = Dir.glob('{lib,config}/**/*') + %w[README.md LICENSE]
 end
