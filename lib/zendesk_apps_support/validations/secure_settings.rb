@@ -31,7 +31,7 @@ module ZendeskAppsSupport
           parameter_type == 'text' || parameter_type == 'password'
         end
 
-        def secure_settings_warning
+        def hidden_default_parameter_warning
           I18n.t(
             'txt.apps.admin.error.app_build.translation.default_secure_or_hidden_parameter_in_manifest'
           )
