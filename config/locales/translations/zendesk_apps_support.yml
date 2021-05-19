@@ -355,6 +355,7 @@ parts:
       key: "txt.apps.admin.error.app_build.translation.default_secure_or_hidden_parameter_in_manifest"
       title: "Validation message to indicate that a hidden or secure manifest parameter has a default value. Do not translate 'secure' and 'hidden'. Secure(true) in manifest refers to https://developer.zendesk.com/apps/docs/developer-guide/using_sdk#using-secure-settings"
       value: "Default values for secure or hidden parameters are not stored securely. Be sure to review them and confirm they do not contain sensitive data"
+      screenshot: "https://drive.google.com/file/d/1MI6ci6Jz6xtwOXjcbHFCfNi1FjXKOuv9/view?usp=sharing"
   - translation:
       key: "txt.apps.admin.error.app_build.stylesheet_error"
       title: "App builder job: invalid stylesheet syntax"
