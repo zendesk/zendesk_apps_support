@@ -20,7 +20,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'image_size', '~> 2.0.2'
   s.add_runtime_dependency 'erubis'
   s.add_runtime_dependency 'loofah', '~> 2.3.1'
-  s.add_runtime_dependency 'nokogiri', '>= 1.8.5', '< 1.11.0'
+  s.add_runtime_dependency 'nokogiri', '>= 1.8.5', '< 1.12.0'
   s.add_runtime_dependency 'rb-inotify', '0.9.10'
   s.add_runtime_dependency 'marcel', '~> 1.0.1'
   s.add_runtime_dependency 'ipaddress_2', '~> 0.13.0'
