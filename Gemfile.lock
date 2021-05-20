@@ -8,7 +8,7 @@ PATH
       ipaddress_2 (~> 0.13.0)
       json
       loofah (~> 2.3.1)
-      marcel (~> 1.0.1)
+      marcel
       nokogiri (>= 1.8.5, < 1.11.0)
       rb-inotify (= 0.9.10)
       sass
