@@ -123,6 +123,9 @@ en:
                 do not match products in translations (%{translation_products})
               insecure_token_parameter_in_manifest: 'Make sure to set secure to true
                 when using keys in Settings. Learn more: %{link}'
+              default_secure_or_hidden_parameter_in_manifest: Default values for secure
+                or hidden parameters are not stored securely. Be sure to review them
+                and confirm they do not contain sensitive data
             stylesheet_error: 'Sass error: %{sass_error}'
             invalid_type_parameter:
               one: "%{invalid_types} is an invalid parameter type."
