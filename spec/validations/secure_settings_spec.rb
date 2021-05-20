@@ -8,8 +8,16 @@ describe ZendeskAppsSupport::Validations::SecureSettings do
   let(:insecure_param) { ZendeskAppsSupport::Manifest::Parameter.new('name' => 'my_token') }
   let(:regular_param)  { ZendeskAppsSupport::Manifest::Parameter.new('name' => 'subdomain') }
   let(:regular_default_param)  { ZendeskAppsSupport::Manifest::Parameter.new('name' => 'subdomain', 'default' => true) }
-  let(:secured_default_param)  { ZendeskAppsSupport::Manifest::Parameter.new('name' => 'subdomain', 'secure' => true, 'default' => true) }
-  let(:hidden_default_param)  { ZendeskAppsSupport::Manifest::Parameter.new('name' => 'subdomain', 'type' => 'hidden', 'default' => true) }
+  let(:secured_default_param)  do
+    ZendeskAppsSupport::Manifest::Parameter.new('name' => 'subdomain',
+                                                'secure' => true,
+                                                'default' => true)
+  end
+  let(:hidden_default_param) do
+    ZendeskAppsSupport::Manifest::Parameter.new('name' => 'subdomain',
+                                                'type' => 'hidden',
+                                                'default' => true)
+  end
 
   context 'when default manifest parameters are not secure or hidden' do
     it 'returns no warning' do
