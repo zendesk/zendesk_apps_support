@@ -21,7 +21,7 @@ module ZendeskAppsSupport
 
         def block_listed?(app_file)
           mime_type = Marcel::MimeType.for(StringIO.new(app_file.read))
-          content_subtype = Marcel::Magic.new(mime_type).subtype if mime_type
+          content_subtype = mime_type.split('/', 2).last if mime_type
           extension_name = app_file.extension.delete('.')
 
           ([content_subtype, extension_name] & UNSUPPORTED_MIME_TYPES).any?
