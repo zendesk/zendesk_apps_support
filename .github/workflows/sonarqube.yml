@@ -12,6 +12,8 @@ jobs:
     steps:
     - name: SonarQube scan Master
       uses: zendesk/checkout@v2
+      with:
+        fetch-depth: 0
       if: github.event_name == 'push' && github.ref == 'refs/heads/master'
       run: |
         sonar-scanner \
