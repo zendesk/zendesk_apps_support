@@ -271,6 +271,10 @@ module ZendeskAppsSupport
             elsif location_options.auto_load?
               errors << ValidationError.new(:blank_location_uri, location: location_options.location.name)
             end
+
+            if !([true, false].include? location_options.responsive) && !location_options.responsive.nil?
+              errors << invalid_location_responsive_error(location_options)
+            end
           end
 
           Product::PRODUCTS_AVAILABLE.each do |product|
@@ -316,6 +320,12 @@ module ZendeskAppsSupport
             validation_error
           end
         rescue URI::InvalidURIError
+          validation_error
+        end
+
+        def invalid_location_responsive_error(location_options)
+          responsive_flag = location_options.responsive
+          validation_error = ValidationError.new(:invalid_location_responsive_type, responsive: responsive_flag)
           validation_error
         end
 
