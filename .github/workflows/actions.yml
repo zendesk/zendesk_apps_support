@@ -1,0 +1,30 @@
+name: repo-checks
+
+on:
+  pull_request:
+    branches:
+    - master
+
+jobs:
+  main:
+    name: ruby
+    runs-on: ubuntu-latest
+    steps:
+    - uses: zendesk/checkout@v2
+    - uses: zendesk/setup-ruby@v1
+      with:
+        ruby-version: '2.4.0'
+    - name: Vendor Cache
+      id: vendor-cache
+      uses: zendesk/cache@v2
+      with:
+        path: vendor/cache
+        key: ${{ runner.os }}-vendor
+    - name: before_script
+      run: bundle install --jobs=3 --retry=3 --path=${BUNDLE_PATH:-vendor/bundle}
+    - name: build
+      run: |
+        bundle exec rake
+    - name: lint
+      run: |
+        bundle exec rubocop
