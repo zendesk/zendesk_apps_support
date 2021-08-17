@@ -7,7 +7,7 @@ module ZendeskAppsSupport
         legacy: 'legacy',
         auto_load: 'autoLoad',
         auto_hide: 'autoHide',
-        responsive: 'responsive',
+        flexible: 'flexible',
         signed: 'signed',
         url: 'url'
       }.freeze

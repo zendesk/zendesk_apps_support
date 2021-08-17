@@ -272,8 +272,8 @@ module ZendeskAppsSupport
               errors << ValidationError.new(:blank_location_uri, location: location_options.location.name)
             end
 
-            if !([true, false].include? location_options.responsive) && !location_options.responsive.nil?
-              errors << invalid_location_responsive_error(location_options)
+            if !([true, false].include? location_options.flexible) && !location_options.flexible.nil?
+              errors << invalid_location_flexible_error(location_options)
             end
           end
 
@@ -323,9 +323,9 @@ module ZendeskAppsSupport
           validation_error
         end
 
-        def invalid_location_responsive_error(location_options)
-          responsive_flag = location_options.responsive
-          validation_error = ValidationError.new(:invalid_location_responsive_type, responsive: responsive_flag)
+        def invalid_location_flexible_error(location_options)
+          flexible_flag = location_options.flexible
+          validation_error = ValidationError.new(:invalid_location_flexible_type, flexible: flexible_flag)
           validation_error
         end
 

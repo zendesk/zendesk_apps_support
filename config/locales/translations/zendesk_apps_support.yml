@@ -235,9 +235,9 @@ parts:
       title: "App builder job: invalid URI for an iframe in the manifest"
       value: "%{uri} is either an invalid location URI, refers to a missing asset, or does not use HTTPS."
   - translation:
-      key: "txt.apps.admin.error.app_build.invalid_location_responsive_type"
-      title: "App builder job: invalid responsive type for an iframe in the manifest"
-      value: "%{responsive} is an invalid type for the responsive location parameter."
+      key: "txt.apps.admin.error.app_build.invalid_location_flexible_type"
+      title: "App builder job: invalid flexible type for an iframe in the manifest"
+      value: "%{flexible} is an invalid type for the flexible location parameter."
   - translation:
       key: "txt.apps.admin.error.app_build.name_as_parameter_name"
       title: "App builder job: error message when developer names a parameter 'name'"
