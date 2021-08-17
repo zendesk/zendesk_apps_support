@@ -96,7 +96,8 @@ en:
             blank_location_uri: "%{location} location does not specify a URI."
             invalid_location_uri: "%{uri} is either an invalid location URI, refers
               to a missing asset, or does not use HTTPS."
-            invalid_location_flexible_type: "%{flexible} is an invalid type for the flexible location parameter."
+            invalid_location_flexible_type: "%{flexible} is an invalid type for the
+              flexible location parameter."
             name_as_parameter_name: Can't call a parameter 'name'
             invalid_hidden_parameter:
               one: "%{invalid_params} is set to hidden and cannot be required."
