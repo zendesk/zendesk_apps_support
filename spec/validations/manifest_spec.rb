@@ -248,6 +248,44 @@ describe ZendeskAppsSupport::Validations::Manifest do
     end
   end
 
+  context 'location references an invalid flexible parameter' do
+    before do
+      @manifest_hash = {
+        'location' => {
+          'zendesk' => {
+            'ticket_sidebar' => {
+              'url' => 'https://mysite.com/zendesk_iframe',
+              'flexible' => 'always'
+            }
+          }
+        }
+      }
+    end
+
+    it 'should have a location error' do
+      expect(@package).to have_error(/invalid type for the flexible location parameter/)
+    end
+  end
+
+  context 'location references a valid flexible parameter' do
+    before do
+      @manifest_hash = {
+        'location' => {
+          'zendesk' => {
+            'ticket_sidebar' => {
+              'url' => 'https://mysite.com/zendesk_iframe',
+              'flexible' => true
+            }
+          }
+        }
+      }
+    end
+
+    it 'should not have a location error' do
+      expect(@package).not_to have_error(/invalid type for the flexible location parameter/)
+    end
+  end
+
   context 'location references a correct URI' do
     before do
       @manifest_hash = {

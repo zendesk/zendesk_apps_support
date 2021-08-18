@@ -25,7 +25,8 @@ describe ZendeskAppsSupport::Manifest do
       location: {
         support: {
           new_ticket_sidebar: {
-            url: Faker::Internet.url
+            url: Faker::Internet.url,
+            flexible: true
           },
           top_bar: {
             url: Faker::Internet.url
