@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |s|
   s.name        = 'zendesk_apps_support'
-  s.version     = '4.29.8'
+  s.version     = '4.29.9'
   s.license     = 'Apache License Version 2.0'
   s.authors     = ['James A. Rosen', 'Likun Liu', 'Sean Caffery', 'Daniel Ribeiro']
   s.email       = ['dev@zendesk.com']
@@ -29,7 +29,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'faker', '~> 1.6.6'
   s.add_development_dependency 'rubocop', '~> 0.49.0'
   s.add_development_dependency 'byebug', '~> 9.0.6'
-  s.add_development_dependency 'bundler', '1.17.3'
+  s.add_development_dependency 'bundler', '2.2.26'
   s.add_development_dependency 'parallel', '1.12.1'
 
   s.files = Dir.glob('{lib,config}/**/*') + %w[README.md LICENSE]
