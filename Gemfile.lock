@@ -9,7 +9,7 @@ PATH
       json
       loofah (~> 2.3.1)
       marcel
-      nokogiri (>= 1.8.5, < 1.11.0)
+      nokogiri
       rb-inotify (= 0.9.10)
       sass
       sassc
