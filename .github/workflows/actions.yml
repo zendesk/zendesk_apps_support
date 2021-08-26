@@ -9,11 +9,14 @@ jobs:
   main:
     name: ruby
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        ruby-version: [2.6.8, 2.5.9, 2.4.10]
     steps:
     - uses: zendesk/checkout@v2
     - uses: zendesk/setup-ruby@v1
       with:
-        ruby-version: '2.4.0'
+        ruby-version: ${{ matrix.ruby-version }}
     - name: Vendor Cache
       id: vendor-cache
       uses: zendesk/cache@v2
