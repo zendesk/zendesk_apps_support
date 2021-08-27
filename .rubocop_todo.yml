@@ -44,7 +44,7 @@ Style/GuardClause:
     - 'lib/zendesk_apps_support/validations/source.rb'
 
 # Offense count: 1
-Style/OpMethod:
+Naming/BinaryOperatorParameterName:
   Exclude:
     - 'lib/zendesk_apps_support/app_file.rb'
 
