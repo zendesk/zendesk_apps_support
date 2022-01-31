@@ -2,6 +2,7 @@
 
 module ZendeskAppsSupport
   class AppRequirement
+    WEBHOOKS_KEY = 'webhooks'
     CUSTOM_OBJECTS_KEY = 'custom_objects'
     CUSTOM_OBJECTS_TYPE_KEY = 'custom_object_types'
     CUSTOM_OBJECTS_RELATIONSHIP_TYPE_KEY = 'custom_object_relationship_types'
