@@ -46,7 +46,7 @@ module ZendeskAppsSupport
         def missing_required_fields(requirements)
           [].tap do |errors|
             requirements.each do |requirement_type, requirement|
-              next if %w[channel_integrations custom_objects].include? requirement_type
+              next if %w[channel_integrations custom_objects webhooks].include? requirement_type
               requirement.each do |identifier, fields|
                 next if fields.nil? || fields.include?('title')
                 errors << ValidationError.new(:missing_required_fields,
