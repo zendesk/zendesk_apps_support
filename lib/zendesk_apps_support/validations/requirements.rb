@@ -29,6 +29,7 @@ module ZendeskAppsSupport
             errors << invalid_channel_integrations(requirements)
             errors << invalid_custom_fields(requirements)
             errors << invalid_custom_objects(requirements)
+            errors << invalid_webhooks(requirements)
             errors << missing_required_fields(requirements)
             errors.flatten!
             errors.compact!
@@ -104,6 +105,26 @@ module ZendeskAppsSupport
                                             field: 'manifest_url',
                                             identifier: identifier)
             end
+          end
+        end
+
+        def invalid_webhooks(requirements)
+          webhook_requirements = requirements[AppRequirement::WEBHOOKS_KEY]
+
+          return if webhook_requirements.nil?
+
+          validate_webhook_keys(webhook_requirements)
+        end
+
+        def validate_webhook_keys(webhook_requirements)
+          required_keys = %w[name status endpoint http_method request_format]
+
+          missing_keys = required_keys - webhook_requirements.keys
+
+          missing_keys.map do |key|
+            ValidationError.new(:missing_required_fields,
+                                field: key,
+                                identifier: AppRequirement::WEBHOOKS_KEY)
           end
         end
 

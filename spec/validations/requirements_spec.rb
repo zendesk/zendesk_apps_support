@@ -272,4 +272,42 @@ describe ZendeskAppsSupport::Validations::Requirements do
       end
     end
   end
+
+  context 'webhooks requirements validations' do
+    context 'there is a valid webhooks schema defined' do
+      let(:requirements_string) do
+        JSON.generate(
+          'webhooks' => {
+            'name' => 'Example',
+            'status' => 'active',
+            'endpoint' => 'https://example.com',
+            'http_method' => 'POST',
+            'request_format' => 'json',
+          }
+        )
+      end
+
+      it 'does not return an error' do
+        expect(errors).to be_empty
+      end
+    end
+
+    context 'a webhooks schema is missing required keys' do
+      let(:requirements_string) do
+        JSON.generate(
+          'webhooks' => {
+          }
+        )
+      end
+      let(:required_keys) { [ 'name', 'status', 'endpoint', 'http_method', 'request_format' ] }
+
+      it 'creates an error' do
+        errors.each do |error|
+          expect(error.key).to eq(:missing_required_fields)
+          expect(required_keys).to include(error.data[:field])
+        end
+        expect(errors.count).to eq(required_keys.count)
+      end
+    end
+  end
 end
