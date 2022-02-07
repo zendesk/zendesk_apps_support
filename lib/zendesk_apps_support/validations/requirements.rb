@@ -113,18 +113,20 @@ module ZendeskAppsSupport
 
           return if webhook_requirements.nil?
 
-          validate_webhook_keys(webhook_requirements)
+          webhook_requirements.map do |identifier, requirement|
+            validate_webhook_keys(identifier, requirement)
+          end.flatten
         end
 
-        def validate_webhook_keys(webhook_requirements)
+        def validate_webhook_keys(identifier, requirement)
           required_keys = %w[name status endpoint http_method request_format]
 
-          missing_keys = required_keys - webhook_requirements.keys
+          missing_keys = required_keys - requirement.keys
 
           missing_keys.map do |key|
             ValidationError.new(:missing_required_fields,
                                 field: key,
-                                identifier: AppRequirement::WEBHOOKS_KEY)
+                                identifier: identifier)
           end
         end
 

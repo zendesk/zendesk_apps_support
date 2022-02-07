@@ -278,11 +278,13 @@ describe ZendeskAppsSupport::Validations::Requirements do
       let(:requirements_string) do
         JSON.generate(
           'webhooks' => {
-            'name' => 'Example',
-            'status' => 'active',
-            'endpoint' => 'https://example.com',
-            'http_method' => 'POST',
-            'request_format' => 'json',
+            'my_webhook' => {
+              'name' => 'Example',
+              'status' => 'active',
+              'endpoint' => 'https://example.com',
+              'http_method' => 'POST',
+              'request_format' => 'json',
+            }
           }
         )
       end
@@ -296,6 +298,7 @@ describe ZendeskAppsSupport::Validations::Requirements do
       let(:requirements_string) do
         JSON.generate(
           'webhooks' => {
+            'my_webhook': {}
           }
         )
       end
@@ -307,6 +310,26 @@ describe ZendeskAppsSupport::Validations::Requirements do
           expect(required_keys).to include(error.data[:field])
         end
         expect(errors.count).to eq(required_keys.count)
+      end
+    end
+
+    context 'multiple webhooks schemas are missing required keys' do
+      let(:requirements_string) do
+        JSON.generate(
+          'webhooks' => {
+            'my_webhook': {},
+            'my_other_webhook': {}
+          }
+        )
+      end
+      let(:required_keys) { [ 'name', 'status', 'endpoint', 'http_method', 'request_format' ] }
+
+      it 'creates an error' do
+        errors.each do |error|
+          expect(error.key).to eq(:missing_required_fields)
+          expect(required_keys).to include(error.data[:field])
+        end
+        expect(errors.count).to eq(required_keys.count * 2)
       end
     end
   end
