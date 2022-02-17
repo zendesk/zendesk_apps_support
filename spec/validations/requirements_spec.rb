@@ -187,6 +187,13 @@ describe ZendeskAppsSupport::Validations::Requirements do
     end
   end
 
+  context 'there is a targets requirement type' do
+    let(:requirements_string) { JSON.generate('targets' => { 'abc' => {}, 'xyz' => {} }) }
+    it 'creates an error' do
+      expect(errors.first.key).to eq(:invalid_requirements_types)
+    end
+  end
+
   context 'there are duplicate requirements' do
     let(:requirements_string) { '{ "a": { "b": 1, "b": 2 }}' }
 
