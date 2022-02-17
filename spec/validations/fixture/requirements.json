@@ -1,10 +1,17 @@
 {
-  "targets": {
-    "jira_story_target": {
-      "title": "blah",
-      "type": "jira_target",
-      "active": true,
-      "target_url": "http://example.org"
+  "webhooks": {
+    "new_webhook_1": {
+      "endpoint": "https://webhook.site/81a0f086-7a95-4654-b224-534c3a5bd319",
+      "http_method": "GET",
+      "name": "App Created Webhook 1",
+      "title": "my webhook",
+      "description": "Webhook for my really sweet app",
+      "request_format": "json",
+      "status": "active",
+      "signing_secret": {
+        "secret": "pvXR0btAdXdFazX8TPRqbGHZJFGmUs6pqAIKR46REk0",
+        "algorithm": "SHA256"
+      }
     }
   },
 

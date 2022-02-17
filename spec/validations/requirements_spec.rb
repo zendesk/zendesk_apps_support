@@ -111,7 +111,7 @@ describe ZendeskAppsSupport::Validations::Requirements do
   end
 
   context 'a requirement field missing a "key"' do
-    let(:requirements_string) { JSON.generate('targets' => { 'abc' => {} }) }
+    let(:requirements_string) { JSON.generate('webhooks' => { 'abc' => {} }) }
 
     it 'creates an error for missing required fields' do
       expect(errors.first.key).to eq(:missing_required_fields)
@@ -172,16 +172,23 @@ describe ZendeskAppsSupport::Validations::Requirements do
   end
 
   context 'many requirements are lacking required fields' do
-    let(:requirements_string) { JSON.generate('targets' => { 'abc' => {}, 'xyz' => {} }) }
+    let(:requirements_string) { JSON.generate('webhooks' => { 'abc' => {}, 'xyz' => {} }) }
 
     it 'creates an error for each of them' do
-      expect(errors.size).to eq(2)
+      expect(errors.size).to eq(10)
     end
   end
 
   context 'there are invalid requirement types' do
     let(:requirements_string) { '{ "i_am_not_a_valid_type": {}}' }
 
+    it 'creates an error' do
+      expect(errors.first.key).to eq(:invalid_requirements_types)
+    end
+  end
+
+  context 'there is a targets requirement type' do
+    let(:requirements_string) { JSON.generate('targets' => { 'abc' => {}, 'xyz' => {} }) }
     it 'creates an error' do
       expect(errors.first.key).to eq(:invalid_requirements_types)
     end
