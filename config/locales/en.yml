@@ -148,6 +148,7 @@ en:
               other: "%{invalid_locations} are invalid locations in framework v1."
             oauth_parameter_cannot_be_secure: oauth parameter cannot be set to be
               secure.
+            invalid_url: '%{field} must be a valid URL, got "%{value}".'
         warning:
           app_build:
             deprecated_version: You are targeting a deprecated version of the framework.

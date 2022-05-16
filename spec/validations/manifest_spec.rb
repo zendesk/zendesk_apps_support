@@ -692,4 +692,55 @@ describe ZendeskAppsSupport::Validations::Manifest do
       expect(package).to have_error 'oauth parameter cannot be set to be secure.'
     end
   end
+
+  context 'url is not HTTP or HTTPS' do
+    before do
+      @manifest_hash = {
+        'termsConditionsURL' => 'javascript:alert("terms_conditions_url")',
+        'author' => { 'url' => 'javascript:alert("author_url")' }
+      }
+    end
+
+    it 'terms_conditions_url should have an error' do
+      expect(@package).to have_error(/terms_conditions_url must be a valid URL/)
+    end
+
+    it 'author.url should have an error' do
+      expect(@package).to have_error(/author url must be a valid URL/)
+    end
+  end
+
+  context 'url is HTTP' do
+    before do
+      @manifest_hash = {
+        'terms_conditions_url' => 'http://mysite.com/terms_conditions_url',
+        'author' => { 'url' => 'http://mysite.com/author_url' }
+      }
+    end
+
+    it 'terms_conditions_url should not have an error' do
+      expect(@package).not_to have_error(/terms_conditions_url must be a valid URL/)
+    end
+
+    it 'author.url should not have an error' do
+      expect(@package).not_to have_error(/author url must be a valid URL/)
+    end
+  end
+
+  context 'url is HTTPS' do
+    before do
+      @manifest_hash = {
+        'terms_conditions_url' => 'https://mysite.com/terms_conditions_url',
+        'author' => { 'url' => 'https://mysite.com/author_url' }
+      }
+    end
+
+    it 'terms_conditions_url should not have an error' do
+      expect(@package).not_to have_error(/terms_conditions_url must be a valid URL/)
+    end
+
+    it 'author.url should not have an error' do
+      expect(@package).not_to have_error(/author url must be a valid URL/)
+    end
+  end
 end
