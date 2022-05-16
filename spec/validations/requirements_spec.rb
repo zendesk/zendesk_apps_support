@@ -187,6 +187,26 @@ describe ZendeskAppsSupport::Validations::Requirements do
     end
   end
 
+  context 'there are invalid target types' do
+    let(:requirements_string) do
+      {
+        targets: {
+          http_target: {
+            type: 'http_target',
+            title: 'HTTP target',
+            method: 'post',
+            target_url: 'http://test.local',
+            content_type: 'application/json'
+          }
+        }
+      }.to_json
+    end
+
+    it 'creates an error' do
+      expect(errors.first.key).to eq(:invalid_requirements_types)
+    end
+  end
+
   context 'there are duplicate requirements' do
     let(:requirements_string) { '{ "a": { "b": 1, "b": 2 }}' }
 

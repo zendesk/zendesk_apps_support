@@ -30,6 +30,7 @@ module ZendeskAppsSupport
             errors << invalid_custom_fields(requirements)
             errors << invalid_custom_objects(requirements)
             errors << invalid_webhooks(requirements)
+            errors << invalid_target_types(requirements)
             errors << missing_required_fields(requirements)
             errors.flatten!
             errors.compact!
@@ -169,6 +170,18 @@ module ZendeskAppsSupport
             errors << ValidationError.new(:missing_required_fields,
                                           field: key,
                                           identifier: identifier)
+          end
+        end
+
+        def invalid_target_types(requirements)
+          invalid_target_types = %w[http_target]
+
+          requirements['targets']&.map do |_identifier, requirement|
+            if invalid_target_types.include?(requirement['type'])
+              ValidationError.new(:invalid_requirements_types,
+                                  invalid_types: "targets -> #{requirement['type']}",
+                                  count: 1)
+            end
           end
         end
       end
