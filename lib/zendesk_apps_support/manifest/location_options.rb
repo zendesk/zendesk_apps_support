@@ -9,7 +9,8 @@ module ZendeskAppsSupport
         auto_hide: 'autoHide',
         flexible: 'flexible',
         signed: 'signed',
-        url: 'url'
+        url: 'url',
+        size: 'size'
       }.freeze
 
       attr_reader :location
