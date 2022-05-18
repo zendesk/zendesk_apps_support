@@ -13,12 +13,13 @@ module ZendeskAppsSupport
         size: 'size'
       }.freeze
 
-      attr_reader :location, *RUBY_TO_JSON.keys
+      attr_reader :location
+      attr_reader(*RUBY_TO_JSON.keys)
 
-      alias signed? signed
-      alias legacy? legacy
-      alias auto_load? auto_load
-      alias auto_hide? auto_hide
+      alias_method :signed?, :signed
+      alias_method :legacy?, :legacy
+      alias_method :auto_load?, :auto_load
+      alias_method :auto_hide?, :auto_hide
 
       def initialize(location, options)
         @location = location
