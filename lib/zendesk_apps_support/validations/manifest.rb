@@ -431,9 +431,14 @@ module ZendeskAppsSupport
         end
 
         def validate_url(value, label_for_error)
-          unless value.nil? || value.match(/^https?:\/\//)
+          return if value.nil?
+
+          uri = URI.parse(value)
+          unless uri.is_a?(URI::HTTP) && !uri.host.nil?
             ValidationError.new(:invalid_url, field: label_for_error, value: value)
           end
+        rescue URI::InvalidURIError
+          ValidationError.new(:invalid_url, field: label_for_error, value: value)
         end
       end
     end
