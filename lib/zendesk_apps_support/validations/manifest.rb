@@ -66,12 +66,14 @@ module ZendeskAppsSupport
 
         def validate_urls(manifest)
           errors = []
-          if manifest.terms_conditions_url
-            errors << validate_url(manifest.terms_conditions_url, "terms_conditions_url")
+
+          if manifest.terms_conditions_url && !valid_url?(manifest.terms_conditions_url)
+            errors << ValidationError.new(:invalid_url, field: 'terms_conditions_url', value: manifest.terms_conditions_url)
           end
 
-          if manifest.author
-            errors << validate_url(manifest.author["url"], "author url")
+          author = manifest.author
+          if author && author["url"] && !valid_url?(author["url"])
+            errors << ValidationError.new(:invalid_url, field: 'author url', value: author["url"])
           end
           errors
         end
@@ -430,15 +432,11 @@ module ZendeskAppsSupport
           end
         end
 
-        def validate_url(value, label_for_error)
-          return if value.nil?
-
+        def valid_url?(value)
           uri = URI.parse(value)
-          unless uri.is_a?(URI::HTTP) && !uri.host.nil?
-            ValidationError.new(:invalid_url, field: label_for_error, value: value)
-          end
+          uri.is_a?(URI::HTTP) && !uri.host.nil?
         rescue URI::InvalidURIError
-          ValidationError.new(:invalid_url, field: label_for_error, value: value)
+          false
         end
       end
     end

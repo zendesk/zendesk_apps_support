@@ -702,11 +702,44 @@ describe ZendeskAppsSupport::Validations::Manifest do
     end
 
     it 'terms_conditions_url should have an error' do
-      expect(@package).to have_error(/terms_conditions_url must be a valid URL/)
+      expect(@package).to have_error("terms_conditions_url must be a valid URL, got \"javascript:alert(\"terms_conditions_url\")\".")
     end
 
     it 'author.url should have an error' do
-      expect(@package).to have_error(/author url must be a valid URL/)
+      expect(@package).to have_error("author url must be a valid URL, got \"javascript:alert(\"author_url\")\".")
+    end
+  end
+
+  context 'url is empty' do
+    before do
+      @manifest_hash = {
+        'termsConditionsURL' => '',
+        'author' => { 'url' => '' }
+      }
+    end
+
+    it 'terms_conditions_url should have an error' do
+      expect(@package).to have_error('terms_conditions_url must be a valid URL, got "".')
+    end
+
+    it 'author.url should have an error' do
+      expect(@package).to have_error('author url must be a valid URL, got "".')
+    end
+  end
+
+  context 'url is nil' do
+    before do
+      @manifest_hash = {
+        'author' => { 'name' => 'author name' }
+      }
+    end
+
+    it 'terms_conditions_url should not have an error' do
+      expect(@package).not_to have_error(/terms_conditions_url must be a valid URL/)
+    end
+
+    it 'author.url should not have an error' do
+      expect(@package).not_to have_error(/author url must be a valid URL/)
     end
   end
 
