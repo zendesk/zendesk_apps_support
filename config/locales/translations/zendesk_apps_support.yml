@@ -412,3 +412,7 @@ parts:
       key: "txt.apps.admin.error.app_build.oauth_parameter_cannot_be_secure"
       title: "oauth parameter cannot be set to be secure."
       value: "oauth parameter cannot be set to be secure."
+  - translation:
+      key: "txt.apps.admin.error.app_build.invalid_url"
+      title: "App builder job: this value needs to be a valid URL, but something else was passed in. placeholder value is taken from user input. You can translate as: The value %{field} must be a valid URL... to avoid any gender issues."
+      value: "%{field} must be a valid URL, got \"%{value}\"."

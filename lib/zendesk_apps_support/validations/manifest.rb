@@ -39,6 +39,7 @@ module ZendeskAppsSupport
             type_checks(manifest),
             oauth_error(manifest),
             default_locale_error(manifest, package),
+            validate_urls(manifest),
             validate_parameters(manifest),
             if manifest.requirements_only? || manifest.marketing_only?
               [ ban_location(manifest),
@@ -61,6 +62,20 @@ module ZendeskAppsSupport
             invalid_v1_location(package),
             location_framework_mismatch(manifest)
           ]
+        end
+
+        def validate_urls(manifest)
+          errors = []
+
+          if manifest.terms_conditions_url && !valid_url?(manifest.terms_conditions_url)
+            errors << ValidationError.new(:invalid_url, field: 'terms_conditions_url', value: manifest.terms_conditions_url)
+          end
+
+          author = manifest.author
+          if author && author["url"] && !valid_url?(author["url"])
+            errors << ValidationError.new(:invalid_url, field: 'author url', value: author["url"])
+          end
+          errors
         end
 
         def validate_parameters(manifest)
@@ -415,6 +430,13 @@ module ZendeskAppsSupport
           unless no_template.is_a?(Array) && manifest.no_template_locations.all? { |loc| Location.find_by(name: loc) }
             ValidationError.new(:invalid_no_template)
           end
+        end
+
+        def valid_url?(value)
+          uri = URI.parse(value)
+          uri.is_a?(URI::HTTP) && !uri.host.nil?
+        rescue URI::InvalidURIError
+          false
         end
       end
     end
