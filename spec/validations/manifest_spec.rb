@@ -743,10 +743,44 @@ describe ZendeskAppsSupport::Validations::Manifest do
     end
   end
 
+  context 'url is empty after http://' do
+    before do
+      @manifest_hash = {
+        'termsConditionsURL' => 'http://',
+        'author' => { 'url' => 'http://' }
+      }
+    end
+
+    it 'terms_conditions_url should have an error' do
+      expect(@package).to have_error('terms_conditions_url must be a valid URL, got "http://".')
+    end
+
+    it 'author.url should have an error' do
+      expect(@package).to have_error('author url must be a valid URL, got "http://".')
+    end
+  end
+
+  context 'url is empty after https://' do
+    before do
+      @manifest_hash = {
+        'termsConditionsURL' => 'https://',
+        'author' => { 'url' => 'https://' }
+      }
+    end
+
+    it 'terms_conditions_url should have an error' do
+      expect(@package).to have_error('terms_conditions_url must be a valid URL, got "https://".')
+    end
+
+    it 'author.url should have an error' do
+      expect(@package).to have_error('author url must be a valid URL, got "https://".')
+    end
+  end
+
   context 'url is HTTP' do
     before do
       @manifest_hash = {
-        'terms_conditions_url' => 'http://mysite.com/terms_conditions_url',
+        'termsConditionsURL' => 'http://mysite.com/terms_conditions_url',
         'author' => { 'url' => 'http://mysite.com/author_url' }
       }
     end
@@ -763,7 +797,7 @@ describe ZendeskAppsSupport::Validations::Manifest do
   context 'url is HTTPS' do
     before do
       @manifest_hash = {
-        'terms_conditions_url' => 'https://mysite.com/terms_conditions_url',
+        'termsConditionsURL' => 'https://mysite.com/terms_conditions_url',
         'author' => { 'url' => 'https://mysite.com/author_url' }
       }
     end
