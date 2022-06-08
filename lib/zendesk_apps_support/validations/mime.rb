@@ -6,7 +6,7 @@ module ZendeskAppsSupport
   module Validations
     module Mime
       UNSUPPORTED_MIME_TYPES = %w[
-        vnd.rar rar zip gzip pdf doc docx avi bin bz bz2 csh sh jar mp3 mpeg odt pptx ppt xls xlsx 7z
+        vnd.rar rar zip gzip pdf doc docx avi bin bz bz2 csh sh jar mp3 mpeg odt pptx ppt xls xlsx 7z shtml
       ].freeze
 
       class << self
