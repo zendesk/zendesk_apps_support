@@ -16,8 +16,7 @@ module ZendeskAppsSupport
       INSTALLED_TEMPLATE.result(
         appsjs: @appsjs,
         installations: @installations,
-        installation_orders: options.fetch(:installation_orders, {}),
-        rollbar_zaf_access_token: options.fetch(:rollbar_zaf_access_token, '')
+        installation_orders: options.fetch(:installation_orders, {})
       )
     end
 
