@@ -14,8 +14,4 @@
   <% end %>
 }());
 
-<% unless rollbar_zaf_access_token.empty? %>
-ZendeskApps.rollbarAccessToken = "<%= rollbar_zaf_access_token %>";
-<% end %>
-
 ZendeskApps.trigger && ZendeskApps.trigger('ready');

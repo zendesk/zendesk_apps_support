@@ -10,8 +10,7 @@ describe ZendeskAppsSupport::Installed do
 
   describe 'compile' do
     it 'should render installed.js' do
-      installedjs = @installed.compile(installation_orders: {},
-                                       rollbar_zaf_access_token: 'test token')
+      installedjs = @installed.compile(installation_orders: {})
 
       expected_installedjs = File.read('spec/fixtures/installed.js')
       expect(installedjs.gsub(/\s+/, ' ')).to eq(expected_installedjs.gsub(/\s+/, ' '))
