@@ -3,7 +3,7 @@
 module ZendeskAppsSupport
   class Installation
     attr_accessor :id, :app_id, :app_name, :requirements, :settings, :enabled, :collapsible, :updated_at, :created_at
-    attr_accessor :plan
+    attr_accessor :plan, :stripe_subscription_id
 
     def initialize(options)
       options.each do |k, v|
