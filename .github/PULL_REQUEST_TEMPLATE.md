@@ -1,7 +1,7 @@
 
-🐕
+💐
 
-/cc @zendesk/dingo
+/cc @zendesk/wattle
 
 ### Description
 
