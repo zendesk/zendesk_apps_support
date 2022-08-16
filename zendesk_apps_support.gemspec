@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.summary     = 'Support to help you develop Zendesk Apps.'
   s.description = s.summary
 
-  s.required_ruby_version = '>= 2.6'
+  s.required_ruby_version = Gem::Requirement.new('>= 2.6', '< 3.1')
   s.required_rubygems_version = '>= 1.3.6'
 
   s.add_runtime_dependency 'i18n'
