@@ -197,6 +197,13 @@ describe ZendeskAppsSupport::Validations::Requirements do
             method: 'post',
             target_url: 'http://test.local',
             content_type: 'application/json'
+          },
+          url_target_v2: {
+            type: 'url_target_v2',
+            title: 'URL target v2',
+            method: 'post',
+            target_url: 'http://test.local',
+            content_type: 'application/json'
           }
         }
       }.to_json
@@ -204,6 +211,7 @@ describe ZendeskAppsSupport::Validations::Requirements do
 
     it 'creates an error' do
       expect(errors.first.key).to eq(:invalid_requirements_types)
+      expect(errors.last.key).to eq(:invalid_requirements_types)
     end
   end
 
