@@ -174,7 +174,7 @@ module ZendeskAppsSupport
         end
 
         def invalid_target_types(requirements)
-          invalid_target_types = %w[http_target]
+          invalid_target_types = %w[http_target url_target_v2]
 
           requirements['targets']&.map do |_identifier, requirement|
             if invalid_target_types.include?(requirement['type'])
