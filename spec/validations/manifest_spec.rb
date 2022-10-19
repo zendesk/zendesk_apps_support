@@ -5,13 +5,16 @@ require 'tmpdir'
 
 describe ZendeskAppsSupport::Validations::Manifest do
   def default_required_params(overrides = {})
-    required = ZendeskAppsSupport::Validations::Manifest::REQUIRED_MANIFEST_FIELDS
-    valid_fields = required.values.each_with_object(frameworkVersion: '1.0') do |fields, name|
-      name[fields] = fields
-      name
-    end
-
-    valid_fields.merge(location: 'ticket_sidebar').merge(overrides)
+    {
+      'author' => 'author',
+      'defaultLocale' => 'default ocale',
+      'frameworkVersion' => '2.0',
+      'location' => {
+        'support' => {
+          'ticket_sidebar' => 'url'
+        }
+      }
+    }.merge!(overrides)
   end
 
   def create_package(parameter_hash)

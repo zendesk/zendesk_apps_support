@@ -12,7 +12,7 @@ module ZendeskAppsSupport
   #                  newly created or updates apps MAY target it, but it
   #                  may change without notice
   class AppVersion
-    DEPRECATED = ['0.5', '1.0'].freeze
+    DEPRECATED = [].freeze
     SUNSETTING = nil
     CURRENT    = '2.0'
     FUTURE     = nil
@@ -73,6 +73,4 @@ module ZendeskAppsSupport
       @version == other.to_s
     end
   end
-
-  AppVersion.freeze
 end

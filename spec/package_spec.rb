@@ -393,6 +393,7 @@ describe ZendeskAppsSupport::Package do
       allow(ZendeskAppsSupport::Validations::Marketplace).to receive(:call)
       allow(ZendeskAppsSupport::Validations::Templates).to receive(:call)
       allow(ZendeskAppsSupport::Validations::Stylesheets).to receive(:call)
+      stub_const('ZendeskAppsSupport::AppVersion::TO_BE_SERVED', ['0.5', '2.0'])
       package.validate!(marketplace: false)
     end
 
