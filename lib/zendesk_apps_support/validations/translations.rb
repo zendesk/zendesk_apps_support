@@ -6,7 +6,7 @@ module ZendeskAppsSupport
   module Validations
     module Translations
       TRANSLATIONS_PATH = %r{^translations/(.*)\.json$}
-      VALID_LOCALE      = /^[a-z]{2}(-\w{2,3})?$/
+      VALID_LOCALE      = /^[a-z]{2,3}(-\w{2,3})?$/
 
       class TranslationFormatError < StandardError
       end
