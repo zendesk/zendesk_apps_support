@@ -22,7 +22,10 @@ jobs:
       uses: zendesk/cache@v3
       with:
         path: vendor/cache
-        key: ${{ runner.os }}-vendor
+        key: ${{ runner.os }}-vendor-ruby-${{ matrix.ruby-version }}-lock-${{ hashFiles('Gemfile.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-vendor-ruby-${{ matrix.ruby-version }}-
+          ${{ runner.os }}-vendor-
     - name: before_script
       run: bundle install --jobs=3 --retry=3 --path=${BUNDLE_PATH:-vendor/bundle}
     - name: build
