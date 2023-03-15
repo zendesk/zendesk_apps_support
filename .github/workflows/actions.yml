@@ -2,8 +2,10 @@ name: repo-checks
 
 on:
   pull_request:
+  push:
     branches:
-    - master
+      - master
+      - main
 
 jobs:
   main:
