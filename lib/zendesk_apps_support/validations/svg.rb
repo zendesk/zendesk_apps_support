@@ -8,13 +8,13 @@ module ZendeskAppsSupport
       PLACEHOLDER_SVG_MARKUP = File.read(File.expand_path('../../assets/default_app_logo.svg', __FILE__))
 
       # whitelist elements and attributes used in Zendesk Garden assets
-      Loofah::HTML5::WhiteList::ALLOWED_ELEMENTS_WITH_LIBXML2.add 'symbol'
-      Loofah::HTML5::WhiteList::ACCEPTABLE_CSS_PROPERTIES.add 'position'
+      Loofah::HTML5::SafeList::ALLOWED_ELEMENTS_WITH_LIBXML2.add 'symbol'
+      Loofah::HTML5::SafeList::ACCEPTABLE_CSS_PROPERTIES.add 'position'
 
       # CRUFT: ignore a (very specific) style attribute which Loofah would otherwise scrub.
       # This attribute is deprecated (https://www.w3.org/TR/filter-effects/#AccessBackgroundImage)
       # but is included in many of the test apps used in fixtures for tests in ZAM, ZAT etc.
-      Loofah::HTML5::WhiteList::ACCEPTABLE_CSS_PROPERTIES.add 'enable-background'
+      Loofah::HTML5::SafeList::ACCEPTABLE_CSS_PROPERTIES.add 'enable-background'
 
       @strip_declaration = Loofah::Scrubber.new do |node|
         node.remove if node.name == 'xml' && node.children.empty?

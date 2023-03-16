@@ -2,8 +2,10 @@ name: repo-checks
 
 on:
   pull_request:
+  push:
     branches:
-    - master
+      - master
+      - main
 
 jobs:
   main:
@@ -13,26 +15,26 @@ jobs:
       matrix:
         ruby-version: [3.0.4, 2.7.5, 2.6.10]
     steps:
-    - uses: zendesk/checkout@v3
-    - uses: zendesk/setup-ruby@v1
-      with:
-        ruby-version: ${{ matrix.ruby-version }}
-    - name: Vendor Cache
-      id: vendor-cache
-      uses: zendesk/cache@v3
-      with:
-        path: vendor/cache
-        key: ${{ runner.os }}-vendor-ruby-${{ matrix.ruby-version }}-lock-${{ hashFiles('Gemfile.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-vendor-ruby-${{ matrix.ruby-version }}-
-          ${{ runner.os }}-vendor-
-    - name: before_script
-      run: |
-        bundle config set --local path 'vendor/cache'
-        bundle install --jobs=3 --retry=3
-    - name: build
-      run: |
-        bundle exec rake
-    - name: lint
-      run: |
-        bundle exec rubocop
+      - uses: zendesk/checkout@v3
+      - uses: zendesk/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby-version }}
+      - name: Vendor Cache
+        id: vendor-cache
+        uses: zendesk/cache@v3
+        with:
+          path: vendor/cache
+          key: ${{ runner.os }}-vendor-ruby-${{ matrix.ruby-version }}-lock-${{ hashFiles('Gemfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-vendor-ruby-${{ matrix.ruby-version }}-
+            ${{ runner.os }}-vendor-
+      - name: before_script
+        run: |
+          bundle config set --local path 'vendor/cache'
+          bundle install --jobs=3 --retry=3
+      - name: build
+        run: |
+          bundle exec rake
+      - name: lint
+        run: |
+          bundle exec rubocop
