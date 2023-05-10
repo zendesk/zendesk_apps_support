@@ -24,7 +24,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'rb-inotify', '0.9.10'
   s.add_runtime_dependency 'marcel'
   s.add_runtime_dependency 'ipaddress_2', '~> 0.13.0'
-  s.add_development_dependency 'rspec', '~> 3.4.0'
+  s.add_development_dependency 'rspec'
   s.add_development_dependency 'bump', '~> 0.5.1'
   s.add_development_dependency 'faker', '~> 1.6.6'
   s.add_development_dependency 'rubocop'
