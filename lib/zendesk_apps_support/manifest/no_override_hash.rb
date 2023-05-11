@@ -18,7 +18,7 @@ module ZendeskAppsSupport
 
           # if the error contains the word `_legacy` in the second sentence, let's
           # only use the first one.
-          if [original, attempted].any? { |val| val =~ /_legacy/ }
+          if [original, attempted].any? { |val| val.is_a?(String) && val =~ /_legacy/ }
             return translated_error
           end
           translated_detail_key = 'txt.apps.admin.error.app_build.duplicate_reference_values'
