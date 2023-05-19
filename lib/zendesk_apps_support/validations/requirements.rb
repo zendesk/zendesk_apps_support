@@ -9,14 +9,12 @@ module ZendeskAppsSupport
       class << self
         def call(package)
           unless package.has_requirements?
-            return [ValidationError.new(:missing_requirements)] \
-              if package.manifest.requirements_only?
-            
-            return []
+            return [ValidationError.new(:missing_requirements)] if package.manifest.requirements_only?
+
+            return [] 
           end
 
-          return [ValidationError.new(:requirements_not_supported)] \
-            unless supports_requirements(package)
+          return [ValidationError.new(:requirements_not_supported)] unless supports_requirements(package)
 
           begin
             requirements = package.requirements_json
@@ -24,7 +22,7 @@ module ZendeskAppsSupport
             return [ValidationError.new(:duplicate_requirements, duplicate_keys: e.key, count: 1)]
           end
 
-          erros(requirements)
+          build_errors(requirements)
         rescue JSON::ParserError => e
           return [ValidationError.new(:requirements_not_json, errors: e)]
         end
@@ -175,7 +173,7 @@ module ZendeskAppsSupport
           end
         end
 
-        def erros(requirements)
+        def build_errors(requirements)
           [].tap do |errors|
             errors << invalid_requirements_types(requirements)
             errors << excessive_requirements(requirements)
