@@ -58,7 +58,7 @@ module ZendeskAppsSupport
 
         def build_errors(requirements)
           [].tap do |errors|
-            BuildErrors.build_errors(requirements, self).each { |error| errors << error}
+            BuildErrors.build_errors(requirements, self).each { |error| errors << error }
             errors.flatten!
             errors.compact!
           end
