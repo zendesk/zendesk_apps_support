@@ -1,23 +1,65 @@
 # frozen_string_literal: true
 
 class BuildErrors
-  def self.build_errors(requirements, klass=klass)
-    subclasses_errors = ObjectSpace.each_object(Class).select { |klass| klass < self }
+  class << self
+    def build_errors(requirements, klass=klass)
+      compute_subclasses_errors = self.get_errors
 
-    errors = []
-    subclasses_errors.each do |subclass_error| 
-      errors << subclass_error.invalid_requirements(requirements, klass=klass)
+      computed_subclasses_errors = []
+      compute_subclasses_errors.keys.each do |compute_subclass_error|
+        func = compute_subclasses_errors.fetch(compute_subclass_error)
+        computed_subclasses_errors << compute_subclass_error.send(func, requirements, klass=klass)
+      end
+      return computed_subclasses_errors
     end
-    return errors
-  end
 
-  def self.invalid_requirements(requirements, klass=klass)
-    raise NotImplementedError, "Must be implemented in a subclass" 
+    def errors(klass_error, func)
+      @errors = {} unless @errors
+      @errors[klass_error] = func
+    end
+
+    def get_errors
+      @errors
+    end
+  end  
+end
+
+class ExcessiveRequirements
+  BuildErrors.errors(self, 'excessive_requirements')
+
+  private 
+
+  def self.excessive_requirements(requirements, klass=klass)
+    count = requirements.values.map do |req|
+      req.is_a?(Hash) ? req.values : req
+    end.flatten.size
+    ValidationError.new(:excessive_requirements, max: klass::MAX_REQUIREMENTS, count: count) if count > klass::MAX_REQUIREMENTS
   end
 end
 
-class InvalidCustomFields < BuildErrors
-  def self.invalid_requirements(requirements, klass=klass)
+class ExcessiveCustomObjectsRequirements
+  BuildErrors.errors(self, 'excessive_custom_objects_requirements')
+
+  private
+
+  def self.excessive_custom_objects_requirements(requirements, klass=klass)
+    custom_objects = requirements[ZendeskAppsSupport::AppRequirement::CUSTOM_OBJECTS_KEY]
+    return unless custom_objects
+
+    count = custom_objects.values.flatten.size
+    if count > klass::MAX_CUSTOM_OBJECTS_REQUIREMENTS
+      ValidationError.new(:excessive_custom_objects_requirements, max: klass::MAX_CUSTOM_OBJECTS_REQUIREMENTS,
+                                                                  count: count)
+    end
+  end
+end
+
+class InvalidCustomFields
+  BuildErrors.errors(self, 'invalid_custom_fields')
+
+  private 
+
+  def self.invalid_custom_fields(requirements, klass=klass)
     user_fields = requirements['user_fields']
     organization_fields = requirements['organization_fields']
     return if user_fields.nil? && organization_fields.nil?
@@ -34,8 +76,12 @@ class InvalidCustomFields < BuildErrors
   end
 end
 
-class InvalidCustomObjects < BuildErrors
-  def self.invalid_requirements(requirements, klass=klass)
+class InvalidCustomObjects
+  BuildErrors.errors(self, 'invalid_custom_objects')
+
+  private
+
+  def self.invalid_custom_objects(requirements, klass=klass)
     custom_objects = requirements[ZendeskAppsSupport::AppRequirement::CUSTOM_OBJECTS_KEY]
     return if custom_objects.nil?
 
@@ -61,8 +107,12 @@ class InvalidCustomObjects < BuildErrors
   end
 end
 
-class InvalidRequirementsTypes < BuildErrors
-  def self.invalid_requirements(requirements, klass=klass)
+class InvalidRequirementsTypes
+  BuildErrors.errors(self, 'invalid_requirements_types')
+
+  private 
+
+  def self.invalid_requirements_types(requirements, klass=klass)
     invalid_types = requirements.keys - ZendeskAppsSupport::AppRequirement::TYPES
     unless invalid_types.empty?
       ValidationError.new(:invalid_requirements_types,
@@ -72,8 +122,12 @@ class InvalidRequirementsTypes < BuildErrors
   end
 end
 
-class InvalidChannelIntegrations < BuildErrors
-  def self.invalid_requirements(requirements, klass=klass)
+class InvalidChannelIntegrations
+  BuildErrors.errors(self, 'invalid_channel_integrations')
+
+  private
+
+  def self.invalid_channel_integrations(requirements, klass=klass)
     channel_integrations = requirements['channel_integrations']
     return unless channel_integrations
     [].tap do |errors|
@@ -90,8 +144,12 @@ class InvalidChannelIntegrations < BuildErrors
   end
 end
 
-class InvalidWebhooks < BuildErrors
-  def self.invalid_requirements(requirements, klass=klass)
+class InvalidWebhooks
+  BuildErrors.errors(self, 'invalid_webhooks')
+
+  private
+
+  def self.invalid_webhooks(requirements, klass=klass)
     webhook_requirements = requirements[ZendeskAppsSupport::AppRequirement::WEBHOOKS_KEY]
 
     return if webhook_requirements.nil?
@@ -102,30 +160,30 @@ class InvalidWebhooks < BuildErrors
   end
 end
 
-class ExcessiveCustomObjectsRequirements < BuildErrors
-  def self.invalid_requirements(requirements, klass=klass)
-    custom_objects = requirements[ZendeskAppsSupport::AppRequirement::CUSTOM_OBJECTS_KEY]
-    return unless custom_objects
+class InvalidTargetTypes
+  BuildErrors.errors(self, 'invalid_target_types')
 
-    count = custom_objects.values.flatten.size
-    if count > klass::MAX_CUSTOM_OBJECTS_REQUIREMENTS
-      ValidationError.new(:excessive_custom_objects_requirements, max: klass::MAX_CUSTOM_OBJECTS_REQUIREMENTS,
-                                                                  count: count)
+  private
+
+  def self.invalid_target_types(requirements, klass=klass)
+    invalid_target_types = %w[http_target url_target_v2]
+
+    requirements['targets']&.map do |_identifier, requirement|
+      if invalid_target_types.include?(requirement['type'])
+        ValidationError.new(:invalid_requirements_types,
+                            invalid_types: "targets -> #{requirement['type']}",
+                            count: 1)
+      end
     end
   end
 end
 
-class ExcessiveRequirements < BuildErrors
-  def self.invalid_requirements(requirements, klass=klass)
-    count = requirements.values.map do |req|
-      req.is_a?(Hash) ? req.values : req
-    end.flatten.size
-    ValidationError.new(:excessive_requirements, max: klass::MAX_REQUIREMENTS, count: count) if count > klass::MAX_REQUIREMENTS
-  end
-end
+class MissingRequiredFields
+  BuildErrors.errors(self, 'missing_required_fields')
 
-class MissingRequiredFields < BuildErrors
-  def self.invalid_requirements(requirements, klass=klass)
+  private
+
+  def self.missing_required_fields(requirements, klass=klass)
     [].tap do |errors|
       requirements.each do |requirement_type, requirement|
         next if %w[channel_integrations custom_objects webhooks].include? requirement_type
@@ -135,20 +193,6 @@ class MissingRequiredFields < BuildErrors
                                         field: 'title',
                                         identifier: identifier)
         end
-      end
-    end
-  end
-end
-
-class InvalidTargetTypes < BuildErrors
-  def self.invalid_requirements(requirements, klass=klass)
-    invalid_target_types = %w[http_target url_target_v2]
-
-    requirements['targets']&.map do |_identifier, requirement|
-      if invalid_target_types.include?(requirement['type'])
-        ValidationError.new(:invalid_requirements_types,
-                            invalid_types: "targets -> #{requirement['type']}",
-                            count: 1)
       end
     end
   end
