@@ -11,7 +11,7 @@ module ZendeskAppsSupport
           unless package.has_requirements?
             return [ValidationError.new(:missing_requirements)] if package.manifest.requirements_only?
 
-            return [] 
+            return []
           end
 
           return [ValidationError.new(:requirements_not_supported)] unless supports_requirements(package)
