@@ -300,7 +300,7 @@ describe ZendeskAppsSupport::Package do
 
         it 'includes zh-cn in translations' do
           expected_translations = JSON.parse(File.read('spec/translations/zh-cn.json'))
-          expect(package.send(:translations)['zh-cn'].except('custom1')).to eq(expected_translations)
+          expect(I18n::Utils.except(package.send(:translations)['zh-cn'], 'custom1')).to eq(expected_translations)
         end
 
         it 'merges missing keys with the default locale' do
@@ -319,7 +319,7 @@ describe ZendeskAppsSupport::Package do
 
         it 'removes zendesk-specific keys in translations' do
           expected_translations = JSON.parse(File.read('spec/translations/zh-cn.json'))
-          expect(package.send(:translations)['zh-cn'].except('custom1')).to eq(expected_translations)
+          expect(I18n::Utils.except(package.send(:translations)['zh-cn'], 'custom1')).to eq(expected_translations)
         end
 
         it 'merges missing keys with the default locale' do

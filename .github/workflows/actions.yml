@@ -8,33 +8,46 @@ on:
       - main
 
 jobs:
-  main:
-    name: ruby
+  tests:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
-        ruby-version: [3.0.4, 2.7.5, 2.6.10]
+        ruby-version:
+          - '2.7'
+          - '3.0'
+          - '3.1'
+          - '3.2'
     steps:
       - uses: zendesk/checkout@v3
       - uses: zendesk/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby-version }}
-      - name: Vendor Cache
-        id: vendor-cache
-        uses: zendesk/cache@v3
+          bundler-cache: true
+      - name: test
+        run: bundle exec rake
+
+  linter:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: zendesk/checkout@v3
+      - uses: zendesk/setup-ruby@v1
         with:
-          path: vendor/cache
-          key: ${{ runner.os }}-vendor-ruby-${{ matrix.ruby-version }}-lock-${{ hashFiles('Gemfile.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-vendor-ruby-${{ matrix.ruby-version }}-
-            ${{ runner.os }}-vendor-
-      - name: before_script
-        run: |
-          bundle config set --local path 'vendor/cache'
-          bundle install --jobs=3 --retry=3
-      - name: build
-        run: |
-          bundle exec rake
+          bundler-cache: true
       - name: lint
-        run: |
-          bundle exec rubocop
+        run: bundle exec rubocop
+
+  tests_successful:
+    name: Tests passing?
+    needs: tests
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          if ${{ needs.tests.result == 'success' }}
+          then
+            echo "All tests pass"
+          else
+            echo "Some tests failed"
+            false
+          fi
