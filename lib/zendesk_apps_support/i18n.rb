@@ -3,8 +3,8 @@
 module ZendeskAppsSupport
   module I18n
     class << self
-      def t(key, *args)
-        i18n.t(key, *args)
+      def t(key, **args)
+        i18n.t(key, **args)
       end
 
       def set_load_path
