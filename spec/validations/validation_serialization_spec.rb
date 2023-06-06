@@ -65,7 +65,7 @@ describe ZendeskAppsSupport::Validations::ValidationError do
 
   describe '.from_json' do
     it 'decodes a JSON hash and passes it to .from_hash' do
-      expect(ValidationError).to receive(:from_hash).with('foo' => 'bar')
+      expect(ValidationError).to receive(:from_hash).with({ 'foo' => 'bar' })
       ValidationError.from_json(JSON.generate('foo' => 'bar'))
     end
 

@@ -434,7 +434,8 @@ module ZendeskAppsSupport
 
         def valid_url?(value)
           uri = URI.parse(value)
-          uri.is_a?(URI::HTTP) && !uri.host.nil?
+          host_empty = uri.host.nil? || uri.host == ''
+          uri.is_a?(URI::HTTP) && !host_empty
         rescue URI::InvalidURIError
           false
         end

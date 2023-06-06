@@ -50,7 +50,7 @@ module ZendeskAppsSupport
       end
 
       def to_s
-        ZendeskAppsSupport::I18n.t("#{KEY_PREFIX}#{key}", data)
+        ZendeskAppsSupport::I18n.t("#{KEY_PREFIX}#{key}", **data)
       end
 
       def to_json(*)
