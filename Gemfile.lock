@@ -7,7 +7,7 @@ PATH
       image_size (~> 2.0.2)
       ipaddress_2 (~> 0.13.0)
       json
-      loofah (>= 2.3.1, < 2.20.0)
+      loofah (>= 2.3.1, <= 2.22.0)
       marcel
       nokogiri
       rb-inotify (= 0.9.10)
