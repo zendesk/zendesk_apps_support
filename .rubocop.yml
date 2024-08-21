@@ -1,0 +1,46 @@
+AllCops:
+  TargetRubyVersion: 2.6
+  Include:
+    - 'Gemfile'
+    - 'Rakefile'
+  Exclude:
+    - 'vendor/**/*'
+
+ClassLength:
+  Enabled: false
+
+Documentation:
+  Enabled: false
+
+MethodLength:
+  Enabled: false
+
+Style/Alias:
+  Enabled: false
+
+Layout/FirstArrayElementIndentation:
+  Enabled: false
+
+HashSyntax:
+  EnforcedStyle: ruby19
+
+Metrics/LineLength:
+  Max: 120
+
+Metrics/BlockLength:
+  Exclude:
+    - 'spec/**/*.rb'
+
+Metrics/ModuleLength:
+  CountComments: false  # count full line comments?
+  Max: 200
+
+CommentAnnotation:
+  Keywords:
+    - TODO
+    - FIXME
+    - OPTIMIZE
+    - HACK
+    - REVIEW
+
+inherit_from: .rubocop_todo.yml

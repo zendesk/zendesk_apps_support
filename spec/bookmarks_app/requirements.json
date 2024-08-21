@@ -1,0 +1,22 @@
+{
+  "targets": {
+    "jira_story_target": {
+      "title": "blah",
+      "type": "jira_target",
+      "active": true,
+      "target_url": "http://example.org"
+    }
+  },
+
+  "triggers": {
+    "submit_trigger": {
+      "title": "whatever",
+      "position": 3,
+      "active": true,
+      "conditions": {
+        "all": [{ "field": "status", "operator": "less_than", "value": "solved" }]
+      },
+      "actions" : [{"field": "status", "value": "open"}]
+    }
+  }
+}

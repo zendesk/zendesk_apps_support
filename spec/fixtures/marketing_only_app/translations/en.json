@@ -1,0 +1,21 @@
+{
+  "app": {
+    "name": {
+      "title": "Name for App: Marketing Only App",
+      "value": "Marketing Only App"
+    },
+    "description": {
+      "title": "Description for App: Marketing Only App",
+      "value": "Bring your Zendesk into your other service"
+    },
+    "long_description": {
+      "title": "Long Description for App: Marketing Only App",
+      "value": "Zendesk for Marketing Only App allows you to integrate your Zendesk Support helpdesk with your other service."
+    },
+    "installation_instructions": {
+      "title": "Installation Instructions for App: Marketing Only App",
+      "value": "Visit the Plugin Directory [here](http://wordpress.org/extend/plugins/zendesk/installation/) to download and install the plugin."
+    },
+    "package": "marketing_only_app"
+  }
+}

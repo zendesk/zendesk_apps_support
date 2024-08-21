@@ -1,0 +1,16 @@
+{
+  "app": {
+    "parameters": {
+      "url": {
+        "label": "URL",
+        "helpText": "The full URL of your account"
+      },
+      "show_photos": {
+        "label": "Show photos",
+        "helpText": "Note: The displayed fields will match the block view configuration"
+      },
+      "description": "this should be invalid, cannot be a string"
+    }
+  },
+  "logout": "Logout"
+}

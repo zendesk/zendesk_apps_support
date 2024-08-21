@@ -1,0 +1,17 @@
+{
+  "name": "Chat Only App",
+  "author": {
+    "name": "Chat developer",
+    "email": "support@developer.com",
+    "url": "https://www.google.com/foo/bar-baz"
+  },
+  "defaultLocale": "en",
+  "private": false,
+  "location": {
+    "chat": {
+      "chat_sidebar": "assets/index.html"
+    }
+  },
+  "version": "2.1.1",
+  "frameworkVersion": "2.0"
+}

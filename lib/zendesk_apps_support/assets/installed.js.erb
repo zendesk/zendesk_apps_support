@@ -1,0 +1,17 @@
+(function() {
+  <% appsjs.each do |appjs| %>
+    <%= appjs %>
+  <% end %>
+
+  <% installations.each do |installation| %>
+    if (ZendeskApps[<%= installation.app_name.to_json %>]) {
+      ZendeskApps[<%= installation.app_name.to_json %>].install(<%= installation.to_json %>);
+    }
+  <% end %>
+
+  <% installation_orders.each do |loc_name, installation_list| %>
+    ZendeskApps.sortAppsForSite(<%= loc_name.to_json %>, <%= installation_list.to_json %>);
+  <% end %>
+}());
+
+ZendeskApps.trigger && ZendeskApps.trigger('ready');

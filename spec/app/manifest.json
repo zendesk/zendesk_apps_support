@@ -1,0 +1,12 @@
+{
+  "name": "ABC",
+  "version": "1.0.0",
+  "author": {
+    "name": "John Smith",
+    "email": "john@example.com"
+  },
+  "defaultLocale": "en",
+  "private": true,
+  "location": "ticket_sidebar",
+  "frameworkVersion": "0.5"
+}

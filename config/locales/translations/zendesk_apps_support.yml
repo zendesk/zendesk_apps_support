@@ -1,0 +1,421 @@
+# This file is contains translations in Zendesk's custom format. The rake task
+# `i18n:standardize` will generate a version that is compatible with the i18n
+# gem (and thus Rails). Both versions should be checked in.
+title: "Apps Support"
+packages:
+  - apps_support
+
+parts:
+  - translation:
+      key: "txt.apps.admin.error.app_build.listing_comma"
+      title: "Punctuation for separating lists of items in a sentence"
+      value: ", "
+  - translation:
+      key: "txt.apps.admin.error.app_build.jshint.one"
+      title: "App builder job: JSHint error message"
+      value: "JSHint error in %{file}: %{errors}"
+      obsolete: "2019-11-01"
+  - translation:
+      key: "txt.apps.admin.error.app_build.jshint.other"
+      title: "App builder job: JSHint error messages"
+      value: "JSHint errors in %{file}: %{errors}"
+      obsolete: "2019-11-01"
+  - translation:
+      key: "txt.apps.admin.error.app_build.no_template_deprecated_in_v2"
+      title: "App builder job: prevent using noTemplate in v2 apps and give advice on how to migrate. Leave noTemplate and autoHide as is (do not localize)"
+      value: "noTemplate is deprecated and cannot be used with framework version 2 or above. Set the autoLoad or autoHide property for each specific location instead. Learn more: %{link}."
+  - translation:
+      key: "txt.apps.admin.error.app_build.no_parameters_required"
+      title: "App builder job: prevent adding parameters while marketing only"
+      value: "Parameters can't be defined for marketing-only apps"
+  - translation:
+      key: "txt.apps.admin.error.app_build.marketing_only_app_cant_be_private"
+      title: "App builder job: prevent creating a private marketing only app"
+      value: "Marketing-only apps must not be private"
+  - translation:
+      key: "txt.apps.admin.error.app_build.no_location_required"
+      title: "App builder job: ban location while requirements only"
+      value: "Locations can't be defined when you specify requirements only"
+  - translation:
+      key: "txt.apps.admin.error.app_build.no_framework_version_required"
+      title: "App builder job: ban framework version while requirements only"
+      value: "Framework versions can't be set when you specify requirements only"
+  - translation:
+      key: "txt.apps.admin.error.app_build.manifest_not_json"
+      title: "App builder job: manifest is invalid JSON error"
+      value: "manifest is not proper JSON. %{errors}"
+  - translation:
+      key: "txt.apps.admin.error.app_build.duplicate_manifest_keys"
+      title: "App builder job: duplicate keys in manifest.json file (do not localize file name). Placeholders loads errors"
+      value: "Duplicate keys are specified in the manifest.json file. %{errors}"
+  - translation:
+      key: "txt.apps.admin.error.app_build.missing_manifest"
+      title: "App builder job: missing manifest error"
+      value: "Could not find manifest.json"
+  - translation:
+      key: "txt.apps.admin.error.app_build.nested_manifest"
+      title: "App builder job: missing manifest.json (file name, leave as is) error, but it was found in a subdirectory (path to correct file is loaded in the placeholder"
+      value: "Could not find manifest.json in the root of the zip file, but %{found_path} was found. Try re-creating the archive from this directory."
+  - translation:
+      key: "txt.apps.admin.error.app_build.symlink_in_zip"
+      title: "App builder job: symlinks not allowed. https://en.wikipedia.org/wiki/Symbolic_link"
+      value: "Symlinks are not allowed in the zip file"
+  - translation:
+      key: "txt.apps.admin.error.app_build.invalid_experiment"
+      title: "App builder job: an experiment has been specifed that is not publically available or otherwise invalid. https://en.wikipedia.org/wiki/Manifest_file"
+      value: "Manifest specifies unknown or unavailable experiment: %{experiment}"
+  - translation:
+      key: "txt.apps.admin.error.app_build.unacceptable_hash"
+      title: "App builder job: the value for a field needs to be key-value pairs, but it was something else. https://en.wikipedia.org/wiki/Manifest_file"
+      value: "The manifest field %{field} needs to be key-value pairs with string keys, but it was %{value}"
+  - translation:
+      key: "txt.apps.admin.error.app_build.unacceptable_array"
+      title: "App builder job: the value for a field needs to be an array, but it was something else. https://en.wikipedia.org/wiki/Manifest_file"
+      value: "The manifest field %{field} needs to be an array, but it was %{value}"
+  - translation:
+      key: "txt.apps.admin.error.app_build.unacceptable_array_of_strings"
+      title: "App builder job: the value for domainWhitelist needs to be an array of strings, but it was something else. https://en.wikipedia.org/wiki/Manifest_file"
+      value: "The manifest field %{field} need to be an array containing strings"
+  - translation:
+      key: "txt.apps.admin.error.app_build.missing_requirements"
+      title: "App builder job: missing requirements error"
+      value: "Could not find requirements.json"
+  - translation:
+      key: "txt.apps.admin.error.app_build.requirements_not_supported"
+      title: "App builder job: requirements not supported error (for example not supported for apps built only for the product Chat or for marketing purposes."
+      value: "App requirements are not supported for marketing-only or Chat-only apps"
+  - translation:
+      key: "txt.apps.admin.error.app_build.manifest_keys.missing.one"
+      title: "App builder job: missing manifest fields error"
+      value: "Missing required field in manifest: %{missing_keys}"
+  - translation:
+      key: "txt.apps.admin.error.app_build.manifest_keys.missing.other"
+      title: "App builder job: missing manifest fields error"
+      value: "Missing required fields in manifest: %{missing_keys}"
+  - translation:
+      key: "txt.apps.admin.error.app_build.requirements_not_json"
+      title: "App builder job: requirements file is invalid JSON error"
+      value: "requirements.json is not proper JSON. %{errors}"
+  - translation:
+      key: "txt.apps.admin.error.app_build.excessive_requirements"
+      title: "App builder job: requirements file contains too many requirements"
+      value: "The requirements.json file contains too many requirements. The current limit is %{max} requirements. This app has %{count} requirements."
+  - translation:
+      key: "txt.apps.admin.error.app_build.excessive_custom_objects_requirements"
+      title: "App builder job: requirements file contains too many custom objects requirements. Leave requirements.json as is (do not localize)"
+      value: "The requirements.json file contains too many custom objects requirements. The current limit is %{max} requirements. This app has %{count} requirements."
+      screenshot: "https://drive.google.com/open?id=18yac8rV7kMe5qm49ERVFVCA7WOZl8vcP"
+  - translation:
+      key: "txt.apps.admin.error.app_build.missing_required_fields"
+      title: "App builder job: required key missing in requirements, e.g. \"title\" is required in \"my_custom_email_target\""
+      value: "Missing required fields in requirements.json: \"%{field}\" is required in \"%{identifier}\""
+  - translation:
+      key: "txt.apps.admin.error.app_build.duplicate_requirements.one"
+      title: "App builder job: requirements file contains duplicate key error"
+      value: "requirements.json contains a duplicate key: %{duplicate_keys}"
+  - translation:
+      key: "txt.apps.admin.error.app_build.duplicate_requirements.other"
+      title: "App builder job: requirements file contains duplicate keys error"
+      value: "requirements.json contains duplicate keys: %{duplicate_keys}"
+  - translation:
+      key: "txt.apps.admin.error.app_build.invalid_requirements_types.one"
+      title: "App builder job: requirements file contains invalid type error"
+      value: "requirements.json contains an invalid type: %{invalid_types}"
+  - translation:
+      key: "txt.apps.admin.error.app_build.invalid_requirements_types.other"
+      title: "App builder job: requirements file contains invalid types error"
+      value: "requirements.json contains invalid types: %{invalid_types}"
+  - translation:
+      key: "txt.apps.admin.error.app_build.unsupported_mime_type_detected.one"
+      title: "App builder job: directory contains unsupported mime type. MIME is an abbreviation for Multipurpose Internet Mail Extensions. https://en.wikipedia.org/wiki/MIME"
+      value: "Unsupported MIME type detected in %{file_names}."
+      screenshot: "https://drive.google.com/open?id=13sG5kRWrcVPZiFzDLYo-WavY4WbsHdvX"
+  - translation:
+      key: "txt.apps.admin.error.app_build.unsupported_mime_type_detected.other"
+      title: "App builder job: directory contains unsupported mime type. MIME is an abbreviation for Multipurpose Internet Mail Extensions. https://en.wikipedia.org/wiki/MIME"
+      value: "Unsupported MIME types detected in %{file_names}."
+      screenshot: "https://drive.google.com/open?id=1Ht4Nq4ZcQ0DMfcm6JphF66QI3e1FT8Wn"
+  - translation:
+      key: "txt.apps.admin.error.app_build.multiple_channel_integrations"
+      title: "App builder job: requirements file contains multiple channel integrations, leave requirements.json as is (file name)"
+      value: "Specifying multiple channel integrations in requirements.json is not supported."
+  - translation:
+      key: "txt.apps.admin.error.app_build.invalid_cr_schema_keys.one"
+      title: "App builder job: custom resources schema contains invalid key error"
+      value: "Custom resources schema contains an invalid key: %{invalid_keys}"
+      screenshot: "https://drive.google.com/open?id=1-CHVDcmr5mf1DKKeWqiOuGWrW25gDY4y"
+      obsolete: "2020-01-01"
+  - translation:
+      key: "txt.apps.admin.error.app_build.invalid_cr_schema_keys.other"
+      title: "App builder job: custom resources schema contains invalid keys error"
+      value: "Custom resources schema contains invalid keys: %{invalid_keys}"
+      screenshot: "https://drive.google.com/open?id=1iEx7f7PYnum_qDQESD3Gz2PwLDza3zI0"
+      obsolete: "2020-01-01"
+  - translation:
+      key: "txt.apps.admin.error.app_build.invalid_custom_objects_schema_keys.one"
+      title: "App builder job: custom objects schema contains invalid key error"
+      value: "Custom objects schema contains an invalid key: %{invalid_keys}"
+      screenshot: "https://drive.google.com/open?id=1-CHVDcmr5mf1DKKeWqiOuGWrW25gDY4y"
+  - translation:
+      key: "txt.apps.admin.error.app_build.invalid_custom_objects_schema_keys.other"
+      title: "App builder job: custom objects schema contains invalid keys error"
+      value: "Custom objects schema contains invalid keys: %{invalid_keys}"
+      screenshot: "https://drive.google.com/open?id=1iEx7f7PYnum_qDQESD3Gz2PwLDza3zI0"
+  - translation:
+      key: "txt.apps.admin.error.app_build.banner.invalid_format"
+      title: "App builder job: Banner image invalid format error"
+      value: "Banner image must be a PNG file."
+  - translation:
+      key: "txt.apps.admin.error.app_build.banner.invalid_size"
+      title: "App builder job: Banner image invalid size error"
+      value: "Invalid banner image dimensions. Must be %{required_banner_width}x%{required_banner_height}px."
+  - translation:
+      key: "txt.apps.admin.error.app_build.dirty_svg"
+      title: "App builder job: invalid SVG markup error"
+      value: "%{svg} contains invalid markup and could not be automatically regenerated."
+  - translation:
+      key: "txt.apps.admin.error.app_build.oauth_keys.missing.one"
+      title: "App builder job: missing oauth fields error"
+      value: "Missing required oauth field in manifest: %{missing_keys}"
+  - translation:
+      key: "txt.apps.admin.error.app_build.oauth_keys.missing.other"
+      title: "App builder job: missing oauth fields error"
+      value: "Missing required oauth fields in manifest: %{missing_keys}"
+  - translation:
+      key: "txt.apps.admin.error.app_build.too_many_oauth_parameters"
+      title: "App builder job: upload error when there are more than one 'oauth'"
+      value: "Too many parameters with type 'oauth': one permitted"
+      screenshot: "https://drive.google.com/file/d/1L3h2fmhJ_9HtYMG1nsinm2gcl-L28IN3/view"
+  - translation:
+      key: "txt.apps.admin.error.app_build.missing_source"
+      title: "App builder job: missing app.js error"
+      value: "Could not find app.js"
+      obsolete: "2019-11-01"
+  - translation:
+      key: "txt.apps.admin.error.app_build.style_in_template"
+      title: "App builder job: <style> tags in template error"
+      value: "<style> tag in %{template}. Use an app.css file instead."
+  - translation:
+      key: "txt.apps.admin.error.app_build.no_code_for_ifo_notemplate"
+      title: "App builder job: code included for a type of app that shouldn't have code"
+      value: "Javascripts, stylesheets, and templates are not allowed when an iframe URI or noTemplate is specified"
+      obsolete: "2019-11-01"
+  - translation:
+      key: "txt.apps.admin.error.app_build.no_source_required_apps"
+      title: "Inform users that no source files are required when uploading marketingOnly and requirementsOnly apps. Do not translate 'marketingOnly' and 'requirementsOnly', these are Manifest properties (https://developer.zendesk.com/apps/docs/developer-guide/manifest). Also refer to https://en.wikipedia.org/wiki/Style_sheet_(web_development) for stylesheets."
+      value: "Javascripts, stylesheets, and templates are not required for marketingOnly or requirementsOnly apps"
+      screenshot: "https://drive.google.com/open?id=12B7CMtErshVxI2b-Eo-DjexOqer27oxV"
+  - translation:
+      key: "txt.apps.admin.error.app_build.invalid_default_locale"
+      title: "App builder job: invalid default locale"
+      value: "%{default_locale} is not a valid default locale."
+  - translation:
+      key: "txt.apps.admin.error.app_build.missing_translation_file"
+      title: "App builder job: missing translation file"
+      value: "Missing translation file for locale '%{default_locale}'. Learn more: https://developer.zendesk.com/apps/docs/developer-guide/deploying#app-internationalization"
+  - translation:
+      key: "txt.apps.admin.error.app_build.invalid_host"
+      title: "App builder job: invalid host application for apps"
+      value: "%{host_name} is an invalid host for apps."
+  - translation:
+      key: "txt.apps.admin.error.app_build.invalid_location.one"
+      title: "App builder job: invalid locations"
+      value: "%{invalid_locations} is an invalid location in %{host_name}."
+  - translation:
+      key: "txt.apps.admin.error.app_build.invalid_location.other"
+      title: "App builder job: invalid locations"
+      value: "%{invalid_locations} are invalid locations in %{host_name}."
+  - translation:
+      key: "txt.apps.admin.error.app_build.blank_location_uri"
+      title: "App builder job: invalid URI for an iframe in the manifest"
+      value: "%{location} location does not specify a URI."
+  - translation:
+      key: "txt.apps.admin.error.app_build.invalid_location_uri"
+      title: "App builder job: invalid URI for an iframe in the manifest"
+      value: "%{uri} is either an invalid location URI, refers to a missing asset, or does not use HTTPS."
+  - translation:
+      key: "txt.apps.admin.error.app_build.invalid_location_flexible_type"
+      title: "App builder job: invalid flexible type for an iframe in the manifest"
+      value: "%{flexible} is an invalid type for the flexible location parameter."
+  - translation:
+      key: "txt.apps.admin.error.app_build.name_as_parameter_name"
+      title: "App builder job: error message when developer names a parameter 'name'"
+      value: "Can't call a parameter 'name'"
+  - translation:
+      key: "txt.apps.admin.error.app_build.invalid_hidden_parameter.one"
+      title: "App builder job: hidden parameters set to required"
+      value: "%{invalid_params} is set to hidden and cannot be required."
+  - translation:
+      key: "txt.apps.admin.error.app_build.invalid_hidden_parameter.other"
+      title: "App builder job: hidden parameters set to required"
+      value: "%{invalid_params} are set to hidden and cannot be required."
+  - translation:
+      key: "txt.apps.admin.warning.app_build.deprecated_version"
+      title: "App builder job: deprecated version specified"
+      value: "You are targeting a deprecated version of the framework. Your app will work, but it might break when the new framework version is deployed."
+      obsolete: "2019-11-01"
+  - translation:
+      key: "txt.apps.admin.warning.app_build.sanitised_svg"
+      title: "App builder job: warning that contents of svg have been sanitised and overwritten"
+      value: "The markup in %{svg} has been edited for use in Zendesk and may not display as intended."
+  - translation:
+      key: "txt.apps.admin.warning.app_build.bitmap_in_svg"
+      title: "App builder job: warning that svg contains an embedded bitmap image and cannot be used"
+      value: "%{svg} contains an embedded bitmap and cannot be used as an app icon. It has been replaced with a default placeholder icon."
+  - translation:
+      key: "txt.apps.admin.warning.app_build.generic_secrets.one"
+      title: "App builder job: warning for generic secrets found in app text files. %{files} will be replaced with one file name"
+      value: "Possible secrets found in %{files}. Consider reviewing the contents of this file before submitting your app."
+      screenshot: "https://drive.google.com/file/d/179IMwzJvXD1m5u-0K499Ul3-qRBXAxnT"
+  - translation:
+      key: "txt.apps.admin.warning.app_build.generic_secrets.other"
+      title: "App builder job: warning for generic secrets found in app text files. %{files} will be replaced with multiple file names"
+      value: "Possible secrets found in %{files}. Consider reviewing the contents of these files before submitting your app."
+      screenshot: "https://drive.google.com/file/d/179IMwzJvXD1m5u-0K499Ul3-qRBXAxnT"
+  - translation:
+      key: "txt.apps.admin.warning.app_build.insecure_http_request"
+      title: "App builder job: warning on detecting an insecure http request call in app source files"
+      value: "Possible insecure HTTP request to %{uri} in %{file}. Consider using the HTTPS protocol instead."
+      screenshot: "https://drive.google.com/file/d/1V-lXrVoAXAZEtBoekq7XLyetomUZRqY-"
+  - translation:
+      key: "txt.apps.admin.error.app_build.blocked_request"
+      title: "App builder job: error on detecting a forbidden http request call in app source files"
+      value: "Possible request to a %{type} ip %{uri} in %{file}."
+      screenshot: "https://drive.google.com/file/d/1hiTwbQi5aj6PnEtfuA7QTALs6AryDmj_"
+  - translation:
+      key: "txt.apps.admin.error.app_build.blocked_request_private"
+      title: "App builder job: forbidden http request call ip type: private. See https://en.wikipedia.org/wiki/Private_network"
+      value: "private"
+  - translation:
+      key: "txt.apps.admin.error.app_build.blocked_request_loopback"
+      title: "App builder job: forbidden http request call ip type: loopback. See https://en.wikipedia.org/wiki/Loopback"
+      value: "loopback"
+  - translation:
+      key: "txt.apps.admin.error.app_build.blocked_request_link_local"
+      title: "App builder job: forbidden http request call ip type: link-local. See https://en.wikipedia.org/wiki/Link-local_address"
+      value: "link-local"
+  - translation:
+      key: "txt.apps.admin.warning.app_build.application_secret"
+      title: "App builder job: warning for secrets found in app text files"
+      value: "Possible %{secret_type} found in %{file}. Consider reviewing the contents of this file before submitting your app."
+      screenshot: "https://drive.google.com/file/d/1LoN9-IlRbiz6uv1-CQ933mh-WY8XY5o2"
+  - translation:
+      key: "txt.apps.admin.error.app_build.invalid_version"
+      title: "App builder job: invalid framework version"
+      value: "%{target_version} is not a valid framework version. Available versions are: %{available_versions}."
+  - translation:
+      key: "txt.apps.admin.error.app_build.old_version"
+      title: "App builder job: old framework version"
+      value: "Iframe Only apps must target framework versions 2.0 or greater."
+      obsolete: "2019-11-01"
+  - translation:
+      key: "txt.apps.admin.error.app_build.parameters_not_an_array"
+      title: "App builder job: app parameters must be an array"
+      value: "App parameters must be an array."
+  - translation:
+      key: "txt.apps.admin.error.app_build.duplicate_parameters"
+      title: "App builder job: duplicate parameters error"
+      value: "Duplicate app parameters defined: %{duplicate_parameters}"
+  - translation:
+      key: "txt.apps.admin.error.app_build.translation.invalid_locale"
+      title: "App builder job: invalid locale file name"
+      value: "%{file} is not a valid locale."
+  - translation:
+      key: "txt.apps.admin.error.app_build.translation.invalid_format"
+      title: "App builder job: file format is invalid for translation"
+      value: "%{field} is invalid for translation."
+  - translation:
+      key: "txt.apps.admin.error.app_build.translation.not_json"
+      title: "App builder job: translation file is invalid json"
+      value: "%{file} is not valid JSON. %{errors}"
+  - translation:
+      key: "txt.apps.admin.error.app_build.translation.not_json_object"
+      title: "App builder job: translation file is not a JSON object"
+      value: "%{file} is not a JSON object."
+  - translation:
+      key: "txt.apps.admin.error.app_build.translation.missing_required_key"
+      title: "App builder job: required key missing from translation file"
+      value: "Missing required key from %{file}: %{missing_key}"
+  - translation:
+      key: "txt.apps.admin.error.app_build.translation.missing_required_key_on_leaf"
+      title: "App builder job: required key missing from translation file."
+      screenshot: "https://zendesk.box.com/s/m6yr2j0vai0a7qkimj2gcqiy61jznmn4"
+      value: "Missing required key %{missing_key} on leaf %{leaf} from %{file}"
+  - translation:
+      key: "txt.apps.admin.error.app_build.translation.missing_required_key_for_product"
+      title: "App builder job: required key missing from translation file for a specific product"
+      value: "Missing required key from %{file} for %{product}: %{missing_key}"
+  - translation:
+      key: "txt.apps.admin.error.app_build.translation.products_do_not_match_manifest_products"
+      title: "App builder job: products specified in translation file don't match products in manifest"
+      value: "Products in manifest (%{manifest_products}) do not match products in translations (%{translation_products})"
+  - translation:
+      key: "txt.apps.admin.error.app_build.translation.insecure_token_parameter_in_manifest"
+      title: "Validation message to indicate missing secure(true) field in manifest's token parameter. Do not translate 'secure' and 'true'. Secure(true) in manifest refers to https://developer.zendesk.com/apps/docs/developer-guide/using_sdk#using-secure-settings"
+      value: "Make sure to set secure to true when using keys in Settings. Learn more: %{link}"
+      screenshot: "https://drive.google.com/open?id=1ss3nNN2RG29R7StjCtiH8qjuwFBlRApJ"
+  - translation:
+      key: "txt.apps.admin.error.app_build.translation.default_secure_or_hidden_parameter_in_manifest"
+      title: "Validation message to indicate that a hidden or secure manifest parameter has a default value. Do not translate 'secure' and 'hidden'. Secure(true) in manifest refers to https://developer.zendesk.com/apps/docs/developer-guide/using_sdk#using-secure-settings"
+      value: "Default values for secure or hidden parameters are not stored securely. Be sure to review them and confirm they do not contain sensitive data"
+      screenshot: "https://drive.google.com/file/d/1MI6ci6Jz6xtwOXjcbHFCfNi1FjXKOuv9/view?usp=sharing"
+  - translation:
+      key: "txt.apps.admin.error.app_build.stylesheet_error"
+      title: "App builder job: invalid stylesheet syntax"
+      value: "Sass error: %{sass_error}"
+  - translation:
+      key: "txt.apps.admin.error.app_build.invalid_type_parameter.one"
+      title: "App builder job: single invalid parameter type error"
+      value: "%{invalid_types} is an invalid parameter type."
+  - translation:
+      key: "txt.apps.admin.error.app_build.invalid_type_parameter.other"
+      title: "App builder job: multiple invalid parameter types error"
+      value: "%{invalid_types} are invalid parameter types."
+  - translation:
+      key: "txt.apps.admin.error.app_build.unacceptable_boolean"
+      title: "App builder job: this value needs to be either true or false, but something else was passed in. placeholder value is taken from user input. You can translate as: The value %{field} must be a Boolean... to avoid any gender issues."
+      value: "%{field} must be a boolean value, got \"%{value}\"."
+  - translation:
+      key: "txt.apps.admin.error.app_build.unacceptable_string"
+      title: "App builder job: this value needs to be a text string, but something else was passed in. placeholder value is taken from user input. You can translate as: The value %{field} must be a string... to avoid any gender issues."
+      value: "%{field} must be a string, got \"%{value}\"."
+  - translation:
+      key: "txt.apps.admin.error.app_build.invalid_no_template"
+      title: "App builder job: `noTemplate` needs to be true, false or a valid array, but something else was passed in. noTemplate, true, and false should not be translated."
+      value: "noTemplate must be set to true, false, or an array of valid locations."
+  - translation:
+      key: "txt.apps.admin.error.app_build.duplicate_reference"
+      title: "App builder job: a key was included twice in the supplied manifest file, but it is only allowed once"
+      value: "Duplicate reference in manifest: \"%{key}\"."
+  - translation:
+      key: "txt.apps.admin.error.app_build.duplicate_reference_values"
+      title: "This sentence follows txt.apps.admin.error.app_build.duplicate_reference. The values are included to help find the problem."
+      value: "Initially set to \"%{original}\", attempted overwrite to \"%{attempted}\"."
+  - translation:
+      key: "txt.apps.admin.error.app_build.locations_must_be_urls"
+      title: "The locations needed to be URLs, but they were empty."
+      value: "App locations need to be URLs for this framework version."
+  - translation:
+      key: "txt.apps.admin.error.app_build.locations_cant_be_urls"
+      title: "The locations can't be URLs, but they were."
+      value: "App locations must not be URLs for this framework version."
+  - translation:
+      key: "txt.apps.admin.error.app_build.invalid_v1_location.one"
+      title: "The location listed is not available in framework v1."
+      value: "%{invalid_locations} is an invalid location in framework v1."
+  - translation:
+      key: "txt.apps.admin.error.app_build.invalid_v1_location.other"
+      title: "The locations listed are not available in framework v1."
+      value: "%{invalid_locations} are invalid locations in framework v1."
+  - translation:
+      key: "txt.apps.admin.error.app_build.oauth_parameter_cannot_be_secure"
+      title: "oauth parameter cannot be set to be secure."
+      value: "oauth parameter cannot be set to be secure."
+  - translation:
+      key: "txt.apps.admin.error.app_build.invalid_url"
+      title: "App builder job: this value needs to be a valid URL, but something else was passed in. placeholder value is taken from user input. You can translate as: The value %{field} must be a valid URL... to avoid any gender issues."
+      value: "%{field} must be a valid URL, got \"%{value}\"."
+  - translation:
+      key: "txt.apps.admin.error.app_build.password_parameter_type_deprecated"
+      title: "App builder job: Password parameter type is deprecated"
+      value: "Password parameter type can no longer be used. Use Secure settings instead. Learn more: %{link}."

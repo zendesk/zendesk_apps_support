@@ -1,0 +1,171 @@
+# This is a generated file. Do NOT edit directly.
+# To update, run 'bundle exec rake i18n:standardize'.
+---
+en:
+  txt:
+    apps:
+      admin:
+        error:
+          app_build:
+            listing_comma: ", "
+            jshint:
+              one: 'JSHint error in %{file}: %{errors}'
+              other: 'JSHint errors in %{file}: %{errors}'
+            no_template_deprecated_in_v2: 'noTemplate is deprecated and cannot be
+              used with framework version 2 or above. Set the autoLoad or autoHide
+              property for each specific location instead. Learn more: %{link}.'
+            no_parameters_required: Parameters can't be defined for marketing-only
+              apps
+            marketing_only_app_cant_be_private: Marketing-only apps must not be private
+            no_location_required: Locations can't be defined when you specify requirements
+              only
+            no_framework_version_required: Framework versions can't be set when you
+              specify requirements only
+            manifest_not_json: manifest is not proper JSON. %{errors}
+            duplicate_manifest_keys: Duplicate keys are specified in the manifest.json
+              file. %{errors}
+            missing_manifest: Could not find manifest.json
+            nested_manifest: Could not find manifest.json in the root of the zip file,
+              but %{found_path} was found. Try re-creating the archive from this directory.
+            symlink_in_zip: Symlinks are not allowed in the zip file
+            invalid_experiment: 'Manifest specifies unknown or unavailable experiment:
+              %{experiment}'
+            unacceptable_hash: The manifest field %{field} needs to be key-value pairs
+              with string keys, but it was %{value}
+            unacceptable_array: The manifest field %{field} needs to be an array,
+              but it was %{value}
+            unacceptable_array_of_strings: The manifest field %{field} need to be
+              an array containing strings
+            missing_requirements: Could not find requirements.json
+            requirements_not_supported: App requirements are not supported for marketing-only
+              or Chat-only apps
+            manifest_keys:
+              missing:
+                one: 'Missing required field in manifest: %{missing_keys}'
+                other: 'Missing required fields in manifest: %{missing_keys}'
+            requirements_not_json: requirements.json is not proper JSON. %{errors}
+            excessive_requirements: The requirements.json file contains too many requirements.
+              The current limit is %{max} requirements. This app has %{count} requirements.
+            excessive_custom_objects_requirements: The requirements.json file contains
+              too many custom objects requirements. The current limit is %{max} requirements.
+              This app has %{count} requirements.
+            missing_required_fields: 'Missing required fields in requirements.json:
+              "%{field}" is required in "%{identifier}"'
+            duplicate_requirements:
+              one: 'requirements.json contains a duplicate key: %{duplicate_keys}'
+              other: 'requirements.json contains duplicate keys: %{duplicate_keys}'
+            invalid_requirements_types:
+              one: 'requirements.json contains an invalid type: %{invalid_types}'
+              other: 'requirements.json contains invalid types: %{invalid_types}'
+            unsupported_mime_type_detected:
+              one: Unsupported MIME type detected in %{file_names}.
+              other: Unsupported MIME types detected in %{file_names}.
+            multiple_channel_integrations: Specifying multiple channel integrations
+              in requirements.json is not supported.
+            oauth_parameter_required: "Please upgrade to our new oauth format. Learn more: %{link}"
+            invalid_cr_schema_keys:
+              one: 'Custom resources schema contains an invalid key: %{invalid_keys}'
+              other: 'Custom resources schema contains invalid keys: %{invalid_keys}'
+            invalid_custom_objects_schema_keys:
+              one: 'Custom objects schema contains an invalid key: %{invalid_keys}'
+              other: 'Custom objects schema contains invalid keys: %{invalid_keys}'
+            banner:
+              invalid_format: Banner image must be a PNG file.
+              invalid_size: Invalid banner image dimensions. Must be %{required_banner_width}x%{required_banner_height}px.
+            dirty_svg: "%{svg} contains invalid markup and could not be automatically
+              regenerated."
+            oauth_keys:
+              missing:
+                one: 'Missing required oauth field in manifest: %{missing_keys}'
+                other: 'Missing required oauth fields in manifest: %{missing_keys}'
+            too_many_oauth_parameters: 'Too many parameters with type ''oauth'': one
+              permitted'
+            missing_source: Could not find app.js
+            style_in_template: "<style> tag in %{template}. Use an app.css file instead."
+            no_code_for_ifo_notemplate: Javascripts, stylesheets, and templates are
+              not allowed when an iframe URI or noTemplate is specified
+            no_source_required_apps: Javascripts, stylesheets, and templates are not
+              required for marketingOnly or requirementsOnly apps
+            invalid_default_locale: "%{default_locale} is not a valid default locale."
+            missing_translation_file: 'Missing translation file for locale ''%{default_locale}''.
+              Learn more: https://developer.zendesk.com/apps/docs/developer-guide/deploying#app-internationalization'
+            invalid_host: "%{host_name} is an invalid host for apps."
+            invalid_location:
+              one: "%{invalid_locations} is an invalid location in %{host_name}."
+              other: "%{invalid_locations} are invalid locations in %{host_name}."
+            blank_location_uri: "%{location} location does not specify a URI."
+            invalid_location_uri: "%{uri} is either an invalid location URI, refers
+              to a missing asset, or does not use HTTPS."
+            invalid_location_flexible_type: "%{flexible} is an invalid type for the
+              flexible location parameter."
+            name_as_parameter_name: Can't call a parameter 'name'
+            invalid_hidden_parameter:
+              one: "%{invalid_params} is set to hidden and cannot be required."
+              other: "%{invalid_params} are set to hidden and cannot be required."
+            blocked_request: Possible request to a %{type} ip %{uri} in %{file}.
+            blocked_request_private: private
+            blocked_request_loopback: loopback
+            blocked_request_link_local: link-local
+            invalid_version: "%{target_version} is not a valid framework version.
+              Available versions are: %{available_versions}."
+            old_version: Iframe Only apps must target framework versions 2.0 or greater.
+            parameters_not_an_array: App parameters must be an array.
+            duplicate_parameters: 'Duplicate app parameters defined: %{duplicate_parameters}'
+            translation:
+              invalid_locale: "%{file} is not a valid locale."
+              invalid_format: "%{field} is invalid for translation."
+              not_json: "%{file} is not valid JSON. %{errors}"
+              not_json_object: "%{file} is not a JSON object."
+              missing_required_key: 'Missing required key from %{file}: %{missing_key}'
+              missing_required_key_on_leaf: Missing required key %{missing_key} on
+                leaf %{leaf} from %{file}
+              missing_required_key_for_product: 'Missing required key from %{file}
+                for %{product}: %{missing_key}'
+              products_do_not_match_manifest_products: Products in manifest (%{manifest_products})
+                do not match products in translations (%{translation_products})
+              insecure_token_parameter_in_manifest: 'Make sure to set secure to true
+                when using keys in Settings. Learn more: %{link}'
+              default_secure_or_hidden_parameter_in_manifest: Default values for secure
+                or hidden parameters are not stored securely. Be sure to review them
+                and confirm they do not contain sensitive data
+            stylesheet_error: 'Sass error: %{sass_error}'
+            invalid_type_parameter:
+              one: "%{invalid_types} is an invalid parameter type."
+              other: "%{invalid_types} are invalid parameter types."
+            unacceptable_boolean: '%{field} must be a boolean value, got "%{value}".'
+            unacceptable_string: '%{field} must be a string, got "%{value}".'
+            invalid_no_template: noTemplate must be set to true, false, or an array
+              of valid locations.
+            duplicate_reference: 'Duplicate reference in manifest: "%{key}".'
+            duplicate_reference_values: Initially set to "%{original}", attempted
+              overwrite to "%{attempted}".
+            locations_must_be_urls: App locations need to be URLs for this framework
+              version.
+            locations_cant_be_urls: App locations must not be URLs for this framework
+              version.
+            invalid_v1_location:
+              one: "%{invalid_locations} is an invalid location in framework v1."
+              other: "%{invalid_locations} are invalid locations in framework v1."
+            oauth_parameter_cannot_be_secure: oauth parameter cannot be set to be
+              secure.
+            invalid_url: '%{field} must be a valid URL, got "%{value}".'
+            password_parameter_type_deprecated: 'Password parameter type can no longer
+              be used. Use Secure settings instead. Learn more: %{link}.'
+        warning:
+          app_build:
+            deprecated_version: You are targeting a deprecated version of the framework.
+              Your app will work, but it might break when the new framework version
+              is deployed.
+            sanitised_svg: The markup in %{svg} has been edited for use in Zendesk
+              and may not display as intended.
+            bitmap_in_svg: "%{svg} contains an embedded bitmap and cannot be used
+              as an app icon. It has been replaced with a default placeholder icon."
+            generic_secrets:
+              one: Possible secrets found in %{files}. Consider reviewing the contents
+                of this file before submitting your app.
+              other: Possible secrets found in %{files}. Consider reviewing the contents
+                of these files before submitting your app.
+            insecure_http_request: Possible insecure HTTP request to %{uri} in %{file}.
+              Consider using the HTTPS protocol instead.
+            application_secret: Possible %{secret_type} found in %{file}. Consider
+              reviewing the contents of this file before submitting your app.

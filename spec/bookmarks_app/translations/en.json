@@ -1,0 +1,10 @@
+{
+  "app": {
+    "name": "Bookmarks App",
+    "short_description": "Quickly access bookmarked tickets. Syncs with the iPad app.",
+    "description": "Access bookmarks",
+    "long_description": "Access bookmarks in your Zendesk",
+    "installation_instructions": "Pull the big lever"
+  },
+  "custom1": "The first custom thing"
+}

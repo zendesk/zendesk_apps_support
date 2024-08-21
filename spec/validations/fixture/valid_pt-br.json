@@ -1,0 +1,14 @@
+{
+  "app": {
+    "parameters": {
+      "url": {
+        "label": "URL"
+      },
+      "show_photos": {
+        "label": "Show photos",
+        "helpText": "Note: The displayed fields will match the block view configuration"
+      }
+    }
+  },
+  "logout": "Logout"
+}

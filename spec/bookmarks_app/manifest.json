@@ -1,0 +1,36 @@
+{
+  "author": {
+    "name": "Ned Stark",
+    "email": "ned@winter.com",
+    "url": "http://www.zendesk.com/apps"
+  },
+  "location": "ticket_sidebar",
+  "defaultLocale": "en",
+  "name": "Bookmarks",
+  "version": "1.5",
+  "singleInstall": true,
+  "frameworkVersion": "0.5",
+  "singleInstall": false,
+
+  "remoteInstallationURL" : "https://example.com/install",
+  "termsConditionsURL": "http://terms.com",
+
+  "parameters": [
+    {
+      "name": "maxCount",
+      "type": "number",
+      "required": false
+    },
+    {
+      "name": "Ability",
+       "type": "text",
+       "required": false
+    },
+    {
+      "name": "Spin",
+       "type": "text",
+       "required": false
+    }
+
+  ]
+}

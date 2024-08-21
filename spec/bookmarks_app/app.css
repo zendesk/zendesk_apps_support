@@ -1,0 +1,23 @@
+.bookmarks_app h3 {
+  line-height: 30px;
+}
+
+.bookmarks_app .logo {
+  background: transparent app-asset-url("logo-small.png") no-repeat;
+  background-size: 25px 25px;
+  float: right;
+  height: 25px;
+  width: 25px;
+}
+
+.bookmarks_app li + li {
+  margin-top: 0.4em;
+}
+
+.bookmarks_app li .destroy {
+  visibility: hidden;
+}
+
+.bookmarks_app li:hover .destroy {
+  visibility: visible;
+}
