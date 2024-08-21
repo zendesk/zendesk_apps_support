@@ -149,6 +149,8 @@ en:
             oauth_parameter_cannot_be_secure: oauth parameter cannot be set to be
               secure.
             invalid_url: '%{field} must be a valid URL, got "%{value}".'
+            password_parameter_type_deprecated: 'Password parameter type can no longer
+              be used. Use Secure settings instead. Learn more: %{link}.'
         warning:
           app_build:
             deprecated_version: You are targeting a deprecated version of the framework.
