@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    zendesk_apps_support (4.40.0)
+    zendesk_apps_support (4.41.0)
       erubis
       i18n (>= 1.7.1)
       image_size (~> 2.0.2)
@@ -19,7 +19,6 @@ GEM
   specs:
     ast (2.4.2)
     bump (0.5.4)
-    byebug (9.0.6)
     concurrent-ruby (1.2.2)
     crass (1.0.6)
     diff-lcs (1.5.0)
@@ -91,7 +90,6 @@ PLATFORMS
 DEPENDENCIES
   bump (~> 0.5.1)
   bundler (~> 2.2)
-  byebug (~> 9.0.6)
   faker
   parallel (= 1.12.1)
   rake
