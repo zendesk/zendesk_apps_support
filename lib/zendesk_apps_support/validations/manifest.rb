@@ -13,7 +13,7 @@ module ZendeskAppsSupport
       OAUTH_MANIFEST_LINK = 'https://developer.zendesk.com/apps/docs/developer-guide/manifest#oauth'
 
       class << self
-        def call(package)
+        def call(package, apply_password_parameter_check: false)
           unless package.has_file?('manifest.json')
             nested_manifest = package.files.find { |file| file =~ %r{\A[^/]+?/manifest\.json\Z} }
             if nested_manifest
@@ -22,7 +22,7 @@ module ZendeskAppsSupport
             return [ValidationError.new(:missing_manifest)]
           end
 
-          collate_manifest_errors(package)
+          collate_manifest_errors(package, apply_password_parameter_check)
         rescue JSON::ParserError => e
           return [ValidationError.new(:manifest_not_json, errors: e)]
         rescue ZendeskAppsSupport::Manifest::OverrideError => e
@@ -31,7 +31,7 @@ module ZendeskAppsSupport
 
         private
 
-        def collate_manifest_errors(package)
+        def collate_manifest_errors(package, apply_password_parameter_check)
           manifest = package.manifest
 
           errors = [
@@ -49,7 +49,10 @@ module ZendeskAppsSupport
                 missing_framework_version(manifest),
                 invalid_version_error(manifest) ]
             end,
-            ban_no_template(manifest)
+            ban_no_template(manifest),
+            if apply_password_parameter_check
+             [ deprecate_password_parameter_type(manifest) ]
+            end
           ]
           errors.flatten.compact
         end
@@ -205,6 +208,13 @@ module ZendeskAppsSupport
 
         def ban_framework_version(manifest)
           ValidationError.new(:no_framework_version_required) unless manifest.framework_version.nil?
+        end
+
+        def deprecate_password_parameter_type(manifest)
+          secure_settings_link = 'https://developer.zendesk.com/documentation/apps/app-developer-guide/making-api-requests-from-a-zendesk-app/#using-secure-settings'
+          if manifest.parameters.any? { |p| p.type == 'password' }
+            ValidationError.new(:password_parameter_type_deprecated, link: secure_settings_link)
+          end
         end
 
         def private_marketing_app_error(manifest)

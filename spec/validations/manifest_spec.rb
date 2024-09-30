@@ -813,4 +813,36 @@ describe ZendeskAppsSupport::Validations::Manifest do
       expect(@package).not_to have_error(/author url must be a valid URL/)
     end
   end
+
+  context 'when the apply_password_parameter_check option is set to false' do
+
+    it 'should be valid with a password param type' do
+      apply_password_parameter_check = false
+      @manifest_hash = {
+        'parameters' => [
+          'name'     => 'a password param',
+          'type'     => 'password',
+        ]}
+        package = create_package(@manifest_hash)
+        errors = ZendeskAppsSupport::Validations::Manifest.call(package, apply_password_parameter_check: apply_password_parameter_check)
+
+      expect(errors.map(&:to_s).join()).not_to include("Password parameter type can no longer be used")
+    end
+  end
+
+  context 'when the apply_password_parameter_check option is set to true' do
+
+    it 'should not be valid with a password param type' do
+      apply_password_parameter_check = true
+      @manifest_hash = {
+        'parameters' => [
+          'name'     => 'a password param',
+          'type'     => 'password',
+        ]}
+        package = create_package(@manifest_hash)
+        errors = ZendeskAppsSupport::Validations::Manifest.call(package, apply_password_parameter_check: apply_password_parameter_check)
+        
+      expect(errors.map(&:to_s).join()).to include("Password parameter type can no longer be used")
+    end
+  end
 end
