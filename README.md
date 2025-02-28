@@ -4,7 +4,7 @@
 Classes to manage and validate Zendesk Apps. This is a gem used in [Zendesk Apps Tools](https://github.com/zendesk/zendesk_apps_tools/).
 
 ## Owners
-This repo is owned and maintained by the Zendesk Apps team. You can reach us on vegemite@zendesk.com. We are located in Melbourne!
+This repo is owned and maintained by the Zendesk Apps team. You can reach us on wattle@zendesk.com. We are located in Melbourne!
 
 ## Getting Started
 When you want to help **develop** this tool, you will need to clone this repo.
@@ -16,7 +16,7 @@ This project uses Rspec, which can be run with `bundle exec rake`.
 
 ## Contribute
 * Put up a PR into the master branch.
-* CC and get two +1 from @zendesk/wattle, or @zendesk/vegemite.
+* CC and get two +1 from @zendesk/wattle.
 
 ## Bugs
 Bugs can be reported as an issue here on github, or submitted to support@zendesk.com. By mentioning this project it will assigned to the right team.
