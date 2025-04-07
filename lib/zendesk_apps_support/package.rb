@@ -31,9 +31,9 @@ module ZendeskAppsSupport
       @warnings = []
     end
 
-    def validate(marketplace: true, skip_marketplace_translations: false, apply_password_parameter_check: false)
+    def validate(marketplace: true, skip_marketplace_translations: false, error_on_password_parameter: false)
       errors = []
-      errors << Validations::Manifest.call(self, apply_password_parameter_check: apply_password_parameter_check)
+      errors << Validations::Manifest.call(self, error_on_password_parameter: error_on_password_parameter)
 
       if has_valid_manifest?(errors)
         errors << Validations::Marketplace.call(self) if marketplace
@@ -61,8 +61,8 @@ module ZendeskAppsSupport
       errors.flatten.compact
     end
 
-    def validate!(marketplace: true, skip_marketplace_translations: false, apply_password_parameter_check: false)
-      errors = validate(marketplace: marketplace, skip_marketplace_translations: skip_marketplace_translations, apply_password_parameter_check: apply_password_parameter_check)
+    def validate!(marketplace: true, skip_marketplace_translations: false, error_on_password_parameter: false)
+      errors = validate(marketplace: marketplace, skip_marketplace_translations: skip_marketplace_translations, error_on_password_parameter: error_on_password_parameter)
       raise errors.first if errors.any?
       true
     end

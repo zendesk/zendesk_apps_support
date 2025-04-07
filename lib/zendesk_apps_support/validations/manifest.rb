@@ -13,7 +13,7 @@ module ZendeskAppsSupport
       OAUTH_MANIFEST_LINK = 'https://developer.zendesk.com/apps/docs/developer-guide/manifest#oauth'
 
       class << self
-        def call(package, apply_password_parameter_check: false)
+        def call(package, error_on_password_parameter: false)
           unless package.has_file?('manifest.json')
             nested_manifest = package.files.find { |file| file =~ %r{\A[^/]+?/manifest\.json\Z} }
             if nested_manifest
@@ -22,7 +22,9 @@ module ZendeskAppsSupport
             return [ValidationError.new(:missing_manifest)]
           end
 
-          collate_manifest_errors(package, apply_password_parameter_check)
+          package.warnings << password_parameter_warning unless error_on_password_parameter
+
+          collate_manifest_errors(package, error_on_password_parameter)
         rescue JSON::ParserError => e
           return [ValidationError.new(:manifest_not_json, errors: e)]
         rescue ZendeskAppsSupport::Manifest::OverrideError => e
@@ -31,7 +33,7 @@ module ZendeskAppsSupport
 
         private
 
-        def collate_manifest_errors(package, apply_password_parameter_check)
+        def collate_manifest_errors(package, error_on_password_parameter)
           manifest = package.manifest
 
           errors = [
@@ -50,7 +52,7 @@ module ZendeskAppsSupport
                 invalid_version_error(manifest) ]
             end,
             ban_no_template(manifest),
-            if apply_password_parameter_check
+            if error_on_password_parameter
              [ deprecate_password_parameter_type(manifest) ]
             end
           ]
@@ -448,6 +450,13 @@ module ZendeskAppsSupport
           uri.is_a?(URI::HTTP) && !host_empty
         rescue URI::InvalidURIError
           false
+        end
+
+        def password_parameter_warning
+          I18n.t(
+            'txt.apps.admin.error.app_build.translation.password_parameter_deprecated',
+            link: 'https://developer.zendesk.com/documentation/apps/app-developer-guide/making-api-requests-from-a-zendesk-app/#using-basic-access-authentication'
+          )
         end
       end
     end

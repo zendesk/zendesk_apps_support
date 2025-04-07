@@ -455,15 +455,15 @@ describe ZendeskAppsSupport::Package do
       end
     end
 
-    context 'when apply_password_parameter_check is true' do
+    context 'when error_on_password_parameter is true' do
       let(:package) { ZendeskAppsSupport::Package.new('spec/fixtures/iframe_only_app') }
 
       before do
         allow(ZendeskAppsSupport::Validations::Manifest).to receive(:call)
-        package.validate!(marketplace: true, apply_password_parameter_check: true)
+        package.validate!(marketplace: true, error_on_password_parameter: true)
       end
-      it 'validate manifest and passes in the apply_password_parameter_check correctly' do
-        expect(ZendeskAppsSupport::Validations::Manifest).to have_received(:call).with(package, {:apply_password_parameter_check => true})
+      it 'validate manifest and passes in the error_on_password_parameter correctly' do
+        expect(ZendeskAppsSupport::Validations::Manifest).to have_received(:call).with(package, {:error_on_password_parameter => true})
       end
     end
   end
