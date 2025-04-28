@@ -27,10 +27,10 @@ standard_i18n_file = project_root.join('config/locales/en.yml')
 
 file standard_i18n_file => zendesk_i18n_file do |task|
   header = "# This is a generated file. Do NOT edit directly.\n# To update, run 'bundle exec rake i18n:standardize'.\n"
-  input = YAML.safe_load(File.read(task.prerequisites.first))
+  input = YAML.safe_load_file(task.prerequisites.first)
   translations = input['parts'].map { |part| part['translation'] }
   yaml = YAML.dump('en' => array_to_nested_hash(translations))
-  File.open(task.name, 'w') { |f| f << header + yaml }
+  File.open(task.name, 'w') { |f| f << (header + yaml) }
 end
 
 namespace :i18n do

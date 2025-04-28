@@ -1,18 +1,18 @@
 AllCops:
-  TargetRubyVersion: 2.6
+  NewCops: enable
   Include:
     - 'Gemfile'
     - 'Rakefile'
   Exclude:
     - 'vendor/**/*'
 
-ClassLength:
+Metrics/ClassLength:
   Enabled: false
 
-Documentation:
+Style/Documentation:
   Enabled: false
 
-MethodLength:
+Metrics/MethodLength:
   Enabled: false
 
 Style/Alias:
@@ -21,10 +21,10 @@ Style/Alias:
 Layout/FirstArrayElementIndentation:
   Enabled: false
 
-HashSyntax:
+Style/HashSyntax:
   EnforcedStyle: ruby19
 
-Metrics/LineLength:
+Layout/LineLength:
   Max: 120
 
 Metrics/BlockLength:
@@ -35,7 +35,7 @@ Metrics/ModuleLength:
   CountComments: false  # count full line comments?
   Max: 200
 
-CommentAnnotation:
+Style/CommentAnnotation:
   Keywords:
     - TODO
     - FIXME
