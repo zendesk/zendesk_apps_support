@@ -19,7 +19,7 @@ module ZendeskAppsSupport
             errors << locale_error(file, path_match[1]) << json_error(file) << format_error(file)
             next unless errors.compact.empty?
             if file.relative_path == 'translations/en.json'
-              # rubocop:disable Metrics/LineLength
+              # rubocop:disable Layout/LineLength
               errors.push(*validate_marketplace_content(file, package, opts.fetch(:skip_marketplace_translations, false)))
             end
           end.compact

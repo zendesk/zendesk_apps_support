@@ -9,7 +9,7 @@ module ZendeskAppsSupport
       ].freeze
 
       APPLICATION_SECRETS = {
-        # rubocop:disable Metrics/LineLength
+        # rubocop:disable Layout/LineLength
         'Slack Token' => /(xox[p|b|o|a]-*.[a-z0-9])/,
         'RSA Private Key' => /-----BEGIN RSA PRIVATE KEY-----/,
         'SSH Private Key (OpenSSH)' => /-----BEGIN OPENSSH PRIVATE KEY-----/,
@@ -45,7 +45,7 @@ module ZendeskAppsSupport
         'Attachment Token Key' => /(attachment_token_key.*.[0-9a-f]{24,72})/,
         'Password' => /([pP][aA][sS][sS][wW][oO][rR][dD].*.[0-9a-zA-Z+_.-]{4,156})/,
         'Token' => /([tT][oO][kK][eE][nN]( [:\"=-]|[:\"=-]).*.[0-9a-zA-Z+_.-]{4,156})/
-        # rubocop:enable Metrics/LineLength
+        # rubocop:enable Layout/LineLength
       }.freeze
 
       class << self

@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.summary     = 'Support to help you develop Zendesk Apps.'
   s.description = s.summary
 
-  s.required_ruby_version = Gem::Requirement.new('>= 2.7')
+  s.required_ruby_version = Gem::Requirement.new('>= 3.2')
   s.required_rubygems_version = '>= 1.3.6'
 
   s.add_runtime_dependency 'i18n', '>= 1.7.1'
@@ -28,7 +28,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'bump', '~> 0.5.1'
   s.add_development_dependency 'faker'
   s.add_development_dependency 'rubocop'
-  s.add_development_dependency 'byebug', '~> 9.0.6'
+  s.add_development_dependency 'byebug'
   s.add_development_dependency 'bundler', '~> 2.2'
   s.add_development_dependency 'parallel', '1.12.1'
   s.add_development_dependency 'rake'
