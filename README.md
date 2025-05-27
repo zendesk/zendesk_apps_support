@@ -15,8 +15,23 @@ Very likely you want to try out your changes with the use of ZAT. See [ZAT](http
 This project uses Rspec, which can be run with `bundle exec rake`.
 
 ## Contribute
-* Put up a PR into the master branch.
+* Put up a PR into the main branch.
 * CC and get two +1 from @zendesk/wattle.
+
+### Releasing a new version
+A new version is published to RubyGems.org every time a change to `version.rb` is pushed to the `main` branch.
+In short, follow these steps:
+1. Update `version.rb`,
+2. run `bundle lock` to update `Gemfile.lock`,
+3. merge this change into `main`, and
+4. look at [the action](https://github.com/zendesk/zendesk_apps_support/actions/workflows/publish.yml) for output.
+
+To create a pre-release from a non-main branch:
+1. change the version in `version.rb` to something like `1.2.0.pre.1` or `2.0.0.beta.2`,
+2. push this change to your branch,
+3. go to [Actions → “Publish to RubyGems.org” on GitHub](https://github.com/zendesk/zendesk_apps_support/actions/workflows/publish.yml),
+4. click the “Run workflow” button,
+5. pick your branch from a dropdown.
 
 ## Bugs
 Bugs can be reported as an issue here on github, or submitted to support@zendesk.com. By mentioning this project it will assigned to the right team.

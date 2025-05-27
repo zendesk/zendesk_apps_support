@@ -1,8 +1,10 @@
 # frozen_string_literal: true
 
+require_relative 'lib/zendesk_apps_support/version'
+
 Gem::Specification.new do |s|
   s.name        = 'zendesk_apps_support'
-  s.version     = '4.42.0'
+  s.version     = ZendeskAppsSupport::VERSION
   s.license     = 'Apache License Version 2.0'
   s.authors     = ['James A. Rosen', 'Likun Liu', 'Sean Caffery', 'Daniel Ribeiro']
   s.email       = ['dev@zendesk.com']
