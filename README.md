@@ -15,7 +15,7 @@ Very likely you want to try out your changes with the use of ZAT. See [ZAT](http
 This project uses Rspec, which can be run with `bundle exec rake`.
 
 ## Contribute
-* Put up a PR into the master branch.
+* Put up a PR into the main branch.
 * CC and get two +1 from @zendesk/wattle.
 
 ### Releasing a new version
