@@ -1,1 +1,2 @@
-* @zendesk/wattle
+*                   @zendesk/wattle
+config/locales/*    @zendesk/localization
