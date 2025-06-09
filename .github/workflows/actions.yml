@@ -35,6 +35,23 @@ jobs:
       - name: lint
         run: bundle exec rubocop
 
+  i18n:
+    name: I18n
+    runs-on: [ self-hosted, zendesk-stable ]
+    env:
+      ARTIFACTORY_API_KEY: ${{ secrets.ARTIFACTORY_API_KEY }}
+      ARTIFACTORY_USERNAME: ${{ secrets.ARTIFACTORY_USERNAME }}
+      BUNDLE_ZDREPO__JFROG__IO: "${{ secrets.BUNDLE_ZDREPO__JFROG__IO }}"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: zendesk/setup-ruby@v1
+        with:
+          ruby-version: 3.4
+      - name: Validate
+        run: |
+          gem install zendesk_i18n_dev_tools --source https://$BUNDLE_ZDREPO__JFROG__IO@zdrepo.jfrog.io/zdrepo/api/gems/gems-local/
+          validate_string_sweep_files config/locales/translations/zendesk_apps_support.yml
+
   tests_successful:
     name: Tests passing?
     needs: tests
