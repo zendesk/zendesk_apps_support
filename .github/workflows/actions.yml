@@ -37,7 +37,7 @@ jobs:
 
   i18n:
     name: I18n
-    runs-on: [ self-hosted, zendesk-stable ]
+    runs-on: ubuntu-latest
     env:
       ARTIFACTORY_API_KEY: ${{ secrets.ARTIFACTORY_API_KEY }}
       ARTIFACTORY_USERNAME: ${{ secrets.ARTIFACTORY_USERNAME }}
