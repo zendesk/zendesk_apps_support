@@ -361,4 +361,146 @@ describe ZendeskAppsSupport::Validations::Requirements do
       end
     end
   end
+
+  context 'custom objects v2 requirements validations' do
+    context 'there is a valid custom objects v2 schema defined' do
+      let(:requirements_string) do
+        JSON.generate(
+          'custom_objects_v2' => {
+            'key' => 'my_custom_object',
+            'include_in_list_view' => true,
+            'title' => 'My Custom Object',
+            'title_pluralized' => 'My Custom Objects'
+          }
+        )
+      end
+
+      it 'does not return an error' do
+        expect(errors).to be_empty
+      end
+    end
+
+    context 'custom objects v2 schema is missing required key field' do
+      let(:requirements_string) do
+        JSON.generate(
+          'custom_objects_v2' => {
+            'include_in_list_view' => true,
+            'title' => 'My Custom Object',
+            'title_pluralized' => 'My Custom Objects'
+          }
+        )
+      end
+
+      it 'creates an error for missing key field' do
+        expect(errors.first.key).to eq(:missing_required_fields)
+        expect(errors.first.data).to eq(field: 'key', identifier: 'custom_objects_v2')
+      end
+    end
+
+    context 'custom objects v2 schema is missing required include_in_list_view field' do
+      let(:requirements_string) do
+        JSON.generate(
+          'custom_objects_v2' => {
+            'key' => 'my_custom_object',
+            'title' => 'My Custom Object',
+            'title_pluralized' => 'My Custom Objects'
+          }
+        )
+      end
+
+      it 'creates an error for missing include_in_list_view field' do
+        expect(errors.first.key).to eq(:missing_required_fields)
+        expect(errors.first.data).to eq(field: 'include_in_list_view', identifier: 'custom_objects_v2')
+      end
+    end
+
+    context 'custom objects v2 schema is missing required title field' do
+      let(:requirements_string) do
+        JSON.generate(
+          'custom_objects_v2' => {
+            'key' => 'my_custom_object',
+            'include_in_list_view' => true,
+            'title_pluralized' => 'My Custom Objects'
+          }
+        )
+      end
+
+      it 'creates an error for missing title field' do
+        expect(errors.first.key).to eq(:missing_required_fields)
+        expect(errors.first.data).to eq(field: 'title', identifier: 'custom_objects_v2')
+      end
+    end
+
+    context 'custom objects v2 schema is missing required title_pluralized field' do
+      let(:requirements_string) do
+        JSON.generate(
+          'custom_objects_v2' => {
+            'key' => 'my_custom_object',
+            'include_in_list_view' => true,
+            'title' => 'My Custom Object'
+          }
+        )
+      end
+
+      it 'creates an error for missing title_pluralized field' do
+        expect(errors.first.key).to eq(:missing_required_fields)
+        expect(errors.first.data).to eq(field: 'title_pluralized', identifier: 'custom_objects_v2')
+      end
+    end
+
+    context 'custom objects v2 schema is missing multiple required fields' do
+      let(:requirements_string) do
+        JSON.generate(
+          'custom_objects_v2' => {
+            'include_in_list_view' => true
+          }
+        )
+      end
+      let(:required_keys) { ['key', 'title', 'title_pluralized'] }
+
+      it 'creates errors for all missing fields' do
+        errors.each do |error|
+          expect(error.key).to eq(:missing_required_fields)
+          expect(required_keys).to include(error.data[:field])
+          expect(error.data[:identifier]).to eq('custom_objects_v2')
+        end
+        expect(errors.count).to eq(required_keys.count)
+      end
+    end
+
+    context 'custom objects v2 schema is completely empty' do
+      let(:requirements_string) do
+        JSON.generate(
+          'custom_objects_v2' => {}
+        )
+      end
+      let(:required_keys) { ['key', 'include_in_list_view', 'title', 'title_pluralized'] }
+
+      it 'creates errors for all required fields' do
+        errors.each do |error|
+          expect(error.key).to eq(:missing_required_fields)
+          expect(required_keys).to include(error.data[:field])
+          expect(error.data[:identifier]).to eq('custom_objects_v2')
+        end
+        expect(errors.count).to eq(required_keys.count)
+      end
+    end
+
+    context 'no custom objects v2 requirements are present' do
+      let(:requirements_string) do
+        JSON.generate(
+          'targets' => {
+            'my_target' => {
+              'title' => 'My Target',
+              'type' => 'email_target'
+            }
+          }
+        )
+      end
+
+      it 'does not create any custom objects v2 validation errors' do
+        expect(errors).to be_empty
+      end
+    end
+  end
 end

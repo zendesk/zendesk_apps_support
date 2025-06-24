@@ -32,6 +32,7 @@ module ZendeskAppsSupport
             errors << invalid_webhooks(requirements)
             errors << invalid_target_types(requirements)
             errors << missing_required_fields(requirements)
+            errors << invalid_custom_objects_v2(requirements)
             errors.flatten!
             errors.compact!
           end
@@ -48,7 +49,7 @@ module ZendeskAppsSupport
         def missing_required_fields(requirements)
           [].tap do |errors|
             requirements.each do |requirement_type, requirement|
-              next if %w[channel_integrations custom_objects webhooks].include? requirement_type
+              next if %w[channel_integrations custom_objects webhooks custom_objects_v2].include? requirement_type
               requirement.each do |identifier, fields|
                 next if fields.nil? || fields.include?('title')
                 errors << ValidationError.new(:missing_required_fields,
@@ -130,6 +131,26 @@ module ZendeskAppsSupport
                                 identifier: identifier)
           end
         end
+
+        def invalid_custom_objects_v2(requirements)
+          custom_objects_v2_requirements = requirements[AppRequirement::CUSTOM_OBJECTS_VERSION_2_KEY]
+          return if custom_objects_v2_requirements.nil?
+
+          validate_custom_objects_v2_keys(custom_objects_v2_requirements)
+        end
+
+        def validate_custom_objects_v2_keys(custom_objects_v2_requirements)
+          required_keys = %w[key include_in_list_view title title_pluralized]
+
+          missing_keys = required_keys - custom_objects_v2_requirements.keys
+
+          missing_keys.map do |key|
+            ValidationError.new(:missing_required_fields,
+                                field: key,
+                                identifier: AppRequirement::CUSTOM_OBJECTS_VERSION_2_KEY)
+          end
+        end
+
 
         def invalid_custom_objects(requirements)
           custom_objects = requirements[AppRequirement::CUSTOM_OBJECTS_KEY]
