@@ -140,15 +140,25 @@ module ZendeskAppsSupport
         end
 
         def validate_custom_objects_v2_keys(custom_objects_v2_requirements)
-          required_keys = %w[key include_in_list_view title title_pluralized]
+          errors = []
 
-          missing_keys = required_keys - custom_objects_v2_requirements.keys
+          # Check if objects array exists
+          objects = custom_objects_v2_requirements['objects']
+          return if objects.nil?
 
-          missing_keys.map do |key|
-            ValidationError.new(:missing_required_fields,
-                                field: key,
-                                identifier: AppRequirement::CUSTOM_OBJECTS_VERSION_2_KEY)
+          required_object_keys = %w[key include_in_list_view title title_pluralized]
+
+          objects.each_with_index do |object, index|
+            missing_keys = required_object_keys - object.keys
+
+            missing_keys.each do |key|
+              errors << ValidationError.new(:missing_required_fields,
+                                          field: key,
+                                          identifier: "#{AppRequirement::CUSTOM_OBJECTS_VERSION_2_KEY} objects[#{index}]")
+            end
           end
+
+          errors
         end
 
 
