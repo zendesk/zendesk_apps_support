@@ -158,9 +158,97 @@ module ZendeskAppsSupport
             end
           end
 
+          # Validate object_triggers if present
+          object_triggers = custom_objects_v2_requirements['object_triggers']
+          if object_triggers
+            errors.concat(validate_object_triggers(object_triggers, objects))
+          end
+
           errors
         end
 
+        def validate_object_triggers(object_triggers, objects)
+          errors = []
+          return errors if object_triggers.nil? || objects.nil?
+
+          # Get all valid field names from objects
+          valid_fields = objects.flat_map { |obj| (obj['fields'] || {}).keys }.compact.uniq
+
+          object_triggers.each_with_index do |trigger, index|
+            trigger_identifier = "object_triggers[#{index}]"
+
+            # Validate required keys for trigger
+            required_trigger_keys = %w[title conditions actions]
+            missing_keys = required_trigger_keys - trigger.keys
+
+            missing_keys.each do |key|
+              errors << ValidationError.new(:missing_required_fields,
+                                          field: key,
+                                          identifier: trigger_identifier)
+            end
+
+            # Validate actions array
+            if trigger['actions']
+              trigger['actions'].each_with_index do |action, action_index|
+                action_identifier = "#{trigger_identifier}.actions[#{action_index}]"
+
+                # Each action must have 'field' and 'value'
+                required_action_keys = %w[field value]
+                missing_action_keys = required_action_keys - action.keys
+
+                missing_action_keys.each do |key|
+                  errors << ValidationError.new(:missing_required_fields,
+                                              field: key,
+                                              identifier: action_identifier)
+                end
+              end
+            end
+
+            # Validate conditions
+            if trigger['conditions']
+              errors.concat(validate_trigger_conditions(trigger['conditions'], valid_fields, trigger_identifier))
+            end
+          end
+
+          errors
+        end
+
+        def validate_trigger_conditions(conditions, valid_fields, trigger_identifier)
+          errors = []
+
+          # Conditions can have 'all' and/or 'any' keys
+          %w[all any].each do |condition_type|
+            next unless conditions[condition_type]
+
+            unless conditions[condition_type].is_a?(Array)
+              errors << ValidationError.new(:missing_required_fields,
+                                          field: "conditions.#{condition_type} (must be array)",
+                                          identifier: trigger_identifier)
+              next
+            end
+
+            conditions[condition_type].each_with_index do |condition, condition_index|
+              condition_identifier = "#{trigger_identifier}.conditions.#{condition_type}[#{condition_index}]"
+
+              # Each condition must have 'field'
+              unless condition.key?('field')
+                errors << ValidationError.new(:missing_required_fields,
+                                            field: 'field',
+                                            identifier: condition_identifier)
+              else
+                # Validate that field exists in objects - use existing error format
+                field_name = condition['field']
+                unless valid_fields.include?(field_name)
+                  errors << ValidationError.new(:missing_required_fields,
+                                              field: "field '#{field_name}' (must reference valid object field: #{valid_fields.join(', ')})",
+                                              identifier: condition_identifier)
+                end
+              end
+            end
+          end
+
+          errors
+        end
 
         def invalid_custom_objects(requirements)
           custom_objects = requirements[AppRequirement::CUSTOM_OBJECTS_KEY]
