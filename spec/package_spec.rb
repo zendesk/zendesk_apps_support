@@ -111,7 +111,7 @@ describe ZendeskAppsSupport::Package do
   end
 
   describe 'files' do
-    it 'should return all the files within the app folder excluding files in tmp folder' do
+    it 'should return all the files within the app folder excluding files in tmp and vendor folder' do
       files = %w[app.css app.js assets/logo-small.png assets/logo.png lib/a.js lib/a.txt
                  lib/nested/b.js manifest.json templates/layout.hdbs translations/en.json translations/nl.json]
       expect(@package.files.map(&:relative_path)).to match_array(files)
