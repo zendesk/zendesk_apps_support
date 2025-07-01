@@ -32,6 +32,7 @@ module ZendeskAppsSupport
             errors << invalid_webhooks(requirements)
             errors << invalid_target_types(requirements)
             errors << missing_required_fields(requirements)
+            errors << invalid_custom_objects_v2(requirements)
             errors.flatten!
             errors.compact!
           end
@@ -48,7 +49,7 @@ module ZendeskAppsSupport
         def missing_required_fields(requirements)
           [].tap do |errors|
             requirements.each do |requirement_type, requirement|
-              next if %w[channel_integrations custom_objects webhooks].include? requirement_type
+              next if %w[channel_integrations custom_objects webhooks custom_objects_v2].include? requirement_type
               requirement.each do |identifier, fields|
                 next if fields.nil? || fields.include?('title')
                 errors << ValidationError.new(:missing_required_fields,
@@ -129,6 +130,127 @@ module ZendeskAppsSupport
                                 field: key,
                                 identifier: identifier)
           end
+        end
+
+        def invalid_custom_objects_v2(requirements)
+          custom_objects_v2_requirements = requirements[AppRequirement::CUSTOM_OBJECTS_VERSION_2_KEY]
+          return if custom_objects_v2_requirements.nil?
+
+          validate_custom_objects_v2_keys(custom_objects_v2_requirements)
+        end
+
+        def validate_custom_objects_v2_keys(custom_objects_v2_requirements)
+          errors = []
+
+          # Check if objects array exists
+          objects = custom_objects_v2_requirements['objects']
+          return if objects.nil?
+
+          required_object_keys = %w[key include_in_list_view title title_pluralized]
+
+          objects.each_with_index do |object, index|
+            missing_keys = required_object_keys - object.keys
+
+            missing_keys.each do |key|
+              errors << ValidationError.new(:missing_required_fields,
+                                          field: key,
+                                          identifier: "#{AppRequirement::CUSTOM_OBJECTS_VERSION_2_KEY} objects[#{index}]")
+            end
+          end
+
+          # Validate object_triggers if present
+          object_triggers = custom_objects_v2_requirements['object_triggers']
+          if object_triggers
+            errors.concat(validate_object_triggers(object_triggers, objects))
+          end
+
+          errors
+        end
+
+        def validate_object_triggers(object_triggers, objects)
+          errors = []
+          return errors if object_triggers.nil? || objects.nil?
+
+          # Get all valid field names from objects
+          valid_fields = objects.flat_map do |obj|
+            fields = obj['fields'] || []
+            fields.map { |field| field['key'] }
+          end.compact.uniq
+
+          object_triggers.each_with_index do |trigger, index|
+            trigger_identifier = "object_triggers[#{index}]"
+
+            # Validate required keys for trigger
+            required_trigger_keys = %w[key title conditions actions]
+            missing_keys = required_trigger_keys - trigger.keys
+
+            missing_keys.each do |key|
+              errors << ValidationError.new(:missing_required_fields,
+                                          field: key,
+                                          identifier: trigger_identifier)
+            end
+
+            # Validate actions array
+            if trigger['actions']
+              trigger['actions'].each_with_index do |action, action_index|
+                action_identifier = "#{trigger_identifier}.actions[#{action_index}]"
+
+                # Each action must have 'field' and 'value'
+                required_action_keys = %w[field value]
+                missing_action_keys = required_action_keys - action.keys
+
+                missing_action_keys.each do |key|
+                  errors << ValidationError.new(:missing_required_fields,
+                                              field: key,
+                                              identifier: action_identifier)
+                end
+              end
+            end
+
+            # Validate conditions
+            if trigger['conditions']
+              errors.concat(validate_trigger_conditions(trigger['conditions'], valid_fields, trigger_identifier))
+            end
+          end
+
+          errors
+        end
+
+        def validate_trigger_conditions(conditions, valid_fields, trigger_identifier)
+          errors = []
+
+          # Conditions can have 'all' and/or 'any' keys
+          %w[all any].each do |condition_type|
+            next unless conditions[condition_type]
+
+            unless conditions[condition_type].is_a?(Array)
+              errors << ValidationError.new(:missing_required_fields,
+                                          field: "conditions.#{condition_type} (must be array)",
+                                          identifier: trigger_identifier)
+              next
+            end
+
+            conditions[condition_type].each_with_index do |condition, condition_index|
+              condition_identifier = "#{trigger_identifier}.conditions.#{condition_type}[#{condition_index}]"
+
+              # Each condition must have 'field'
+              unless condition.key?('field')
+                errors << ValidationError.new(:missing_required_fields,
+                                            field: 'field',
+                                            identifier: condition_identifier)
+              else
+                # Validate that field exists in objects - use existing error format
+                field_name = condition['field']
+                unless valid_fields.include?(field_name)
+                  errors << ValidationError.new(:missing_required_fields,
+                                              field: "field '#{field_name}' (must reference valid object field: #{valid_fields.join(', ')})",
+                                              identifier: condition_identifier)
+                end
+              end
+            end
+          end
+
+          errors
         end
 
         def invalid_custom_objects(requirements)

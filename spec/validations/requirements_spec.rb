@@ -361,4 +361,626 @@ describe ZendeskAppsSupport::Validations::Requirements do
       end
     end
   end
+
+  context 'custom objects v2 requirements validations' do
+    context 'there is a valid custom objects v2 schema defined' do
+      let(:requirements_string) do
+        JSON.generate(
+          'custom_objects_v2' => {
+            'objects' => [
+              {
+                'key' => 'my_custom_object',
+                'include_in_list_view' => true,
+                'title' => 'My Custom Object',
+                'title_pluralized' => 'My Custom Objects'
+              }
+            ]
+          }
+        )
+      end
+
+      it 'does not return an error' do
+        expect(errors).to be_empty
+      end
+    end
+
+    context 'there is a valid custom objects v2 schema with object_triggers' do
+      let(:requirements_string) do
+        JSON.generate(
+          'custom_objects_v2' => {
+            'objects' => [
+              {
+                'key' => 'my_custom_object',
+                'include_in_list_view' => true,
+                'title' => 'My Custom Object',
+                'title_pluralized' => 'My Custom Objects',
+                'fields' => [
+                  { 'key' => 'status', 'type' => 'dropdown' },
+                  { 'key' => 'priority', 'type' => 'text' }
+                ]
+              }
+            ],
+            'object_triggers' => [
+              {
+                'key' => 'my_object_trigger',
+                'title' => 'My Object Trigger',
+                'conditions' => {
+                  'all' => [
+                    { 'field' => 'status' }
+                  ]
+                },
+                'actions' => [
+                  { 'field' => 'priority', 'value' => 'high' }
+                ]
+              }
+            ]
+          }
+        )
+      end
+
+      it 'does not return an error' do
+        expect(errors).to be_empty
+      end
+    end
+
+    context 'custom objects v2 with multiple valid objects' do
+      let(:requirements_string) do
+        JSON.generate(
+          'custom_objects_v2' => {
+            'objects' => [
+              {
+                'key' => 'first_object',
+                'include_in_list_view' => true,
+                'title' => 'First Object',
+                'title_pluralized' => 'First Objects'
+              },
+              {
+                'key' => 'second_object',
+                'include_in_list_view' => false,
+                'title' => 'Second Object',
+                'title_pluralized' => 'Second Objects'
+              }
+            ]
+          }
+        )
+      end
+
+      it 'does not return an error' do
+        expect(errors).to be_empty
+      end
+    end
+
+    context 'custom objects v2 object is missing required key field' do
+      let(:requirements_string) do
+        JSON.generate(
+          'custom_objects_v2' => {
+            'objects' => [
+              {
+                'include_in_list_view' => true,
+                'title' => 'My Custom Object',
+                'title_pluralized' => 'My Custom Objects'
+              }
+            ]
+          }
+        )
+      end
+
+      it 'creates an error for missing key field' do
+        expect(errors.first.key).to eq(:missing_required_fields)
+        expect(errors.first.data).to eq(field: 'key', identifier: 'custom_objects_v2 objects[0]')
+      end
+    end
+
+    context 'custom objects v2 object is missing required include_in_list_view field' do
+      let(:requirements_string) do
+        JSON.generate(
+          'custom_objects_v2' => {
+            'objects' => [
+              {
+                'key' => 'my_custom_object',
+                'title' => 'My Custom Object',
+                'title_pluralized' => 'My Custom Objects'
+              }
+            ]
+          }
+        )
+      end
+
+      it 'creates an error for missing include_in_list_view field' do
+        expect(errors.first.key).to eq(:missing_required_fields)
+        expect(errors.first.data).to eq(field: 'include_in_list_view', identifier: 'custom_objects_v2 objects[0]')
+      end
+    end
+
+    context 'custom objects v2 object is missing required title field' do
+      let(:requirements_string) do
+        JSON.generate(
+          'custom_objects_v2' => {
+            'objects' => [
+              {
+                'key' => 'my_custom_object',
+                'include_in_list_view' => true,
+                'title_pluralized' => 'My Custom Objects'
+              }
+            ]
+          }
+        )
+      end
+
+      it 'creates an error for missing title field' do
+        expect(errors.first.key).to eq(:missing_required_fields)
+        expect(errors.first.data).to eq(field: 'title', identifier: 'custom_objects_v2 objects[0]')
+      end
+    end
+
+    context 'custom objects v2 object is missing required title_pluralized field' do
+      let(:requirements_string) do
+        JSON.generate(
+          'custom_objects_v2' => {
+            'objects' => [
+              {
+                'key' => 'my_custom_object',
+                'include_in_list_view' => true,
+                'title' => 'My Custom Object'
+              }
+            ]
+          }
+        )
+      end
+
+      it 'creates an error for missing title_pluralized field' do
+        expect(errors.first.key).to eq(:missing_required_fields)
+        expect(errors.first.data).to eq(field: 'title_pluralized', identifier: 'custom_objects_v2 objects[0]')
+      end
+    end
+
+    context 'custom objects v2 object is missing multiple required fields' do
+      let(:requirements_string) do
+        JSON.generate(
+          'custom_objects_v2' => {
+            'objects' => [
+              {
+                'include_in_list_view' => true
+              }
+            ]
+          }
+        )
+      end
+      let(:required_keys) { ['key', 'title', 'title_pluralized'] }
+
+      it 'creates errors for all missing fields' do
+        errors.each do |error|
+          expect(error.key).to eq(:missing_required_fields)
+          expect(required_keys).to include(error.data[:field])
+          expect(error.data[:identifier]).to eq('custom_objects_v2 objects[0]')
+        end
+        expect(errors.count).to eq(required_keys.count)
+      end
+    end
+
+    context 'custom objects v2 object is completely empty' do
+      let(:requirements_string) do
+        JSON.generate(
+          'custom_objects_v2' => {
+            'objects' => [{}]
+          }
+        )
+      end
+      let(:required_keys) { ['key', 'include_in_list_view', 'title', 'title_pluralized'] }
+
+      it 'creates errors for all required fields' do
+        errors.each do |error|
+          expect(error.key).to eq(:missing_required_fields)
+          expect(required_keys).to include(error.data[:field])
+          expect(error.data[:identifier]).to eq('custom_objects_v2 objects[0]')
+        end
+        expect(errors.count).to eq(required_keys.count)
+      end
+    end
+
+    context 'multiple custom objects v2 objects with missing fields' do
+      let(:requirements_string) do
+        JSON.generate(
+          'custom_objects_v2' => {
+            'objects' => [
+              {
+                'include_in_list_view' => true
+              },
+              {
+                'key' => 'second_object'
+              }
+            ]
+          }
+        )
+      end
+
+      it 'creates errors for missing fields in both objects' do
+        # First object missing: key, title, title_pluralized
+        first_object_errors = errors.select { |e| e.data[:identifier] == 'custom_objects_v2 objects[0]' }
+        expect(first_object_errors.count).to eq(3)
+        first_object_missing_fields = first_object_errors.map { |e| e.data[:field] }
+        expect(first_object_missing_fields).to include('key', 'title', 'title_pluralized')
+
+        # Second object missing: include_in_list_view, title, title_pluralized
+        second_object_errors = errors.select { |e| e.data[:identifier] == 'custom_objects_v2 objects[1]' }
+        expect(second_object_errors.count).to eq(3)
+        second_object_missing_fields = second_object_errors.map { |e| e.data[:field] }
+        expect(second_object_missing_fields).to include('include_in_list_view', 'title', 'title_pluralized')
+
+        expect(errors.count).to eq(6)
+      end
+    end
+
+    context 'custom objects v2 schema has no objects array' do
+      let(:requirements_string) do
+        JSON.generate(
+          'custom_objects_v2' => {}
+        )
+      end
+
+      it 'does not create any validation errors' do
+        expect(errors).to be_empty
+      end
+    end
+
+    context 'custom objects v2 schema has empty objects array' do
+      let(:requirements_string) do
+        JSON.generate(
+          'custom_objects_v2' => {
+            'objects' => []
+          }
+        )
+      end
+
+      it 'does not create any validation errors' do
+        expect(errors).to be_empty
+      end
+    end
+
+    context 'no custom objects v2 requirements are present' do
+      let(:requirements_string) do
+        JSON.generate(
+          'targets' => {
+            'my_target' => {
+              'title' => 'My Target',
+              'type' => 'email_target'
+            }
+          }
+        )
+      end
+
+      it 'does not create any custom objects v2 validation errors' do
+        expect(errors).to be_empty
+      end
+    end
+
+    context 'object_triggers validation' do
+      context 'object_triggers missing required key field' do
+        let(:requirements_string) do
+          JSON.generate(
+            'custom_objects_v2' => {
+              'objects' => [
+                {
+                  'key' => 'my_custom_object',
+                  'include_in_list_view' => true,
+                  'title' => 'My Custom Object',
+                  'title_pluralized' => 'My Custom Objects',
+                  'fields' => [
+                    { 'key' => 'status', 'type' => 'dropdown' }
+                  ]
+                }
+              ],
+              'object_triggers' => [
+                {
+                  'title' => 'My Trigger',
+                  'conditions' => {
+                    'all' => [
+                      { 'field' => 'status' }
+                    ]
+                  },
+                  'actions' => [
+                    { 'field' => 'status', 'value' => 'open' }
+                  ]
+                }
+              ]
+            }
+          )
+        end
+
+        it 'creates an error for missing key field' do
+          expect(errors.first.key).to eq(:missing_required_fields)
+          expect(errors.first.data).to eq(field: 'key', identifier: 'object_triggers[0]')
+        end
+      end
+
+      context 'object_triggers missing required title field' do
+        let(:requirements_string) do
+          JSON.generate(
+            'custom_objects_v2' => {
+              'objects' => [
+                {
+                  'key' => 'my_custom_object',
+                  'include_in_list_view' => true,
+                  'title' => 'My Custom Object',
+                  'title_pluralized' => 'My Custom Objects',
+                  'fields' => [
+                    { 'key' => 'status', 'type' => 'dropdown' }
+                  ]
+                }
+              ],
+              'object_triggers' => [
+                {
+                  'key' => 'my_trigger',
+                  'conditions' => {
+                    'all' => [
+                      { 'field' => 'status' }
+                    ]
+                  },
+                  'actions' => [
+                    { 'field' => 'status', 'value' => 'open' }
+                  ]
+                }
+              ]
+            }
+          )
+        end
+
+        it 'creates an error for missing title field' do
+          expect(errors.first.key).to eq(:missing_required_fields)
+          expect(errors.first.data).to eq(field: 'title', identifier: 'object_triggers[0]')
+        end
+      end
+
+      context 'object_triggers missing required conditions field' do
+        let(:requirements_string) do
+          JSON.generate(
+            'custom_objects_v2' => {
+              'objects' => [
+                {
+                  'key' => 'my_custom_object',
+                  'include_in_list_view' => true,
+                  'title' => 'My Custom Object',
+                  'title_pluralized' => 'My Custom Objects'
+                }
+              ],
+              'object_triggers' => [
+                {
+                  'key' => 'my_trigger',
+                  'title' => 'My Trigger',
+                  'actions' => [
+                    { 'field' => 'status', 'value' => 'open' }
+                  ]
+                }
+              ]
+            }
+          )
+        end
+
+        it 'creates an error for missing conditions field' do
+          expect(errors.first.key).to eq(:missing_required_fields)
+          expect(errors.first.data).to eq(field: 'conditions', identifier: 'object_triggers[0]')
+        end
+      end
+
+      context 'object_triggers missing required actions field' do
+        let(:requirements_string) do
+          JSON.generate(
+            'custom_objects_v2' => {
+              'objects' => [
+                {
+                  'key' => 'my_custom_object',
+                  'include_in_list_view' => true,
+                  'title' => 'My Custom Object',
+                  'title_pluralized' => 'My Custom Objects',
+                  'fields' => [
+                    { 'key' => 'status', 'type' => 'dropdown' }
+                  ]
+                }
+              ],
+              'object_triggers' => [
+                {
+                  'key' => 'my_trigger',
+                  'title' => 'My Trigger',
+                  'conditions' => {
+                    'all' => [
+                      { 'field' => 'status' }
+                    ]
+                  }
+                }
+              ]
+            }
+          )
+        end
+
+        it 'creates an error for missing actions field' do
+          expect(errors.first.key).to eq(:missing_required_fields)
+          expect(errors.first.data).to eq(field: 'actions', identifier: 'object_triggers[0]')
+        end
+      end
+
+      context 'object_triggers with action missing field key' do
+        let(:requirements_string) do
+          JSON.generate(
+            'custom_objects_v2' => {
+              'objects' => [
+                {
+                  'key' => 'my_custom_object',
+                  'include_in_list_view' => true,
+                  'title' => 'My Custom Object',
+                  'title_pluralized' => 'My Custom Objects'
+                }
+              ],
+              'object_triggers' => [
+                {
+                  'key' => 'my_trigger',
+                  'title' => 'My Trigger',
+                  'conditions' => {
+                    'all' => []
+                  },
+                  'actions' => [
+                    { 'value' => 'open' }
+                  ]
+                }
+              ]
+            }
+          )
+        end
+
+        it 'creates an error for action missing field key' do
+          error = errors.find { |e| e.data[:identifier] == 'object_triggers[0].actions[0]' && e.data[:field] == 'field' }
+          expect(error).not_to be_nil
+          expect(error.key).to eq(:missing_required_fields)
+        end
+      end
+
+      context 'object_triggers with action missing value key' do
+        let(:requirements_string) do
+          JSON.generate(
+            'custom_objects_v2' => {
+              'objects' => [
+                {
+                  'key' => 'my_custom_object',
+                  'include_in_list_view' => true,
+                  'title' => 'My Custom Object',
+                  'title_pluralized' => 'My Custom Objects'
+                }
+              ],
+              'object_triggers' => [
+                {
+                  'key' => 'my_trigger',
+                  'title' => 'My Trigger',
+                  'conditions' => {
+                    'all' => []
+                  },
+                  'actions' => [
+                    { 'field' => 'status' }
+                  ]
+                }
+              ]
+            }
+          )
+        end
+
+        it 'creates an error for action missing value key' do
+          error = errors.find { |e| e.data[:identifier] == 'object_triggers[0].actions[0]' && e.data[:field] == 'value' }
+          expect(error).not_to be_nil
+          expect(error.key).to eq(:missing_required_fields)
+        end
+      end
+
+      context 'object_triggers with conditions.all not being an array' do
+        let(:requirements_string) do
+          JSON.generate(
+            'custom_objects_v2' => {
+              'objects' => [
+                {
+                  'key' => 'my_custom_object',
+                  'include_in_list_view' => true,
+                  'title' => 'My Custom Object',
+                  'title_pluralized' => 'My Custom Objects'
+                }
+              ],
+              'object_triggers' => [
+                {
+                  'key' => 'my_trigger',
+                  'title' => 'My Trigger',
+                  'conditions' => {
+                    'all' => 'not_an_array'
+                  },
+                  'actions' => []
+                }
+              ]
+            }
+          )
+        end
+
+        it 'creates an error for conditions.all not being an array' do
+          error = errors.find { |e| e.data[:field] == 'conditions.all (must be array)' }
+          expect(error).not_to be_nil
+          expect(error.key).to eq(:missing_required_fields)
+          expect(error.data[:identifier]).to eq('object_triggers[0]')
+        end
+      end
+
+      context 'object_triggers with condition missing field key' do
+        let(:requirements_string) do
+          JSON.generate(
+            'custom_objects_v2' => {
+              'objects' => [
+                {
+                  'key' => 'my_custom_object',
+                  'include_in_list_view' => true,
+                  'title' => 'My Custom Object',
+                  'title_pluralized' => 'My Custom Objects',
+                  'fields' => [
+                    { 'key' => 'status', 'type' => 'dropdown' }
+                  ]
+                }
+              ],
+              'object_triggers' => [
+                {
+                  'key' => 'my_trigger',
+                  'title' => 'My Trigger',
+                  'conditions' => {
+                    'all' => [
+                      { 'operator' => 'equals' }
+                    ]
+                  },
+                  'actions' => []
+                }
+              ]
+            }
+          )
+        end
+
+        it 'creates an error for condition missing field key' do
+          error = errors.find { |e| e.data[:identifier] == 'object_triggers[0].conditions.all[0]' && e.data[:field] == 'field' }
+          expect(error).not_to be_nil
+          expect(error.key).to eq(:missing_required_fields)
+        end
+      end
+
+      context 'object_triggers with condition field referencing non-existent object field' do
+        let(:requirements_string) do
+          JSON.generate(
+            'custom_objects_v2' => {
+              'objects' => [
+                {
+                  'key' => 'my_custom_object',
+                  'include_in_list_view' => true,
+                  'title' => 'My Custom Object',
+                  'title_pluralized' => 'My Custom Objects',
+                  'fields' => [
+                    { 'key' => 'status', 'type' => 'dropdown' }
+                  ]
+                }
+              ],
+              'object_triggers' => [
+                {
+                  'key' => 'my_trigger',
+                  'title' => 'My Trigger',
+                  'conditions' => {
+                    'all' => [
+                      { 'field' => 'nonexistent_field' }
+                    ]
+                  },
+                  'actions' => [
+                    { 'field' => 'status', 'value' => 'open' }
+                  ]
+                }
+              ]
+            }
+          )
+        end
+
+        it 'creates an error for invalid field reference' do
+          error = errors.find { |e| e.data[:identifier] == 'object_triggers[0].conditions.all[0]' }
+          expect(error).not_to be_nil
+          expect(error.key).to eq(:missing_required_fields)
+          expect(error.data[:field]).to include('nonexistent_field')
+          expect(error.data[:field]).to include('status')
+        end
+      end
+    end
+  end
 end
