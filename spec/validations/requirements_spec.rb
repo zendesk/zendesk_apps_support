@@ -394,14 +394,15 @@ describe ZendeskAppsSupport::Validations::Requirements do
                 'include_in_list_view' => true,
                 'title' => 'My Custom Object',
                 'title_pluralized' => 'My Custom Objects',
-                'fields' => {
-                  'status' => { 'type' => 'dropdown' },
-                  'priority' => { 'type' => 'text' }
-                }
+                'fields' => [
+                  { 'key' => 'status', 'type' => 'dropdown' },
+                  { 'key' => 'priority', 'type' => 'text' }
+                ]
               }
             ],
             'object_triggers' => [
               {
+                'key' => 'my_object_trigger',
                 'title' => 'My Object Trigger',
                 'conditions' => {
                   'all' => [
@@ -654,6 +655,44 @@ describe ZendeskAppsSupport::Validations::Requirements do
     end
 
     context 'object_triggers validation' do
+      context 'object_triggers missing required key field' do
+        let(:requirements_string) do
+          JSON.generate(
+            'custom_objects_v2' => {
+              'objects' => [
+                {
+                  'key' => 'my_custom_object',
+                  'include_in_list_view' => true,
+                  'title' => 'My Custom Object',
+                  'title_pluralized' => 'My Custom Objects',
+                  'fields' => [
+                    { 'key' => 'status', 'type' => 'dropdown' }
+                  ]
+                }
+              ],
+              'object_triggers' => [
+                {
+                  'title' => 'My Trigger',
+                  'conditions' => {
+                    'all' => [
+                      { 'field' => 'status' }
+                    ]
+                  },
+                  'actions' => [
+                    { 'field' => 'status', 'value' => 'open' }
+                  ]
+                }
+              ]
+            }
+          )
+        end
+
+        it 'creates an error for missing key field' do
+          expect(errors.first.key).to eq(:missing_required_fields)
+          expect(errors.first.data).to eq(field: 'key', identifier: 'object_triggers[0]')
+        end
+      end
+
       context 'object_triggers missing required title field' do
         let(:requirements_string) do
           JSON.generate(
@@ -664,13 +703,14 @@ describe ZendeskAppsSupport::Validations::Requirements do
                   'include_in_list_view' => true,
                   'title' => 'My Custom Object',
                   'title_pluralized' => 'My Custom Objects',
-                  'fields' => {
-                    'status' => { 'type' => 'dropdown' }
-                  }
+                  'fields' => [
+                    { 'key' => 'status', 'type' => 'dropdown' }
+                  ]
                 }
               ],
               'object_triggers' => [
                 {
+                  'key' => 'my_trigger',
                   'conditions' => {
                     'all' => [
                       { 'field' => 'status' }
@@ -705,6 +745,7 @@ describe ZendeskAppsSupport::Validations::Requirements do
               ],
               'object_triggers' => [
                 {
+                  'key' => 'my_trigger',
                   'title' => 'My Trigger',
                   'actions' => [
                     { 'field' => 'status', 'value' => 'open' }
@@ -731,13 +772,14 @@ describe ZendeskAppsSupport::Validations::Requirements do
                   'include_in_list_view' => true,
                   'title' => 'My Custom Object',
                   'title_pluralized' => 'My Custom Objects',
-                  'fields' => {
-                    'status' => { 'type' => 'dropdown' }
-                  }
+                  'fields' => [
+                    { 'key' => 'status', 'type' => 'dropdown' }
+                  ]
                 }
               ],
               'object_triggers' => [
                 {
+                  'key' => 'my_trigger',
                   'title' => 'My Trigger',
                   'conditions' => {
                     'all' => [
@@ -770,6 +812,7 @@ describe ZendeskAppsSupport::Validations::Requirements do
               ],
               'object_triggers' => [
                 {
+                  'key' => 'my_trigger',
                   'title' => 'My Trigger',
                   'conditions' => {
                     'all' => []
@@ -804,6 +847,7 @@ describe ZendeskAppsSupport::Validations::Requirements do
               ],
               'object_triggers' => [
                 {
+                  'key' => 'my_trigger',
                   'title' => 'My Trigger',
                   'conditions' => {
                     'all' => []
@@ -838,6 +882,7 @@ describe ZendeskAppsSupport::Validations::Requirements do
               ],
               'object_triggers' => [
                 {
+                  'key' => 'my_trigger',
                   'title' => 'My Trigger',
                   'conditions' => {
                     'all' => 'not_an_array'
@@ -867,13 +912,14 @@ describe ZendeskAppsSupport::Validations::Requirements do
                   'include_in_list_view' => true,
                   'title' => 'My Custom Object',
                   'title_pluralized' => 'My Custom Objects',
-                  'fields' => {
-                    'status' => { 'type' => 'dropdown' }
-                  }
+                  'fields' => [
+                    { 'key' => 'status', 'type' => 'dropdown' }
+                  ]
                 }
               ],
               'object_triggers' => [
                 {
+                  'key' => 'my_trigger',
                   'title' => 'My Trigger',
                   'conditions' => {
                     'all' => [
@@ -904,13 +950,14 @@ describe ZendeskAppsSupport::Validations::Requirements do
                   'include_in_list_view' => true,
                   'title' => 'My Custom Object',
                   'title_pluralized' => 'My Custom Objects',
-                  'fields' => {
-                    'status' => { 'type' => 'dropdown' }
-                  }
+                  'fields' => [
+                    { 'key' => 'status', 'type' => 'dropdown' }
+                  ]
                 }
               ],
               'object_triggers' => [
                 {
+                  'key' => 'my_trigger',
                   'title' => 'My Trigger',
                   'conditions' => {
                     'all' => [

@@ -172,13 +172,16 @@ module ZendeskAppsSupport
           return errors if object_triggers.nil? || objects.nil?
 
           # Get all valid field names from objects
-          valid_fields = objects.flat_map { |obj| (obj['fields'] || {}).keys }.compact.uniq
+          valid_fields = objects.flat_map do |obj|
+            fields = obj['fields'] || []
+            fields.map { |field| field['key'] }
+          end.compact.uniq
 
           object_triggers.each_with_index do |trigger, index|
             trigger_identifier = "object_triggers[#{index}]"
 
             # Validate required keys for trigger
-            required_trigger_keys = %w[title conditions actions]
+            required_trigger_keys = %w[key title conditions actions]
             missing_keys = required_trigger_keys - trigger.keys
 
             missing_keys.each do |key|
