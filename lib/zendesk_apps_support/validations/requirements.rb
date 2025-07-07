@@ -142,27 +142,33 @@ module ZendeskAppsSupport
         def validate_custom_objects_v2_keys(custom_objects_v2_requirements)
           errors = []
 
-          # Check if objects array exists
+          # Check if objects hash exists
           objects = custom_objects_v2_requirements['objects']
           return if objects.nil?
 
           required_object_keys = %w[key include_in_list_view title title_pluralized]
 
-          objects.each_with_index do |object, index|
+          objects.each do |object_key, object|
             missing_keys = required_object_keys - object.keys
 
             missing_keys.each do |key|
               errors << ValidationError.new(:missing_required_fields,
                                           field: key,
-                                          identifier: "#{AppRequirement::CUSTOM_OBJECTS_VERSION_2_KEY} objects[#{index}]")
+                                          identifier: "#{AppRequirement::CUSTOM_OBJECTS_VERSION_2_KEY} objects.#{object_key}")
+            end
+
+            # Validate that object_key matches the 'key' field inside the object
+            if object['key'] && object['key'] != object_key
+              errors << ValidationError.new(:custom_object_key_mismatch,
+                                          object_name: object_key,
+                                          expected_key: object_key,
+                                          actual_key: object['key'])
             end
           end
 
           # Validate object_triggers if present
           object_triggers = custom_objects_v2_requirements['object_triggers']
-          if object_triggers
-            errors.concat(validate_object_triggers(object_triggers, objects))
-          end
+          errors.concat(validate_object_triggers(object_triggers, objects)) if object_triggers
 
           errors
         end
@@ -172,13 +178,10 @@ module ZendeskAppsSupport
           return errors if object_triggers.nil? || objects.nil?
 
           # Get all valid field names from objects
-          valid_fields = objects.flat_map do |obj|
-            fields = obj['fields'] || []
-            fields.map { |field| field['key'] }
-          end.compact.uniq
+          valid_fields = objects.flat_map { |_, obj| (obj['fields'] || []).map { |field| field['key'] } }.compact.uniq
 
-          object_triggers.each_with_index do |trigger, index|
-            trigger_identifier = "object_triggers[#{index}]"
+          object_triggers.each do |trigger_key, trigger|
+            trigger_identifier = "object_triggers.#{trigger_key}"
 
             # Validate required keys for trigger
             required_trigger_keys = %w[key title conditions actions]
@@ -188,6 +191,14 @@ module ZendeskAppsSupport
               errors << ValidationError.new(:missing_required_fields,
                                           field: key,
                                           identifier: trigger_identifier)
+            end
+
+            # Validate that trigger_key matches the 'key' field inside the trigger
+            if trigger['key'] && trigger['key'] != trigger_key
+              errors << ValidationError.new(:custom_object_trigger_key_mismatch,
+                                          trigger_name: trigger_key,
+                                          expected_key: trigger_key,
+                                          actual_key: trigger['key'])
             end
 
             # Validate actions array
@@ -208,9 +219,7 @@ module ZendeskAppsSupport
             end
 
             # Validate conditions
-            if trigger['conditions']
-              errors.concat(validate_trigger_conditions(trigger['conditions'], valid_fields, trigger_identifier))
-            end
+            errors.concat(validate_trigger_conditions(trigger['conditions'], valid_fields, trigger_identifier)) if trigger['conditions']
           end
 
           errors

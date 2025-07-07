@@ -367,14 +367,14 @@ describe ZendeskAppsSupport::Validations::Requirements do
       let(:requirements_string) do
         JSON.generate(
           'custom_objects_v2' => {
-            'objects' => [
-              {
+            'objects' => {
+              'my_custom_object' => {
                 'key' => 'my_custom_object',
                 'include_in_list_view' => true,
                 'title' => 'My Custom Object',
                 'title_pluralized' => 'My Custom Objects'
               }
-            ]
+            }
           }
         )
       end
@@ -388,8 +388,8 @@ describe ZendeskAppsSupport::Validations::Requirements do
       let(:requirements_string) do
         JSON.generate(
           'custom_objects_v2' => {
-            'objects' => [
-              {
+            'objects' => {
+              'my_custom_object' => {
                 'key' => 'my_custom_object',
                 'include_in_list_view' => true,
                 'title' => 'My Custom Object',
@@ -399,9 +399,9 @@ describe ZendeskAppsSupport::Validations::Requirements do
                   { 'key' => 'priority', 'type' => 'text' }
                 ]
               }
-            ],
-            'object_triggers' => [
-              {
+            },
+            'object_triggers' => {
+              'my_object_trigger' => {
                 'key' => 'my_object_trigger',
                 'title' => 'My Object Trigger',
                 'conditions' => {
@@ -413,7 +413,7 @@ describe ZendeskAppsSupport::Validations::Requirements do
                   { 'field' => 'priority', 'value' => 'high' }
                 ]
               }
-            ]
+            }
           }
         )
       end
@@ -427,20 +427,20 @@ describe ZendeskAppsSupport::Validations::Requirements do
       let(:requirements_string) do
         JSON.generate(
           'custom_objects_v2' => {
-            'objects' => [
-              {
+            'objects' => {
+              'first_object' => {
                 'key' => 'first_object',
                 'include_in_list_view' => true,
                 'title' => 'First Object',
                 'title_pluralized' => 'First Objects'
               },
-              {
+              'second_object' => {
                 'key' => 'second_object',
                 'include_in_list_view' => false,
                 'title' => 'Second Object',
                 'title_pluralized' => 'Second Objects'
               }
-            ]
+            }
           }
         )
       end
@@ -452,99 +452,99 @@ describe ZendeskAppsSupport::Validations::Requirements do
 
     context 'custom objects v2 object is missing required key field' do
       let(:requirements_string) do
-        JSON.generate(
-          'custom_objects_v2' => {
-            'objects' => [
-              {
-                'include_in_list_view' => true,
-                'title' => 'My Custom Object',
-                'title_pluralized' => 'My Custom Objects'
+          JSON.generate(
+            'custom_objects_v2' => {
+              'objects' => {
+                'my_custom_object' => {
+                  'include_in_list_view' => true,
+                  'title' => 'My Custom Object',
+                  'title_pluralized' => 'My Custom Objects'
+                }
               }
-            ]
-          }
-        )
+            }
+          )
       end
 
       it 'creates an error for missing key field' do
         expect(errors.first.key).to eq(:missing_required_fields)
-        expect(errors.first.data).to eq(field: 'key', identifier: 'custom_objects_v2 objects[0]')
+        expect(errors.first.data).to eq(field: 'key', identifier: 'custom_objects_v2 objects.my_custom_object')
       end
     end
 
     context 'custom objects v2 object is missing required include_in_list_view field' do
       let(:requirements_string) do
-        JSON.generate(
-          'custom_objects_v2' => {
-            'objects' => [
-              {
-                'key' => 'my_custom_object',
-                'title' => 'My Custom Object',
-                'title_pluralized' => 'My Custom Objects'
+          JSON.generate(
+            'custom_objects_v2' => {
+              'objects' => {
+                'my_custom_object' => {
+                  'key' => 'my_custom_object',
+                  'title' => 'My Custom Object',
+                  'title_pluralized' => 'My Custom Objects'
+                }
               }
-            ]
-          }
-        )
+            }
+          )
       end
 
       it 'creates an error for missing include_in_list_view field' do
         expect(errors.first.key).to eq(:missing_required_fields)
-        expect(errors.first.data).to eq(field: 'include_in_list_view', identifier: 'custom_objects_v2 objects[0]')
+        expect(errors.first.data).to eq(field: 'include_in_list_view', identifier: 'custom_objects_v2 objects.my_custom_object')
       end
     end
 
     context 'custom objects v2 object is missing required title field' do
       let(:requirements_string) do
-        JSON.generate(
-          'custom_objects_v2' => {
-            'objects' => [
-              {
-                'key' => 'my_custom_object',
-                'include_in_list_view' => true,
-                'title_pluralized' => 'My Custom Objects'
+          JSON.generate(
+            'custom_objects_v2' => {
+              'objects' => {
+                'my_custom_object' => {
+                  'key' => 'my_custom_object',
+                  'include_in_list_view' => true,
+                  'title_pluralized' => 'My Custom Objects'
+                }
               }
-            ]
-          }
-        )
+            }
+          )
       end
 
       it 'creates an error for missing title field' do
         expect(errors.first.key).to eq(:missing_required_fields)
-        expect(errors.first.data).to eq(field: 'title', identifier: 'custom_objects_v2 objects[0]')
+        expect(errors.first.data).to eq(field: 'title', identifier: 'custom_objects_v2 objects.my_custom_object')
       end
     end
 
     context 'custom objects v2 object is missing required title_pluralized field' do
       let(:requirements_string) do
-        JSON.generate(
-          'custom_objects_v2' => {
-            'objects' => [
-              {
-                'key' => 'my_custom_object',
-                'include_in_list_view' => true,
-                'title' => 'My Custom Object'
+          JSON.generate(
+            'custom_objects_v2' => {
+              'objects' => {
+                'my_custom_object' => {
+                  'key' => 'my_custom_object',
+                  'include_in_list_view' => true,
+                  'title' => 'My Custom Object'
+                }
               }
-            ]
-          }
-        )
+            }
+          )
       end
 
       it 'creates an error for missing title_pluralized field' do
         expect(errors.first.key).to eq(:missing_required_fields)
-        expect(errors.first.data).to eq(field: 'title_pluralized', identifier: 'custom_objects_v2 objects[0]')
+        expect(errors.first.data).to eq(field: 'title_pluralized', identifier: 'custom_objects_v2 objects.my_custom_object')
       end
     end
 
     context 'custom objects v2 object is missing multiple required fields' do
       let(:requirements_string) do
-        JSON.generate(
-          'custom_objects_v2' => {
-            'objects' => [
-              {
-                'include_in_list_view' => true
+          JSON.generate(
+            'custom_objects_v2' => {
+              'objects' => {
+                'incomplete_object' => {
+                  'include_in_list_view' => true
+                }
               }
-            ]
-          }
-        )
+            }
+          )
       end
       let(:required_keys) { ['key', 'title', 'title_pluralized'] }
 
@@ -552,7 +552,7 @@ describe ZendeskAppsSupport::Validations::Requirements do
         errors.each do |error|
           expect(error.key).to eq(:missing_required_fields)
           expect(required_keys).to include(error.data[:field])
-          expect(error.data[:identifier]).to eq('custom_objects_v2 objects[0]')
+          expect(error.data[:identifier]).to eq('custom_objects_v2 objects.incomplete_object')
         end
         expect(errors.count).to eq(required_keys.count)
       end
@@ -560,11 +560,13 @@ describe ZendeskAppsSupport::Validations::Requirements do
 
     context 'custom objects v2 object is completely empty' do
       let(:requirements_string) do
-        JSON.generate(
-          'custom_objects_v2' => {
-            'objects' => [{}]
-          }
-        )
+          JSON.generate(
+            'custom_objects_v2' => {
+              'objects' => {
+                'empty_object' => {}
+              }
+            }
+          )
       end
       let(:required_keys) { ['key', 'include_in_list_view', 'title', 'title_pluralized'] }
 
@@ -572,7 +574,7 @@ describe ZendeskAppsSupport::Validations::Requirements do
         errors.each do |error|
           expect(error.key).to eq(:missing_required_fields)
           expect(required_keys).to include(error.data[:field])
-          expect(error.data[:identifier]).to eq('custom_objects_v2 objects[0]')
+          expect(error.data[:identifier]).to eq('custom_objects_v2 objects.empty_object')
         end
         expect(errors.count).to eq(required_keys.count)
       end
@@ -580,29 +582,29 @@ describe ZendeskAppsSupport::Validations::Requirements do
 
     context 'multiple custom objects v2 objects with missing fields' do
       let(:requirements_string) do
-        JSON.generate(
-          'custom_objects_v2' => {
-            'objects' => [
-              {
-                'include_in_list_view' => true
-              },
-              {
-                'key' => 'second_object'
+          JSON.generate(
+            'custom_objects_v2' => {
+              'objects' => {
+                'first_incomplete' => {
+                  'include_in_list_view' => true
+                },
+                'second_incomplete' => {
+                  'key' => 'second_incomplete'
+                }
               }
-            ]
-          }
-        )
+            }
+          )
       end
 
       it 'creates errors for missing fields in both objects' do
         # First object missing: key, title, title_pluralized
-        first_object_errors = errors.select { |e| e.data[:identifier] == 'custom_objects_v2 objects[0]' }
+        first_object_errors = errors.select { |e| e.data[:identifier] == 'custom_objects_v2 objects.first_incomplete' }
         expect(first_object_errors.count).to eq(3)
         first_object_missing_fields = first_object_errors.map { |e| e.data[:field] }
         expect(first_object_missing_fields).to include('key', 'title', 'title_pluralized')
 
         # Second object missing: include_in_list_view, title, title_pluralized
-        second_object_errors = errors.select { |e| e.data[:identifier] == 'custom_objects_v2 objects[1]' }
+        second_object_errors = errors.select { |e| e.data[:identifier] == 'custom_objects_v2 objects.second_incomplete' }
         expect(second_object_errors.count).to eq(3)
         second_object_missing_fields = second_object_errors.map { |e| e.data[:field] }
         expect(second_object_missing_fields).to include('include_in_list_view', 'title', 'title_pluralized')
@@ -623,11 +625,11 @@ describe ZendeskAppsSupport::Validations::Requirements do
       end
     end
 
-    context 'custom objects v2 schema has empty objects array' do
+    context 'custom objects v2 schema has empty objects hash' do
       let(:requirements_string) do
         JSON.generate(
           'custom_objects_v2' => {
-            'objects' => []
+            'objects' => {}
           }
         )
       end
@@ -659,8 +661,8 @@ describe ZendeskAppsSupport::Validations::Requirements do
         let(:requirements_string) do
           JSON.generate(
             'custom_objects_v2' => {
-              'objects' => [
-                {
+              'objects' => {
+                'my_custom_object' => {
                   'key' => 'my_custom_object',
                   'include_in_list_view' => true,
                   'title' => 'My Custom Object',
@@ -669,9 +671,9 @@ describe ZendeskAppsSupport::Validations::Requirements do
                     { 'key' => 'status', 'type' => 'dropdown' }
                   ]
                 }
-              ],
-              'object_triggers' => [
-                {
+              },
+              'object_triggers' => {
+                'my_trigger' => {
                   'title' => 'My Trigger',
                   'conditions' => {
                     'all' => [
@@ -682,14 +684,14 @@ describe ZendeskAppsSupport::Validations::Requirements do
                     { 'field' => 'status', 'value' => 'open' }
                   ]
                 }
-              ]
+              }
             }
           )
         end
 
         it 'creates an error for missing key field' do
           expect(errors.first.key).to eq(:missing_required_fields)
-          expect(errors.first.data).to eq(field: 'key', identifier: 'object_triggers[0]')
+          expect(errors.first.data).to eq(field: 'key', identifier: 'object_triggers.my_trigger')
         end
       end
 
@@ -697,8 +699,8 @@ describe ZendeskAppsSupport::Validations::Requirements do
         let(:requirements_string) do
           JSON.generate(
             'custom_objects_v2' => {
-              'objects' => [
-                {
+              'objects' => {
+                'my_custom_object' => {
                   'key' => 'my_custom_object',
                   'include_in_list_view' => true,
                   'title' => 'My Custom Object',
@@ -707,9 +709,9 @@ describe ZendeskAppsSupport::Validations::Requirements do
                     { 'key' => 'status', 'type' => 'dropdown' }
                   ]
                 }
-              ],
-              'object_triggers' => [
-                {
+              },
+              'object_triggers' => {
+                'my_trigger' => {
                   'key' => 'my_trigger',
                   'conditions' => {
                     'all' => [
@@ -720,14 +722,14 @@ describe ZendeskAppsSupport::Validations::Requirements do
                     { 'field' => 'status', 'value' => 'open' }
                   ]
                 }
-              ]
+              }
             }
           )
         end
 
         it 'creates an error for missing title field' do
           expect(errors.first.key).to eq(:missing_required_fields)
-          expect(errors.first.data).to eq(field: 'title', identifier: 'object_triggers[0]')
+          expect(errors.first.data).to eq(field: 'title', identifier: 'object_triggers.my_trigger')
         end
       end
 
@@ -735,30 +737,30 @@ describe ZendeskAppsSupport::Validations::Requirements do
         let(:requirements_string) do
           JSON.generate(
             'custom_objects_v2' => {
-              'objects' => [
-                {
+              'objects' => {
+                'my_custom_object' => {
                   'key' => 'my_custom_object',
                   'include_in_list_view' => true,
                   'title' => 'My Custom Object',
                   'title_pluralized' => 'My Custom Objects'
                 }
-              ],
-              'object_triggers' => [
-                {
+              },
+              'object_triggers' => {
+                'my_trigger' => {
                   'key' => 'my_trigger',
                   'title' => 'My Trigger',
                   'actions' => [
                     { 'field' => 'status', 'value' => 'open' }
                   ]
                 }
-              ]
+              }
             }
           )
         end
 
         it 'creates an error for missing conditions field' do
           expect(errors.first.key).to eq(:missing_required_fields)
-          expect(errors.first.data).to eq(field: 'conditions', identifier: 'object_triggers[0]')
+          expect(errors.first.data).to eq(field: 'conditions', identifier: 'object_triggers.my_trigger')
         end
       end
 
@@ -766,8 +768,8 @@ describe ZendeskAppsSupport::Validations::Requirements do
         let(:requirements_string) do
           JSON.generate(
             'custom_objects_v2' => {
-              'objects' => [
-                {
+              'objects' => {
+                'my_custom_object' => {
                   'key' => 'my_custom_object',
                   'include_in_list_view' => true,
                   'title' => 'My Custom Object',
@@ -776,9 +778,9 @@ describe ZendeskAppsSupport::Validations::Requirements do
                     { 'key' => 'status', 'type' => 'dropdown' }
                   ]
                 }
-              ],
-              'object_triggers' => [
-                {
+              },
+              'object_triggers' => {
+                'my_trigger' => {
                   'key' => 'my_trigger',
                   'title' => 'My Trigger',
                   'conditions' => {
@@ -787,14 +789,14 @@ describe ZendeskAppsSupport::Validations::Requirements do
                     ]
                   }
                 }
-              ]
+              }
             }
           )
         end
 
         it 'creates an error for missing actions field' do
           expect(errors.first.key).to eq(:missing_required_fields)
-          expect(errors.first.data).to eq(field: 'actions', identifier: 'object_triggers[0]')
+          expect(errors.first.data).to eq(field: 'actions', identifier: 'object_triggers.my_trigger')
         end
       end
 
@@ -802,16 +804,16 @@ describe ZendeskAppsSupport::Validations::Requirements do
         let(:requirements_string) do
           JSON.generate(
             'custom_objects_v2' => {
-              'objects' => [
-                {
+              'objects' => {
+                'my_custom_object' => {
                   'key' => 'my_custom_object',
                   'include_in_list_view' => true,
                   'title' => 'My Custom Object',
                   'title_pluralized' => 'My Custom Objects'
                 }
-              ],
-              'object_triggers' => [
-                {
+              },
+              'object_triggers' => {
+                'my_trigger' => {
                   'key' => 'my_trigger',
                   'title' => 'My Trigger',
                   'conditions' => {
@@ -821,13 +823,13 @@ describe ZendeskAppsSupport::Validations::Requirements do
                     { 'value' => 'open' }
                   ]
                 }
-              ]
+              }
             }
           )
         end
 
         it 'creates an error for action missing field key' do
-          error = errors.find { |e| e.data[:identifier] == 'object_triggers[0].actions[0]' && e.data[:field] == 'field' }
+          error = errors.find { |e| e.data[:identifier] == 'object_triggers.my_trigger.actions[0]' && e.data[:field] == 'field' }
           expect(error).not_to be_nil
           expect(error.key).to eq(:missing_required_fields)
         end
@@ -837,16 +839,16 @@ describe ZendeskAppsSupport::Validations::Requirements do
         let(:requirements_string) do
           JSON.generate(
             'custom_objects_v2' => {
-              'objects' => [
-                {
+              'objects' => {
+                'my_custom_object' => {
                   'key' => 'my_custom_object',
                   'include_in_list_view' => true,
                   'title' => 'My Custom Object',
                   'title_pluralized' => 'My Custom Objects'
                 }
-              ],
-              'object_triggers' => [
-                {
+              },
+              'object_triggers' => {
+                'my_trigger' => {
                   'key' => 'my_trigger',
                   'title' => 'My Trigger',
                   'conditions' => {
@@ -856,13 +858,13 @@ describe ZendeskAppsSupport::Validations::Requirements do
                     { 'field' => 'status' }
                   ]
                 }
-              ]
+              }
             }
           )
         end
 
         it 'creates an error for action missing value key' do
-          error = errors.find { |e| e.data[:identifier] == 'object_triggers[0].actions[0]' && e.data[:field] == 'value' }
+          error = errors.find { |e| e.data[:identifier] == 'object_triggers.my_trigger.actions[0]' && e.data[:field] == 'value' }
           expect(error).not_to be_nil
           expect(error.key).to eq(:missing_required_fields)
         end
@@ -872,16 +874,16 @@ describe ZendeskAppsSupport::Validations::Requirements do
         let(:requirements_string) do
           JSON.generate(
             'custom_objects_v2' => {
-              'objects' => [
-                {
+              'objects' => {
+                'my_custom_object' => {
                   'key' => 'my_custom_object',
                   'include_in_list_view' => true,
                   'title' => 'My Custom Object',
                   'title_pluralized' => 'My Custom Objects'
                 }
-              ],
-              'object_triggers' => [
-                {
+              },
+              'object_triggers' => {
+                'my_trigger' => {
                   'key' => 'my_trigger',
                   'title' => 'My Trigger',
                   'conditions' => {
@@ -889,7 +891,7 @@ describe ZendeskAppsSupport::Validations::Requirements do
                   },
                   'actions' => []
                 }
-              ]
+              }
             }
           )
         end
@@ -898,7 +900,7 @@ describe ZendeskAppsSupport::Validations::Requirements do
           error = errors.find { |e| e.data[:field] == 'conditions.all (must be array)' }
           expect(error).not_to be_nil
           expect(error.key).to eq(:missing_required_fields)
-          expect(error.data[:identifier]).to eq('object_triggers[0]')
+          expect(error.data[:identifier]).to eq('object_triggers.my_trigger')
         end
       end
 
@@ -906,8 +908,8 @@ describe ZendeskAppsSupport::Validations::Requirements do
         let(:requirements_string) do
           JSON.generate(
             'custom_objects_v2' => {
-              'objects' => [
-                {
+              'objects' => {
+                'my_custom_object' => {
                   'key' => 'my_custom_object',
                   'include_in_list_view' => true,
                   'title' => 'My Custom Object',
@@ -916,9 +918,9 @@ describe ZendeskAppsSupport::Validations::Requirements do
                     { 'key' => 'status', 'type' => 'dropdown' }
                   ]
                 }
-              ],
-              'object_triggers' => [
-                {
+              },
+              'object_triggers' => {
+                'my_trigger' => {
                   'key' => 'my_trigger',
                   'title' => 'My Trigger',
                   'conditions' => {
@@ -928,13 +930,13 @@ describe ZendeskAppsSupport::Validations::Requirements do
                   },
                   'actions' => []
                 }
-              ]
+              }
             }
           )
         end
 
         it 'creates an error for condition missing field key' do
-          error = errors.find { |e| e.data[:identifier] == 'object_triggers[0].conditions.all[0]' && e.data[:field] == 'field' }
+          error = errors.find { |e| e.data[:identifier] == 'object_triggers.my_trigger.conditions.all[0]' && e.data[:field] == 'field' }
           expect(error).not_to be_nil
           expect(error.key).to eq(:missing_required_fields)
         end
@@ -944,8 +946,8 @@ describe ZendeskAppsSupport::Validations::Requirements do
         let(:requirements_string) do
           JSON.generate(
             'custom_objects_v2' => {
-              'objects' => [
-                {
+              'objects' => {
+                'my_custom_object' => {
                   'key' => 'my_custom_object',
                   'include_in_list_view' => true,
                   'title' => 'My Custom Object',
@@ -954,9 +956,9 @@ describe ZendeskAppsSupport::Validations::Requirements do
                     { 'key' => 'status', 'type' => 'dropdown' }
                   ]
                 }
-              ],
-              'object_triggers' => [
-                {
+              },
+              'object_triggers' => {
+                'my_trigger' => {
                   'key' => 'my_trigger',
                   'title' => 'My Trigger',
                   'conditions' => {
@@ -968,19 +970,118 @@ describe ZendeskAppsSupport::Validations::Requirements do
                     { 'field' => 'status', 'value' => 'open' }
                   ]
                 }
-              ]
+              }
             }
           )
         end
 
         it 'creates an error for invalid field reference' do
-          error = errors.find { |e| e.data[:identifier] == 'object_triggers[0].conditions.all[0]' }
+          error = errors.find { |e| e.data[:identifier] == 'object_triggers.my_trigger.conditions.all[0]' }
           expect(error).not_to be_nil
           expect(error.key).to eq(:missing_required_fields)
           expect(error.data[:field]).to include('nonexistent_field')
           expect(error.data[:field]).to include('status')
         end
       end
+    end
+
+    context 'custom object key mismatch validation' do
+      context 'object key does not match its internal key field' do
+        let(:requirements_string) do
+          JSON.generate(
+            'custom_objects_v2' => {
+              'objects' => {
+                'my_custom_object' => {
+                  'key' => 'different_key',
+                  'include_in_list_view' => true,
+                  'title' => 'My Custom Object',
+                  'title_pluralized' => 'My Custom Objects'
+                }
+              }
+            }
+          )
+        end
+
+        it 'creates an error for key mismatch' do
+          expect(errors.first.key).to eq(:custom_object_key_mismatch)
+          expect(errors.first.data).to eq(object_name: 'my_custom_object', expected_key: 'my_custom_object', actual_key: 'different_key')
+        end
+      end
+
+      context 'multiple objects with key mismatches' do
+        let(:requirements_string) do
+          JSON.generate(
+            'custom_objects_v2' => {
+              'objects' => {
+                'first_object' => {
+                  'key' => 'wrong_first_key',
+                  'include_in_list_view' => true,
+                  'title' => 'First Object',
+                  'title_pluralized' => 'First Objects'
+                },
+                'second_object' => {
+                  'key' => 'wrong_second_key',
+                  'include_in_list_view' => false,
+                  'title' => 'Second Object',
+                  'title_pluralized' => 'Second Objects'
+                }
+              }
+            }
+          )
+        end
+
+        it 'creates errors for both key mismatches' do
+          mismatch_errors = errors.select { |e| e.key == :custom_object_key_mismatch }
+          expect(mismatch_errors.count).to eq(2)
+          
+          first_error = mismatch_errors.find { |e| e.data[:object_name] == 'first_object' }
+          expect(first_error.data).to eq(object_name: 'first_object', expected_key: 'first_object', actual_key: 'wrong_first_key')
+          
+          second_error = mismatch_errors.find { |e| e.data[:object_name] == 'second_object' }
+          expect(second_error.data).to eq(object_name: 'second_object', expected_key: 'second_object', actual_key: 'wrong_second_key')
+      end
+    end
+    end
+
+    context 'object trigger key mismatch validation' do
+      context 'trigger key does not match its internal key field' do
+        let(:requirements_string) do
+          JSON.generate(
+            'custom_objects_v2' => {
+              'objects' => {
+                'my_custom_object' => {
+                  'key' => 'my_custom_object',
+                  'include_in_list_view' => true,
+                  'title' => 'My Custom Object',
+                  'title_pluralized' => 'My Custom Objects',
+                  'fields' => [
+                    { 'key' => 'status', 'type' => 'dropdown' }
+                  ]
+                }
+              },
+              'object_triggers' => {
+                'my_trigger' => {
+                  'key' => 'different_trigger_key',
+                  'title' => 'My Trigger',
+                  'conditions' => {
+                    'all' => [
+                      { 'field' => 'status' }
+                    ]
+                  },
+                  'actions' => [
+                    { 'field' => 'status', 'value' => 'open' }
+                  ]
+                }
+              }
+            }
+          )
+        end
+
+        it 'creates an error for trigger key mismatch' do
+          expect(errors.first.key).to eq(:custom_object_trigger_key_mismatch)
+          expect(errors.first.data).to eq(trigger_name: 'my_trigger', expected_key: 'my_trigger', actual_key: 'different_trigger_key')
+      end
+    end
     end
   end
 end
