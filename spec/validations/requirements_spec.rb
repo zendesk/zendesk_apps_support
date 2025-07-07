@@ -402,7 +402,7 @@ describe ZendeskAppsSupport::Validations::Requirements do
             },
             'object_triggers' => {
               'my_object_trigger' => {
-                'key' => 'my_object_trigger',
+                'object_key' => 'my_custom_object',
                 'title' => 'My Object Trigger',
                 'conditions' => {
                   'all' => [
@@ -657,7 +657,7 @@ describe ZendeskAppsSupport::Validations::Requirements do
     end
 
     context 'object_triggers validation' do
-      context 'object_triggers missing required key field' do
+      context 'object_triggers missing required object_key field' do
         let(:requirements_string) do
           JSON.generate(
             'custom_objects_v2' => {
@@ -689,9 +689,9 @@ describe ZendeskAppsSupport::Validations::Requirements do
           )
         end
 
-        it 'creates an error for missing key field' do
+        it 'creates an error for missing object_key field' do
           expect(errors.first.key).to eq(:missing_required_fields)
-          expect(errors.first.data).to eq(field: 'key', identifier: 'object_triggers.my_trigger')
+          expect(errors.first.data).to eq(field: 'object_key', identifier: 'object_triggers.my_trigger')
         end
       end
 
@@ -712,7 +712,7 @@ describe ZendeskAppsSupport::Validations::Requirements do
               },
               'object_triggers' => {
                 'my_trigger' => {
-                  'key' => 'my_trigger',
+                  'object_key' => 'my_custom_object',
                   'conditions' => {
                     'all' => [
                       { 'field' => 'status' }
@@ -747,7 +747,7 @@ describe ZendeskAppsSupport::Validations::Requirements do
               },
               'object_triggers' => {
                 'my_trigger' => {
-                  'key' => 'my_trigger',
+                  'object_key' => 'my_custom_object',
                   'title' => 'My Trigger',
                   'actions' => [
                     { 'field' => 'status', 'value' => 'open' }
@@ -781,7 +781,7 @@ describe ZendeskAppsSupport::Validations::Requirements do
               },
               'object_triggers' => {
                 'my_trigger' => {
-                  'key' => 'my_trigger',
+                  'object_key' => 'my_custom_object',
                   'title' => 'My Trigger',
                   'conditions' => {
                     'all' => [
@@ -814,7 +814,7 @@ describe ZendeskAppsSupport::Validations::Requirements do
               },
               'object_triggers' => {
                 'my_trigger' => {
-                  'key' => 'my_trigger',
+                  'object_key' => 'my_custom_object',
                   'title' => 'My Trigger',
                   'conditions' => {
                     'all' => []
@@ -849,7 +849,7 @@ describe ZendeskAppsSupport::Validations::Requirements do
               },
               'object_triggers' => {
                 'my_trigger' => {
-                  'key' => 'my_trigger',
+                  'object_key' => 'my_custom_object',
                   'title' => 'My Trigger',
                   'conditions' => {
                     'all' => []
@@ -884,7 +884,7 @@ describe ZendeskAppsSupport::Validations::Requirements do
               },
               'object_triggers' => {
                 'my_trigger' => {
-                  'key' => 'my_trigger',
+                  'object_key' => 'my_custom_object',
                   'title' => 'My Trigger',
                   'conditions' => {
                     'all' => 'not_an_array'
@@ -921,7 +921,7 @@ describe ZendeskAppsSupport::Validations::Requirements do
               },
               'object_triggers' => {
                 'my_trigger' => {
-                  'key' => 'my_trigger',
+                  'object_key' => 'my_custom_object',
                   'title' => 'My Trigger',
                   'conditions' => {
                     'all' => [
@@ -959,7 +959,7 @@ describe ZendeskAppsSupport::Validations::Requirements do
               },
               'object_triggers' => {
                 'my_trigger' => {
-                  'key' => 'my_trigger',
+                  'object_key' => 'my_custom_object',
                   'title' => 'My Trigger',
                   'conditions' => {
                     'all' => [
@@ -981,6 +981,48 @@ describe ZendeskAppsSupport::Validations::Requirements do
           expect(error.key).to eq(:missing_required_fields)
           expect(error.data[:field]).to include('nonexistent_field')
           expect(error.data[:field]).to include('status')
+        end
+      end
+
+      context 'object_triggers with invalid object_key reference' do
+        let(:requirements_string) do
+          JSON.generate(
+            'custom_objects_v2' => {
+              'objects' => {
+                'my_custom_object' => {
+                  'key' => 'my_custom_object',
+                  'include_in_list_view' => true,
+                  'title' => 'My Custom Object',
+                  'title_pluralized' => 'My Custom Objects',
+                  'fields' => [
+                    { 'key' => 'status', 'type' => 'dropdown' }
+                  ]
+                }
+              },
+              'object_triggers' => {
+                'my_trigger' => {
+                  'object_key' => 'nonexistent_object',
+                  'title' => 'My Trigger',
+                  'conditions' => {
+                    'all' => [
+                      { 'field' => 'status' }
+                    ]
+                  },
+                  'actions' => [
+                    { 'field' => 'status', 'value' => 'open' }
+                  ]
+                }
+              }
+            }
+          )
+        end
+
+        it 'creates an error for invalid object_key reference' do
+          error = errors.find { |e| e.data[:identifier] == 'object_triggers.my_trigger' && e.data[:field].include?('object_key') }
+          expect(error).not_to be_nil
+          expect(error.key).to eq(:missing_required_fields)
+          expect(error.data[:field]).to include('nonexistent_object')
+          expect(error.data[:field]).to include('my_custom_object')
         end
       end
     end
@@ -1033,55 +1075,14 @@ describe ZendeskAppsSupport::Validations::Requirements do
         it 'creates errors for both key mismatches' do
           mismatch_errors = errors.select { |e| e.key == :custom_object_key_mismatch }
           expect(mismatch_errors.count).to eq(2)
-          
+
           first_error = mismatch_errors.find { |e| e.data[:object_name] == 'first_object' }
           expect(first_error.data).to eq(object_name: 'first_object', expected_key: 'first_object', actual_key: 'wrong_first_key')
-          
+
           second_error = mismatch_errors.find { |e| e.data[:object_name] == 'second_object' }
           expect(second_error.data).to eq(object_name: 'second_object', expected_key: 'second_object', actual_key: 'wrong_second_key')
-      end
-    end
-    end
-
-    context 'object trigger key mismatch validation' do
-      context 'trigger key does not match its internal key field' do
-        let(:requirements_string) do
-          JSON.generate(
-            'custom_objects_v2' => {
-              'objects' => {
-                'my_custom_object' => {
-                  'key' => 'my_custom_object',
-                  'include_in_list_view' => true,
-                  'title' => 'My Custom Object',
-                  'title_pluralized' => 'My Custom Objects',
-                  'fields' => [
-                    { 'key' => 'status', 'type' => 'dropdown' }
-                  ]
-                }
-              },
-              'object_triggers' => {
-                'my_trigger' => {
-                  'key' => 'different_trigger_key',
-                  'title' => 'My Trigger',
-                  'conditions' => {
-                    'all' => [
-                      { 'field' => 'status' }
-                    ]
-                  },
-                  'actions' => [
-                    { 'field' => 'status', 'value' => 'open' }
-                  ]
-                }
-              }
-            }
-          )
         end
-
-        it 'creates an error for trigger key mismatch' do
-          expect(errors.first.key).to eq(:custom_object_trigger_key_mismatch)
-          expect(errors.first.data).to eq(trigger_name: 'my_trigger', expected_key: 'my_trigger', actual_key: 'different_trigger_key')
       end
-    end
     end
   end
 end
