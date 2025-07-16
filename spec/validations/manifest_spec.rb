@@ -814,37 +814,54 @@ describe ZendeskAppsSupport::Validations::Manifest do
     end
   end
 
-  context 'when the error_on_password_parameter option is set to false' do
+  context 'password parameter validations' do
+    password_parameter_error_message = 'Password parameter type can no longer be used'
+    password_parameter_warning_message = 'Password parameter type is deprecated and will not be accepted in the future'
 
-    it 'should be valid but add a warning about the password param type' do
-      error_on_password_parameter = false
-      @manifest_hash = {
-        'parameters' => [
-          'name'     => 'a password param',
-          'type'     => 'password',
-        ]}
-        package = create_package(@manifest_hash)
-        errors = ZendeskAppsSupport::Validations::Manifest.call(package, error_on_password_parameter: error_on_password_parameter)
+    context 'when the error_on_password_parameter option is set to false' do
+      describe 'when the password parameter type is present' do
+        it 'should be valid but add a warning about the password param type' do
+          error_on_password_parameter = false
+          @manifest_hash = {
+            'parameters' => [
+              'name'     => 'a password param',
+              'type'     => 'password',
+            ]}
+            package = create_package(@manifest_hash)
+            errors = ZendeskAppsSupport::Validations::Manifest.call(package, error_on_password_parameter: error_on_password_parameter)
 
-      expect(errors.map(&:to_s).join()).not_to include("Password parameter type can no longer be used")
-      expect(package.warnings.join()).to include("Password parameter type is deprecated and will not be accepted in the future")
+          expect(errors.map(&:to_s).join()).not_to include(password_parameter_error_message)
+          expect(package.warnings.join()).to include(password_parameter_warning_message)
+        end
+      end
+
+      describe 'when the password parameter type is not present' do
+        it 'should be valid and add no warnings about a password parameter' do
+          error_on_password_parameter = false
+          @manifest_hash = {}
+            package = create_package(@manifest_hash)
+            errors = ZendeskAppsSupport::Validations::Manifest.call(package, error_on_password_parameter: error_on_password_parameter)
+
+          expect(errors.map(&:to_s).join()).not_to include(password_parameter_error_message)
+          expect(package.warnings.join()).not_to include(password_parameter_warning_message)
+        end
+      end
     end
-  end
 
-  context 'when the error_on_password_parameter option is set to true' do
+    context 'when the error_on_password_parameter option is set to true' do
+      it 'should not be valid with a password param type and add no warnings' do
+        error_on_password_parameter = true
+        @manifest_hash = {
+          'parameters' => [
+            'name'     => 'a password param',
+            'type'     => 'password',
+          ]}
+          package = create_package(@manifest_hash)
+          errors = ZendeskAppsSupport::Validations::Manifest.call(package, error_on_password_parameter: error_on_password_parameter)
 
-    it 'should not be valid with a password param type and add no warnings' do
-      error_on_password_parameter = true
-      @manifest_hash = {
-        'parameters' => [
-          'name'     => 'a password param',
-          'type'     => 'password',
-        ]}
-        package = create_package(@manifest_hash)
-        errors = ZendeskAppsSupport::Validations::Manifest.call(package, error_on_password_parameter: error_on_password_parameter)
-
-      expect(errors.map(&:to_s).join()).to include("Password parameter type can no longer be used")
-      expect(package.warnings.join()).not_to include("Password parameter type is deprecated and will not be accepted in the future")
+        expect(errors.map(&:to_s).join()).to include(password_parameter_error_message)
+        expect(package.warnings.join()).not_to include(password_parameter_warning_message)
+      end
     end
   end
 end

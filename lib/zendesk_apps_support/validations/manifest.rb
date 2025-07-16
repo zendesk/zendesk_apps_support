@@ -22,7 +22,7 @@ module ZendeskAppsSupport
             return [ValidationError.new(:missing_manifest)]
           end
 
-          package.warnings << password_parameter_warning unless error_on_password_parameter
+          package.warnings << password_parameter_warning if !error_on_password_parameter && password_param_present?(package.manifest)
 
           collate_manifest_errors(package, error_on_password_parameter)
         rescue JSON::ParserError => e
@@ -32,6 +32,10 @@ module ZendeskAppsSupport
         end
 
         private
+
+        def password_param_present?(manifest)
+          manifest.parameters.any? { |p| p.type == 'password' }
+        end
 
         def collate_manifest_errors(package, error_on_password_parameter)
           manifest = package.manifest
@@ -214,7 +218,7 @@ module ZendeskAppsSupport
 
         def deprecate_password_parameter_type(manifest)
           secure_settings_link = 'https://developer.zendesk.com/documentation/apps/app-developer-guide/making-api-requests-from-a-zendesk-app/#using-secure-settings'
-          if manifest.parameters.any? { |p| p.type == 'password' }
+          if password_param_present?(manifest)
             ValidationError.new(:password_parameter_type_deprecated, link: secure_settings_link)
           end
         end
