@@ -361,4 +361,27 @@ describe ZendeskAppsSupport::Validations::Requirements do
       end
     end
   end
+
+  context 'custom objects v2 requirements validations' do
+    context 'when custom_objects_v2 is used as a requirement key' do
+      let(:requirements_string) do
+        JSON.generate(
+          'custom_objects_v2' => {
+            'objects' => Array.new(51) do |i|
+              { 'key' => "object_#{i + 1}", 'title' => "Object #{i + 1}", 'title_pluralized' => "Objects #{i + 1}",
+                'included_in_list_view' => true }
+            end,
+            'object_fields' => [],
+            'object_triggers' => []
+          }
+        )
+      end
+
+      it 'accepts custom_objects_v2 as valid requirement key and does not raise validation errors yet' do
+        # Currently CustomObjectsV2 validation is disabled (returns empty array)
+        # so custom_objects_v2 requirements should be accepted without any validation errors
+        expect(errors).to be_empty
+      end
+    end
+  end
 end
