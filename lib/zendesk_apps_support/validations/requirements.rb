@@ -31,6 +31,7 @@ module ZendeskAppsSupport
             errors << invalid_custom_objects(requirements)
             errors << invalid_webhooks(requirements)
             errors << invalid_target_types(requirements)
+            errors << validate_custom_objects_v2_requirements(requirements)
             errors << missing_required_fields(requirements)
             errors.flatten!
             errors.compact!
@@ -48,9 +49,11 @@ module ZendeskAppsSupport
         def missing_required_fields(requirements)
           [].tap do |errors|
             requirements.each do |requirement_type, requirement|
-              next if %w[channel_integrations custom_objects webhooks].include? requirement_type
+              next if %w[channel_integrations custom_objects webhooks custom_objects_v2].include? requirement_type
+
               requirement.each do |identifier, fields|
                 next if fields.nil? || fields.include?('title')
+
                 errors << ValidationError.new(:missing_required_fields,
                                               field: 'title',
                                               identifier: identifier)
@@ -75,6 +78,13 @@ module ZendeskAppsSupport
             ValidationError.new(:excessive_custom_objects_requirements, max: MAX_CUSTOM_OBJECTS_REQUIREMENTS,
                                                                         count: count)
           end
+        end
+
+        def validate_custom_objects_v2_requirements(requirements)
+          cov2_requirements = requirements[AppRequirement::CUSTOM_OBJECTS_V2_KEY]
+          return unless cov2_requirements
+
+          CustomObjectsV2.call(cov2_requirements)
         end
 
         def invalid_custom_fields(requirements)

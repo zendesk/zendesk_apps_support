@@ -117,7 +117,7 @@ parts:
       screenshot: "https://drive.google.com/file/d/1mEiQLJxTb-lFFnVt96n051w4BnxJOZID/view?usp=sharing"
   - translation:
       key: "txt.apps.admin.error.app_build.excessive_custom_objects_v2_triggers"
-      title: "App builder job: requirements file contains too many custom object triggers. The maximum number of custom object triggers per object is 100. Leave requirements.json as is (do not translate)"
+      title: "App builder job: requirements file contains too many custom object triggers. The maximum number of custom object triggers per object is 20. Leave requirements.json as is (do not translate)"
       value: "The requirements.json file contains too many custom object triggers. The current limit is %{max} triggers per custom object. This app has %{count} triggers for object %{object_key}."
       screenshot: "https://drive.google.com/file/d/1JTEmjrUTq7Bsxoy36Syj-vhbkG8W_68D/view?usp=sharing"
   - translation:
@@ -131,17 +131,40 @@ parts:
       value: "The requirements.json file contains too many custom object trigger actions. The current limit is %{max} actions per trigger. This app has %{count} actions for trigger %{trigger_title}."
       screenshot: "https://drive.google.com/file/d/18jXaM7_OnPqHAg6jAxJrTrgX1v_H156_/view?usp=sharing"
   - translation:
-      key: "txt.apps.admin.error.app_build.excessive_cov2_dropdown_fields_per_object"
-      title: "App builder job: requirements file contains too many custom object fields of type dropdown. The maximum number of fields of type dropdown per object is 5. Leave requirements.json as is (do not translate)"
-      value: "The requirements.json file contains too many custom object fields of type dropdown. The current limit is %{max} fields per object. This app has %{count} fields of type dropdown for object %{object_key}."
-      screenshot: "https://drive.google.com/file/d/1hILvdZQXZCtkQVupYXedPbnD_rNN4nwH/view?usp=sharing"
-      obsolete: "2025-11-01"
+      key: "txt.apps.admin.error.app_build.invalid_cov2_requirements_structure"
+      title: "App builder job: requirements file contains invalid custom objects v2 structure. Must be a object. Leave requirements.json, custom_objects_v2 as is (do not translate)"
+      value: "The requirements.json file contains an invalid custom_objects_v2 structure. Custom objects v2 requirements must be a object."
+      screenshot: "https://drive.google.com/file/d/1LPyYM92Ni6kCZOfCXHl4y43pwSQP_pSJ/view?usp=sharing"
   - translation:
-      key: "txt.apps.admin.error.app_build.excessive_cov2_multiselect_fields_per_object"
-      title: "App builder job: requirements file contains too many custom object fields of type multiselect. The maximum number of fields of type multiselect per object is 5. Leave requirements.json as is (do not translate)"
-      value: "The requirements.json file contains too many custom object fields of type multiselect. The current limit is %{max} fields per object. This app has %{count} fields of type multiselect for object %{object_key}."
-      screenshot: "https://drive.google.com/file/d/1RJgWEKXv7Zkt7V2Vh3QZyl55W9QOC6Z9/view?usp=sharing"
-      obsolete: "2025-11-01"
+      key: "txt.apps.admin.error.app_build.excessive_cov2_payload_size"
+      title: "App builder job: requirements file contains custom objects v2 payload that exceeds maximum size limit. The maximum payload size is 1 MB. Leave requirements.json as is (do not translate)"
+      value: "The requirements.json file contains a custom objects v2 payload that is too large. The maximum allowed size is 1 MB."
+      screenshot: "https://drive.google.com/file/d/1buZhVxCslyX3fYiqJPWgJrWZyW3oHbGg/view?usp=sharing"
+  - translation:
+      key: "txt.apps.admin.error.app_build.invalid_cov2_trigger_conditions_structure"
+      title: "App builder job: requirements file contains invalid custom object trigger conditions structure. Conditions must be a hash with 'all' and 'any' arrays. Leave requirements.json, 'all' and 'any' as is (do not translate)"
+      value: 'The requirements.json file contains an invalid custom object trigger conditions structure. Conditions must be a hash with \"all\" and \"any\" arrays for trigger %{trigger_title}.'
+      screenshot: "https://drive.google.com/file/d/1c4Hgk8OXscco_cwOfCX5r8Ub3k_-umrr/view?usp=sharing"
+  - translation:
+      key: "txt.apps.admin.error.app_build.empty_cov2_trigger_conditions"
+      title: "App builder job: requirements file contains empty custom object trigger conditions. At least one condition must be specified in either 'all' or 'any' array. Leave requirements.json, 'all', and 'any' as is (do not translate)"
+      value: "The requirements.json file contains empty custom object trigger conditions. At least one condition must be specified in either 'all' or 'any' array for trigger %{trigger_title}."
+      screenshot: "https://drive.google.com/file/d/1AfTnUJxMaQP9oYH-RLFDE1Pyf4feaEZ4/view?usp=sharing"
+  - translation:
+      key: "txt.apps.admin.error.app_build.invalid_cov2_trigger_actions_structure"
+      title: "App builder job: requirements file contains invalid custom object trigger actions structure. Actions must be an array. Leave requirements.json, 'actions' as is (do not translate)"
+      value: "The requirements.json file contains an invalid custom object trigger actions structure. \"actions\" must be an array for trigger %{trigger_title}."
+      screenshot: "https://drive.google.com/file/d/12p8LzIcK4-ItJfHqHQiTaKxDxWnIiDni/view?usp=sharing"
+  - translation:
+      key: "txt.apps.admin.error.app_build.empty_cov2_trigger_actions"
+      title: "App builder job: requirements file contains empty custom object trigger actions. At least one action must be specified. Leave requirements.json as is (do not translate)"
+      value: "The requirements.json file contains empty custom object trigger actions. At least one action must be specified for trigger %{trigger_title}."
+      screenshot: "https://drive.google.com/file/d/12XxGTNfRwh0aQM0gJkc_gFxiYSB0Op_r/view?usp=sharing"
+  - translation:
+      key: "txt.apps.admin.error.app_build.excessive_cov2_selection_fields_per_object"
+      title: "App builder job: requirements file contains too many custom object fields of type dropdown or multiselect. The maximum number of fields of type dropdown or multiselect per object is 5. Leave requirements.json as is (do not translate)"
+      value: "The requirements.json file contains too many custom object fields of type %{field_type}. The current limit is %{max} fields per object. This app has %{count} fields of type %{field_type} for object %{object_key}."
+      screenshot: "https://drive.google.com/file/d/1hILvdZQXZCtkQVupYXedPbnD_rNN4nwH/view?usp=sharing"
   - translation:
       key: "txt.apps.admin.error.app_build.excessive_cov2_field_options"
       title: "App builder job: requirements file contains too many options for custom object field of type dropdown or multiselect. The maximum number of options of type dropdown or multiselect per field is 10. Leave requirements.json as is (do not translate)"
@@ -153,68 +176,38 @@ parts:
       value: "The requirements.json file contains too many conditions in relationship filter for custom object field %{field_key}. The current limit is %{max} conditions per field. This app has %{count} conditions for field %{field_key} in object %{object_key}."
       "screenshot": "https://drive.google.com/file/d/13J6GIkq3CXGqRwV5KRHouXulRVuwQnNi/view?usp=sharing"
       key: "txt.apps.admin.error.app_build.missing_cov2_object_schema_key"
-      title: 'App builder job: requirements file is missing a custom object schema key. These are the required keys: (key, title, title_pluralized, include_in_list_view). The term \"schema key\" typically refers to an identifier or attribute that defines a specific item within a schema and it should be translated. Leave requirements.json as is (do not translate)'
+      title: "App builder job: requirements file is missing a custom object schema key. These are the required keys: (key, title, title_pluralized, include_in_list_view). Leave requirements.json as is (do not translate)"
       value: "The requirements.json file is missing custom object schema key for object %{object_key}. The following key is required: %{missing_key}."
       "screenshot": "https://drive.google.com/file/d/15iZemfkt14z96W4zmDHw1kodU70UxMYs/view?usp=sharing"
   - translation:
       key: "txt.apps.admin.error.app_build.missing_cov2_field_schema_key"
-      title: 'App builder job: requirements file is missing a custom object field schema key. These are the required keys: (key, title, type, object_key). The term \"schema key\" typically refers to an identifier or attribute that defines a specific item within a schema and it should be translated. Leave requirements.json as is (do not translate)'
+      title: "App builder job: requirements file is missing a custom object field schema key. These are the required keys: (key, title, type, object_key). Leave requirements.json as is (do not translate)"
       value: "The requirements.json file is missing custom object field schema key for field %{field_key} in object %{object_key}. The following key is required: %{missing_key}."
-      "screenshot": "https://drive.google.com/file/d/1hYqJ_df8jhjqQjUQHMAC-yrAK7uGaKEH/view?usp=sharing"
+      "screenshot": "https://drive.google.com/file/d/1ygm89vlBBD72Pc4gS8TW2arYRcaxdvIY/view?usp=sharing"
   - translation:
       key: "txt.apps.admin.error.app_build.missing_cov2_trigger_schema_key"
-      title: 'App builder job: requirements file is missing a custom object trigger schema key. These are the required keys: (title, actions, conditions, object_key). The term \"schema key\" typically refers to an identifier or attribute that defines a specific item within a schema and it should be translated. Leave requirements.json as is (do not translate)'
+      title: "App builder job: requirements file is missing a custom object trigger schema key. These are the required keys: (title, actions, conditions, object_key). Leave requirements.json as is (do not translate)"
       value: "The requirements.json file is missing custom object trigger schema key for trigger %{trigger_title} in object %{object_key}. The following key is required: %{missing_key}."
-      "screenshot": "https://drive.google.com/file/d/1Q_qFDZMoUzfAdL27QehW0q1rrHG3BPcP/view?usp=sharing"
+      "screenshot": "https://drive.google.com/file/d/1XpwG7mxPTaI-My3fG2xGyxdEfE3LbECt/view?usp=sharing"
   - translation:
       key: "txt.apps.admin.error.app_build.empty_cov2_trigger_conditions"
-      title: "App builder job: requirements file contains an empty conditions array for custom object trigger. Leave requirements.json as is (do not translate)"
-      value: "The requirements.json file contains an empty conditions array for custom object trigger %{trigger_title} in object %{object_key}."
+      title: "App builder job: requirements file contains an empty conditions for custom object trigger. Leave requirements.json as is (do not translate)"
+      value: "The requirements.json file contains an empty conditions for custom object trigger %{trigger_title} in object %{object_key}."
       "screenshot": "https://drive.google.com/file/d/1dU534_37__yrqX9lQujjgTJeCV5Y5FIp/view?usp=sharing"
-  - translation:
-      key: "txt.apps.admin.error.app_build.invalid_cov2_requirements_structure"
-      title: 'App builder job: requirements file contains invalid custom objects v2 structure. An "object" here refers to a programming object (a set of key-value pairs), not a custom object in Zendesk. Leave requirements.json, custom_objects_v2 as is (do not translate)'
-      value: 'The requirements.json file contains an invalid custom_objects_v2 structure. \"custom_objects_v2\" requirements must be an object.'
-      screenshot: "https://drive.google.com/file/d/1_P5Vl_QikPs-WgxqgDKJdgQW3jr1pTk2/view?usp=sharing"
-  - translation:
-      key: "txt.apps.admin.error.app_build.excessive_cov2_payload_size"
-      title: "App builder job: requirements file contains custom objects v2 payload that exceeds maximum size limit. The maximum payload size is 1 MB. Leave requirements.json as is (do not translate)"
-      value: "The requirements.json file contains a custom objects v2 payload that is too large. The maximum allowed size is 1 MB."
-      screenshot: "https://drive.google.com/file/d/1buZhVxCslyX3fYiqJPWgJrWZyW3oHbGg/view?usp=sharing"
-  - translation:
-      key: "txt.apps.admin.error.app_build.invalid_cov2_trigger_conditions_structure"
-      title: 'App builder job: requirements file contains invalid custom object trigger conditions structure. Conditions must be an object (a set of key-value pairs, like { "all": [], "any": [] } in JSON) with "all" and "any" arrays as keys. Leave requirements.json, "all" and "any" as is (do not translate)'
-      value: 'The requirements.json file contains an invalid custom object trigger conditions structure. Conditions must be a hash with "all" and "any" arrays for trigger %{trigger_title}.'
-      screenshot: "https://drive.google.com/file/d/1c4Hgk8OXscco_cwOfCX5r8Ub3k_-umrr/view?usp=sharing"
-  - translation:
-      key: "txt.apps.admin.error.app_build.invalid_cov2_trigger_actions_structure"
-      title: "App builder job: requirements file contains an invalid custom object trigger actions structure. Actions must be an array. 'actions' is part of requirements file. Leave requirements.json and 'actions' as is (do not translate)"
-      value: 'The requirements.json file contains an invalid custom object trigger actions structure. \"actions\" must be an array for trigger %{trigger_title}.'
-      screenshot: "https://drive.google.com/file/d/12p8LzIcK4-ItJfHqHQiTaKxDxWnIiDni/view?usp=sharing"
-  - translation:
-      key: "txt.apps.admin.error.app_build.empty_cov2_trigger_actions"
-      title: "App builder job: requirements file contains empty custom object trigger actions. At least one action must be specified. Leave requirements.json as is (do not translate)"
-      value: "The requirements.json file contains empty custom object trigger actions. At least one action must be specified for trigger %{trigger_title}."
-      screenshot: "https://drive.google.com/file/d/12XxGTNfRwh0aQM0gJkc_gFxiYSB0Op_r/view?usp=sharing"
-  - translation:
-      key: "txt.apps.admin.error.app_build.excessive_cov2_selection_fields_per_object"
-      title: "App builder job: requirements file contains too many custom object fields of type dropdown or multiselect. The maximum number of fields of type dropdown or multiselect per object is 5. Leave requirements.json as is (do not translate). If your language has concatenation issues, please translate as: The requirements.json file contains too many custom object fields of type %{field_type}. The current limit per object is %{max}. This app has object %{object_key}, which has %{count} fields of type %{field_type}."
-      value: "The requirements.json file contains too many custom object fields of type %{field_type}. The current limit is %{max} fields per object. This app has %{count} fields of type %{field_type} for object %{object_key}."
-      screenshot: "https://drive.google.com/file/d/1hILvdZQXZCtkQVupYXedPbnD_rNN4nwH/view?usp=sharing"
   - translation:
       key: "txt.apps.admin.error.app_build.invalid_objects_structure_in_cov2_requirements"
       title: "App builder job: requirements file contains invalid objects structure for custom objects v2. Objects must be an array. Leave requirements.json and 'objects' as is (do not translate)"
-      value: 'The requirements.json file contains an invalid objects structure. \"objects\" must be an array.'
+      value: "The requirements.json file contains an invalid objects structure. \"objects\" must be an array."
       screenshot: "https://drive.google.com/file/d/1_0TOE9hOP2XeGZNyw9ueiYspvWGLileu/view?usp=sharing"
   - translation:
       key: "txt.apps.admin.error.app_build.invalid_object_fields_structure_in_cov2_requirements"
       title: "App builder job: requirements file contains invalid object_fields structure for custom objects v2. Object_fields must be an array. Leave requirements.json and 'object_fields' as is (do not translate)"
-      value: 'The requirements.json file contains an invalid object_fields structure. \"object_fields\" must be an array.'
+      value: "The requirements.json file contains an invalid object_fields structure. \"object_fields\" must be an array."
       screenshot: "https://drive.google.com/file/d/1yIHf-no1xXobSxnhmBuZSqzFMbZROzDO/view?usp=sharing"
   - translation:
       key: "txt.apps.admin.error.app_build.invalid_object_triggers_structure_in_cov2_requirements"
       title: "App builder job: requirements file contains invalid object_triggers structure for custom objects v2. Object_triggers must be an array. Leave requirements.json and 'object_triggers' as is (do not translate)"
-      value: 'The requirements.json file contains an invalid object_triggers structure. \"object_triggers\" must be an array.'
+      value: "The requirements.json file contains an invalid object_triggers structure. \"object_triggers\" must be an array."
       screenshot: "https://drive.google.com/file/d/14NNUm9R0u45LPbugUNmpA9psEwED1zkB/view?usp=sharing"
   - translation:
       key: "txt.apps.admin.error.app_build.empty_cov2_requirements"

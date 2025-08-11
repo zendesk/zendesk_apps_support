@@ -361,4 +361,50 @@ describe ZendeskAppsSupport::Validations::Requirements do
       end
     end
   end
+
+  context 'custom objects v2 requirements limit validations' do
+    context 'when there are validation errors in custom objects v2' do
+      let(:requirements_string) do
+        JSON.generate(
+          'custom_objects_v2' => {
+            'objects' => Array.new(51) do |i|
+              { 'key' => "object_#{i + 1}", 'title' => "Object #{i + 1}", 'title_pluralized' => "Objects #{i + 1}",
+                'included_in_list_view' => true }
+            end,
+            'object_fields' => [],
+            'object_triggers' => []
+          }
+        )
+      end
+
+      it 'delegates validation to CustomObjectsV2 module and returns errors' do
+        expect(errors.first.key).to eq(:excessive_custom_objects_v2_requirements)
+        expect(errors.first.data).to eq(max: 50, count: 51)
+      end
+    end
+
+    context 'when custom objects v2 requirements are valid' do
+      let(:requirements_string) do
+        JSON.generate(
+          'custom_objects_v2' => {
+            'objects' => [
+              { 'key' => 'object_1', 'title' => 'Object 1', 'title_pluralized' => 'Objects 1',
+                'include_in_list_view' => true }
+            ],
+            'object_fields' => [
+              { 'key' => 'field_1', 'type' => 'text', 'title' => 'Field 1', 'object_key' => 'object_1' }
+            ],
+            'object_triggers' => []
+          }
+        )
+      end
+
+      it 'delegates validation to CustomObjectsV2 module and returns no errors' do
+        cov2_errors = errors.select do |error|
+          error.key.to_s.include?('custom_objects_v2') || error.key.to_s.include?('cov2')
+        end
+        expect(cov2_errors).to be_empty
+      end
+    end
+  end
 end
