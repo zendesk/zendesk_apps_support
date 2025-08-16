@@ -254,7 +254,7 @@ module ZendeskAppsSupport
           missing_keys.map do |missing_key|
             ValidationError.new(:missing_cov2_field_schema_key,
                                 missing_key: missing_key,
-                                field_key: field['key'],
+                                field_key: field['key'] || '(undefined)',
                                 object_key: field['object_key'] || '(undefined)')
           end
         end
@@ -275,14 +275,14 @@ module ZendeskAppsSupport
           errors = missing_keys.map do |missing_key|
             ValidationError.new(:missing_cov2_trigger_schema_key,
                                 missing_key: missing_key,
-                                trigger_title: trigger['title'],
+                                trigger_title: trigger['title'] || '(undefined)',
                                 object_key: trigger['object_key'] || '(undefined)')
           end
 
           if trigger['conditions'].is_a?(Hash) && trigger['conditions'].empty?
             errors << ValidationError.new(:empty_cov2_trigger_conditions,
-                                          trigger_title: trigger['title'],
-                                          object_key: trigger['object_key'])
+                                          trigger_title: trigger['title'] || '(undefined)',
+                                          object_key: trigger['object_key'] || '(undefined)')
           end
 
           errors

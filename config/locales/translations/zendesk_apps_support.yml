@@ -157,12 +157,12 @@ parts:
   - translation:
       key: "txt.apps.admin.error.app_build.missing_cov2_field_schema_key"
       title: "App builder job: requirements file is missing a custom object field schema key. These are the required keys: (key, title, type, object_key). Leave requirements.json as is (do not translate)"
-      value: "The requirements.json file is missing custom object field schema key for field %{field_key} and object %{object_key}. The following key is required: %{missing_key}."
+      value: "The requirements.json file is missing custom object field schema key for field %{field_key} in object %{object_key}. The following key is required: %{missing_key}."
       "screenshot": "https://drive.google.com/file/d/1ygm89vlBBD72Pc4gS8TW2arYRcaxdvIY/view?usp=sharing"
   - translation:
       key: "txt.apps.admin.error.app_build.missing_cov2_trigger_schema_key"
       title: "App builder job: requirements file is missing a custom object trigger schema key. These are the required keys: (title, actions, conditions, object_key). Leave requirements.json as is (do not translate)"
-      value: "The requirements.json file is missing custom object trigger schema key for trigger %{trigger_title} and object %{object_key}. The following key is required: %{missing_key}."
+      value: "The requirements.json file is missing custom object trigger schema key for trigger %{trigger_title} in object %{object_key}. The following key is required: %{missing_key}."
       "screenshot": "https://drive.google.com/file/d/1XpwG7mxPTaI-My3fG2xGyxdEfE3LbECt/view?usp=sharing"
   - translation:
       key: "txt.apps.admin.error.app_build.empty_cov2_trigger_conditions"
