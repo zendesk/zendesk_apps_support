@@ -32,6 +32,7 @@ module ZendeskAppsSupport
     autoload :Requests,              'zendesk_apps_support/validations/requests'
     autoload :Banner,                'zendesk_apps_support/validations/banner'
     autoload :Svg,                   'zendesk_apps_support/validations/svg'
+    autoload :CustomObjectsV2,       'zendesk_apps_support/validations/custom_objects_v2'
   end
 
   class Manifest
