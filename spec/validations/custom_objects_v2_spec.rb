@@ -5,12 +5,29 @@ require 'json'
 
 describe ZendeskAppsSupport::Validations::CustomObjectsV2 do
   let(:custom_objects_v2_requirements) { nil }
-  let(:requirements) { { 'custom_objects_v2' => custom_objects_v2_requirements } }
-  let(:errors) { described_class.call(requirements) }
+  let(:errors) { described_class.call(custom_objects_v2_requirements) }
 
-  context 'when custom_objects_v2_requirements is nil' do
-    it 'returns empty array' do
-      expect(errors).to eq([])
+  context 'when custom objects v2 requirements is empty hash' do
+    let(:custom_objects_v2_requirements) { {} }
+
+    it 'returns a validation error for empty requirements' do
+      expect(errors.first.key).to eq(:empty_cov2_requirements)
+      expect(errors.first.data).to eq({})
+    end
+  end
+
+  context 'when objects array is empty' do
+    let(:custom_objects_v2_requirements) do
+      {
+        'objects' => [],
+        'object_fields' => [],
+        'object_triggers' => []
+      }
+    end
+
+    it 'returns a validation error for empty objects array' do
+      expect(errors.first.key).to eq(:empty_objects_in_cov2_requirements)
+      expect(errors.first.data).to eq({})
     end
   end
 
@@ -70,7 +87,7 @@ describe ZendeskAppsSupport::Validations::CustomObjectsV2 do
 
     it 'returns a validation error' do
       expect(errors.first.key).to eq(:excessive_custom_objects_v2_triggers)
-      expect(errors.first.data).to eq(max: 100, count: 101, object_key: 'object_1')
+      expect(errors.first.data).to eq(max: 20, count: 101, object_key: 'object_1')
     end
   end
 

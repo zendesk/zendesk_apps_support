@@ -165,6 +165,14 @@ parts:
       value: "The requirements.json file contains an empty conditions array for custom object trigger %{trigger_title} in object %{object_key}."
       "screenshot": "https://drive.google.com/file/d/1dU534_37__yrqX9lQujjgTJeCV5Y5FIp/view?usp=sharing"
   - translation:
+      key: "txt.apps.admin.error.app_build.empty_objects_in_cov2_requirements"
+      title: "App builder job: requirements file contains an empty objects array for custom objects v2. Leave requirements.json as is (do not translate)"
+      value: "The requirements.json file contains an empty objects array for custom objects v2. You must define at least one object."
+  - translation:
+      key: "txt.apps.admin.error.app_build.empty_cov2_requirements"
+      title: "App builder job: requirements file contains an empty hash for custom objects v2. Leave requirements.json as is (do not translate)"
+      value: "The requirements.json file contains empty custom objects v2 requirements. You must define valid requirements."
+  - translation:
       key: "txt.apps.admin.error.app_build.missing_required_fields"
       title: "App builder job: required key missing in requirements, e.g. \"title\" is required in \"my_custom_email_target\""
       value: "Missing required fields in requirements.json: \"%{field}\" is required in \"%{identifier}\""

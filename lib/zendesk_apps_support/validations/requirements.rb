@@ -80,11 +80,11 @@ module ZendeskAppsSupport
           end
         end
 
-        def validate_custom_objects_v2_requirements(requirements) # rubocop:disable Lint/UnusedMethodArgument
-          # TODO: Uncomment this code
-          # when translations for validation errors are avilable to use in CustomObjectsV2 module
-          # CustomObjectsV2.call(requirements)
-          []
+        def validate_custom_objects_v2_requirements(requirements)
+          cov2_requirements = requirements[AppRequirement::CUSTOM_OBJECTS_V2_KEY]
+          return unless cov2_requirements
+
+          CustomObjectsV2.call(cov2_requirements)
         end
 
         def invalid_custom_fields(requirements)

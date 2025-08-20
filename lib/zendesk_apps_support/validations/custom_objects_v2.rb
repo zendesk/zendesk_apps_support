@@ -6,7 +6,7 @@ module ZendeskAppsSupport
     module CustomObjectsV2
       MAX_OBJECTS = 50
       MAX_FIELDS_PER_OBJECT = 10
-      MAX_TRIGGERS_PER_OBJECT = 100
+      MAX_TRIGGERS_PER_OBJECT = 20
       MAX_CONDITIONS_PER_TRIGGER = 50
       MAX_ACTIONS_PER_TRIGGER = 25
       MAX_CONDITIONS_IN_RELATIONSHIP_FILTER_PER_OBJECT = 20
@@ -27,40 +27,54 @@ module ZendeskAppsSupport
 
       class << self
         def call(requirements)
-          custom_objects_v2_requirements = requirements[AppRequirement::CUSTOM_OBJECTS_V2_KEY]
-          return [] unless custom_objects_v2_requirements
-
           [
-            validate_limits(custom_objects_v2_requirements),
-            validate_schema(custom_objects_v2_requirements)
+            validate_empty_requirements(requirements),
+            validate_objects_presence(requirements),
+            validate_limits(requirements),
+            validate_schema(requirements)
           ].flatten
         end
 
         private
 
-        def validate_limits(custom_objects_v2_requirements)
+        def validate_limits(requirements)
           [
-            validate_objects_excessive_limit(custom_objects_v2_requirements),
-            validate_fields_excessive_limit(custom_objects_v2_requirements),
-            validate_triggers_excessive_limit(custom_objects_v2_requirements)
+            validate_objects_excessive_limit(requirements['objects']),
+            validate_fields_excessive_limit(requirements['object_fields']),
+            validate_triggers_excessive_limit(requirements['object_triggers'])
           ].flatten
         end
 
-        def validate_schema(custom_objects_v2_requirements)
+        def validate_schema(requirements)
           [
-            validate_objects_schema(custom_objects_v2_requirements),
-            validate_fields_schema(custom_objects_v2_requirements),
-            validate_triggers_schema(custom_objects_v2_requirements)
+            validate_objects_schema(requirements['objects']),
+            validate_fields_schema(requirements['object_fields']),
+            validate_triggers_schema(requirements['object_triggers'])
           ].flatten
+        end
+
+        # ========== PRESENCE VALIDATION ==========
+
+        def validate_objects_presence(requirements)
+          objects = requirements['objects'] || []
+
+          return [ValidationError.new(:empty_objects_in_cov2_requirements)] if objects.empty?
+
+          []
+        end
+
+        def validate_empty_requirements(requirements)
+          return [ValidationError.new(:empty_cov2_requirements)] if requirements.empty?
+
+          []
         end
 
         # ========== OBJECTS VALIDATION ==========
 
-        def validate_objects_excessive_limit(custom_objects_v2_requirements)
-          objects = custom_objects_v2_requirements['objects']
+        def validate_objects_excessive_limit(objects = [])
           return [] unless objects
 
-          return [] unless objects.size > MAX_OBJECTS
+          return [] if objects.size <= MAX_OBJECTS
 
           [ValidationError.new(:excessive_custom_objects_v2_requirements,
                                max: MAX_OBJECTS,
@@ -69,8 +83,9 @@ module ZendeskAppsSupport
 
         # ========== FIELDS VALIDATION ==========
 
-        def validate_fields_excessive_limit(custom_objects_v2_requirements)
-          object_fields = custom_objects_v2_requirements['object_fields']
+        def validate_fields_excessive_limit(object_fields = [])
+          return [] unless object_fields&.any?
+
           [
             validate_fields_limit(object_fields),
             validate_selection_field_limits(object_fields),
@@ -80,60 +95,51 @@ module ZendeskAppsSupport
         end
 
         def validate_fields_limit(object_fields)
-          return [] unless object_fields
-
           fields_by_object = object_fields.group_by { |field| field['object_key'] }
 
-          check_collection_limits(fields_by_object, MAX_FIELDS_PER_OBJECT, :excessive_custom_objects_v2_fields)
+          validate_collection_limits(fields_by_object, MAX_FIELDS_PER_OBJECT, :excessive_custom_objects_v2_fields)
         end
 
         def validate_selection_field_limits(object_fields)
-          SELECTION_FIELD_LIMITS.map do |field_type, max_limit|
+          SELECTION_FIELD_LIMITS.flat_map do |field_type, max_limit|
             validate_field_type_limit(object_fields, field_type, max_limit)
-          end.flatten
+          end
         end
 
         def validate_field_type_limit(object_fields, field_type, max_limit)
-          return [] unless object_fields
-
           fields_by_object = object_fields
                              .select { |field| field['type'] == field_type }
                              .group_by { |field| field['object_key'] }
 
-          check_collection_limits(fields_by_object, max_limit, :excessive_cov2_selection_fields_per_object,
-                                  field_type: field_type)
+          validate_collection_limits(fields_by_object, max_limit, :excessive_cov2_selection_fields_per_object,
+                                     field_type: field_type)
         end
 
         def validate_selection_field_options_limits(object_fields)
-          SELECTION_FIELD_OPTIONS_LIMITS.map do |field_type, max_limit|
+          SELECTION_FIELD_OPTIONS_LIMITS.flat_map do |field_type, max_limit|
             validate_options_limit(object_fields, field_type, max_limit)
-          end.flatten
+          end
         end
 
         def validate_options_limit(object_fields, field_type, max_limit)
-          return [] unless object_fields
-
           fields_with_options = object_fields.select do |field|
             field['type'] == field_type && field['custom_field_options']
           end
 
-          [].tap do |errors|
-            fields_with_options.each do |field|
-              options = field['custom_field_options']
-              next if options.size <= max_limit
+          fields_with_options.filter_map do |field|
+            options = field['custom_field_options']
+            next unless options&.any?
+            next if options.size <= max_limit
 
-              errors << ValidationError.new(:excessive_cov2_field_options,
-                                            max: max_limit,
-                                            count: options.size,
-                                            field_key: field['key'],
-                                            object_key: field['object_key'])
-            end
+            ValidationError.new(:excessive_cov2_field_options,
+                                max: max_limit,
+                                count: options.size,
+                                field_key: field['key'],
+                                object_key: field['object_key'])
           end
         end
 
         def validate_conditions_in_relationship_filter_limit(object_fields)
-          return [] unless object_fields
-
           object_fields
             .select { |field| field['relationship_filter'] }
             .flat_map { |field| validate_relationship_filter_conditions(field) }
@@ -154,28 +160,24 @@ module ZendeskAppsSupport
 
         # ========== TRIGGERS VALIDATION ==========
 
-        def validate_triggers_excessive_limit(custom_objects_v2_requirements)
+        def validate_triggers_excessive_limit(object_triggers = [])
+          return [] unless object_triggers&.any?
+
           [
-            validate_triggers_limit(custom_objects_v2_requirements),
-            validate_triggers_conditions_limit(custom_objects_v2_requirements),
-            validate_triggers_actions_limit(custom_objects_v2_requirements)
+            validate_triggers_limit(object_triggers),
+            validate_triggers_conditions_limit(object_triggers),
+            validate_triggers_actions_limit(object_triggers)
           ].flatten
         end
 
-        def validate_triggers_limit(custom_objects_v2_requirements)
-          triggers = custom_objects_v2_requirements['object_triggers']
-          return [] unless triggers
+        def validate_triggers_limit(object_triggers)
+          triggers_by_object = object_triggers.group_by { |trigger| trigger['object_key'] }
 
-          triggers_by_object = triggers.group_by { |trigger| trigger['object_key'] }
-
-          check_collection_limits(triggers_by_object, MAX_TRIGGERS_PER_OBJECT, :excessive_custom_objects_v2_triggers)
+          validate_collection_limits(triggers_by_object, MAX_TRIGGERS_PER_OBJECT, :excessive_custom_objects_v2_triggers)
         end
 
-        def validate_triggers_conditions_limit(custom_objects_v2_requirements)
-          triggers = custom_objects_v2_requirements['object_triggers']
-          return [] unless triggers
-
-          triggers.flat_map do |trigger|
+        def validate_triggers_conditions_limit(object_triggers)
+          object_triggers.flat_map do |trigger|
             validate_trigger_conditions(trigger)
           end
         end
@@ -194,30 +196,24 @@ module ZendeskAppsSupport
                                trigger_title: trigger['title'])]
         end
 
-        def validate_triggers_actions_limit(custom_objects_v2_requirements)
-          triggers = custom_objects_v2_requirements['object_triggers']
-          return [] unless triggers
+        def validate_triggers_actions_limit(object_triggers)
+          object_triggers.filter_map do |trigger|
+            next unless trigger['actions']
 
-          [].tap do |errors|
-            triggers.each do |trigger|
-              next unless trigger['actions']
+            actions = trigger['actions']
+            next if actions.size <= MAX_ACTIONS_PER_TRIGGER
 
-              actions = trigger['actions']
-              next if actions.size <= MAX_ACTIONS_PER_TRIGGER
-
-              errors << ValidationError.new(:excessive_custom_objects_v2_trigger_actions,
-                                            max: MAX_ACTIONS_PER_TRIGGER,
-                                            count: actions.size,
-                                            trigger_title: trigger['title'])
-            end
+            ValidationError.new(:excessive_custom_objects_v2_trigger_actions,
+                                max: MAX_ACTIONS_PER_TRIGGER,
+                                count: actions.size,
+                                trigger_title: trigger['title'])
           end
         end
 
         # ========== SCHEMA VALIDATION ==========
 
-        def validate_objects_schema(custom_objects_v2_requirements)
-          objects = custom_objects_v2_requirements['objects']
-          return [] unless objects
+        def validate_objects_schema(objects = [])
+          return [] unless objects&.any?
 
           objects.flat_map do |object|
             validate_object_schema(object)
@@ -235,9 +231,8 @@ module ZendeskAppsSupport
           end
         end
 
-        def validate_fields_schema(custom_objects_v2_requirements)
-          object_fields = custom_objects_v2_requirements['object_fields']
-          return [] unless object_fields
+        def validate_fields_schema(object_fields = [])
+          return [] unless object_fields&.any?
 
           object_fields.flat_map do |field|
             validate_field_schema(field)
@@ -256,11 +251,10 @@ module ZendeskAppsSupport
           end
         end
 
-        def validate_triggers_schema(custom_objects_v2_requirements)
-          triggers = custom_objects_v2_requirements['object_triggers']
-          return [] unless triggers
+        def validate_triggers_schema(object_triggers = [])
+          return [] unless object_triggers&.any?
 
-          triggers.flat_map do |trigger|
+          object_triggers.flat_map do |trigger|
             validate_trigger_schema(trigger)
           end
         end
@@ -293,17 +287,16 @@ module ZendeskAppsSupport
           %w[all any].sum { |key| conditions[key]&.size || 0 }
         end
 
-        def check_collection_limits(grouped_items, max_limit, error, **context)
-          [].tap do |errors|
-            grouped_items.each do |object_key, items|
-              next unless items.size > max_limit
+        def validate_collection_limits(grouped_items, max_limit, error, **context)
+          grouped_items.filter_map do |object_key, items|
+            next if object_key.nil?
+            next if items.size <= max_limit
 
-              errors << ValidationError.new(error,
-                                            max: max_limit,
-                                            count: items.size,
-                                            object_key: object_key,
-                                            **context)
-            end
+            ValidationError.new(error,
+                                max: max_limit,
+                                count: items.size,
+                                object_key: object_key,
+                                **context)
           end
         end
       end
