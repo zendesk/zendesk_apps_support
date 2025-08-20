@@ -131,15 +131,10 @@ parts:
       value: "The requirements.json file contains too many custom object trigger actions. The current limit is %{max} actions per trigger. This app has %{count} actions for trigger %{trigger_title}."
       screenshot: "https://drive.google.com/file/d/18jXaM7_OnPqHAg6jAxJrTrgX1v_H156_/view?usp=sharing"
   - translation:
-      key: "txt.apps.admin.error.app_build.excessive_cov2_dropdown_fields_per_object"
-      title: "App builder job: requirements file contains too many custom object fields of type dropdown. The maximum number of fields of type dropdown per object is 5. Leave requirements.json as is (do not translate)"
-      value: "The requirements.json file contains too many custom object fields of type dropdown. The current limit is %{max} fields per object. This app has %{count} fields of type dropdown for object %{object_key}."
+      key: "txt.apps.admin.error.app_build.excessive_cov2_selection_fields_per_object"
+      title: "App builder job: requirements file contains too many custom object fields of type dropdown or multiselect. The maximum number of fields of type dropdown or multiselect per object is 5. Leave requirements.json as is (do not translate)"
+      value: "The requirements.json file contains too many custom object fields of type %{field_type}. The current limit is %{max} fields per object. This app has %{count} fields of type %{field_type} for object %{object_key}."
       screenshot: "https://drive.google.com/file/d/1hILvdZQXZCtkQVupYXedPbnD_rNN4nwH/view?usp=sharing"
-  - translation:
-      key: "txt.apps.admin.error.app_build.excessive_cov2_multiselect_fields_per_object"
-      title: "App builder job: requirements file contains too many custom object fields of type multiselect. The maximum number of fields of type multiselect per object is 5. Leave requirements.json as is (do not translate)"
-      value: "The requirements.json file contains too many custom object fields of type multiselect. The current limit is %{max} fields per object. This app has %{count} fields of type multiselect for object %{object_key}."
-      screenshot: "https://drive.google.com/file/d/1RJgWEKXv7Zkt7V2Vh3QZyl55W9QOC6Z9/view?usp=sharing"
   - translation:
       key: "txt.apps.admin.error.app_build.excessive_cov2_field_options"
       title: "App builder job: requirements file contains too many options for custom object field of type dropdown or multiselect. The maximum number of options of type dropdown or multiselect per field is 10. Leave requirements.json as is (do not translate)"
