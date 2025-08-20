@@ -149,8 +149,7 @@ describe ZendeskAppsSupport::Validations::CustomObjectsV2 do
     end
 
     it 'returns a validation error' do
-      expected_error_key = field_type == 'dropdown' ? :excessive_cov2_dropdown_fields_per_object : # rubocop:disable Style/MultilineTernaryOperator
-                                                      :excessive_cov2_multiselect_fields_per_object
+      expected_error_key = :excessive_cov2_selection_fields_per_object
       expect(errors.first.key).to eq(expected_error_key)
       expect(errors.first.data).to eq(max: 5, count: 6, object_key: 'object_1', field_type: field_type)
     end

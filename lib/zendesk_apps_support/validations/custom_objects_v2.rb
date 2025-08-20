@@ -100,11 +100,8 @@ module ZendeskAppsSupport
                              .select { |field| field['type'] == field_type }
                              .group_by { |field| field['object_key'] }
 
-          error = field_type == 'dropdown' ? # rubocop:disable Style/MultilineTernaryOperator
-                  :excessive_cov2_dropdown_fields_per_object :
-                  :excessive_cov2_multiselect_fields_per_object
-
-          check_collection_limits(fields_by_object, max_limit, error, field_type: field_type)
+          check_collection_limits(fields_by_object, max_limit, :excessive_cov2_selection_fields_per_object,
+                                  field_type: field_type)
         end
 
         def validate_selection_field_options_limits(object_fields)
