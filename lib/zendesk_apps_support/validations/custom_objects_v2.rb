@@ -55,16 +55,14 @@ module ZendeskAppsSupport
 
         # ========== PRESENCE VALIDATION ==========
 
-        def validate_objects_presence(requirements)
-          objects = requirements['objects'] || []
-
-          return [ValidationError.new(:empty_objects_in_cov2_requirements)] if objects.empty?
+        def validate_empty_requirements(requirements)
+          return [ValidationError.new(:empty_cov2_requirements)] if requirements.empty?
 
           []
         end
 
-        def validate_empty_requirements(requirements)
-          return [ValidationError.new(:empty_cov2_requirements)] if requirements.empty?
+        def validate_objects_presence(requirements)
+          return [ValidationError.new(:empty_objects_in_cov2_requirements)] unless requirements['objects']&.any?
 
           []
         end
@@ -147,6 +145,8 @@ module ZendeskAppsSupport
 
         def validate_relationship_filter_conditions(field)
           relationship_filter = field['relationship_filter']
+          return [] unless relationship_filter
+
           total_conditions = count_conditions(relationship_filter)
 
           return [] unless total_conditions > MAX_CONDITIONS_IN_RELATIONSHIP_FILTER_PER_OBJECT
