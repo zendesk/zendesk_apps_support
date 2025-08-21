@@ -90,7 +90,7 @@ module ZendeskAppsSupport
       Dir[root.join('**/**')].each do |f|
         next unless File.file?(f)
         relative_file_name = f.sub(%r{#{root}/?}, '')
-        next if relative_file_name =~ %r{^tmp/}
+        next if relative_file_name =~ %r{^(tmp|vendor)/}
         files << AppFile.new(self, relative_file_name)
       end
       files
