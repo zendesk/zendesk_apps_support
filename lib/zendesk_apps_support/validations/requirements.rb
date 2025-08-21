@@ -8,13 +8,13 @@ module ZendeskAppsSupport
 
       class << self
         def call(package)
-          if package.manifest.requirements_only? && !package.has_requirements?
-            return [ValidationError.new(:missing_requirements)]
-          elsif !supports_requirements(package) && package.has_requirements?
-            return [ValidationError.new(:requirements_not_supported)]
-          elsif !package.has_requirements?
+          unless package.has_requirements?
+            return [ValidationError.new(:missing_requirements)] if package.manifest.requirements_only?
+
             return []
           end
+
+          return [ValidationError.new(:requirements_not_supported)] unless supports_requirements(package)
 
           begin
             requirements = package.requirements_json
@@ -22,19 +22,7 @@ module ZendeskAppsSupport
             return [ValidationError.new(:duplicate_requirements, duplicate_keys: e.key, count: 1)]
           end
 
-          [].tap do |errors|
-            errors << invalid_requirements_types(requirements)
-            errors << excessive_requirements(requirements)
-            errors << excessive_custom_objects_requirements(requirements)
-            errors << invalid_channel_integrations(requirements)
-            errors << invalid_custom_fields(requirements)
-            errors << invalid_custom_objects(requirements)
-            errors << invalid_webhooks(requirements)
-            errors << invalid_target_types(requirements)
-            errors << missing_required_fields(requirements)
-            errors.flatten!
-            errors.compact!
-          end
+          build_errors(requirements)
         rescue JSON::ParserError => e
           return [ValidationError.new(:requirements_not_json, errors: e)]
         end
@@ -182,6 +170,22 @@ module ZendeskAppsSupport
                                   invalid_types: "targets -> #{requirement['type']}",
                                   count: 1)
             end
+          end
+        end
+
+        def build_errors(requirements)
+          [].tap do |errors|
+            errors << invalid_requirements_types(requirements)
+            errors << excessive_requirements(requirements)
+            errors << excessive_custom_objects_requirements(requirements)
+            errors << invalid_channel_integrations(requirements)
+            errors << invalid_custom_fields(requirements)
+            errors << invalid_custom_objects(requirements)
+            errors << invalid_webhooks(requirements)
+            errors << invalid_target_types(requirements)
+            errors << missing_required_fields(requirements)
+            errors.flatten!
+            errors.compact!
           end
         end
       end
