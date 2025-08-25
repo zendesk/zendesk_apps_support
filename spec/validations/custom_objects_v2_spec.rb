@@ -487,4 +487,28 @@ describe ZendeskAppsSupport::Validations::CustomObjectsV2 do
       expect(errors.first.data).to eq(trigger_title: 'Empty Actions', object_key: 'object_1')
     end
   end
+
+  context 'when payload exceeds 1MB limit' do
+    let(:large_string) { 'A' * 500_000 } # 500KB string
+    let(:custom_objects_v2_requirements) do
+      {
+        'objects' => [
+          { 'key' => 'large_obj1', 'title' => large_string, 'title_pluralized' => 'Large Objects 1', 
+            'include_in_list_view' => true },
+          { 'key' => 'large_obj2', 'title' => large_string, 'title_pluralized' => 'Large Objects 2', 
+            'include_in_list_view' => true },
+          { 'key' => 'large_obj3', 'title' => large_string, 'title_pluralized' => 'Large Objects 3', 
+            'include_in_list_view' => true }
+        ],
+        'object_fields' => [],
+        'object_triggers' => []
+      }
+    end
+
+    it 'returns a payload size validation error and skips other validations' do
+      expect(errors.size).to eq(1)
+      expect(errors.first.key).to eq(:excessive_cov2_payload_size)
+      expect(errors.first.data).to eq({})
+    end
+  end
 end

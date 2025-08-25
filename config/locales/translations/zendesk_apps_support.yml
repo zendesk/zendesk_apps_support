@@ -136,6 +136,11 @@ parts:
       value: "The requirements.json file contains an invalid custom_objects_v2 structure. Custom objects v2 requirements must be a object."
       screenshot: "https://drive.google.com/file/d/1LPyYM92Ni6kCZOfCXHl4y43pwSQP_pSJ/view?usp=sharing"
   - translation:
+      key: "txt.apps.admin.error.app_build.excessive_cov2_payload_size"
+      title: "App builder job: requirements file contains custom objects v2 payload that exceeds maximum size limit. The maximum payload size is 1 MB. Leave requirements.json as is (do not translate)"
+      value: "The requirements.json file contains a custom objects v2 payload that is too large. The maximum allowed size is 1 MB."
+      screenshot: "https://drive.google.com/file/d/1buZhVxCslyX3fYiqJPWgJrWZyW3oHbGg/view?usp=sharing"
+  - translation:
       key: "txt.apps.admin.error.app_build.invalid_cov2_trigger_conditions_structure"
       title: "App builder job: requirements file contains invalid custom object trigger conditions structure. Conditions must be a hash with 'all' and 'any' arrays. Leave requirements.json, 'all' and 'any' as is (do not translate)"
       value: 'The requirements.json file contains an invalid custom object trigger conditions structure. Conditions must be a hash with \"all\" and \"any\" arrays for trigger %{trigger_title}.'

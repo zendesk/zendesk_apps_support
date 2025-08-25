@@ -34,11 +34,15 @@ module ZendeskAppsSupport
 
       UNDEFINED_VALUE = '(undefined)'
       CONDITION_KEYS = %w[all any].freeze
+      MAX_PAYLOAD_SIZE_BYTES = 1_048_576 # 1 MB in bytes
 
       class << self
         def call(requirements)
           errors = validate_overall_requirements_structure(requirements)
           return errors unless errors.empty?
+
+          payload_size_errors = validate_payload_size(requirements)
+          return payload_size_errors unless payload_size_errors.empty?
 
           [
             validate_limits(requirements),
@@ -47,6 +51,15 @@ module ZendeskAppsSupport
         end
 
         private
+
+        # ============ PAYLOAD SIZE VALIDATION ============
+
+        def validate_payload_size(requirements)
+          payload_size = requirements.to_json.bytesize
+          return [] if payload_size <= MAX_PAYLOAD_SIZE_BYTES
+
+          [ValidationError.new(:excessive_cov2_payload_size)]
+        end
 
         # ============ STRUCTURAL VALIDATION ============
 
