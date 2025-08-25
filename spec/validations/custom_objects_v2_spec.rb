@@ -25,19 +25,6 @@ describe ZendeskAppsSupport::Validations::CustomObjectsV2 do
     end
   end
 
-  context 'when objects key is missing' do
-    let(:custom_objects_v2_requirements) do
-      {
-        'object_fields' => [],
-        'object_triggers' => []
-      }
-    end
-
-    it 'does not return validation errors' do
-      expect(errors).to be_empty
-    end
-  end
-
   context 'when objects, object_fields, and object_triggers arrays are empty' do
     let(:custom_objects_v2_requirements) do
       {

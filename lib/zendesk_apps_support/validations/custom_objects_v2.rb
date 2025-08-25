@@ -329,17 +329,17 @@ module ZendeskAppsSupport
         end
 
         def validate_actions_schema(actions, object_key, title)
-          errors = []
           error_data = { trigger_title: title || UNDEFINED_VALUE, object_key: object_key || UNDEFINED_VALUE }
 
           unless actions.is_a?(Array)
             return [ValidationError.new(:invalid_cov2_trigger_actions_structure, **error_data)]
           end
 
-          errors << ValidationError.new(:empty_cov2_trigger_actions, **error_data) if actions.empty?
+          return [] unless actions.empty?
 
-          errors
+          [ValidationError.new(:empty_cov2_trigger_actions, **error_data)]
         end
+
         # ========== HELPER METHODS ==========
 
         def count_conditions(conditions)
