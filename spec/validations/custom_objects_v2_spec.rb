@@ -433,7 +433,7 @@ describe ZendeskAppsSupport::Validations::CustomObjectsV2 do
     end
 
     it 'returns a validation error for empty conditions arrays' do
-      expect(errors.first.key).to eq(:empty_cov2_conditions)
+      expect(errors.first.key).to eq(:empty_cov2_trigger_conditions)
       expect(errors.first.data).to eq(trigger_title: 'Empty Arrays', object_key: 'object_1')
     end
   end

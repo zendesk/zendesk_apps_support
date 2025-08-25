@@ -322,7 +322,7 @@ module ZendeskAppsSupport
           end
 
           unless (conditions['all'] || []).any? || (conditions['any'] || []).any?
-            return [ValidationError.new(:empty_cov2_conditions, **error_data)]
+            return [ValidationError.new(:empty_cov2_trigger_conditions, **error_data)]
           end
 
           []
