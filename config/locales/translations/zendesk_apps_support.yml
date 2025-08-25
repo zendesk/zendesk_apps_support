@@ -151,17 +151,17 @@ parts:
       value: "The requirements.json file contains too many conditions in relationship filter for custom object field %{field_key}. The current limit is %{max} conditions per field. This app has %{count} conditions for field %{field_key} in object %{object_key}."
       "screenshot": "https://drive.google.com/file/d/13J6GIkq3CXGqRwV5KRHouXulRVuwQnNi/view?usp=sharing"
       key: "txt.apps.admin.error.app_build.missing_cov2_object_schema_key"
-      title: "App builder job: requirements file is missing a custom object schema key. These are the required keys: (key, title, title_pluralized, include_in_list_view). Leave requirements.json as is (do not translate)"
+      title: 'App builder job: requirements file is missing a custom object schema key. These are the required keys: (key, title, title_pluralized, include_in_list_view). The term \"schema key\" typically refers to an identifier or attribute that defines a specific item within a schema and it should be translated. Leave requirements.json as is (do not translate)'
       value: "The requirements.json file is missing custom object schema key for object %{object_key}. The following key is required: %{missing_key}."
       "screenshot": "https://drive.google.com/file/d/15iZemfkt14z96W4zmDHw1kodU70UxMYs/view?usp=sharing"
   - translation:
       key: "txt.apps.admin.error.app_build.missing_cov2_field_schema_key"
-      title: "App builder job: requirements file is missing a custom object field schema key. These are the required keys: (key, title, type, object_key). Leave requirements.json as is (do not translate)"
+      title: 'App builder job: requirements file is missing a custom object field schema key. These are the required keys: (key, title, type, object_key). The term \"schema key\" typically refers to an identifier or attribute that defines a specific item within a schema and it should be translated. Leave requirements.json as is (do not translate)'
       value: "The requirements.json file is missing custom object field schema key for field %{field_key} in object %{object_key}. The following key is required: %{missing_key}."
       "screenshot": "https://drive.google.com/file/d/1hYqJ_df8jhjqQjUQHMAC-yrAK7uGaKEH/view?usp=sharing"
   - translation:
       key: "txt.apps.admin.error.app_build.missing_cov2_trigger_schema_key"
-      title: "App builder job: requirements file is missing a custom object trigger schema key. These are the required keys: (title, actions, conditions, object_key). Leave requirements.json as is (do not translate)"
+      title: 'App builder job: requirements file is missing a custom object trigger schema key. These are the required keys: (title, actions, conditions, object_key). The term \"schema key\" typically refers to an identifier or attribute that defines a specific item within a schema and it should be translated. Leave requirements.json as is (do not translate)'
       value: "The requirements.json file is missing custom object trigger schema key for trigger %{trigger_title} in object %{object_key}. The following key is required: %{missing_key}."
       "screenshot": "https://drive.google.com/file/d/1Q_qFDZMoUzfAdL27QehW0q1rrHG3BPcP/view?usp=sharing"
   - translation:
