@@ -7,6 +7,15 @@ describe ZendeskAppsSupport::Validations::CustomObjectsV2 do
   let(:custom_objects_v2_requirements) { nil }
   let(:errors) { described_class.call(custom_objects_v2_requirements) }
 
+  context 'when custom objects v2 requirements is not a hash' do
+    let(:custom_objects_v2_requirements) { [] }
+
+    it 'returns a validation error for invalid structure' do
+      expect(errors.first.key).to eq(:invalid_cov2_requirements_structure)
+      expect(errors.first.data).to eq({})
+    end
+  end
+
   context 'when custom objects v2 requirements is empty hash' do
     let(:custom_objects_v2_requirements) { {} }
 
@@ -16,7 +25,20 @@ describe ZendeskAppsSupport::Validations::CustomObjectsV2 do
     end
   end
 
-  context 'when objects array is empty' do
+  context 'when objects key is missing' do
+    let(:custom_objects_v2_requirements) do
+      {
+        'object_fields' => [],
+        'object_triggers' => []
+      }
+    end
+
+    it 'does not return validation errors' do
+      expect(errors).to be_empty
+    end
+  end
+
+  context 'when objects, object_fields, and object_triggers arrays are empty' do
     let(:custom_objects_v2_requirements) do
       {
         'objects' => [],
@@ -25,9 +47,61 @@ describe ZendeskAppsSupport::Validations::CustomObjectsV2 do
       }
     end
 
-    it 'returns a validation error for empty objects array' do
-      expect(errors.first.key).to eq(:empty_objects_in_cov2_requirements)
+    it 'returns a validation error for empty requirements' do
+      expect(errors.first.key).to eq(:empty_cov2_requirements)
       expect(errors.first.data).to eq({})
+    end
+  end
+
+  context 'when objects is not an array' do
+    context 'when objects is a hash' do
+      let(:custom_objects_v2_requirements) do
+        {
+          'objects' => {},
+          'object_fields' => [],
+          'object_triggers' => []
+        }
+      end
+
+      it 'returns a validation error for invalid objects structure' do
+        expect(errors.first.key).to eq(:invalid_objects_structure_in_cov2_requirements)
+        expect(errors.first.data).to eq({})
+      end
+    end
+  end
+
+  context 'when object_fields is not an array' do
+    context 'when object_fields is a hash' do
+      let(:custom_objects_v2_requirements) do
+        {
+          'objects' => [{ 'key' => 'object_1', 'title' => 'Object 1', 'title_pluralized' => 'Objects 1', 'include_in_list_view' => true }],
+          'object_fields' => {},
+          'object_triggers' => []
+        }
+      end
+
+      it 'returns a validation error for invalid object_fields structure' do
+        expect(errors.first.key).to eq(:invalid_object_fields_structure_in_cov2_requirements)
+        expect(errors.first.data).to eq({})
+      end
+    end
+  end
+
+  context 'when object_triggers is not an array' do
+    context 'when object_triggers is a hash' do
+      let(:custom_objects_v2_requirements) do
+        {
+          'objects' => [{ 'key' => 'object_1', 'title' => 'Object 1', 'title_pluralized' => 'Objects 1', 
+                          'include_in_list_view' => true }],
+          'object_fields' => [],
+          'object_triggers' => {}
+        }
+      end
+
+      it 'returns a validation error for invalid object_triggers structure' do
+        expect(errors.first.key).to eq(:invalid_object_triggers_structure_in_cov2_requirements)
+        expect(errors.first.data).to eq({})
+      end
     end
   end
 
@@ -322,8 +396,108 @@ describe ZendeskAppsSupport::Validations::CustomObjectsV2 do
     end
 
     it 'returns a validation error for empty conditions' do
-      expect(errors.first.key).to eq(:empty_cov2_trigger_conditions)
+      expect(errors.first.key).to eq(:invalid_cov2_trigger_conditions_structure)
       expect(errors.first.data).to eq(trigger_title: 'Empty Trigger', object_key: 'object_1')
+    end
+  end
+
+  context 'when trigger has invalid conditions structure' do
+    let(:custom_objects_v2_requirements) do
+      {
+        'objects' => [
+          { 'key' => 'object_1', 'title' => 'Object 1', 'title_pluralized' => 'Objects 1',
+            'include_in_list_view' => true }
+        ],
+        'object_fields' => [],
+        'object_triggers' => [
+          {
+            'object_key' => 'object_1',
+            'title' => 'Invalid Conditions',
+            'actions' => [{ 'field' => 'status', 'value' => 'updated' }],
+            'conditions' => { 'invalid_key' => [] }
+          }
+        ]
+      }
+    end
+
+    it 'returns a validation error for invalid conditions structure' do
+      expect(errors.first.key).to eq(:invalid_cov2_trigger_conditions_structure)
+      expect(errors.first.data).to eq(trigger_title: 'Invalid Conditions', object_key: 'object_1')
+    end
+  end
+
+  context 'when trigger has empty conditions arrays' do
+    let(:custom_objects_v2_requirements) do
+      {
+        'objects' => [
+          { 'key' => 'object_1', 'title' => 'Object 1', 'title_pluralized' => 'Objects 1',
+            'include_in_list_view' => true }
+        ],
+        'object_fields' => [],
+        'object_triggers' => [
+          {
+            'object_key' => 'object_1',
+            'title' => 'Empty Arrays',
+            'actions' => [{ 'field' => 'status', 'value' => 'updated' }],
+            'conditions' => { 'all' => [], 'any' => [] }
+          }
+        ]
+      }
+    end
+
+    it 'returns a validation error for empty conditions arrays' do
+      expect(errors.first.key).to eq(:empty_cov2_conditions)
+      expect(errors.first.data).to eq(trigger_title: 'Empty Arrays', object_key: 'object_1')
+    end
+  end
+
+  context 'when trigger has invalid actions structure' do
+    let(:custom_objects_v2_requirements) do
+      {
+        'objects' => [
+          { 'key' => 'object_1', 'title' => 'Object 1', 'title_pluralized' => 'Objects 1',
+            'include_in_list_view' => true }
+        ],
+        'object_fields' => [],
+        'object_triggers' => [
+          {
+            'object_key' => 'object_1',
+            'title' => 'Invalid Actions',
+            'actions' => 'not_an_array',
+            'conditions' => { 'all' => [{ 'field' => 'status', 'operator' => 'is', 'value' => 'open' }] }
+          }
+        ]
+      }
+    end
+
+    it 'returns a validation error for invalid actions structure' do
+      expect(errors.first.key).to eq(:invalid_cov2_trigger_actions_structure)
+      expect(errors.first.data).to eq(trigger_title: 'Invalid Actions', object_key: 'object_1')
+    end
+  end
+
+  context 'when trigger has empty actions array' do
+    let(:custom_objects_v2_requirements) do
+      {
+        'objects' => [
+          { 'key' => 'object_1', 'title' => 'Object 1', 'title_pluralized' => 'Objects 1',
+            'include_in_list_view' => true }
+        ],
+        'object_fields' => [],
+        'object_triggers' => [
+          {
+            'object_key' => 'object_1',
+            'title' => 'Empty Actions',
+            'actions' => [],
+            'conditions' => { 'all' => [{ 'field' => 'status', 'operator' => 'is', 'value' => 'open' }] }
+          }
+        ]
+      }
+    end
+
+    it 'returns a validation error for empty actions array' do
+      expect(errors.first.key).to eq(:empty_cov2_trigger_actions)
+      expect(errors.first.data).to eq(trigger_title: 'Empty Actions', object_key: 'object_1')
     end
   end
 end

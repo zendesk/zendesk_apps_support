@@ -131,6 +131,26 @@ parts:
       value: "The requirements.json file contains too many custom object trigger actions. The current limit is %{max} actions per trigger. This app has %{count} actions for trigger %{trigger_title}."
       screenshot: "https://drive.google.com/file/d/18jXaM7_OnPqHAg6jAxJrTrgX1v_H156_/view?usp=sharing"
   - translation:
+      key: "txt.apps.admin.error.app_build.invalid_cov2_requirements_structure"
+      title: "App builder job: requirements file contains invalid custom objects v2 structure. Must be a object. Leave requirements.json as is (do not translate)"
+      value: "The requirements.json file contains an invalid custom objects v2 structure. Custom objects v2 requirements must be a object structure."
+  - translation:
+      key: "txt.apps.admin.error.app_build.invalid_cov2_trigger_conditions_structure"
+      title: "App builder job: requirements file contains invalid custom object trigger conditions structure. Conditions must be a hash with 'all' and 'any' arrays. Leave requirements.json as is (do not translate)"
+      value: "The requirements.json file contains an invalid custom object trigger conditions structure. Conditions must be a hash with 'all' and 'any' arrays for trigger %{trigger_title}."
+  - translation:
+      key: "txt.apps.admin.error.app_build.empty_cov2_conditions"
+      title: "App builder job: requirements file contains empty custom object trigger conditions. At least one condition must be specified in either 'all' or 'any' array. Leave requirements.json, 'all', and 'any' as is (do not translate)"
+      value: "The requirements.json file contains empty custom object trigger conditions. At least one condition must be specified in either 'all' or 'any' array for trigger %{trigger_title}."
+  - translation:
+      key: "txt.apps.admin.error.app_build.invalid_cov2_trigger_actions_structure"
+      title: "App builder job: requirements file contains invalid custom object trigger actions structure. Actions must be an array. Leave requirements.json as is (do not translate)"
+      value: "The requirements.json file contains an invalid custom object trigger actions structure. Actions must be an array for trigger %{trigger_title}."
+  - translation:
+      key: "txt.apps.admin.error.app_build.empty_cov2_trigger_actions"
+      title: "App builder job: requirements file contains empty custom object trigger actions. At least one action must be specified. Leave requirements.json as is (do not translate)"
+      value: "The requirements.json file contains empty custom object trigger actions. At least one action must be specified for trigger %{trigger_title}."
+  - translation:
       key: "txt.apps.admin.error.app_build.excessive_cov2_selection_fields_per_object"
       title: "App builder job: requirements file contains too many custom object fields of type dropdown or multiselect. The maximum number of fields of type dropdown or multiselect per object is 5. Leave requirements.json as is (do not translate)"
       value: "The requirements.json file contains too many custom object fields of type %{field_type}. The current limit is %{max} fields per object. This app has %{count} fields of type %{field_type} for object %{object_key}."
@@ -161,13 +181,21 @@ parts:
       "screenshot": "https://drive.google.com/file/d/1XpwG7mxPTaI-My3fG2xGyxdEfE3LbECt/view?usp=sharing"
   - translation:
       key: "txt.apps.admin.error.app_build.empty_cov2_trigger_conditions"
-      title: "App builder job: requirements file contains an empty conditions array for custom object trigger. Leave requirements.json as is (do not translate)"
-      value: "The requirements.json file contains an empty conditions array for custom object trigger %{trigger_title} in object %{object_key}."
+      title: "App builder job: requirements file contains an empty conditions for custom object trigger. Leave requirements.json as is (do not translate)"
+      value: "The requirements.json file contains an empty conditions for custom object trigger %{trigger_title} in object %{object_key}."
       "screenshot": "https://drive.google.com/file/d/1dU534_37__yrqX9lQujjgTJeCV5Y5FIp/view?usp=sharing"
   - translation:
-      key: "txt.apps.admin.error.app_build.empty_objects_in_cov2_requirements"
-      title: "App builder job: requirements file contains an empty objects array for custom objects v2. Leave requirements.json as is (do not translate)"
-      value: "The requirements.json file contains an empty objects array for custom objects v2. You must define at least one object."
+      key: "txt.apps.admin.error.app_build.invalid_objects_structure_in_cov2_requirements"
+      title: "App builder job: requirements file contains invalid objects structure for custom objects v2. Objects must be an array. Leave requirements.json and 'objects' as is (do not translate)"
+      value: "The requirements.json file contains an invalid objects structure for custom objects v2. Objects must be an array."
+  - translation:
+      key: "txt.apps.admin.error.app_build.invalid_object_fields_structure_in_cov2_requirements"
+      title: "App builder job: requirements file contains invalid object_fields structure for custom objects v2. Object_fields must be an array. Leave requirements.json and 'object_fields' as is (do not translate)"
+      value: "The requirements.json file contains an invalid object_fields structure for custom objects v2. Object fields must be an array."
+  - translation:
+      key: "txt.apps.admin.error.app_build.invalid_object_triggers_structure_in_cov2_requirements"
+      title: "App builder job: requirements file contains invalid object_triggers structure for custom objects v2. Object_triggers must be an array. Leave requirements.json and 'object_triggers' as is (do not translate)"
+      value: "The requirements.json file contains an invalid object_triggers structure for custom objects v2. Object triggers must be an array."
   - translation:
       key: "txt.apps.admin.error.app_build.empty_cov2_requirements"
       title: "App builder job: requirements file contains an empty hash for custom objects v2. Leave requirements.json as is (do not translate)"

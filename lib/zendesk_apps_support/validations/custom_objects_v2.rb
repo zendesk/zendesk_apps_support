@@ -4,6 +4,13 @@
 module ZendeskAppsSupport
   module Validations
     module CustomObjectsV2
+      SCHEMA_KEYS = {
+        objects: 'objects',
+        object_fields: 'object_fields',
+        object_triggers: 'object_triggers'
+      }.freeze
+
+      # Limits
       MAX_OBJECTS = 50
       MAX_FIELDS_PER_OBJECT = 10
       MAX_TRIGGERS_PER_OBJECT = 20
@@ -25,11 +32,15 @@ module ZendeskAppsSupport
         'multiselect' => MAX_MULTISELECT_OPTIONS_PER_FIELD
       }.freeze
 
+      UNDEFINED_VALUE = '(undefined)'
+      CONDITION_KEYS = %w[all any].freeze
+
       class << self
         def call(requirements)
+          errors = validate_overall_requirements_structure(requirements)
+          return errors unless errors.empty?
+
           [
-            validate_empty_requirements(requirements),
-            validate_objects_presence(requirements),
             validate_limits(requirements),
             validate_schema(requirements)
           ].flatten
@@ -37,42 +48,58 @@ module ZendeskAppsSupport
 
         private
 
-        def validate_limits(requirements)
+        # ============ STRUCTURAL VALIDATION ============
+
+        def validate_overall_requirements_structure(requirements)
+          errors = validate_structural_requirements(requirements)
+          return errors unless errors.empty?
+
+          objects = requirements[SCHEMA_KEYS[:objects]]
+          object_fields = requirements[SCHEMA_KEYS[:object_fields]]
+          object_triggers = requirements[SCHEMA_KEYS[:object_triggers]]
+
+          if all_collections_empty_or_nil?(objects, object_fields, object_triggers)
+            return [ValidationError.new(:empty_cov2_requirements)]
+          end
+
           [
-            validate_objects_excessive_limit(requirements['objects']),
-            validate_fields_excessive_limit(requirements['object_fields']),
-            validate_triggers_excessive_limit(requirements['object_triggers'])
+            validate_collection_is_array(objects, :invalid_objects_structure_in_cov2_requirements),
+            validate_collection_is_array(object_fields, :invalid_object_fields_structure_in_cov2_requirements),
+            validate_collection_is_array(object_triggers, :invalid_object_triggers_structure_in_cov2_requirements)
           ].flatten
         end
 
-        def validate_schema(requirements)
-          [
-            validate_objects_schema(requirements['objects']),
-            validate_fields_schema(requirements['object_fields']),
-            validate_triggers_schema(requirements['object_triggers'])
-          ].flatten
-        end
-
-        # ========== PRESENCE VALIDATION ==========
-
-        def validate_empty_requirements(requirements)
+        def validate_structural_requirements(requirements)
+          return [ValidationError.new(:invalid_cov2_requirements_structure)] unless requirements.is_a?(Hash)
           return [ValidationError.new(:empty_cov2_requirements)] if requirements.empty?
 
           []
         end
 
-        def validate_objects_presence(requirements)
-          return [ValidationError.new(:empty_objects_in_cov2_requirements)] unless requirements['objects']&.any?
+        # ============ VALIDATE LIMITS ============
 
-          []
+        def validate_limits(requirements)
+          [
+            validate_objects_excessive_limit(requirements[SCHEMA_KEYS[:objects]]),
+            validate_fields_excessive_limit(requirements[SCHEMA_KEYS[:object_fields]]),
+            validate_triggers_excessive_limit(requirements[SCHEMA_KEYS[:object_triggers]])
+          ].flatten
+        end
+
+        # ============ SCHEMA VALIDATION ============
+
+        def validate_schema(requirements)
+          [
+            validate_objects_schema(requirements[SCHEMA_KEYS[:objects]]),
+            validate_fields_schema(requirements[SCHEMA_KEYS[:object_fields]]),
+            validate_triggers_schema(requirements[SCHEMA_KEYS[:object_triggers]])
+          ].flatten
         end
 
         # ========== OBJECTS VALIDATION ==========
 
         def validate_objects_excessive_limit(objects = [])
-          return [] unless objects
-
-          return [] if objects.size <= MAX_OBJECTS
+          return [] if objects.nil? || objects.size <= MAX_OBJECTS
 
           [ValidationError.new(:excessive_custom_objects_v2_requirements,
                                max: MAX_OBJECTS,
@@ -84,11 +111,13 @@ module ZendeskAppsSupport
         def validate_fields_excessive_limit(object_fields = [])
           return [] unless object_fields&.any?
 
+          valid_fields = object_fields.select { |field| field.is_a?(Hash) }
+
           [
-            validate_fields_limit(object_fields),
-            validate_selection_field_limits(object_fields),
-            validate_selection_field_options_limits(object_fields),
-            validate_conditions_in_relationship_filter_limit(object_fields)
+            validate_fields_limit(valid_fields),
+            validate_selection_field_limits(valid_fields),
+            validate_selection_field_options_limits(valid_fields),
+            validate_conditions_in_relationship_filter_limit(valid_fields)
           ].flatten
         end
 
@@ -163,10 +192,12 @@ module ZendeskAppsSupport
         def validate_triggers_excessive_limit(object_triggers = [])
           return [] unless object_triggers&.any?
 
+          valid_triggers = object_triggers.select { |trigger| trigger.is_a?(Hash) }
+
           [
-            validate_triggers_limit(object_triggers),
-            validate_triggers_conditions_limit(object_triggers),
-            validate_triggers_actions_limit(object_triggers)
+            validate_triggers_limit(valid_triggers),
+            validate_triggers_conditions_limit(valid_triggers),
+            validate_triggers_actions_limit(valid_triggers)
           ].flatten
         end
 
@@ -177,7 +208,8 @@ module ZendeskAppsSupport
         end
 
         def validate_triggers_conditions_limit(object_triggers)
-          object_triggers.flat_map do |trigger|
+          object_triggers
+            .flat_map do |trigger|
             validate_trigger_conditions(trigger)
           end
         end
@@ -197,7 +229,8 @@ module ZendeskAppsSupport
         end
 
         def validate_triggers_actions_limit(object_triggers)
-          object_triggers.filter_map do |trigger|
+          object_triggers
+            .filter_map do |trigger|
             next unless trigger['actions']
 
             actions = trigger['actions']
@@ -213,9 +246,11 @@ module ZendeskAppsSupport
         # ========== SCHEMA VALIDATION ==========
 
         def validate_objects_schema(objects = [])
-          return [] unless objects&.any?
+          return [] if objects.nil?
 
-          objects.flat_map do |object|
+          valid_objects = objects.select { |object| object.is_a?(Hash) }
+
+          valid_objects.flat_map do |object|
             validate_object_schema(object)
           end
         end
@@ -227,14 +262,16 @@ module ZendeskAppsSupport
           missing_keys.map do |missing_key|
             ValidationError.new(:missing_cov2_object_schema_key,
                                 missing_key: missing_key,
-                                object_key: object['key'] || '(undefined)')
+                                object_key: object['key'] || UNDEFINED_VALUE)
           end
         end
 
         def validate_fields_schema(object_fields = [])
           return [] unless object_fields&.any?
 
-          object_fields.flat_map do |field|
+          valid_fields = object_fields.select { |field| field.is_a?(Hash) }
+
+          valid_fields.flat_map do |field|
             validate_field_schema(field)
           end
         end
@@ -246,15 +283,17 @@ module ZendeskAppsSupport
           missing_keys.map do |missing_key|
             ValidationError.new(:missing_cov2_field_schema_key,
                                 missing_key: missing_key,
-                                field_key: field['key'] || '(undefined)',
-                                object_key: field['object_key'] || '(undefined)')
+                                field_key: field['key'] || UNDEFINED_VALUE,
+                                object_key: field['object_key'] || UNDEFINED_VALUE)
           end
         end
 
         def validate_triggers_schema(object_triggers = [])
           return [] unless object_triggers&.any?
 
-          object_triggers.flat_map do |trigger|
+          valid_triggers = object_triggers.select { |trigger| trigger.is_a?(Hash) }
+
+          valid_triggers.flat_map do |trigger|
             validate_trigger_schema(trigger)
           end
         end
@@ -266,25 +305,47 @@ module ZendeskAppsSupport
           errors = missing_keys.map do |missing_key|
             ValidationError.new(:missing_cov2_trigger_schema_key,
                                 missing_key: missing_key,
-                                trigger_title: trigger['title'] || '(undefined)',
-                                object_key: trigger['object_key'] || '(undefined)')
+                                trigger_title: trigger['title'] || UNDEFINED_VALUE,
+                                object_key: trigger['object_key'] || UNDEFINED_VALUE)
           end
 
-          if trigger['conditions'].is_a?(Hash) && trigger['conditions'].empty?
-            errors << ValidationError.new(:empty_cov2_trigger_conditions,
-                                          trigger_title: trigger['title'] || '(undefined)',
-                                          object_key: trigger['object_key'] || '(undefined)')
-          end
-
+          errors.concat(validate_conditions_schema(trigger['conditions'], trigger['object_key'], trigger['title']))
+          errors.concat(validate_actions_schema(trigger['actions'], trigger['object_key'], trigger['title']))
           errors
         end
 
+        def validate_conditions_schema(conditions, object_key, title)
+          error_data = { trigger_title: title || UNDEFINED_VALUE, object_key: object_key || UNDEFINED_VALUE }
+
+          unless valid_conditions_structure?(conditions)
+            return [ValidationError.new(:invalid_cov2_trigger_conditions_structure, **error_data)]
+          end
+
+          unless (conditions['all'] || []).any? || (conditions['any'] || []).any?
+            return [ValidationError.new(:empty_cov2_conditions, **error_data)]
+          end
+
+          []
+        end
+
+        def validate_actions_schema(actions, object_key, title)
+          errors = []
+          error_data = { trigger_title: title || UNDEFINED_VALUE, object_key: object_key || UNDEFINED_VALUE }
+
+          unless actions.is_a?(Array)
+            return [ValidationError.new(:invalid_cov2_trigger_actions_structure, **error_data)]
+          end
+
+          errors << ValidationError.new(:empty_cov2_trigger_actions, **error_data) if actions.empty?
+
+          errors
+        end
         # ========== HELPER METHODS ==========
 
         def count_conditions(conditions)
           return 0 unless conditions.is_a?(Hash)
 
-          %w[all any].sum { |key| conditions[key]&.size || 0 }
+          CONDITION_KEYS.sum { |key| conditions[key]&.size || 0 }
         end
 
         def validate_collection_limits(grouped_items, max_limit, error, **context)
@@ -297,6 +358,25 @@ module ZendeskAppsSupport
                                 count: items.size,
                                 object_key: object_key,
                                 **context)
+          end
+        end
+
+        def valid_conditions_structure?(conditions)
+          return false unless conditions.is_a?(Hash)
+
+          (conditions.key?('all') || conditions.key?('any')) &&
+            CONDITION_KEYS.all? { |key| conditions[key].nil? || conditions[key].is_a?(Array) }
+        end
+
+        def validate_collection_is_array(collection, error_type)
+          return [] if collection.nil? || collection.is_a?(Array)
+
+          [ValidationError.new(error_type)]
+        end
+
+        def all_collections_empty_or_nil?(objects, object_fields, object_triggers)
+          [objects, object_fields, object_triggers].all? do |collection|
+            collection.is_a?(Array) && collection.empty?
           end
         end
       end
