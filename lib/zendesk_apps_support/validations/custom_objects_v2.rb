@@ -39,10 +39,10 @@ module ZendeskAppsSupport
       class << self
         def call(requirements)
           errors = validate_overall_requirements_structure(requirements)
-          return errors unless errors.empty?
+          return errors if errors.any?
 
           payload_size_errors = validate_payload_size(requirements)
-          return payload_size_errors unless payload_size_errors.empty?
+          return payload_size_errors if payload_size_errors.any?
 
           [
             validate_limits(requirements),
@@ -124,7 +124,9 @@ module ZendeskAppsSupport
         def validate_fields_excessive_limit(object_fields = [])
           return [] unless object_fields&.any?
 
-          valid_fields = object_fields.select { |field| field.is_a?(Hash) }
+          valid_fields = object_fields
+                         .select { |field| field.is_a?(Hash) }
+                         .reject { |field| field['object_key'].to_s.empty? }
 
           [
             validate_fields_limit(valid_fields),
@@ -147,9 +149,8 @@ module ZendeskAppsSupport
         end
 
         def validate_field_type_limit(object_fields, field_type, max_limit)
-          fields_by_object = object_fields
-                             .select { |field| field['type'] == field_type }
-                             .group_by { |field| field['object_key'] }
+          filtered_fields = object_fields.select { |field| field['type'] == field_type }
+          fields_by_object = filtered_fields.group_by { |field| field['object_key'] }
 
           validate_collection_limits(fields_by_object, max_limit, :excessive_cov2_selection_fields_per_object,
                                      field_type: field_type)
@@ -163,12 +164,12 @@ module ZendeskAppsSupport
 
         def validate_options_limit(object_fields, field_type, max_limit)
           fields_with_options = object_fields.select do |field|
-            field['type'] == field_type && field['custom_field_options']
+            field['type'] == field_type && field['custom_field_options']&.any?
           end
 
           fields_with_options.filter_map do |field|
             options = field['custom_field_options']
-            next unless options&.any?
+
             next if options.size <= max_limit
 
             ValidationError.new(:excessive_cov2_field_options,
@@ -203,9 +204,10 @@ module ZendeskAppsSupport
         # ========== TRIGGERS VALIDATION ==========
 
         def validate_triggers_excessive_limit(object_triggers = [])
-          return [] unless object_triggers&.any?
-
-          valid_triggers = object_triggers.select { |trigger| trigger.is_a?(Hash) }
+          valid_triggers = object_triggers
+                           .select { |trigger| trigger.is_a?(Hash) }
+                           .reject { |trigger| trigger['object_key'].to_s.empty? }
+          return [] unless valid_triggers&.any?
 
           [
             validate_triggers_limit(valid_triggers),
@@ -221,8 +223,7 @@ module ZendeskAppsSupport
         end
 
         def validate_triggers_conditions_limit(object_triggers)
-          object_triggers
-            .flat_map do |trigger|
+          object_triggers.flat_map do |trigger|
             validate_trigger_conditions(trigger)
           end
         end
@@ -242,8 +243,7 @@ module ZendeskAppsSupport
         end
 
         def validate_triggers_actions_limit(object_triggers)
-          object_triggers
-            .filter_map do |trigger|
+          object_triggers.filter_map do |trigger|
             next unless trigger['actions']
 
             actions = trigger['actions']
@@ -327,22 +327,22 @@ module ZendeskAppsSupport
           errors
         end
 
-        def validate_conditions_schema(conditions, object_key, title)
-          error_data = { trigger_title: title || UNDEFINED_VALUE, object_key: object_key || UNDEFINED_VALUE }
+        def validate_conditions_schema(conditions, object_key = UNDEFINED_VALUE, title = UNDEFINED_VALUE)
+          error_data = { trigger_title: title, object_key: object_key }
 
           unless valid_conditions_structure?(conditions)
             return [ValidationError.new(:invalid_cov2_trigger_conditions_structure, **error_data)]
           end
 
-          unless (conditions['all'] || []).any? || (conditions['any'] || []).any?
+          if count_conditions(conditions).zero?
             return [ValidationError.new(:empty_cov2_trigger_conditions, **error_data)]
           end
 
           []
         end
 
-        def validate_actions_schema(actions, object_key, title)
-          error_data = { trigger_title: title || UNDEFINED_VALUE, object_key: object_key || UNDEFINED_VALUE }
+        def validate_actions_schema(actions, object_key = UNDEFINED_VALUE, title = UNDEFINED_VALUE)
+          error_data = { trigger_title: title, object_key: object_key }
 
           unless actions.is_a?(Array)
             return [ValidationError.new(:invalid_cov2_trigger_actions_structure, **error_data)]
@@ -363,7 +363,6 @@ module ZendeskAppsSupport
 
         def validate_collection_limits(grouped_items, max_limit, error, **context)
           grouped_items.filter_map do |object_key, items|
-            next if object_key.nil?
             next if items.size <= max_limit
 
             ValidationError.new(error,
