@@ -149,8 +149,9 @@ module ZendeskAppsSupport
         end
 
         def validate_field_type_limit(object_fields, field_type, max_limit)
-          filtered_fields = object_fields.select { |field| field['type'] == field_type }
-          fields_by_object = filtered_fields.group_by { |field| field['object_key'] }
+          fields_by_object = object_fields
+                             .select { |field| field['type'] == field_type }
+                             .group_by { |field| field['object_key'] }
 
           validate_collection_limits(fields_by_object, max_limit, :excessive_cov2_selection_fields_per_object,
                                      field_type: field_type)
