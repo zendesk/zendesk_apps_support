@@ -389,7 +389,7 @@ module ZendeskAppsSupport
 
         def all_collections_empty_or_nil?(objects, object_fields, object_triggers)
           [objects, object_fields, object_triggers].all? do |collection|
-            collection.is_a?(Array) && collection.empty?
+            collection.nil? || (collection.is_a?(Array) && collection.empty?)
           end
         end
       end
