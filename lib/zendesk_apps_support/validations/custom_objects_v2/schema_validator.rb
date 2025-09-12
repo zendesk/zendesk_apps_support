@@ -103,10 +103,6 @@ module ZendeskAppsSupport
             [ValidationError.new(:empty_cov2_trigger_actions, **error_data)]
           end
 
-          def safe_value(value)
-            value || UNDEFINED_VALUE
-          end
-
           def valid_conditions_structure?(conditions)
             return false unless conditions.is_a?(Hash) && conditions.any?
             return false if (conditions.keys - CONDITION_KEYS).any?
