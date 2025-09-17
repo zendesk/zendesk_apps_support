@@ -152,6 +152,7 @@ parts:
       title: "App builder job: requirements file contains too many conditions in relationship filter for lookup fields. The maximum number of conditions allowed in the relationship filter per field is 20. Leave requirements.json as is (do not translate)"
       value: "The requirements.json file contains too many conditions in relationship filter for custom object field %{field_key}. The current limit is %{max} conditions per field. This app has %{count} conditions for field %{field_key} in object %{object_key}."
       "screenshot": "https://drive.google.com/file/d/13J6GIkq3CXGqRwV5KRHouXulRVuwQnNi/view?usp=sharing"
+  - translation:
       key: "txt.apps.admin.error.app_build.missing_cov2_object_schema_key"
       title: 'App builder job: requirements file is missing a custom object schema key. These are the required keys: (key, title, title_pluralized, include_in_list_view). The term \"schema key\" typically refers to an identifier or attribute that defines a specific item within a schema and it should be translated. Leave requirements.json as is (do not translate)'
       value: "The requirements.json file is missing custom object schema key for object %{object_key}. The following key is required: %{missing_key}."
