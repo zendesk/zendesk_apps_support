@@ -75,12 +75,7 @@ module ZendeskAppsSupport
         def validate_object_references(requirements)
           valid_object_keys = extract_valid_object_keys(requirements[SCHEMA_KEYS[:objects]])
 
-          collections_config = {
-            SCHEMA_KEYS[:object_fields] => { identifier: KEY, error: :invalid_cov2_object_reference_in_fields },
-            SCHEMA_KEYS[:object_triggers] => { identifier: TITLE, error: :invalid_cov2_object_reference_in_triggers }
-          }
-
-          collections_config.flat_map do |collection_type, config|
+          REFERENCE_VALIDATION_CONFIG.flat_map do |collection_type, config|
             collection = requirements[collection_type]
             validate_collection_references(collection, valid_object_keys, config[:error], config[:identifier])
           end
