@@ -117,7 +117,7 @@ parts:
       screenshot: "https://drive.google.com/file/d/1mEiQLJxTb-lFFnVt96n051w4BnxJOZID/view?usp=sharing"
   - translation:
       key: "txt.apps.admin.error.app_build.excessive_custom_objects_v2_triggers"
-      title: "App builder job: requirements file contains too many custom object triggers. The maximum number of custom object triggers per object is 20. Leave requirements.json as is (do not translate)"
+      title: "App builder job: requirements file contains too many custom object triggers. The maximum number of custom object triggers per object is 100. Leave requirements.json as is (do not translate)"
       value: "The requirements.json file contains too many custom object triggers. The current limit is %{max} triggers per custom object. This app has %{count} triggers for object %{object_key}."
       screenshot: "https://drive.google.com/file/d/1JTEmjrUTq7Bsxoy36Syj-vhbkG8W_68D/view?usp=sharing"
   - translation:
@@ -221,16 +221,6 @@ parts:
       title: "App builder job: requirements file contains an empty hash for custom objects v2. Leave requirements.json as is (do not translate)"
       value: "The requirements.json file contains empty custom objects v2 requirements. You must define valid requirements."
       screenshot: "https://drive.google.com/file/d/1AfbKu_JOMSG9274IUrIUvwirSuwbxy3Y/view?usp=sharing"
-  - translation:
-      key: "txt.apps.admin.error.app_build.invalid_cov2_object_reference_in_fields"
-      title: 'App builder job: requirements file contains an invalid object reference in object_fields for Custom Objects V2. Do not translate "requirements.json", "object_fields", \"%{item_identifier}\",  \"%{object_key}\".'
-      value: 'The requirements.json file contains an invalid object reference in object_fields. Field \"%{item_identifier}\" references object \"%{object_key}\" which does not exist in the objects array.'
-      screenshot: "https://drive.google.com/file/d/124uX-MBnEoqt7lDZBqQb4OVT2YN8-qz2/view?usp=sharing"
-  - translation:
-      key: "txt.apps.admin.error.app_build.invalid_cov2_object_reference_in_triggers"
-      title: 'App builder job: requirements file contains an invalid object reference in object_triggers for Custom Objects V2. Do not translate "requirements.json", "object_fields", \"%{item_identifier}\", \"%{object_key}\".'
-      value: 'The requirements.json file contains an invalid object reference in object_triggers. Trigger \"%{item_identifier}\" references object \"%{object_key}\" which does not exist in the objects array.'
-      screenshot: "https://drive.google.com/file/d/11e3x1sEfXQydkE-mRQ_rHqqLCRurHoCN/view?usp=sharing"
   - translation:
       key: "txt.apps.admin.error.app_build.missing_required_fields"
       title: "App builder job: required key missing in requirements, e.g. \"title\" is required in \"my_custom_email_target\""
