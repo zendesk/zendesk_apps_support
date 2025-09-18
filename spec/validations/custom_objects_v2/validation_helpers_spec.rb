@@ -8,7 +8,7 @@ describe ZendeskAppsSupport::Validations::CustomObjectsV2::ValidationHelpers do
       class << self
         include ZendeskAppsSupport::Validations::CustomObjectsV2::ValidationHelpers
 
-        public :extract_hash_entries, :count_conditions
+        public :extract_hash_entries, :count_conditions, :safe_value
       end
     end
   end
@@ -65,6 +65,27 @@ describe ZendeskAppsSupport::Validations::CustomObjectsV2::ValidationHelpers do
       context "when #{test_case[:description]}" do
         it 'returns expected result' do
           expect(test_class.count_conditions(test_case[:input])).to eq(test_case[:expected])
+        end
+      end
+    end
+  end
+
+  describe '.safe_value' do
+    [
+      {
+        input: nil,
+        expected: '(undefined)',
+        description: 'value is nil'
+      },
+      {
+        input: 'valid_key',
+        expected: 'valid_key',
+        description: 'value is not nil'
+      }
+    ].each do |test_case|
+      context "when #{test_case[:description]}" do
+        it 'returns expected result' do
+          expect(test_class.safe_value(test_case[:input])).to eq(test_case[:expected])
         end
       end
     end
