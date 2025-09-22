@@ -35,8 +35,8 @@ describe ZendeskAppsSupport::Validations::CustomObjectsV2 do
           'objects' => {},
           'object_fields' => [{ 'key' => 'field_1', 'type' => 'text', 'title' => 'Field 1',
                                 'object_key' => 'object_1' }],
-          'object_triggers' => [{ 'title' => 'Trigger 1', 'object_key' => 'object_1', 'conditions' => { 'all' => [] },
-                                  'actions' => [] }]
+          'object_triggers' => [{ 'key' => 'trigger_1', 'title' => 'Trigger 1', 'object_key' => 'object_1',
+                                  'conditions' => { 'all' => [] }, 'actions' => [] }]
         },
         description: 'objects is not an array'
       },
@@ -46,8 +46,8 @@ describe ZendeskAppsSupport::Validations::CustomObjectsV2 do
           'objects' => [{ 'key' => 'object_1', 'title' => 'Object 1', 'title_pluralized' => 'Objects 1',
                           'include_in_list_view' => true }],
           'object_fields' => {},
-          'object_triggers' => [{ 'title' => 'Trigger 1', 'object_key' => 'object_1', 'conditions' => { 'all' => [] },
-                                  'actions' => [] }]
+          'object_triggers' => [{ 'key' => 'trigger_1', 'title' => 'Trigger 1', 'object_key' => 'object_1',
+                                  'conditions' => { 'all' => [] }, 'actions' => [] }]
         },
         description: 'object_fields is not an array'
       },
@@ -87,7 +87,7 @@ describe ZendeskAppsSupport::Validations::CustomObjectsV2 do
           ],
           'object_fields' => [],
           'object_triggers' => [
-            { 'title' => 'Trigger 1', 'object_key' => 'invalid_object', 
+            { 'key' => 'trigger_1', 'title' => 'Trigger 1', 'object_key' => 'invalid_object',
               'conditions' => { 'all' => [{ 'field' => 'status', 'operator' => 'is', 'value' => 'open' }] },
               'actions' => [{ 'field' => 'status', 'value' => 'closed' }] }
           ]
@@ -137,6 +137,7 @@ describe ZendeskAppsSupport::Validations::CustomObjectsV2 do
           ],
           'object_triggers' => [
             {
+              'key' => 'trigger_1',
               'title' => 'Priority Trigger',
               'object_key' => 'ticket_object',
               'conditions' => { 'all' => [{ 'field' => 'priority', 'operator' => 'is', 'value' => 'high' }] },

@@ -60,7 +60,7 @@ module ZendeskAppsSupport
           end
 
           def validate_trigger_schema(trigger)
-            required_keys = %w[object_key title actions conditions]
+            required_keys = %w[key object_key title actions conditions]
             missing_keys = required_keys - trigger.keys
             trigger_title = safe_value(trigger[TITLE])
             object_key = safe_value(trigger[OBJECT_KEY])

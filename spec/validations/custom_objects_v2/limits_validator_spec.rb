@@ -72,7 +72,8 @@ describe ZendeskAppsSupport::Validations::CustomObjectsV2::LimitsValidator do
           'objects' => [{ 'key' => 'object_1', 'title' => 'Object 1' }],
           'object_fields' => [],
           'object_triggers' => Array.new(21) do |i|
-            { 'title' => "Trigger #{i}", 'object_key' => 'object_1', 'conditions' => { 'all' => [] }, 'actions' => [] }
+            { 'key' => "trigger_#{i}", 'title' => "Trigger #{i}", 'object_key' => 'object_1',
+              'conditions' => { 'all' => [] }, 'actions' => [] }
           end
         },
         description: 'there are more than 20 triggers per object'
@@ -83,6 +84,7 @@ describe ZendeskAppsSupport::Validations::CustomObjectsV2::LimitsValidator do
           'objects' => [{ 'key' => 'object_1', 'title' => 'Object 1' }],
           'object_fields' => [],
           'object_triggers' => [{
+            'key' => 'trigger_1',
             'title' => 'Trigger 1',
             'object_key' => 'object_1',
             'conditions' => {
@@ -99,6 +101,7 @@ describe ZendeskAppsSupport::Validations::CustomObjectsV2::LimitsValidator do
           'objects' => [{ 'key' => 'object_1', 'title' => 'Object 1' }],
           'object_fields' => [],
           'object_triggers' => [{
+            'key' => 'trigger_1',
             'title' => 'Trigger 1',
             'object_key' => 'object_1',
             'conditions' => { 'all' => [] },
@@ -138,6 +141,7 @@ describe ZendeskAppsSupport::Validations::CustomObjectsV2::LimitsValidator do
           ],
           'object_triggers' => [
             {
+              'key' => 'order_processing_trigger',
               'title' => 'Order Processing Trigger',
               'object_key' => 'order_object',
               'conditions' => {
@@ -170,6 +174,7 @@ describe ZendeskAppsSupport::Validations::CustomObjectsV2::LimitsValidator do
           ],
           'object_triggers' => [
             {
+              'key' => 'assignment_trigger',
               'title' => 'Ticket Assignment Trigger',
               'object_key' => 'ticket_object',
               'conditions' => { 'all' => [{ 'field' => 'priority', 'operator' => 'is', 'value' => 'high' }] },
