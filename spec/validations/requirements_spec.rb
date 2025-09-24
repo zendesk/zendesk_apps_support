@@ -394,8 +394,9 @@ describe ZendeskAppsSupport::Validations::Requirements do
       context 'with no custom_objects_v2 requirements' do
         let(:requirements_string) { non_cov2_requirements }
 
-        it 'does not call validate_custom_objects_v2_requirements method' do
-          expect(ZendeskAppsSupport::Validations::Requirements).not_to receive(:validate_custom_objects_v2_requirements)
+        it 'calls validate_custom_objects_v2_requirements but returns early due to flag' do
+          expect(ZendeskAppsSupport::Validations::Requirements)
+            .to receive(:validate_custom_objects_v2_requirements).and_call_original
           expect(ZendeskAppsSupport::Validations::CustomObjectsV2).not_to receive(:call)
           expect(errors).to be_empty
         end
@@ -404,8 +405,9 @@ describe ZendeskAppsSupport::Validations::Requirements do
       context 'with excessive custom_objects_v2 requirements' do
         let(:requirements_string) { excessive_objects_requirements }
 
-        it 'skips validation method entirely and returns no errors' do
-          expect(ZendeskAppsSupport::Validations::Requirements).not_to receive(:validate_custom_objects_v2_requirements)
+        it 'calls validate_custom_objects_v2_requirements but returns early due to flag' do
+          expect(ZendeskAppsSupport::Validations::Requirements)
+            .to receive(:validate_custom_objects_v2_requirements).and_call_original
           expect(ZendeskAppsSupport::Validations::CustomObjectsV2).not_to receive(:call)
           expect(errors).to be_empty
         end
