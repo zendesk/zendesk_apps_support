@@ -7,7 +7,7 @@ module ZendeskAppsSupport
       MAX_CUSTOM_OBJECTS_REQUIREMENTS = 50
 
       class << self
-        def call(package)
+        def call(package, opts = {})
           if package.manifest.requirements_only? && !package.has_requirements?
             return [ValidationError.new(:missing_requirements)]
           elsif !supports_requirements(package) && package.has_requirements?
@@ -31,13 +31,15 @@ module ZendeskAppsSupport
             errors << invalid_custom_objects(requirements)
             errors << invalid_webhooks(requirements)
             errors << invalid_target_types(requirements)
-            errors << validate_custom_objects_v2_requirements(requirements)
+            errors << validate_custom_objects_v2_requirements(requirements) if opts.fetch(
+              :custom_objects_v2_requirements, false
+            )
             errors << missing_required_fields(requirements)
             errors.flatten!
             errors.compact!
           end
         rescue JSON::ParserError => e
-          return [ValidationError.new(:requirements_not_json, errors: e)]
+          [ValidationError.new(:requirements_not_json, errors: e)]
         end
 
         private
@@ -91,10 +93,12 @@ module ZendeskAppsSupport
           user_fields = requirements['user_fields']
           organization_fields = requirements['organization_fields']
           return if user_fields.nil? && organization_fields.nil?
+
           [].tap do |errors|
             [user_fields, organization_fields].compact.each do |field_group|
               field_group.each do |identifier, fields|
                 next if fields.include? 'key'
+
                 errors << ValidationError.new(:missing_required_fields,
                                               field: 'key',
                                               identifier: identifier)
@@ -106,12 +110,12 @@ module ZendeskAppsSupport
         def invalid_channel_integrations(requirements)
           channel_integrations = requirements['channel_integrations']
           return unless channel_integrations
+
           [].tap do |errors|
-            if channel_integrations.size > 1
-              errors << ValidationError.new(:multiple_channel_integrations)
-            end
+            errors << ValidationError.new(:multiple_channel_integrations) if channel_integrations.size > 1
             channel_integrations.each do |identifier, fields|
               next if fields.include? 'manifest_url'
+
               errors << ValidationError.new(:missing_required_fields,
                                             field: 'manifest_url',
                                             identifier: identifier)
@@ -187,11 +191,11 @@ module ZendeskAppsSupport
           invalid_target_types = %w[http_target url_target_v2]
 
           requirements['targets']&.map do |_identifier, requirement|
-            if invalid_target_types.include?(requirement['type'])
-              ValidationError.new(:invalid_requirements_types,
-                                  invalid_types: "targets -> #{requirement['type']}",
-                                  count: 1)
-            end
+            next unless invalid_target_types.include?(requirement['type'])
+
+            ValidationError.new(:invalid_requirements_types,
+                                invalid_types: "targets -> #{requirement['type']}",
+                                count: 1)
           end
         end
       end
