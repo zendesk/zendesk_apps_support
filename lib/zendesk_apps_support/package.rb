@@ -32,7 +32,7 @@ module ZendeskAppsSupport
     end
 
     def validate(marketplace: true, skip_marketplace_translations: false, error_on_password_parameter: false,
-                 custom_objects_v2_requirements: false)
+                 enable_custom_objects_v2_validation: false)
       errors = []
       errors << Validations::Manifest.call(self, error_on_password_parameter: error_on_password_parameter)
 
@@ -40,7 +40,7 @@ module ZendeskAppsSupport
         errors << Validations::Marketplace.call(self) if marketplace
         errors << Validations::Source.call(self)
         errors << Validations::Translations.call(self, skip_marketplace_translations: skip_marketplace_translations)
-        errors << Validations::Requirements.call(self, custom_objects_v2_requirements: custom_objects_v2_requirements)
+        errors << Validations::Requirements.call(self, enable_custom_objects_v2_validation: enable_custom_objects_v2_validation) # rubocop:disable Layout/LineLength
 
         # only adds warnings
         Validations::SecureSettings.call(self)
@@ -63,10 +63,10 @@ module ZendeskAppsSupport
     end
 
     def validate!(marketplace: true, skip_marketplace_translations: false, error_on_password_parameter: false,
-                  custom_objects_v2_requirements: false)
+                  enable_custom_objects_v2_validation: false)
       errors = validate(marketplace: marketplace, skip_marketplace_translations: skip_marketplace_translations,
                         error_on_password_parameter: error_on_password_parameter,
-                        custom_objects_v2_requirements: custom_objects_v2_requirements)
+                        enable_custom_objects_v2_validation: enable_custom_objects_v2_validation)
       raise errors.first if errors.any?
 
       true

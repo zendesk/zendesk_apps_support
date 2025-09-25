@@ -81,7 +81,7 @@ module ZendeskAppsSupport
         end
 
         def validate_custom_objects_v2_requirements(requirements, opts = {})
-          is_cov2_validation_allowed = opts.fetch(:custom_objects_v2_requirements, false)
+          is_cov2_validation_allowed = opts.fetch(:enable_custom_objects_v2_validation, false)
           return unless is_cov2_validation_allowed && requirements.key?(AppRequirement::CUSTOM_OBJECTS_V2_KEY)
 
           cov2_requirements = requirements[AppRequirement::CUSTOM_OBJECTS_V2_KEY]

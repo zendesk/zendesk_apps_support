@@ -390,7 +390,7 @@ describe ZendeskAppsSupport::Validations::Requirements do
       )
     end
 
-    context 'when custom_objects_v2_requirements is false (default)' do
+    context 'when enable_custom_objects_v2_validation is false (default)' do
       context 'with no custom_objects_v2 requirements' do
         let(:requirements_string) { non_cov2_requirements }
 
@@ -414,8 +414,10 @@ describe ZendeskAppsSupport::Validations::Requirements do
       end
     end
 
-    context 'when custom_objects_v2_requirements is true' do
-      let(:errors) { ZendeskAppsSupport::Validations::Requirements.call(package, custom_objects_v2_requirements: true) }
+    context 'when enable_custom_objects_v2_validation is true' do
+      let(:errors) do
+        ZendeskAppsSupport::Validations::Requirements.call(package, enable_custom_objects_v2_validation: true)
+      end
 
       context 'with no custom_objects_v2 requirements' do
         let(:requirements_string) { non_cov2_requirements }
