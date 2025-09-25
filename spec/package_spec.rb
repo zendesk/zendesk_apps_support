@@ -475,8 +475,8 @@ describe ZendeskAppsSupport::Package do
         package.validate!(marketplace: true, custom_objects_v2_requirements: true)
       end
       it 'validates requirements and passes in the custom_objects_v2_requirements correctly' do
-        expect(ZendeskAppsSupport::Validations::Requirements).to have_received(:call).with(package,
-                                                                                           { custom_objects_v2_requirements: true })
+        expect(ZendeskAppsSupport::Validations::Requirements).to have_received(:call)
+          .with(package, { custom_objects_v2_requirements: true })
       end
     end
   end
