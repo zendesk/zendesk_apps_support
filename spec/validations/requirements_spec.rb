@@ -416,7 +416,7 @@ describe ZendeskAppsSupport::Validations::Requirements do
 
     context 'when enable_custom_objects_v2_validation is true' do
       let(:errors) do
-        ZendeskAppsSupport::Validations::Requirements.call(package, enable_custom_objects_v2_validation: true)
+        ZendeskAppsSupport::Validations::Requirements.call(package, { enable_custom_objects_v2_validation: true })
       end
 
       context 'with no custom_objects_v2 requirements' do
