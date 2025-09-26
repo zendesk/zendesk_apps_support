@@ -7,7 +7,7 @@ module ZendeskAppsSupport
       MAX_CUSTOM_OBJECTS_REQUIREMENTS = 50
 
       class << self
-        def call(package)
+        def call(package, opts = {})
           if package.manifest.requirements_only? && !package.has_requirements?
             return [ValidationError.new(:missing_requirements)]
           elsif !supports_requirements(package) && package.has_requirements?
@@ -31,7 +31,7 @@ module ZendeskAppsSupport
             errors << invalid_custom_objects(requirements)
             errors << invalid_webhooks(requirements)
             errors << invalid_target_types(requirements)
-            errors << validate_custom_objects_v2_requirements(requirements)
+            errors << validate_custom_objects_v2_requirements(requirements, opts)
             errors << missing_required_fields(requirements)
             errors.flatten!
             errors.compact!
@@ -80,8 +80,9 @@ module ZendeskAppsSupport
           end
         end
 
-        def validate_custom_objects_v2_requirements(requirements)
-          return unless requirements.key?(AppRequirement::CUSTOM_OBJECTS_V2_KEY)
+        def validate_custom_objects_v2_requirements(requirements, opts = {})
+          is_cov2_validation_allowed = opts.fetch(:enable_custom_objects_v2_validation, false)
+          return unless is_cov2_validation_allowed && requirements.key?(AppRequirement::CUSTOM_OBJECTS_V2_KEY)
 
           cov2_requirements = requirements[AppRequirement::CUSTOM_OBJECTS_V2_KEY]
           CustomObjectsV2.call(cov2_requirements)

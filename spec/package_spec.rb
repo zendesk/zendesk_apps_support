@@ -466,6 +466,19 @@ describe ZendeskAppsSupport::Package do
         expect(ZendeskAppsSupport::Validations::Manifest).to have_received(:call).with(package, {:error_on_password_parameter => true})
       end
     end
+
+    context 'when enable_custom_objects_v2_validation is true' do
+      let(:package) { ZendeskAppsSupport::Package.new('spec/fixtures/iframe_only_app') }
+
+      before do
+        allow(ZendeskAppsSupport::Validations::Requirements).to receive(:call)
+        package.validate!(marketplace: true, enable_custom_objects_v2_validation: true)
+      end
+      it 'validates requirements and passes in the enable_custom_objects_v2_validation correctly' do
+        expect(ZendeskAppsSupport::Validations::Requirements).to have_received(:call)
+          .with(package, { enable_custom_objects_v2_validation: true })
+      end
+    end
   end
 
   describe '#commonjs_modules' do
