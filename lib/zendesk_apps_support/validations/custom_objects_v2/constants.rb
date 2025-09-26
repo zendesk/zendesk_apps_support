@@ -47,6 +47,11 @@ module ZendeskAppsSupport
         UNDEFINED_VALUE = '(undefined)'
         CONDITION_KEYS = [ALL, ANY].freeze
         MAX_PAYLOAD_SIZE_BYTES = 1_048_576 # 1 MB in bytes
+
+        REFERENCE_VALIDATION_CONFIG = {
+          SCHEMA_KEYS[:object_fields] => { identifier: KEY, error: :invalid_cov2_object_reference_in_fields },
+          SCHEMA_KEYS[:object_triggers] => { identifier: TITLE, error: :invalid_cov2_object_reference_in_triggers }
+        }.freeze
       end
     end
   end

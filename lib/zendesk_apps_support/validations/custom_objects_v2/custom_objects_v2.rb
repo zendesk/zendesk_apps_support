@@ -10,18 +10,23 @@ module ZendeskAppsSupport
     module CustomObjectsV2
       class << self
         include Constants
+        include ValidationHelpers
 
         def call(requirements)
-          errors = validate_overall_requirements_structure(requirements)
-          return errors if errors.any?
+          structural_errors = validate_overall_requirements_structure(requirements)
+          return structural_errors if structural_errors.any?
 
           payload_size_errors = validate_payload_size(requirements)
           return payload_size_errors if payload_size_errors.any?
 
-          [
+          limits_and_schema_errors = [
             validate_limits(requirements),
             validate_schema(requirements)
           ].flatten
+
+          return limits_and_schema_errors if limits_and_schema_errors.any?
+
+          validate_object_references(requirements)
         end
 
         private
@@ -67,6 +72,27 @@ module ZendeskAppsSupport
           SchemaValidator.validate(requirements)
         end
 
+        def validate_object_references(requirements)
+          valid_object_keys = extract_valid_object_keys(requirements[SCHEMA_KEYS[:objects]])
+
+          REFERENCE_VALIDATION_CONFIG.flat_map do |collection_type, config|
+            collection = requirements[collection_type]
+            validate_collection_references(collection, valid_object_keys, config[:error], config[:identifier])
+          end
+        end
+
+        def validate_collection_references(collection, valid_object_keys, error, identifier)
+          valid_collection = extract_hash_entries(collection)
+          valid_collection.filter_map do |item|
+            object_key = item[OBJECT_KEY]
+            next if valid_object_keys.include?(object_key)
+
+            ValidationError.new(error,
+                                item_identifier: safe_value(item[identifier]),
+                                object_key: object_key)
+          end
+        end
+
         def validate_collection_is_array(collection, error_type)
           return [] if collection.nil? || collection.is_a?(Array)
 
@@ -77,6 +103,14 @@ module ZendeskAppsSupport
           [objects, object_fields, object_triggers].all? do |collection|
             collection.is_a?(Array) && collection.empty?
           end
+        end
+
+        def extract_valid_object_keys(objects)
+          valid_objects = extract_hash_entries(objects)
+          valid_objects.filter_map do |obj|
+            key = obj[KEY]
+            key if key.is_a?(String) && !key.strip.empty?
+          end.uniq
         end
       end
     end

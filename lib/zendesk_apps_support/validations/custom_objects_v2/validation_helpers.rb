@@ -4,6 +4,8 @@ module ZendeskAppsSupport
   module Validations
     module CustomObjectsV2
       module ValidationHelpers
+        include Constants
+
         private
 
         def extract_hash_entries(collection)
@@ -16,6 +18,10 @@ module ZendeskAppsSupport
           return 0 unless conditions.is_a?(Hash)
 
           Constants::CONDITION_KEYS.sum { |key| conditions[key]&.size || 0 }
+        end
+
+        def safe_value(value)
+          value || UNDEFINED_VALUE
         end
       end
     end

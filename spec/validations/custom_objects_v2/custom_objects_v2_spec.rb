@@ -77,6 +77,35 @@ describe ZendeskAppsSupport::Validations::CustomObjectsV2 do
           'object_triggers' => []
         },
         description: 'payload exceeds size limit'
+      },
+      {
+        error: :invalid_cov2_object_reference_in_triggers,
+        requirements: {
+          'objects' => [
+            { 'key' => 'object_1', 'title' => 'Object 1', 'title_pluralized' => 'Objects 1',
+              'include_in_list_view' => true }
+          ],
+          'object_fields' => [],
+          'object_triggers' => [
+            { 'title' => 'Trigger 1', 'object_key' => 'invalid_object', 
+              'conditions' => { 'all' => [{ 'field' => 'status', 'operator' => 'is', 'value' => 'open' }] },
+              'actions' => [{ 'field' => 'status', 'value' => 'closed' }] }
+          ]
+        },
+        description: 'object_trigger references non-existent object'
+      },
+      {
+        error: :invalid_cov2_object_reference_in_fields,
+        requirements: {
+          'objects' => [
+            { 'key' => 'object_1', 'title' => 'Object 1', 'title_pluralized' => 'Objects 1',
+              'include_in_list_view' => true }
+          ],
+          'object_fields' => [
+            { 'object_key' => 'invalid_object', 'key' => 'field_1', 'type' => 'text', 'title' => 'Field 1' }
+          ]
+        },
+        description: 'object_field references non-existent object'
       }
     ].each do |test_case|
       context "when #{test_case[:description]}" do
