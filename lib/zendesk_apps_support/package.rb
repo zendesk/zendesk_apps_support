@@ -40,7 +40,10 @@ module ZendeskAppsSupport
         errors << Validations::Marketplace.call(self) if marketplace
         errors << Validations::Source.call(self)
         errors << Validations::Translations.call(self, skip_marketplace_translations: skip_marketplace_translations)
-        errors << Validations::Requirements.call(self, enable_custom_objects_v2_validation: enable_custom_objects_v2_validation) # rubocop:disable Layout/LineLength
+        errors << Validations::Requirements.call(
+          self,
+          enable_custom_objects_v2_validation: enable_custom_objects_v2_validation
+        )
 
         # only adds warnings
         Validations::SecureSettings.call(self)

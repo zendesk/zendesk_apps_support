@@ -367,10 +367,10 @@ describe ZendeskAppsSupport::Validations::Requirements do
     let(:excessive_objects_requirements) do
       JSON.generate(
         'custom_objects_v2' => {
-          'objects' => Array.new(51) { |i|
-            { 'key' => "object_#{i + 1}", 'title' => "Object #{i + 1}", 
+          'objects' => Array.new(51) do |i|
+            { 'key' => "object_#{i + 1}", 'title' => "Object #{i + 1}",
               'title_pluralized' => "Objects #{i + 1}", 'included_in_list_view' => true }
-          },
+          end,
           'object_fields' => [], 'object_triggers' => []
         }
       )
@@ -378,12 +378,12 @@ describe ZendeskAppsSupport::Validations::Requirements do
     let(:valid_objects_requirements) do
       JSON.generate(
         'custom_objects_v2' => {
-          'objects' => [{ 
-            'key' => 'object_1', 'title' => 'Object 1', 'title_pluralized' => 'Objects 1', 
-            'include_in_list_view' => true 
+          'objects' => [{
+            'key' => 'object_1', 'title' => 'Object 1', 'title_pluralized' => 'Objects 1',
+            'include_in_list_view' => true
           }],
-          'object_fields' => [{ 
-            'key' => 'field_1', 'type' => 'text', 'title' => 'Field 1', 'object_key' => 'object_1' 
+          'object_fields' => [{
+            'key' => 'field_1', 'type' => 'text', 'title' => 'Field 1', 'object_key' => 'object_1'
           }],
           'object_triggers' => []
         }
