@@ -41,6 +41,7 @@ describe ZendeskAppsSupport::Validations::CustomObjectsV2::SchemaValidator do
                           'include_in_list_view' => true }],
           'object_fields' => [],
           'object_triggers' => [{
+            'key' => 'trigger_1',
             'object_key' => 'object_1',
             'title' => 'Trigger 1',
             'actions' => [{ 'field' => 'status', 'value' => 'resolved' }],
@@ -56,6 +57,7 @@ describe ZendeskAppsSupport::Validations::CustomObjectsV2::SchemaValidator do
                           'include_in_list_view' => true }],
           'object_fields' => [],
           'object_triggers' => [{
+            'key' => 'trigger_1',
             'object_key' => 'object_1',
             'title' => 'Trigger 1',
             'actions' => [{ 'field' => 'status', 'value' => 'resolved' }],
@@ -71,6 +73,7 @@ describe ZendeskAppsSupport::Validations::CustomObjectsV2::SchemaValidator do
                           'include_in_list_view' => true }],
           'object_fields' => [],
           'object_triggers' => [{
+            'key' => 'trigger_1',
             'object_key' => 'object_1',
             'title' => 'Trigger 1',
             'actions' => 'not_an_array',
@@ -86,6 +89,7 @@ describe ZendeskAppsSupport::Validations::CustomObjectsV2::SchemaValidator do
                           'include_in_list_view' => true }],
           'object_fields' => [],
           'object_triggers' => [{
+            'key' => 'trigger_1',
             'object_key' => 'object_1',
             'title' => 'Trigger 1',
             'actions' => [],
@@ -124,6 +128,7 @@ describe ZendeskAppsSupport::Validations::CustomObjectsV2::SchemaValidator do
           ],
           'object_triggers' => [
             {
+              'key' => 'trigger_1',
               'object_key' => 'ticket_object',
               'title' => 'Priority Trigger',
               'actions' => [{ 'field' => 'status', 'value' => 'resolved' }],
@@ -153,6 +158,7 @@ describe ZendeskAppsSupport::Validations::CustomObjectsV2::SchemaValidator do
           ],
           'object_triggers' => [
             {
+              'key' => 'trigger_1',
               'object_key' => 'user_object',
               'title' => 'Department Trigger',
               'actions' => [{ 'field' => 'assignee', 'value' => 'manager' }],
@@ -182,6 +188,7 @@ describe ZendeskAppsSupport::Validations::CustomObjectsV2::SchemaValidator do
           ],
           'object_triggers' => [
             {
+              'key' => 'trigger_1',
               'object_key' => 'task_object',
               'title' => 'Mixed Trigger',
               'actions' => [{ 'field' => 'priority', 'value' => 'urgent' }],
