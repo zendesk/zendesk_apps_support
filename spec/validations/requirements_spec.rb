@@ -433,7 +433,7 @@ describe ZendeskAppsSupport::Validations::Requirements do
       context 'with excessive custom_objects_v2 requirements' do
         let(:requirements_string) { excessive_objects_requirements }
 
-        it 'calls validate_custom_objects_v2_requirements and validates with errors' do
+        it 'validates max custom object limits' do
           expect(ZendeskAppsSupport::Validations::Requirements)
             .to receive(:validate_custom_objects_v2_requirements).and_call_original
           expect(errors.first.key).to eq(:excessive_custom_objects_v2_requirements)
