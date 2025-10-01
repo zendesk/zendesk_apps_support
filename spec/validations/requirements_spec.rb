@@ -362,63 +362,94 @@ describe ZendeskAppsSupport::Validations::Requirements do
     end
   end
 
-  context 'custom objects v2 requirements limit validations' do
-    context 'when requirements does not contain custom_objects_v2 key' do
-      let(:requirements_string) do
-        JSON.generate(
-          'targets' => {
-            'my_target' => { 'title' => 'My Target' }
-          }
-        )
-      end
-
-      it 'does not call CustomObjectsV2 module' do
-        expect(ZendeskAppsSupport::Validations::CustomObjectsV2).not_to receive(:call)
-        errors
-      end
+  context 'custom objects v2 requirements validations' do
+    let(:non_cov2_requirements) { JSON.generate('targets' => { 'my_target' => { 'title' => 'My Target' } }) }
+    let(:excessive_objects_requirements) do
+      JSON.generate(
+        'custom_objects_v2' => {
+          'objects' => Array.new(51) do |i|
+            { 'key' => "object_#{i + 1}", 'title' => "Object #{i + 1}",
+              'title_pluralized' => "Objects #{i + 1}", 'included_in_list_view' => true }
+          end,
+          'object_fields' => [], 'object_triggers' => []
+        }
+      )
+    end
+    let(:valid_objects_requirements) do
+      JSON.generate(
+        'custom_objects_v2' => {
+          'objects' => [{
+            'key' => 'object_1', 'title' => 'Object 1', 'title_pluralized' => 'Objects 1',
+            'include_in_list_view' => true
+          }],
+          'object_fields' => [{
+            'key' => 'field_1', 'type' => 'text', 'title' => 'Field 1', 'object_key' => 'object_1'
+          }],
+          'object_triggers' => []
+        }
+      )
     end
 
-    context 'when there are validation errors in custom objects v2' do
-      let(:requirements_string) do
-        JSON.generate(
-          'custom_objects_v2' => {
-            'objects' => Array.new(51) do |i|
-              { 'key' => "object_#{i + 1}", 'title' => "Object #{i + 1}", 'title_pluralized' => "Objects #{i + 1}",
-                'included_in_list_view' => true }
-            end,
-            'object_fields' => [],
-            'object_triggers' => []
-          }
-        )
-      end
+    context 'when validate_custom_objects_v2 is false (default)' do
+      context 'with no custom_objects_v2 requirements' do
+        let(:requirements_string) { non_cov2_requirements }
 
-      it 'delegates validation to CustomObjectsV2 module and returns errors' do
-        expect(errors.first.key).to eq(:excessive_custom_objects_v2_requirements)
-        expect(errors.first.data).to eq(max: 50, count: 51)
-      end
-    end
-
-    context 'when custom objects v2 requirements are valid' do
-      let(:requirements_string) do
-        JSON.generate(
-          'custom_objects_v2' => {
-            'objects' => [
-              { 'key' => 'object_1', 'title' => 'Object 1', 'title_pluralized' => 'Objects 1',
-                'include_in_list_view' => true }
-            ],
-            'object_fields' => [
-              { 'key' => 'field_1', 'type' => 'text', 'title' => 'Field 1', 'object_key' => 'object_1' }
-            ],
-            'object_triggers' => []
-          }
-        )
-      end
-
-      it 'delegates validation to CustomObjectsV2 module and returns no errors' do
-        cov2_errors = errors.select do |error|
-          error.key.to_s.include?('custom_objects_v2') || error.key.to_s.include?('cov2')
+        it 'calls validate_custom_objects_v2_requirements but returns early due to flag' do
+          expect(ZendeskAppsSupport::Validations::Requirements)
+            .to receive(:validate_custom_objects_v2_requirements).and_call_original
+          expect(ZendeskAppsSupport::Validations::CustomObjectsV2).not_to receive(:call)
+          expect(errors).to be_empty
         end
-        expect(cov2_errors).to be_empty
+      end
+
+      context 'with excessive custom_objects_v2 requirements' do
+        let(:requirements_string) { excessive_objects_requirements }
+
+        it 'calls validate_custom_objects_v2_requirements but returns early due to flag' do
+          expect(ZendeskAppsSupport::Validations::Requirements)
+            .to receive(:validate_custom_objects_v2_requirements).and_call_original
+          expect(ZendeskAppsSupport::Validations::CustomObjectsV2).not_to receive(:call)
+          expect(errors).to be_empty
+        end
+      end
+    end
+
+    context 'when validate_custom_objects_v2 is true' do
+      let(:errors) do
+        ZendeskAppsSupport::Validations::Requirements.call(package, validate_custom_objects_v2: true)
+      end
+
+      context 'with no custom_objects_v2 requirements' do
+        let(:requirements_string) { non_cov2_requirements }
+
+        it 'calls validate_custom_objects_v2_requirements but not CustomObjectsV2 module' do
+          expect(ZendeskAppsSupport::Validations::Requirements)
+            .to receive(:validate_custom_objects_v2_requirements).and_call_original
+          expect(ZendeskAppsSupport::Validations::CustomObjectsV2).not_to receive(:call)
+          expect(errors).to be_empty
+        end
+      end
+
+      context 'with excessive custom_objects_v2 requirements' do
+        let(:requirements_string) { excessive_objects_requirements }
+
+        it 'validates max custom object limits' do
+          expect(ZendeskAppsSupport::Validations::Requirements)
+            .to receive(:validate_custom_objects_v2_requirements).and_call_original
+          expect(errors.first.key).to eq(:excessive_custom_objects_v2_requirements)
+          expect(errors.first.data).to eq(max: 50, count: 51)
+        end
+      end
+
+      context 'with valid custom_objects_v2 requirements' do
+        let(:requirements_string) { valid_objects_requirements }
+
+        it 'calls validate_custom_objects_v2_requirements and validates successfully' do
+          expect(ZendeskAppsSupport::Validations::Requirements)
+            .to receive(:validate_custom_objects_v2_requirements).and_call_original
+          expect(ZendeskAppsSupport::Validations::CustomObjectsV2).to receive(:call).and_return([])
+          expect(errors).to be_empty
+        end
       end
     end
   end
