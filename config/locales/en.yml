@@ -49,6 +49,89 @@ en:
             excessive_custom_objects_requirements: The requirements.json file contains
               too many custom objects requirements. The current limit is %{max} requirements.
               This app has %{count} requirements.
+            excessive_custom_objects_v2_requirements: The requirements.json file contains
+              too many custom objects v2 requirements. The current limit is %{max}
+              custom objects per account. This app has %{count} custom objects per
+              account.
+            excessive_custom_objects_v2_fields: The requirements.json file contains
+              too many custom object fields. The current limit is %{max} fields per
+              custom object. This app has %{count} fields for object %{object_key}.
+            excessive_custom_objects_v2_triggers: The requirements.json file contains
+              too many custom object triggers. The current limit is %{max} triggers
+              per custom object. This app has %{count} triggers for object %{object_key}.
+            excessive_custom_objects_v2_trigger_conditions: The requirements.json
+              file contains too many custom object trigger conditions. The current
+              limit is %{max} conditions per trigger. This app has %{count} conditions
+              for trigger %{trigger_title}.
+            excessive_custom_objects_v2_trigger_actions: The requirements.json file
+              contains too many custom object trigger actions. The current limit is
+              %{max} actions per trigger. This app has %{count} actions for trigger
+              %{trigger_title}.
+            excessive_cov2_dropdown_fields_per_object: The requirements.json file
+              contains too many custom object fields of type dropdown. The current
+              limit is %{max} fields per object. This app has %{count} fields of type
+              dropdown for object %{object_key}.
+            excessive_cov2_multiselect_fields_per_object: The requirements.json file
+              contains too many custom object fields of type multiselect. The current
+              limit is %{max} fields per object. This app has %{count} fields of type
+              multiselect for object %{object_key}.
+            excessive_cov2_field_options: The requirements.json file contains too
+              many options for custom object field %{field_key}. The current limit
+              is %{max} options per field. This app has %{count} options for field
+              %{field_key} in object %{object_key}.
+            excessive_cov2_relationship_filter_conditions: The requirements.json file
+              contains too many conditions in relationship filter for custom object
+              field %{field_key}. The current limit is %{max} conditions per field.
+              This app has %{count} conditions for field %{field_key} in object %{object_key}.
+            missing_cov2_object_schema_key: 'The requirements.json file is missing
+              custom object schema key for object %{object_key}. The following key
+              is required: %{missing_key}.'
+            missing_cov2_field_schema_key: 'The requirements.json file is missing
+              custom object field schema key for field %{field_key} in object %{object_key}.
+              The following key is required: %{missing_key}.'
+            missing_cov2_trigger_schema_key: 'The requirements.json file is missing
+              custom object trigger schema key for trigger %{trigger_title} in object
+              %{object_key}. The following key is required: %{missing_key}.'
+            empty_cov2_trigger_conditions: The requirements.json file contains an
+              empty conditions array for custom object trigger %{trigger_title} in
+              object %{object_key}.
+            invalid_cov2_requirements_structure: The requirements.json file contains
+              an invalid custom_objects_v2 structure. \"custom_objects_v2\" requirements
+              must be an object.
+            excessive_cov2_payload_size: The requirements.json file contains a custom
+              objects v2 payload that is too large. The maximum allowed size is 1
+              MB.
+            invalid_cov2_trigger_conditions_structure: The requirements.json file
+              contains an invalid custom object trigger conditions structure. Conditions
+              must be a hash with "all" and "any" arrays for trigger %{trigger_title}.
+            invalid_cov2_trigger_actions_structure: The requirements.json file contains
+              an invalid custom object trigger actions structure. \"actions\" must
+              be an array for trigger %{trigger_title}.
+            empty_cov2_trigger_actions: The requirements.json file contains empty
+              custom object trigger actions. At least one action must be specified
+              for trigger %{trigger_title}.
+            excessive_cov2_selection_fields_per_object: The requirements.json file
+              contains too many custom object fields of type %{field_type}. The current
+              limit is %{max} fields per object. This app has %{count} fields of type
+              %{field_type} for object %{object_key}.
+            invalid_objects_structure_in_cov2_requirements: The requirements.json
+              file contains an invalid objects structure. \"objects\" must be an array.
+            invalid_object_fields_structure_in_cov2_requirements: The requirements.json
+              file contains an invalid object_fields structure. \"object_fields\"
+              must be an array.
+            invalid_object_triggers_structure_in_cov2_requirements: The requirements.json
+              file contains an invalid object_triggers structure. \"object_triggers\"
+              must be an array.
+            empty_cov2_requirements: The requirements.json file contains empty custom
+              objects v2 requirements. You must define valid requirements.
+            invalid_cov2_object_reference_in_fields: The requirements.json file contains
+              an invalid object reference in object_fields. Field \"%{item_identifier}\"
+              references object \"%{object_key}\" which does not exist in the objects
+              array.
+            invalid_cov2_object_reference_in_triggers: The requirements.json file
+              contains an invalid object reference in object_triggers. Trigger \"%{item_identifier}\"
+              references object \"%{object_key}\" which does not exist in the objects
+              array.
             missing_required_fields: 'Missing required fields in requirements.json:
               "%{field}" is required in "%{identifier}"'
             duplicate_requirements:
