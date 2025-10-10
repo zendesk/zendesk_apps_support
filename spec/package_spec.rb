@@ -479,6 +479,41 @@ describe ZendeskAppsSupport::Package do
           .with(package, { validate_custom_objects_v2: true })
       end
     end
+
+    context 'when handling validation options' do
+      before do
+        allow(ZendeskAppsSupport::Validations::Manifest).to receive(:call).and_return([])
+        allow(ZendeskAppsSupport::Validations::Translations).to receive(:call)
+        allow(ZendeskAppsSupport::Validations::Requirements).to receive(:call)
+      end
+
+      it 'uses default values when called with empty options' do
+        package.validate!
+
+        expect(ZendeskAppsSupport::Validations::Manifest).to have_received(:call).with(
+          package,
+          { error_on_password_parameter: false }
+        )
+        expect(ZendeskAppsSupport::Validations::Marketplace).to have_received(:call).with(package)
+        expect(ZendeskAppsSupport::Validations::Translations).to have_received(:call).with(
+          package,
+          { skip_marketplace_translations: false }
+        )
+        expect(ZendeskAppsSupport::Validations::Requirements).to have_received(:call).with(
+          package,
+          { validate_custom_objects_v2: false }
+        )
+      end
+
+      it 'ignores unknown options without raising error' do
+        expect do
+          package.validate!(
+            marketplace: false,
+            unknown: 'ignored'
+          )
+        end.not_to raise_error
+      end
+    end
   end
 
   describe '#commonjs_modules' do

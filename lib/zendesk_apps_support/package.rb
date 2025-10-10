@@ -31,8 +31,12 @@ module ZendeskAppsSupport
       @warnings = []
     end
 
-    def validate(marketplace: true, skip_marketplace_translations: false, error_on_password_parameter: false,
-                 validate_custom_objects_v2: false)
+    def validate(options = {})
+      marketplace = options.fetch(:marketplace, true)
+      skip_marketplace_translations = options.fetch(:skip_marketplace_translations, false)
+      error_on_password_parameter = options.fetch(:error_on_password_parameter, false)
+      validate_custom_objects_v2 = options.fetch(:validate_custom_objects_v2, false)
+
       errors = []
       errors << Validations::Manifest.call(self, error_on_password_parameter: error_on_password_parameter)
 
@@ -62,12 +66,8 @@ module ZendeskAppsSupport
       errors.flatten.compact
     end
 
-    def validate!(marketplace: true, skip_marketplace_translations: false, error_on_password_parameter: false,
-                  validate_custom_objects_v2: false)
-      errors = validate(marketplace: marketplace,
-                        skip_marketplace_translations: skip_marketplace_translations,
-                        error_on_password_parameter: error_on_password_parameter,
-                        validate_custom_objects_v2:)
+    def validate!(opts = {})
+      errors = validate(opts)
       raise errors.first if errors.any?
 
       true
