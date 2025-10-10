@@ -556,7 +556,7 @@ describe ZendeskAppsSupport::Validations::Manifest do
             'access_token_uri' => '4'
           }
         }
-        expect(@package).to have_error(/Please upgrade to our new oauth format/)
+        expect(@package).to have_error(/Missing parameter of type 'oauth'./)
       end
     end
   end

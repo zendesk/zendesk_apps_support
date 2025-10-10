@@ -381,6 +381,10 @@ parts:
       title: "App builder job: missing oauth fields error"
       value: "Missing required oauth fields in manifest: %{missing_keys}"
   - translation:
+      key: "txt.apps.admin.error.app_build.oauth_parameter_required"
+      title: "App builder job: missing oauth parameter"
+      value: "Missing parameter of type 'oauth'. Learn about oauth property in manifest: %{link}"
+  - translation:
       key: "txt.apps.admin.error.app_build.too_many_oauth_parameters"
       title: "App builder job: upload error when there are more than one 'oauth'"
       value: "Too many parameters with type 'oauth': one permitted"
