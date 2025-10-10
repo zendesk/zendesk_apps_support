@@ -479,6 +479,19 @@ describe ZendeskAppsSupport::Package do
           .with(package, { validate_custom_objects_v2: true })
       end
     end
+
+    context 'when called with empty options' do
+      it 'uses default values for validation options' do
+        allow(ZendeskAppsSupport::Validations::Manifest).to receive(:call)
+
+        package.validate
+
+        expect(ZendeskAppsSupport::Validations::Manifest).to have_received(:call).with(
+          package,
+          { error_on_password_parameter: false }
+        )
+      end
+    end
   end
 
   describe '#commonjs_modules' do
