@@ -480,16 +480,39 @@ describe ZendeskAppsSupport::Package do
       end
     end
 
-    context 'when called with empty options' do
-      it 'uses default values for validation options' do
-        allow(ZendeskAppsSupport::Validations::Manifest).to receive(:call)
+    context 'when handling validation options' do
+      before do
+        allow(ZendeskAppsSupport::Validations::Manifest).to receive(:call).and_return([])
+        allow(ZendeskAppsSupport::Validations::Translations).to receive(:call)
+        allow(ZendeskAppsSupport::Validations::Requirements).to receive(:call)
+      end
 
-        package.validate
+      it 'uses default values when called with empty options' do
+        package.validate!
 
         expect(ZendeskAppsSupport::Validations::Manifest).to have_received(:call).with(
           package,
           { error_on_password_parameter: false }
         )
+        expect(ZendeskAppsSupport::Validations::Marketplace).to have_received(:call).with(package)
+        expect(ZendeskAppsSupport::Validations::Translations).to have_received(:call).with(
+          package,
+          { skip_marketplace_translations: false }
+        )
+        expect(ZendeskAppsSupport::Validations::Requirements).to have_received(:call).with(
+          package,
+          { validate_custom_objects_v2: false }
+        )
+      end
+
+      it 'ignores unknown options without raising error' do
+        expect do
+          package.validate!(
+            marketplace: false,
+            completely_unknown: 'ignored',
+            random_junk: { nested: 'data' }
+          )
+        end.not_to raise_error
       end
     end
   end
