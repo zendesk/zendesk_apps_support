@@ -207,10 +207,11 @@ en:
                 for %{product}: %{missing_key}'
               products_do_not_match_manifest_products: Products in manifest (%{manifest_products})
                 do not match products in translations (%{translation_products})
-              password_parameter_deprecated: 'Password parameter type is deprecated and will not
-                be accepted in the future. Use Basic Access Authentication instead. Learn more: %{link}.'
               insecure_token_parameter_in_manifest: 'Make sure to set secure to true
                 when using keys in Settings. Learn more: %{link}'
+              password_parameter_deprecated: 'Password parameter type is deprecated
+                and will not be accepted in the future. Use Basic Access Authentication
+                instead. Learn more: %{link}.'
               default_secure_or_hidden_parameter_in_manifest: Default values for secure
                 or hidden parameters are not stored securely. Be sure to review them
                 and confirm they do not contain sensitive data
