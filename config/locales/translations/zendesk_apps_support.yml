@@ -256,52 +256,52 @@ parts:
       screenshot: "https://drive.google.com/file/d/1peD9NjuFQ6_dW4ia6Cxz-GimTN0rdjMk/view?usp=sharing"
   - translation:
       key: "txt.apps.admin.error.app_build.missing_cov2_trigger_schema_key_v2"
-      title: 'App builder job: requirements file is missing a custom object trigger schema key. These are the required keys: (title, actions, conditions, object_key). The term \"schema key\" typically refers to an identifier or attribute that defines a specific item within a schema and it should be translated. Leave requirements.json as is (do not translate)'
+      title: 'App builder job: requirements file is missing a custom object trigger schema key. These are the required keys: (title, actions, conditions, object_key). The term "schema key" typically refers to an identifier or attribute that defines a specific item within a schema and it should be translated. Leave requirements.json as is (do not translate)'
       value: "The requirements.json file is missing custom object trigger schema key for trigger %{trigger_key} in object %{object_key}. The following key is required: %{missing_key}."
       screenshot: "https://drive.google.com/file/d/1esO2LObXEPGoeEJQSZYy-e2Jaa867vOy/view?usp=sharing"
   - translation:
       key: "txt.apps.admin.error.app_build.empty_cov2_trigger_conditions_v2"
-      title: "App builder job: requirements file contains an empty conditions array for custom object trigger. Leave requirements.json as is (do not translate)"
+      title: 'App builder job: requirements file contains an empty conditions array for custom object trigger. Leave requirements.json as is (do not translate). Do not translate "conditions" as it is part of schema.'
       value: "The requirements.json file contains an empty conditions array for custom object trigger %{trigger_key} in object %{object_key}."
       screenshot: "https://drive.google.com/file/d/1ishzANlbt4PiyxikwXDTTPKy9drlWWlP/view?usp=sharing"
   - translation:
       key: "txt.apps.admin.error.app_build.invalid_cov2_requirements_structure_v2"
-      title: 'App builder job: requirements file contains invalid custom objects v2 structure. An "object" here refers to a programming object (a set of key-value pairs), not a custom object in Zendesk. Leave requirements.json, custom_objects_v2 as is (do not translate)'
+      title: 'App builder job: requirements file contains invalid custom objects v2 structure. An "object" here refers to a programming object (a set of key-value pairs), not a custom object in Zendesk. Leave requirements.json as is (do not translate). Do not translate "custom_objects_v2" as it is part of schema.'
       value: 'The requirements.json file contains an invalid custom_objects_v2 structure. The custom_objects_v2 requirements must be an object.'
       screenshot: "https://drive.google.com/file/d/1hTiBvSHqEXCsoa2YAt1bnGNCs8cXSzlx/view?usp=sharing"
   - translation:
       key: "txt.apps.admin.error.app_build.invalid_cov2_trigger_actions_structure_v2"
-      title: "App builder job: requirements file contains an invalid custom object trigger actions structure. Actions must be an array. 'actions' is part of requirements file. Leave requirements.json and 'actions' as is (do not translate)"
+      title: "App builder job: requirements file contains an invalid custom object trigger actions structure. Actions must be an array. 'actions' is part of requirements file. Leave requirements.json as is (do not translate). Do not translate 'actions' as it is part of schema."
       value: 'The requirements.json file contains an invalid custom object trigger actions structure. The actions field must be an array for trigger %{trigger_key}.'
       screenshot: "https://drive.google.com/file/d/1UeBrY4GlnHDK19zuUE8xUoHnZl9HQv3y/view?usp=sharing"
   - translation:
       key: "txt.apps.admin.error.app_build.empty_cov2_trigger_actions_v2"
-      title: "App builder job: requirements file contains empty custom object trigger actions. At least one action must be specified. Leave requirements.json as is (do not translate)"
+      title: "App builder job: requirements file contains empty custom object trigger actions. At least one action must be specified. Leave requirements.json as is (do not translate). Do not translate 'actions' as it is part of schema."
       value: "The requirements.json file contains empty custom object trigger actions. At least one action must be specified for trigger %{trigger_key}."
       screenshot: "https://drive.google.com/file/d/1MKBwF-OTD18FQPxkjVhwq4GVOCXAgVDs/view?usp=sharing"
   - translation:
       key: "txt.apps.admin.error.app_build.invalid_objects_structure_in_cov2_requirements_v2"
-      title: "App builder job: requirements file contains invalid objects structure for custom objects v2. Objects must be an array. Leave requirements.json and 'objects' as is (do not translate)"
+      title: "App builder job: requirements file contains invalid objects structure for custom objects v2. Objects must be an array. Leave requirements.json as is (do not translate). Do not translate 'objects' as it is part of schema."
       value: "The requirements.json file contains an invalid objects structure. The objects field must be an array."
       screenshot: "https://drive.google.com/file/d/1ywYAYOoeVmjUgZ2yfFl3YdJ-xkrBSgUG/view?usp=sharing"
   - translation:
       key: "txt.apps.admin.error.app_build.invalid_object_fields_structure_in_cov2_requirements_v2"
-      title: "App builder job: requirements file contains invalid object_fields structure for custom objects v2. Object_fields must be an array. Leave requirements.json and 'object_fields' as is (do not translate)"
+      title: "App builder job: requirements file contains invalid object_fields structure for custom objects v2. Object_fields must be an array. Leave requirements.json as is (do not translate). Do not translate 'object_fields' as it is part of schema."
       value: 'The requirements.json file contains an invalid object_fields structure. The object_fields field must be an array.'
       screenshot: "https://drive.google.com/file/d/1TQSnKbBXxLSYFpcgEBGNceLpo5ARMBAa/view?usp=sharing"
   - translation:
       key: "txt.apps.admin.error.app_build.invalid_object_triggers_structure_in_cov2_requirements_v2"
-      title: "App builder job: requirements file contains invalid object_triggers structure for custom objects v2. Object_triggers must be an array. Leave requirements.json and 'object_triggers' as is (do not translate)"
+      title: "App builder job: requirements file contains invalid object_triggers structure for custom objects v2. Object_triggers must be an array. Leave requirements.json as is (do not translate). Do not translate 'object_triggers' as it is part of schema."
       value: 'The requirements.json file contains an invalid object_triggers structure. The object_triggers field must be an array.'
       screenshot: "https://drive.google.com/file/d/19r2xv15OnXtu2-JxU_ioAVMmaP33DiB-/view?usp=sharing"
   - translation:
       key: "txt.apps.admin.error.app_build.invalid_cov2_object_reference_in_fields_v2"
-      title: 'App builder job: requirements file contains an invalid object reference in object_fields for Custom Objects V2. Do not translate "requirements.json", "object_fields", %{item_identifier},  %{object_key}.'
-      value: The requirements.json file contains an invalid object reference in object_fields. Field %{item_identifier} references object %{object_key} which does not exist in the objects array.
+      title: 'App builder job: requirements file contains an invalid object reference in object_fields for Custom Objects V2. Do not translate "requirements.json" %{item_identifier},  %{object_key}. Do not translate "object_fields" as it is part of schema.'
+      value: 'The requirements.json file contains an invalid object reference in object_fields. Field %{item_identifier} references object %{object_key} which does not exist in the objects array.'
       screenshot: "https://drive.google.com/file/d/1yHiq5uUyGmQjLgO72ARAVCgFA1tXFUHT/view?usp=sharing"
   - translation:
       key: "txt.apps.admin.error.app_build.invalid_cov2_object_reference_in_triggers_v2"
-      title: 'App builder job: requirements file contains an invalid object reference in object_triggers for Custom Objects V2. Do not translate "requirements.json", "object_fields", %{item_identifier}, %{object_key}.'
+      title: 'App builder job: requirements file contains an invalid object reference in object_triggers for Custom Objects V2. Do not translate "requirements.json", %{item_identifier}, %{object_key}. Do not translate "object_triggers" as it is part of schema.'
       value: 'The requirements.json file contains an invalid object reference in object_triggers. Trigger %{item_identifier} references object %{object_key} which does not exist in the objects array.'
       screenshot: "https://drive.google.com/file/d/1hwmWbFPd5_XtoY6gpyy7FZ9niHppRe2m/view?usp=sharing"
   - translation:
