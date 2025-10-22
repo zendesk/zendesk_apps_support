@@ -238,6 +238,10 @@ en:
             invalid_url: '%{field} must be a valid URL, got "%{value}".'
             password_parameter_type_deprecated: 'Password parameter type can no longer
               be used. Use Secure settings instead. Learn more: %{link}.'
+            scope_requires_secure_parameter: Scopes can only be defined on secure
+              parameters.
+            scopes_cannot_be_empty: Scopes cannot be empty when defined.
+            invalid_secure_parameter_scopes: 'Invalid secure parameter scopes: %{invalid_scope}.'
         warning:
           app_build:
             deprecated_version: You are targeting a deprecated version of the framework.
