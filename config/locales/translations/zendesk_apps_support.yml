@@ -627,3 +627,15 @@ parts:
       key: "txt.apps.admin.error.app_build.password_parameter_type_deprecated"
       title: "App builder job: Password parameter type is deprecated"
       value: "Password parameter type can no longer be used. Use Secure settings instead. Learn more: %{link}."
+  - translation:
+      key: "txt.apps.admin.error.app_build.scope_requires_secure_parameter"
+      title: "App builder job: scopes can be defined only on secure parameters"
+      value: "Scopes can only be defined on secure parameters."
+  - translation:
+      key: "txt.apps.admin.error.app_build.scopes_cannot_be_empty"
+      title: "App builder job: scopes cannot be empty when defined"
+      value: "Scopes cannot be empty when defined."
+  - translation:
+      key: "txt.apps.admin.error.app_build.invalid_secure_parameter_scopes"
+      title: "App builder job: invalid secure parameter scopes"
+      value: "Invalid secure parameter scopes: %{invalid_scope}."
