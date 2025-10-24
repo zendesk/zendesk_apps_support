@@ -455,18 +455,6 @@ describe ZendeskAppsSupport::Package do
       end
     end
 
-    context 'when error_on_password_parameter is true' do
-      let(:package) { ZendeskAppsSupport::Package.new('spec/fixtures/iframe_only_app') }
-
-      before do
-        allow(ZendeskAppsSupport::Validations::Manifest).to receive(:call)
-        package.validate!(marketplace: true, error_on_password_parameter: true)
-      end
-      it 'validate manifest and passes in the error_on_password_parameter correctly' do
-        expect(ZendeskAppsSupport::Validations::Manifest).to have_received(:call).with(package, {:error_on_password_parameter => true})
-      end
-    end
-
     context 'when validate_custom_objects_v2 is true' do
       let(:package) { ZendeskAppsSupport::Package.new('spec/fixtures/iframe_only_app') }
 
@@ -481,10 +469,17 @@ describe ZendeskAppsSupport::Package do
     end
 
     context 'when handling validation options' do
+      let(:package) { ZendeskAppsSupport::Package.new('spec/fixtures/iframe_only_app') }
+
       before do
         allow(ZendeskAppsSupport::Validations::Manifest).to receive(:call).and_return([])
         allow(ZendeskAppsSupport::Validations::Translations).to receive(:call)
         allow(ZendeskAppsSupport::Validations::Requirements).to receive(:call)
+      end
+
+      it 'passes manifest validation options correctly' do
+        package.validate!(marketplace: true, error_on_password_parameter: true, validate_scopes_for_secure_parameter: true)
+        expect(ZendeskAppsSupport::Validations::Manifest).to have_received(:call).with(package, {:error_on_password_parameter => true, :validate_scopes_for_secure_parameter => true})
       end
 
       it 'uses default values when called with empty options' do
@@ -492,7 +487,7 @@ describe ZendeskAppsSupport::Package do
 
         expect(ZendeskAppsSupport::Validations::Manifest).to have_received(:call).with(
           package,
-          { error_on_password_parameter: false }
+          { error_on_password_parameter: false, validate_scopes_for_secure_parameter: false }
         )
         expect(ZendeskAppsSupport::Validations::Marketplace).to have_received(:call).with(package)
         expect(ZendeskAppsSupport::Validations::Translations).to have_received(:call).with(
