@@ -35,5 +35,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'parallel', '1.12.1'
   s.add_development_dependency 'rake'
 
-  s.files = Dir.glob('{lib,config}/**/*') + %w[README.md LICENSE]
+  s.files = Dir['lib/**/*', 'config/locales/*.yml', 'README.md', 'LICENSE']
 end

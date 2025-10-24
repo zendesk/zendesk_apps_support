@@ -132,6 +132,46 @@ en:
               contains an invalid object reference in object_triggers. Trigger \"%{item_identifier}\"
               references object \"%{object_key}\" which does not exist in the objects
               array.
+            excessive_custom_objects_v2_trigger_conditions_v2: The requirements.json
+              file contains too many custom object trigger conditions. The current
+              limit is %{max} conditions per trigger. This app has %{count} conditions
+              for trigger %{trigger_key}.
+            excessive_custom_objects_v2_trigger_actions_v2: The requirements.json
+              file contains too many custom object trigger actions. The current limit
+              is %{max} actions per trigger. This app has %{count} actions for trigger
+              %{trigger_key}.
+            missing_cov2_trigger_schema_key_v2: 'The requirements.json file is missing
+              custom object trigger schema key for trigger %{trigger_key} in object
+              %{object_key}. The following key is required: %{missing_key}.'
+            empty_cov2_trigger_conditions_v2: The requirements.json file contains
+              an empty conditions array for custom object trigger %{trigger_key} in
+              object %{object_key}.
+            invalid_cov2_requirements_structure_v2: The requirements.json file contains
+              an invalid custom_objects_v2 structure. The custom_objects_v2 requirements
+              must be an object.
+            invalid_cov2_trigger_actions_structure_v2: The requirements.json file
+              contains an invalid custom object trigger actions structure. The actions
+              field must be an array for trigger %{trigger_key}.
+            empty_cov2_trigger_actions_v2: The requirements.json file contains empty
+              custom object trigger actions. At least one action must be specified
+              for trigger %{trigger_key}.
+            invalid_objects_structure_in_cov2_requirements_v2: The requirements.json
+              file contains an invalid objects structure. The objects field must be
+              an array.
+            invalid_object_fields_structure_in_cov2_requirements_v2: The requirements.json
+              file contains an invalid object_fields structure. The object_fields
+              field must be an array.
+            invalid_object_triggers_structure_in_cov2_requirements_v2: The requirements.json
+              file contains an invalid object_triggers structure. The object_triggers
+              field must be an array.
+            invalid_cov2_object_reference_in_fields_v2: The requirements.json file
+              contains an invalid object reference in object_fields. Field %{item_identifier}
+              references object %{object_key} which does not exist in the objects
+              array.
+            invalid_cov2_object_reference_in_triggers_v2: The requirements.json file
+              contains an invalid object reference in object_triggers. Trigger %{item_identifier}
+              references object %{object_key} which does not exist in the objects
+              array.
             missing_required_fields: 'Missing required fields in requirements.json:
               "%{field}" is required in "%{identifier}"'
             duplicate_requirements:
