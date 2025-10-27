@@ -78,7 +78,7 @@ module ZendeskAppsSupport
           end
 
           def validate_conditions_schema(conditions, object_key, trigger_key)
-            error_data = { trigger_key: trigger_key, object_key: object_key }
+            error_data = { trigger_key:, object_key: }
 
             unless valid_conditions_structure?(conditions)
               return [ValidationError.new(:invalid_cov2_trigger_conditions_structure_v2, **error_data)]
@@ -92,7 +92,7 @@ module ZendeskAppsSupport
           end
 
           def validate_actions_schema(actions, object_key, trigger_key)
-            error_data = { trigger_key: trigger_key, object_key: object_key }
+            error_data = { trigger_key:, object_key: }
 
             unless actions.is_a?(Array)
               return [ValidationError.new(:invalid_cov2_trigger_actions_structure_v2, **error_data)]
