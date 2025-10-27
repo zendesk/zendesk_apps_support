@@ -62,45 +62,45 @@ module ZendeskAppsSupport
           def validate_trigger_schema(trigger)
             required_keys = %w[key object_key title actions conditions]
             missing_keys = required_keys - trigger.keys
-            trigger_title = safe_value(trigger[TITLE])
+            trigger_key = safe_value(trigger[KEY])
             object_key = safe_value(trigger[OBJECT_KEY])
 
             errors = missing_keys.map do |missing_key|
-              ValidationError.new(:missing_cov2_trigger_schema_key,
+              ValidationError.new(:missing_cov2_trigger_schema_key_v2,
                                   missing_key: missing_key,
-                                  trigger_title: trigger_title,
+                                  trigger_key: trigger_key,
                                   object_key: object_key)
             end
 
-            errors.concat(validate_conditions_schema(trigger[CONDITIONS], object_key, trigger_title))
-            errors.concat(validate_actions_schema(trigger[ACTIONS], object_key, trigger_title))
+            errors.concat(validate_conditions_schema(trigger[CONDITIONS], object_key, trigger_key))
+            errors.concat(validate_actions_schema(trigger[ACTIONS], object_key, trigger_key))
             errors
           end
 
-          def validate_conditions_schema(conditions, object_key, title)
-            error_data = { trigger_title: title, object_key: object_key }
+          def validate_conditions_schema(conditions, object_key, trigger_key)
+            error_data = { trigger_key: trigger_key, object_key: object_key }
 
             unless valid_conditions_structure?(conditions)
-              return [ValidationError.new(:invalid_cov2_trigger_conditions_structure, **error_data)]
+              return [ValidationError.new(:invalid_cov2_trigger_conditions_structure_v2, **error_data)]
             end
 
             if count_conditions(conditions).zero?
-              return [ValidationError.new(:empty_cov2_trigger_conditions, **error_data)]
+              return [ValidationError.new(:empty_cov2_trigger_conditions_v2, **error_data)]
             end
 
             []
           end
 
-          def validate_actions_schema(actions, object_key, title)
-            error_data = { trigger_title: title, object_key: object_key }
+          def validate_actions_schema(actions, object_key, trigger_key)
+            error_data = { trigger_key: trigger_key, object_key: object_key }
 
             unless actions.is_a?(Array)
-              return [ValidationError.new(:invalid_cov2_trigger_actions_structure, **error_data)]
+              return [ValidationError.new(:invalid_cov2_trigger_actions_structure_v2, **error_data)]
             end
 
             return [] unless actions.empty?
 
-            [ValidationError.new(:empty_cov2_trigger_actions, **error_data)]
+            [ValidationError.new(:empty_cov2_trigger_actions_v2, **error_data)]
           end
 
           def valid_conditions_structure?(conditions)

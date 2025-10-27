@@ -79,7 +79,7 @@ describe ZendeskAppsSupport::Validations::CustomObjectsV2::LimitsValidator do
         description: 'there are more than 20 triggers per object'
       },
       {
-        error: :excessive_custom_objects_v2_trigger_conditions,
+        error: :excessive_custom_objects_v2_trigger_conditions_v2,
         requirements: {
           'objects' => [{ 'key' => 'object_1', 'title' => 'Object 1' }],
           'object_fields' => [],
@@ -96,7 +96,7 @@ describe ZendeskAppsSupport::Validations::CustomObjectsV2::LimitsValidator do
         description: 'there are more than 50 conditions per trigger'
       },
       {
-        error: :excessive_custom_objects_v2_trigger_actions,
+        error: :excessive_custom_objects_v2_trigger_actions_v2,
         requirements: {
           'objects' => [{ 'key' => 'object_1', 'title' => 'Object 1' }],
           'object_fields' => [],
