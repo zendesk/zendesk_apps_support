@@ -192,6 +192,7 @@ parts:
       title: 'App builder job: requirements file contains invalid custom object trigger conditions structure. Conditions must be an object (a set of key-value pairs, like { "all": [], "any": [] } in JSON) with "all" and "any" arrays as keys. Leave requirements.json, "all" and "any" as is (do not translate)'
       value: 'The requirements.json file contains an invalid custom object trigger conditions structure. Conditions must be a hash with "all" and "any" arrays for trigger %{trigger_title}.'
       screenshot: "https://drive.google.com/file/d/1c4Hgk8OXscco_cwOfCX5r8Ub3k_-umrr/view?usp=sharing"
+      obsolete: "2025-12-31"
   - translation:
       key: "txt.apps.admin.error.app_build.invalid_cov2_trigger_actions_structure"
       title: "App builder job: requirements file contains an invalid custom object trigger actions structure. Actions must be an array. 'actions' is part of requirements file. Leave requirements.json and 'actions' as is (do not translate)"
@@ -304,6 +305,11 @@ parts:
       title: 'App builder job: requirements file contains an invalid object reference in object_triggers for Custom Objects V2. Do not translate "requirements.json", %{item_identifier}, %{object_key}. Do not translate "object_triggers" as it is part of schema.'
       value: 'The requirements.json file contains an invalid object reference in object_triggers. Trigger %{item_identifier} references object %{object_key} which does not exist in the objects array.'
       screenshot: "https://drive.google.com/file/d/1hwmWbFPd5_XtoY6gpyy7FZ9niHppRe2m/view?usp=sharing"
+  - translation:
+      key: "txt.apps.admin.error.app_build.invalid_cov2_trigger_conditions_structure_v2"
+      title: 'App builder job: requirements file contains invalid custom object trigger conditions structure. Conditions must be an object (a set of key-value pairs, like { "all": [], "any": [] } in JSON) with "all" and "any" arrays as keys. Do not translate "requirements.json". Do not translate "all" and "any" as it is part of schema.'
+      value: 'The requirements.json file contains an invalid custom object trigger conditions structure. Conditions must be a hash with all and any arrays for trigger %{trigger_key}.'
+      screenshot: "https://drive.google.com/file/d/1q9S42EyNDE1GPk8A32LT0n2ZQiBpuCEW/view?usp=sharing"
   - translation:
       key: "txt.apps.admin.error.app_build.missing_required_fields"
       title: "App builder job: required key missing in requirements, e.g. \"title\" is required in \"my_custom_email_target\""
