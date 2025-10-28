@@ -51,14 +51,14 @@ module ZendeskAppsSupport
           end
 
           [
-            validate_collection_is_array(objects, :invalid_objects_structure_in_cov2_requirements),
-            validate_collection_is_array(object_fields, :invalid_object_fields_structure_in_cov2_requirements),
-            validate_collection_is_array(object_triggers, :invalid_object_triggers_structure_in_cov2_requirements)
+            validate_collection_is_array(objects, :invalid_objects_structure_in_cov2_requirements_v2),
+            validate_collection_is_array(object_fields, :invalid_object_fields_structure_in_cov2_requirements_v2),
+            validate_collection_is_array(object_triggers, :invalid_object_triggers_structure_in_cov2_requirements_v2)
           ].flatten
         end
 
         def validate_structural_requirements(requirements)
-          return [ValidationError.new(:invalid_cov2_requirements_structure)] unless requirements.is_a?(Hash)
+          return [ValidationError.new(:invalid_cov2_requirements_structure_v2)] unless requirements.is_a?(Hash)
           return [ValidationError.new(:empty_cov2_requirements)] if requirements.empty?
 
           []

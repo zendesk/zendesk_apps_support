@@ -6,12 +6,12 @@ describe ZendeskAppsSupport::Validations::CustomObjectsV2 do
   describe '.call' do
     [
       {
-        error: :invalid_cov2_requirements_structure,
+        error: :invalid_cov2_requirements_structure_v2,
         requirements: nil,
         description: 'requirements is nil'
       },
       {
-        error: :invalid_cov2_requirements_structure,
+        error: :invalid_cov2_requirements_structure_v2,
         requirements: [],
         description: 'requirements is an array'
       },
@@ -30,7 +30,7 @@ describe ZendeskAppsSupport::Validations::CustomObjectsV2 do
         description: 'all cov2 arrays are empty'
       },
       {
-        error: :invalid_objects_structure_in_cov2_requirements,
+        error: :invalid_objects_structure_in_cov2_requirements_v2,
         requirements: {
           'objects' => {},
           'object_fields' => [{ 'key' => 'field_1', 'type' => 'text', 'title' => 'Field 1',
@@ -41,7 +41,7 @@ describe ZendeskAppsSupport::Validations::CustomObjectsV2 do
         description: 'objects is not an array'
       },
       {
-        error: :invalid_object_fields_structure_in_cov2_requirements,
+        error: :invalid_object_fields_structure_in_cov2_requirements_v2,
         requirements: {
           'objects' => [{ 'key' => 'object_1', 'title' => 'Object 1', 'title_pluralized' => 'Objects 1',
                           'include_in_list_view' => true }],
@@ -52,7 +52,7 @@ describe ZendeskAppsSupport::Validations::CustomObjectsV2 do
         description: 'object_fields is not an array'
       },
       {
-        error: :invalid_object_triggers_structure_in_cov2_requirements,
+        error: :invalid_object_triggers_structure_in_cov2_requirements_v2,
         requirements: {
           'objects' => [{ 'key' => 'object_1', 'title' => 'Object 1', 'title_pluralized' => 'Objects 1',
                           'include_in_list_view' => true }],
@@ -79,7 +79,7 @@ describe ZendeskAppsSupport::Validations::CustomObjectsV2 do
         description: 'payload exceeds size limit'
       },
       {
-        error: :invalid_cov2_object_reference_in_triggers,
+        error: :invalid_cov2_object_reference_in_triggers_v2,
         requirements: {
           'objects' => [
             { 'key' => 'object_1', 'title' => 'Object 1', 'title_pluralized' => 'Objects 1',
@@ -95,7 +95,7 @@ describe ZendeskAppsSupport::Validations::CustomObjectsV2 do
         description: 'object_trigger references non-existent object'
       },
       {
-        error: :invalid_cov2_object_reference_in_fields,
+        error: :invalid_cov2_object_reference_in_fields_v2,
         requirements: {
           'objects' => [
             { 'key' => 'object_1', 'title' => 'Object 1', 'title_pluralized' => 'Objects 1',

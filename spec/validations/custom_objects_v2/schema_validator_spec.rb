@@ -25,7 +25,7 @@ describe ZendeskAppsSupport::Validations::CustomObjectsV2::SchemaValidator do
         description: 'fields is missing required key'
       },
       {
-        error: :missing_cov2_trigger_schema_key,
+        error: :missing_cov2_trigger_schema_key_v2,
         requirements: {
           'objects' => [{ 'key' => 'object_1', 'title' => 'Object 1', 'title_pluralized' => 'Objects 1',
                           'include_in_list_view' => true }],
@@ -35,7 +35,7 @@ describe ZendeskAppsSupport::Validations::CustomObjectsV2::SchemaValidator do
         description: 'triggers is missing required key'
       },
       {
-        error: :invalid_cov2_trigger_conditions_structure,
+        error: :invalid_cov2_trigger_conditions_structure_v2,
         requirements: {
           'objects' => [{ 'key' => 'object_1', 'title' => 'Object 1', 'title_pluralized' => 'Objects 1',
                           'include_in_list_view' => true }],
@@ -51,7 +51,7 @@ describe ZendeskAppsSupport::Validations::CustomObjectsV2::SchemaValidator do
         description: 'triggers has invalid conditions structure'
       },
       {
-        error: :empty_cov2_trigger_conditions,
+        error: :empty_cov2_trigger_conditions_v2,
         requirements: {
           'objects' => [{ 'key' => 'object_1', 'title' => 'Object 1', 'title_pluralized' => 'Objects 1',
                           'include_in_list_view' => true }],
@@ -67,7 +67,7 @@ describe ZendeskAppsSupport::Validations::CustomObjectsV2::SchemaValidator do
         description: 'triggers has empty conditions'
       },
       {
-        error: :invalid_cov2_trigger_actions_structure,
+        error: :invalid_cov2_trigger_actions_structure_v2,
         requirements: {
           'objects' => [{ 'key' => 'object_1', 'title' => 'Object 1', 'title_pluralized' => 'Objects 1',
                           'include_in_list_view' => true }],
@@ -83,7 +83,7 @@ describe ZendeskAppsSupport::Validations::CustomObjectsV2::SchemaValidator do
         description: 'triggers has invalid actions structure'
       },
       {
-        error: :empty_cov2_trigger_actions,
+        error: :empty_cov2_trigger_actions_v2,
         requirements: {
           'objects' => [{ 'key' => 'object_1', 'title' => 'Object 1', 'title_pluralized' => 'Objects 1',
                           'include_in_list_view' => true }],

@@ -140,10 +140,10 @@ module ZendeskAppsSupport
 
             return [] unless total_conditions > MAX_CONDITIONS_PER_TRIGGER
 
-            [ValidationError.new(:excessive_custom_objects_v2_trigger_conditions,
+            [ValidationError.new(:excessive_custom_objects_v2_trigger_conditions_v2,
                                  max: MAX_CONDITIONS_PER_TRIGGER,
                                  count: total_conditions,
-                                 trigger_title: trigger[TITLE])]
+                                 trigger_key: trigger[KEY])]
           end
 
           def validate_triggers_actions_limit(object_triggers)
@@ -153,10 +153,10 @@ module ZendeskAppsSupport
               actions = trigger[ACTIONS]
               next if actions.size <= MAX_ACTIONS_PER_TRIGGER
 
-              ValidationError.new(:excessive_custom_objects_v2_trigger_actions,
+              ValidationError.new(:excessive_custom_objects_v2_trigger_actions_v2,
                                   max: MAX_ACTIONS_PER_TRIGGER,
                                   count: actions.size,
-                                  trigger_title: trigger[TITLE])
+                                  trigger_key: trigger[KEY])
             end
           end
 
