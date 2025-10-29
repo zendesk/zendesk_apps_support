@@ -281,6 +281,11 @@ en:
             invalid_url: '%{field} must be a valid URL, got "%{value}".'
             password_parameter_type_deprecated: 'Password parameter type can no longer
               be used. Use Secure settings instead. Learn more: %{link}.'
+            field_requires_secure_parameter: "%{field} cannot be defined in a non-secure
+              parameter."
+            field_cannot_be_empty: "%{field} cannot be empty."
+            field_contains_invalid_values: "%{field} contains invalid values: %{values}."
+            field_contains_invalid_keys: "%{field} contains invalid keys: %{keys}."
         warning:
           app_build:
             deprecated_version: You are targeting a deprecated version of the framework.
