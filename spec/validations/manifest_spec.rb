@@ -7,11 +7,11 @@ describe ZendeskAppsSupport::Validations::Manifest do
   def default_required_params(overrides = {})
     {
       'author' => 'author',
-      'defaultLocale' => 'default ocale',
+      'defaultLocale' => 'en',
       'frameworkVersion' => '2.0',
       'location' => {
         'support' => {
-          'ticket_sidebar' => 'url'
+          'ticket_sidebar' => 'https://example.com/app'
         }
       }
     }.merge!(overrides)
@@ -65,6 +65,8 @@ describe ZendeskAppsSupport::Validations::Manifest do
     allow(@package).to receive(:requirements_only) { false }
     allow(@package).to receive(:requirements_only=) { nil }
     allow(@package).to receive(:manifest) { manifest }
+    translation_files = double('AppFile', relative_path: 'translations/en.json')
+    allow(@package).to receive_messages(translation_files: [translation_files])
   end
 
   after do
@@ -123,16 +125,12 @@ describe ZendeskAppsSupport::Validations::Manifest do
 
   it 'should have an error when the translation file is missing for the defaultLocale' do
     @manifest_hash = { 'defaultLocale' => 'pt' }
-    translation_files = double('AppFile', relative_path: 'translations/en.json')
-    allow(@package).to receive_messages(translation_files: [translation_files])
 
     expect(@package).to have_error(/Missing translation file/)
   end
 
   it 'should not error when using {{setting.}}' do
     package = create_package('defaultLocale' => 'en')
-    translation_files = double('AppFile', relative_path: 'translations/en.json')
-    allow(@package).to receive_messages(translation_files: [translation_files])
     allow(package.manifest.location_options.first).to receive(:url) { 'https://zen.{{setting.test}}.com/apps' }
 
     expect(package).not_to have_error
@@ -562,11 +560,6 @@ describe ZendeskAppsSupport::Validations::Manifest do
   end
 
   context 'with invalid parameters' do
-    before do
-      allow(ZendeskAppsSupport::Validations::Manifest).to receive(:default_locale_error)
-      allow(ZendeskAppsSupport::Validations::Manifest).to receive(:invalid_location_error)
-      allow(ZendeskAppsSupport::Validations::Manifest).to receive(:invalid_version_error)
-    end
 
     it 'has an error when the app parameters are not an array' do
       parameter_hash = {
@@ -904,12 +897,6 @@ describe ZendeskAppsSupport::Validations::Manifest do
       context 'when a parameter has scopes and is secure' do
         it 'should not have an error for valid scope values' do
           @manifest_hash = {
-            'defaultLocale' => 'en',
-            'location' => {
-              'support' => {
-                'ticket_sidebar' => 'https://example.com/app'
-              }
-            },
             'parameters' => [
               {
                 'name' => 'api_token',
@@ -920,8 +907,6 @@ describe ZendeskAppsSupport::Validations::Manifest do
             ]
           }
           package = create_package(@manifest_hash)
-          translation_files = double('AppFile', relative_path: 'translations/en.json')
-          allow(package).to receive_messages(translation_files: [translation_files])
           expect(package).not_to have_error
         end
 
@@ -971,12 +956,6 @@ describe ZendeskAppsSupport::Validations::Manifest do
       context 'when a parameter has no scopes' do
         it 'should not have any scope-related errors' do
           @manifest_hash = {
-            'defaultLocale' => 'en',
-            'location' => {
-              'support' => {
-                'ticket_sidebar' => 'https://example.com/app'
-              }
-            },
             'parameters' => [
               {
                 'name' => 'api_token',
@@ -986,8 +965,6 @@ describe ZendeskAppsSupport::Validations::Manifest do
             ]
           }
           package = create_package(@manifest_hash)
-          translation_files = double('AppFile', relative_path: 'translations/en.json')
-          allow(package).to receive_messages(translation_files: [translation_files])
           expect(package).not_to have_error
         end
       end
