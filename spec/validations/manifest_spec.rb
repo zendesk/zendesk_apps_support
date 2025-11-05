@@ -7,11 +7,11 @@ describe ZendeskAppsSupport::Validations::Manifest do
   def default_required_params(overrides = {})
     {
       'author' => 'author',
-      'defaultLocale' => 'default ocale',
+      'defaultLocale' => 'en',
       'frameworkVersion' => '2.0',
       'location' => {
         'support' => {
-          'ticket_sidebar' => 'url'
+          'ticket_sidebar' => 'https://example.com/app'
         }
       }
     }.merge!(overrides)
@@ -24,7 +24,7 @@ describe ZendeskAppsSupport::Validations::Manifest do
 
   RSpec::Matchers.define :have_error do |error|
     match do |package|
-      errors = ZendeskAppsSupport::Validations::Manifest.call(package)
+      errors = ZendeskAppsSupport::Validations::Manifest.call(package, validate_scopes_for_secure_parameter: true)
       errors.map!(&:to_s) unless error.is_a? Symbol
       @actual = errors.compact
 
@@ -65,6 +65,8 @@ describe ZendeskAppsSupport::Validations::Manifest do
     allow(@package).to receive(:requirements_only) { false }
     allow(@package).to receive(:requirements_only=) { nil }
     allow(@package).to receive(:manifest) { manifest }
+    translation_files = double('AppFile', relative_path: 'translations/en.json')
+    allow(@package).to receive_messages(translation_files: [translation_files])
   end
 
   after do
@@ -123,16 +125,12 @@ describe ZendeskAppsSupport::Validations::Manifest do
 
   it 'should have an error when the translation file is missing for the defaultLocale' do
     @manifest_hash = { 'defaultLocale' => 'pt' }
-    translation_files = double('AppFile', relative_path: 'translations/en.json')
-    allow(@package).to receive_messages(translation_files: [translation_files])
 
     expect(@package).to have_error(/Missing translation file/)
   end
 
   it 'should not error when using {{setting.}}' do
     package = create_package('defaultLocale' => 'en')
-    translation_files = double('AppFile', relative_path: 'translations/en.json')
-    allow(@package).to receive_messages(translation_files: [translation_files])
     allow(package.manifest.location_options.first).to receive(:url) { 'https://zen.{{setting.test}}.com/apps' }
 
     expect(package).not_to have_error
@@ -562,11 +560,6 @@ describe ZendeskAppsSupport::Validations::Manifest do
   end
 
   context 'with invalid parameters' do
-    before do
-      allow(ZendeskAppsSupport::Validations::Manifest).to receive(:default_locale_error)
-      allow(ZendeskAppsSupport::Validations::Manifest).to receive(:invalid_location_error)
-      allow(ZendeskAppsSupport::Validations::Manifest).to receive(:invalid_version_error)
-    end
 
     it 'has an error when the app parameters are not an array' do
       parameter_hash = {
@@ -861,6 +854,119 @@ describe ZendeskAppsSupport::Validations::Manifest do
 
         expect(errors.map(&:to_s).join()).to include(password_parameter_error_message)
         expect(package.warnings.join()).not_to include(password_parameter_warning_message)
+      end
+    end
+  end
+
+  context 'scope parameter validations' do
+    context 'when validate_scopes_for_secure_parameter is false' do
+      it 'should have an invalid_keys error when scopes key is present' do
+        @manifest_hash = {
+          'parameters' => [
+            {
+              'name' => 'api_token',
+              'type' => 'text',
+              'secure' => true,
+              'scopes' => ['header']
+            }
+          ]
+        }
+        package = create_package(@manifest_hash)
+        errors = ZendeskAppsSupport::Validations::Manifest.call(package, validate_scopes_for_secure_parameter: false)
+        expect(errors.map(&:to_s)).to include('parameters[name="api_token"] contains invalid keys: scopes.')
+      end
+    end
+
+    context 'when validate_scopes_for_secure_parameter is true' do
+      context 'when a parameter has scopes but is not secure' do
+        it 'should have an error requiring secure parameter for scopes' do
+          @manifest_hash = {
+            'parameters' => [
+              {
+                'name' => 'api_token',
+                'type' => 'text',
+                'secure' => false,
+                'scopes' => ['header']
+              }
+            ]
+          }
+          expect(create_package(@manifest_hash)).to have_error('parameters[name="api_token"].scopes cannot be defined in a non-secure parameter.')
+        end
+      end
+
+      context 'when a parameter has scopes and is secure' do
+        it 'should not have an error for valid scope values' do
+          @manifest_hash = {
+            'parameters' => [
+              {
+                'name' => 'api_token',
+                'type' => 'text',
+                'secure' => true,
+                'scopes' => %w[header body]
+              }
+            ]
+          }
+          package = create_package(@manifest_hash)
+          expect(package).not_to have_error
+        end
+
+        it 'should have an error for invalid scope values with all invalid scopes in the error' do
+          @manifest_hash = {
+            'parameters' => [
+              {
+                'name' => 'api_token',
+                'type' => 'text',
+                'secure' => true,
+                'scopes' => %w[invalid_scope1 header invalid_scope2 body invalid_scope3]
+              }
+            ]
+          }
+          expect(create_package(@manifest_hash)).to have_error('parameters[name="api_token"].scopes contains invalid values: invalid_scope1, invalid_scope2, invalid_scope3.')
+        end
+
+        it 'should have an error when scopes are empty' do
+          @manifest_hash = {
+            'parameters' => [
+              {
+                'name' => 'api_token',
+                'type' => 'text',
+                'secure' => true,
+                'scopes' => []
+              }
+            ]
+          }
+          expect(create_package(@manifest_hash)).to have_error('parameters[name="api_token"].scopes cannot be empty.')
+        end
+
+        it 'should have an error when scopes is not an array' do
+          @manifest_hash = {
+            'parameters' => [
+              {
+                'name' => 'api_token',
+                'type' => 'text',
+                'secure' => true,
+                'scopes' => 'header'
+              }
+            ]
+          }
+          expect(create_package(@manifest_hash)).to have_error('The manifest field parameters[name="api_token"].scopes needs to be an array, but it was String')
+        end
+      end
+
+      context 'when a parameter has no scopes' do
+        it 'should not have any scope-related errors' do
+          @manifest_hash = {
+            'parameters' => [
+              {
+                'name' => 'api_token',
+                'type' => 'text',
+                'secure' => true
+              }
+            ]
+          }
+          package = create_package(@manifest_hash)
+          expect(package).not_to have_error
+        end
       end
     end
   end

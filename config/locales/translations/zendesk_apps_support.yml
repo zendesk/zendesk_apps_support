@@ -633,3 +633,19 @@ parts:
       key: "txt.apps.admin.error.app_build.password_parameter_type_deprecated"
       title: "App builder job: Password parameter type is deprecated"
       value: "Password parameter type can no longer be used. Use Secure settings instead. Learn more: %{link}."
+  - translation:
+      key: "txt.apps.admin.error.app_build.field_requires_secure_parameter"
+      title: "App builder job: Error when parameter field requires secure setting set to true. Placeholder %{field} shows parameter field along with parameter name like \"parameter[name='param'].scopes\" found in the supplied manifest file."
+      value: "%{field} cannot be defined in a non-secure parameter."
+  - translation:
+      key: "txt.apps.admin.error.app_build.field_cannot_be_empty"
+      title: "App builder job: field cannot be empty. %{field} will be replaced with empty fields such as \"name\", \"author\" \"parameter[name='param'].scopes\" etc in the supplied manifest file."
+      value: "%{field} cannot be empty."
+  - translation:
+      key: "txt.apps.admin.error.app_build.field_contains_invalid_values"
+      title: "App builder job: Error for invalid field values. Placeholder %{field} shows parameter fields like \"parameter[name='param'].scopes\" in the supplied manifest file, %{values} shows the invalid values in the user input corresponding to those fields."
+      value: "%{field} contains invalid values: %{values}."
+  - translation:
+      key: "txt.apps.admin.error.app_build.field_contains_invalid_keys"
+      title: "App builder job: Error for invalid field keys. Placeholder %{field} shows parameter fields like \"parameter[name='param'].scopes\" provided in the supplied manifest file, %{keys} shows the invalid keys found within the field."
+      value: "%{field} contains invalid keys: %{keys}."
