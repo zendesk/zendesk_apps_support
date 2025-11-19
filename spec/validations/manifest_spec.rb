@@ -3,6 +3,16 @@
 require 'spec_helper'
 require 'tmpdir'
 
+ALLOWED_SECURE_SETTING_SCOPES = %w[
+  header
+  body
+  url
+  jwt_secret_key
+  jwt_claim
+  basic_auth_username
+  basic_auth_password
+].freeze
+
 describe ZendeskAppsSupport::Validations::Manifest do
   def default_required_params(overrides = {})
     {
@@ -987,8 +997,8 @@ describe ZendeskAppsSupport::Validations::Manifest do
     # This test catches any unintended modifications to scopes's values or size.
     context 'when scopes are modified in the constant declaration' do
       it 'it should have the correct immutable constant array value' do
-        expect(ZendeskAppsSupport::Validations::Manifest::SECURE_PARAM_SCOPES).to match_array(%w[header body url
-                                                                                                  jwt_secret_key jwt_claim basic_auth_username basic_auth_password])
+        expect(ZendeskAppsSupport::Validations::Manifest::SECURE_PARAM_SCOPES)
+          .to match_array(ALLOWED_SECURE_SETTING_SCOPES)
       end
     end
   end
