@@ -996,7 +996,7 @@ describe ZendeskAppsSupport::Validations::Manifest do
 
     # This test catches any unintended modifications to scopes's values or size.
     context 'when scopes are modified in the constant declaration' do
-      it 'it should have the correct immutable constant array value' do
+      it 'should have the correct immutable constant array value' do
         expect(ZendeskAppsSupport::Validations::Manifest::SECURE_PARAM_SCOPES)
           .to match_array(ALLOWED_SECURE_SETTING_SCOPES)
       end
