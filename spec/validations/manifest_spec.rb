@@ -970,4 +970,26 @@ describe ZendeskAppsSupport::Validations::Manifest do
       end
     end
   end
+
+  context 'immutability and integrity of allowed scopes' do
+    context 'runtime modification of scopes' do
+      it 'scopes list should be frozen' do
+        expect(ZendeskAppsSupport::Validations::Manifest::SECURE_PARAM_SCOPES).to be_frozen
+      end
+
+      it 'should raise FrozenError' do
+        expect do
+          ZendeskAppsSupport::Validations::Manifest::SECURE_PARAM_SCOPES << 'new_scope'
+        end.to raise_error(FrozenError)
+      end
+    end
+
+    # This test catches any unintended modifications to scopes's values or size.
+    context 'when scopes are modified in the constant declaration' do
+      it 'it should have the correct immutable constant array value' do
+        expect(ZendeskAppsSupport::Validations::Manifest::SECURE_PARAM_SCOPES).to match_array(%w[header body url
+                                                                                                  jwt_secret_key jwt_claim basic_auth_username basic_auth_password])
+      end
+    end
+  end
 end
