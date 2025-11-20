@@ -11,7 +11,7 @@ module ZendeskAppsSupport
       OAUTH_REQUIRED_FIELDS = %w[client_id client_secret authorize_uri access_token_uri].freeze
       PARAMETER_TYPES = ZendeskAppsSupport::Manifest::Parameter::TYPES
       OAUTH_MANIFEST_LINK = 'https://developer.zendesk.com/apps/docs/developer-guide/manifest#oauth'
-      SECURE_PARAM_SCOPES = %w[header body url_host url_path jwt_secret_key jwt_claim basic_auth_username basic_auth_password].freeze
+      SECURE_PARAM_SCOPES = %w[header body url jwt_secret_key jwt_claim basic_auth_username basic_auth_password].freeze
 
       class << self
         def call(package, error_on_password_parameter: false, validate_scopes_for_secure_parameter: false)
