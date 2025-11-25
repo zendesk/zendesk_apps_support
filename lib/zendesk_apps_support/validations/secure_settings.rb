@@ -17,7 +17,7 @@ module ZendeskAppsSupport
           package.warnings << hidden_default_parameter_warning if secure_or_hidden_default_param_found
 
           secure_params_without_scopes = manifest_params.filter_map do |param|
-            next unless param.secure || param.name =~ SECURABLE_KEYWORDS_REGEXP
+            next unless param.secure
 
             param.name if secure_param_without_scopes?(param)
           end
@@ -60,7 +60,7 @@ module ZendeskAppsSupport
           I18n.t(
             'txt.apps.admin.error.app_build.translation.secure_parameters_with_no_scopes_in_manifest',
             params: param_names.join(', '),
-            link: 'https://developer.zendesk.com/apps/docs/developer-guide/using_sdk#using-secure-settings'
+            link: 'https://developer.zendesk.com/documentation/apps/getting-started/setting-up-new-apps/#scopes'
           )
         end
       end

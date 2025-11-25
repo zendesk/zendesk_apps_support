@@ -265,7 +265,7 @@ en:
                 do not match products in translations (%{translation_products})
               insecure_token_parameter_in_manifest: 'Make sure to set secure to true
                 when using keys in Settings. Learn more: %{link}'
-              secure_parameters_with_no_scopes_in_manifest: 'Make sure to set scopes for secure Settings: %{params}'
+              secure_parameters_with_no_scopes_in_manifest: 'Make sure to configure scopes for secure settings: %{params}'
               password_parameter_deprecated: 'Password parameter type is deprecated
                 and will not be accepted in the future. Use Basic Access Authentication
                 instead. Learn more: %{link}.'

@@ -39,7 +39,7 @@ describe ZendeskAppsSupport::Validations::SecureSettings do
 
       expect(package.warnings.size).to eq(2)
       expect(package.warnings[0]).to include('confirm they do not contain sensitive data')
-      expect(package.warnings[1]).to include('Make sure to set scopes for secure Settings: secured_default_subdomain')
+      expect(package.warnings[1]).to include('Make sure to configure scopes for secure settings: secured_default_subdomain')
     end
   end
 
@@ -67,9 +67,8 @@ describe ZendeskAppsSupport::Validations::SecureSettings do
       allow(package).to receive_message_chain('manifest.parameters') { [ insecure_param, regular_param ] }
       subject.call(package)
 
-      expect(package.warnings.size).to eq(2)
+      expect(package.warnings.size).to eq(1)
       expect(package.warnings[0]).to include('Make sure to set secure to true')
-      expect(package.warnings[1]).to eq('Make sure to set scopes for secure Settings: my_insecure_token')
     end
 
     it 'returns warning only for parameters that are secure but with no scopes' do
@@ -79,7 +78,7 @@ describe ZendeskAppsSupport::Validations::SecureSettings do
       subject.call(package)
 
       expect(package.warnings.size).to eq(1) 
-      expect(package.warnings[0]).to eq('Make sure to set scopes for secure Settings: my_token, oauth_token')
+      expect(package.warnings[0]).to eq('Make sure to configure scopes for secure settings: my_token, oauth_token')
     end
 
     it 'show warning for secured, insecured, default parameters' do
@@ -100,7 +99,7 @@ describe ZendeskAppsSupport::Validations::SecureSettings do
       expect(package.warnings[0]).to include('Make sure to set secure to true when using keys in Settings')
       expect(package.warnings[1]).to include('Default values for secure or hidden parameters are not stored securely')
       expect(package.warnings[2]).to eq(
-        'Make sure to set scopes for secure Settings: my_token, oauth_token, my_insecure_token, secured_default_subdomain'
+        'Make sure to configure scopes for secure settings: my_token, oauth_token, secured_default_subdomain'
       )
     end
 
