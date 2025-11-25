@@ -46,7 +46,7 @@ describe ZendeskAppsSupport::Validations::SecureSettings do
       expect(package.warnings.size).to eq(2)
       expect(package.warnings[0]).to include('confirm they do not contain sensitive data')
       expect(package.warnings[1]).to include(
-        'SECURITY: Secure settings scopes are not configured for parameters: secured_default_subdomain. This may cause token exposure vulnerabilities. Learn more:'
+        'SECURITY: Secure settings scopes are not configured for parameter(s): secured_default_subdomain. This may cause token exposure vulnerabilities. Learn more:'
       )
     end
   end
@@ -87,7 +87,7 @@ describe ZendeskAppsSupport::Validations::SecureSettings do
 
       expect(package.warnings.size).to eq(1) 
       expect(package.warnings[0]).to include(
-        'SECURITY: Secure settings scopes are not configured for parameters: my_token, oauth_token. This may cause token exposure vulnerabilities. Learn more:'
+        'SECURITY: Secure settings scopes are not configured for parameter(s): my_token, oauth_token. This may cause token exposure vulnerabilities. Learn more:'
       )
     end
 
@@ -109,7 +109,7 @@ describe ZendeskAppsSupport::Validations::SecureSettings do
       expect(package.warnings[0]).to include('Make sure to set secure to true when using keys in Settings')
       expect(package.warnings[1]).to include('Default values for secure or hidden parameters are not stored securely')
       expect(package.warnings[2]).to include(
-        'SECURITY: Secure settings scopes are not configured for parameters: my_token, oauth_token, secured_default_subdomain. This may cause token exposure vulnerabilities. Learn more:'
+        'SECURITY: Secure settings scopes are not configured for parameter(s): my_token, oauth_token, secured_default_subdomain. This may cause token exposure vulnerabilities. Learn more:'
       )
     end
 
@@ -127,7 +127,7 @@ describe ZendeskAppsSupport::Validations::SecureSettings do
       subject.call(package)
 
       expect(package.warnings[0]).to include(
-        'SECURITY: Secure settings scopes are not configured for parameters: token_with_nil_scopes. This may cause token exposure vulnerabilities. Learn more:'
+        'SECURITY: Secure settings scopes are not configured for parameter(s): token_with_nil_scopes. This may cause token exposure vulnerabilities. Learn more:'
       )
     end
 
@@ -136,7 +136,7 @@ describe ZendeskAppsSupport::Validations::SecureSettings do
       subject.call(package)
 
       expect(package.warnings[0]).to include(
-        'SECURITY: Secure settings scopes are not configured for parameters: token_with_empty_scopes. This may cause token exposure vulnerabilities. Learn more:'
+        'SECURITY: Secure settings scopes are not configured for parameter(s): token_with_empty_scopes. This may cause token exposure vulnerabilities. Learn more:'
       )
     end
 
@@ -147,7 +147,7 @@ describe ZendeskAppsSupport::Validations::SecureSettings do
       subject.call(package)
 
       expect(package.warnings[0]).to include(
-        'SECURITY: Secure settings scopes are not configured for parameters: token_with_nil_scopes, token_with_empty_scopes. This may cause token exposure vulnerabilities. Learn more:'
+        'SECURITY: Secure settings scopes are not configured for parameter(s): token_with_nil_scopes, token_with_empty_scopes. This may cause token exposure vulnerabilities. Learn more:'
       )
     end
   end

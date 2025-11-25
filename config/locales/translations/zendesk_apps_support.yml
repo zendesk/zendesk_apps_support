@@ -667,4 +667,4 @@ parts:
   - translation:
     key: "txt.apps.admin.error.app_build.translation.secure_parameters_with_no_scopes_in_manifest"
     title: "Validation message to indicate missing scopes field in manifest's secure parameter. Do not translate 'secure' and 'scopes'. Scopes in manifest refers to https://developer.zendesk.com/documentation/apps/getting-started/setting-up-new-apps/#scopes"
-    value: "SECURITY: Secure settings scopes are not configured for parameters: %{params}. This may cause token exposure vulnerabilities. Learn more: %{link}"
+    value: "SECURITY: Secure settings scopes are not configured for parameter(s): %{params}. This may cause token exposure vulnerabilities. Learn more: %{link}"
