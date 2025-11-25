@@ -21,7 +21,6 @@ module ZendeskAppsSupport
 
             param.name if secure_param_without_scopes?(param)
           end
-
           package.warnings << no_scopes_warning(secure_params_without_scopes) if secure_params_without_scopes.any?
         end
 

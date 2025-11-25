@@ -9,6 +9,12 @@ describe ZendeskAppsSupport::Validations::SecureSettings do
   let(:secured_param_with_scopes) do
     ZendeskAppsSupport::Manifest::Parameter.new('name' => 'token_with_scopes', 'secure' => true, 'scopes' => ['header'])
   end
+  let(:secured_param_with_nil_scopes) do
+    ZendeskAppsSupport::Manifest::Parameter.new('name' => 'token_with_nil_scopes', 'secure' => true, 'scopes' => nil)
+  end
+  let(:secured_param_with_empty_scopes) do
+    ZendeskAppsSupport::Manifest::Parameter.new('name' => 'token_with_empty_scopes', 'secure' => true, 'scopes' => [])
+  end
   let(:insecure_param) { ZendeskAppsSupport::Manifest::Parameter.new('name' => 'my_insecure_token') }
   let(:regular_param)  { ZendeskAppsSupport::Manifest::Parameter.new('name' => 'subdomain') }
   let(:regular_default_param)  { ZendeskAppsSupport::Manifest::Parameter.new('name' => 'subdomain', 'default' => true) }
@@ -39,7 +45,9 @@ describe ZendeskAppsSupport::Validations::SecureSettings do
 
       expect(package.warnings.size).to eq(2)
       expect(package.warnings[0]).to include('confirm they do not contain sensitive data')
-      expect(package.warnings[1]).to include('Make sure to configure scopes for secure settings: secured_default_subdomain')
+      expect(package.warnings[1]).to include(
+        'SECURITY: Secure settings scopes are not configured for parameters: secured_default_subdomain. This may cause token exposure vulnerabilities. Learn more:'
+      )
     end
   end
 
@@ -78,7 +86,9 @@ describe ZendeskAppsSupport::Validations::SecureSettings do
       subject.call(package)
 
       expect(package.warnings.size).to eq(1) 
-      expect(package.warnings[0]).to eq('Make sure to configure scopes for secure settings: my_token, oauth_token')
+      expect(package.warnings[0]).to include(
+        'SECURITY: Secure settings scopes are not configured for parameters: my_token, oauth_token. This may cause token exposure vulnerabilities. Learn more:'
+      )
     end
 
     it 'show warning for secured, insecured, default parameters' do
@@ -98,16 +108,47 @@ describe ZendeskAppsSupport::Validations::SecureSettings do
       expect(package.warnings.size).to eq(3)
       expect(package.warnings[0]).to include('Make sure to set secure to true when using keys in Settings')
       expect(package.warnings[1]).to include('Default values for secure or hidden parameters are not stored securely')
-      expect(package.warnings[2]).to eq(
-        'Make sure to configure scopes for secure settings: my_token, oauth_token, secured_default_subdomain'
+      expect(package.warnings[2]).to include(
+        'SECURITY: Secure settings scopes are not configured for parameters: my_token, oauth_token, secured_default_subdomain. This may cause token exposure vulnerabilities. Learn more:'
       )
     end
 
     it 'returns no warning' do
-      allow(package).to receive_message_chain('manifest.parameters') { [ secured_param_with_scopes, regular_param ] }
+      allow(package).to receive_message_chain('manifest.parameters') { [secured_param_with_scopes, regular_param] }
       subject.call(package)
 
       expect(package.warnings).to be_empty
+    end
+  end
+
+  context 'when scopes are falsy,' do
+    it 'return warning for nil scopes' do
+      allow(package).to receive_message_chain('manifest.parameters') { [secured_param_with_nil_scopes] }
+      subject.call(package)
+
+      expect(package.warnings[0]).to include(
+        'SECURITY: Secure settings scopes are not configured for parameters: token_with_nil_scopes. This may cause token exposure vulnerabilities. Learn more:'
+      )
+    end
+
+    it 'return warning for [] scopes' do
+      allow(package).to receive_message_chain('manifest.parameters') { [secured_param_with_empty_scopes] }
+      subject.call(package)
+
+      expect(package.warnings[0]).to include(
+        'SECURITY: Secure settings scopes are not configured for parameters: token_with_empty_scopes. This may cause token exposure vulnerabilities. Learn more:'
+      )
+    end
+
+    it 'return warning for nil and [] scopes' do
+      allow(package).to receive_message_chain('manifest.parameters') do
+        [secured_param_with_nil_scopes, secured_param_with_empty_scopes]
+      end
+      subject.call(package)
+
+      expect(package.warnings[0]).to include(
+        'SECURITY: Secure settings scopes are not configured for parameters: token_with_nil_scopes, token_with_empty_scopes. This may cause token exposure vulnerabilities. Learn more:'
+      )
     end
   end
 end
