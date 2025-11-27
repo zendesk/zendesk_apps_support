@@ -7,7 +7,7 @@ module ZendeskAppsSupport
       SECURABLE_KEYWORDS_REGEXP = Regexp.new(SECURABLE_KEYWORDS.join('|'), Regexp::IGNORECASE)
 
       class << self
-        def call(package)
+        def call(package, validate_scopes_for_secure_parameter: false)
           manifest_params = package.manifest.parameters
 
           insecure_params_found = manifest_params.any? { |param| insecure_param?(param) }
@@ -16,12 +16,10 @@ module ZendeskAppsSupport
           secure_or_hidden_default_param_found = manifest_params.any? { |param| secure_or_hidden_default_param?(param) }
           package.warnings << hidden_default_parameter_warning if secure_or_hidden_default_param_found
 
-          secure_params_without_scopes = manifest_params.filter_map do |param|
-            next unless param.secure
-
-            param.name if secure_param_without_scopes?(param)
+          if validate_scopes_for_secure_parameter
+            unscoped_secure_param_names = manifest_params.filter_map { |param| name_if_secure_unscoped(param) }
+            package.warnings << no_scopes_warning(unscoped_secure_param_names) if unscoped_secure_param_names.any?
           end
-          package.warnings << no_scopes_warning(secure_params_without_scopes) if secure_params_without_scopes.any?
         end
 
         private
@@ -51,14 +49,14 @@ module ZendeskAppsSupport
           )
         end
 
-        def secure_param_without_scopes?(parameter)
-          !parameter.scopes&.any?
+        def name_if_secure_unscoped(param)
+          param.name if param.secure && !param.scopes&.any?
         end
 
         def no_scopes_warning(param_names)
           I18n.t(
             'txt.apps.admin.error.app_build.translation.secure_parameters_with_no_scopes_in_manifest',
-            params: param_names.join(', '),
+            params: param_names.join(I18n.t('txt.apps.admin.error.app_build.listing_comma')),
             link: 'https://developer.zendesk.com/documentation/apps/getting-started/setting-up-new-apps/#scopes'
           )
         end
