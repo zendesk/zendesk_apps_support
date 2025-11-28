@@ -61,7 +61,7 @@ describe ZendeskAppsSupport::Validations::SecureSettings do
         expect(package.warnings.size).to eq(2)
         expect(package.warnings[0]).to include('confirm they do not contain sensitive data')
         expect(package.warnings[1]).to include(
-          'The scopes property is not configured for parameter(s): secured_default_subdomain. This may cause token exposure vulnerabilities. Learn more:'
+          'The scopes property is not configured for parameter(s): secured_default_subdomain. This may cause token exposure vulnerabilities. Learn about:'
         )
       end
     end
@@ -170,7 +170,7 @@ describe ZendeskAppsSupport::Validations::SecureSettings do
         expect(package.warnings[0]).to include('Make sure to set secure to true when using keys in Settings')
         expect(package.warnings[1]).to include('Default values for secure or hidden parameters are not stored securely')
         expect(package.warnings[2]).to include(
-          'The scopes property is not configured for parameter(s): my_token, oauth_token, secured_default_subdomain. This may cause token exposure vulnerabilities. Learn more:'
+          'The scopes property is not configured for parameter(s): my_token, oauth_token, secured_default_subdomain. This may cause token exposure vulnerabilities. Learn about:'
         )
       end
 
@@ -212,7 +212,7 @@ describe ZendeskAppsSupport::Validations::SecureSettings do
         subject.call(package, validate_scopes_for_secure_parameter: true)
 
         expect(package.warnings[0]).to include(
-          'The scopes property is not configured for parameter(s): token_with_nil_scopes. This may cause token exposure vulnerabilities. Learn more:'
+          'The scopes property is not configured for parameter(s): token_with_nil_scopes. This may cause token exposure vulnerabilities. Learn about:'
         )
       end
 
@@ -231,7 +231,7 @@ describe ZendeskAppsSupport::Validations::SecureSettings do
         subject.call(package, validate_scopes_for_secure_parameter: true)
 
         expect(package.warnings[0]).to include(
-          'The scopes property is not configured for parameter(s): token_with_empty_scopes. This may cause token exposure vulnerabilities. Learn more:'
+          'The scopes property is not configured for parameter(s): token_with_empty_scopes. This may cause token exposure vulnerabilities. Learn about:'
         )
       end
 
@@ -256,7 +256,7 @@ describe ZendeskAppsSupport::Validations::SecureSettings do
         subject.call(package, validate_scopes_for_secure_parameter: true)
 
         expect(package.warnings[0]).to include(
-          'The scopes property is not configured for parameter(s): token_with_nil_scopes, token_with_empty_scopes. This may cause token exposure vulnerabilities. Learn more:'
+          'The scopes property is not configured for parameter(s): token_with_nil_scopes, token_with_empty_scopes. This may cause token exposure vulnerabilities. Learn about:'
         )
       end
     end

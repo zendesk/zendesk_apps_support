@@ -669,4 +669,4 @@ parts:
       title: "Validation message to indicate missing scopes field in manifest's secure parameter.
         Do not translate 'scopes'. %{params} refers to secure parameters with no scopes configured.
         Scopes in manifest refers to https://developer.zendesk.com/documentation/apps/getting-started/setting-up-new-apps/#scopes"
-      value: "The scopes property is not configured for parameter(s): %{params}. This may cause token exposure vulnerabilities. Learn more: %{link}"
+      value: "The scopes property is not configured for parameter(s): %{params}. This may cause token exposure vulnerabilities. Learn about: %{link}"
