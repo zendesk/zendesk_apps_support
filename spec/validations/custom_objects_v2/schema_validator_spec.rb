@@ -97,6 +97,69 @@ describe ZendeskAppsSupport::Validations::CustomObjectsV2::SchemaValidator do
           }]
         },
         description: 'triggers has empty actions'
+      },
+      {
+        error: :cov2_object_setting_placeholder_not_allowed,
+        requirements: {
+          'objects' => [
+            {
+              'key' => 'object_1',
+              'title' => '{{ setting.object_title }}',
+              'title_pluralized' => 'Objects 1',
+              'include_in_list_view' => true
+            }
+          ],
+          'object_fields' => [],
+          'object_triggers' => []
+        },
+        description: 'object contains setting placeholder in value'
+      },
+      {
+        error: :cov2_field_setting_placeholder_not_allowed,
+        requirements: {
+          'objects' => [
+            {
+              'key' => 'object_1',
+              'title' => 'Object 1',
+              'title_pluralized' => 'Objects 1',
+              'include_in_list_view' => true
+            }
+          ],
+          'object_fields' => [
+      {
+        'key' => 'field_1',
+        'title' => '{{ setting.field_title }}',
+        'type' => 'text',
+        'object_key' => 'object_1'
+      }
+    ],
+          'object_triggers' => []
+        },
+        description: 'field contains setting placeholder in value'
+      },
+      {
+        error: :cov2_trigger_setting_placeholder_not_allowed,
+        requirements: {
+          'objects' => [
+            {
+              'key' => 'object_1',
+              'title' => 'Object 1',
+              'title_pluralized' => 'Objects 1',
+              'include_in_list_view' => true
+            }
+          ],
+          'object_fields' => [],
+          'object_triggers' => [
+      {
+        'key' => 'trigger_1',
+        'object_key' => 'object_1',
+        'title' => '{{ setting.trigger_title }}',
+        'actions' => [{ 'field' => 'status', 'value' => 'resolved' }],
+        'conditions' => { 'all' => [{ 'field' => 'status', 'operator' => 'is', 'value' => 'open' }] }
+      }
+    ]
+        },
+        description: 'trigger contains setting placeholder in title'
       }
     ].each do |test_case|
       context "when #{test_case[:description]}" do
