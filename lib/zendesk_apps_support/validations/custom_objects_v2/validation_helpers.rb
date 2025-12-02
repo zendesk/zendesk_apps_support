@@ -23,6 +23,12 @@ module ZendeskAppsSupport
         def safe_value(value)
           value || UNDEFINED_VALUE
         end
+
+        def contains_setting_placeholder?(value)
+          return false unless value.is_a?(String)
+
+          value.match?(SETTING_PLACEHOLDER_REGEXP)
+        end
       end
     end
   end

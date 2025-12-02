@@ -12,6 +12,15 @@ module ZendeskAppsSupport
           include Constants
 
           def validate(requirements)
+            schema_errors = validate_schema_keys(requirements)
+            return schema_errors if schema_errors.any?
+
+            validate_setting_placeholder_values(requirements)
+          end
+
+          private
+
+          def validate_schema_keys(requirements)
             [
               validate_objects_schema(requirements[SCHEMA_KEYS[:objects]]),
               validate_fields_schema(requirements[SCHEMA_KEYS[:object_fields]]),
@@ -19,7 +28,13 @@ module ZendeskAppsSupport
             ].flatten
           end
 
-          private
+          def validate_setting_placeholder_values(requirements)
+            [
+              validate_objects_placeholder_values(requirements[SCHEMA_KEYS[:objects]]),
+              validate_fields_placeholder_values(requirements[SCHEMA_KEYS[:object_fields]]),
+              validate_triggers_placeholder_values(requirements[SCHEMA_KEYS[:object_triggers]])
+            ].flatten
+          end
 
           def validate_objects_schema(objects = [])
             valid_objects = extract_hash_entries(objects)
@@ -37,6 +52,24 @@ module ZendeskAppsSupport
             end
           end
 
+          def validate_objects_placeholder_values(objects)
+            valid_objects = extract_hash_entries(objects)
+            valid_objects.flat_map do |object|
+              validate_object_placeholder_values(object, object[KEY])
+            end
+          end
+
+          def validate_object_placeholder_values(object, object_identifier)
+            object.select { |_, value| contains_setting_placeholder?(value) }.map do |property_name, property_value|
+              ValidationError.new(
+                :cov2_object_setting_placeholder_not_allowed,
+                object_key: safe_value(object_identifier),
+                property_name:,
+                property_value:
+              )
+            end
+          end
+
           def validate_fields_schema(object_fields = [])
             valid_fields = extract_hash_entries(object_fields)
             valid_fields.flat_map { |field| validate_field_schema(field) }
@@ -51,6 +84,25 @@ module ZendeskAppsSupport
                                   missing_key: missing_key,
                                   field_key: safe_value(field[KEY]),
                                   object_key: safe_value(field[OBJECT_KEY]))
+            end
+          end
+
+          def validate_fields_placeholder_values(object_fields)
+            object_fields = extract_hash_entries(object_fields)
+            object_fields.flat_map do |field|
+              validate_field_placeholder_values(field, field[KEY], field[OBJECT_KEY])
+            end
+          end
+
+          def validate_field_placeholder_values(field, field_identifier, object_identifier)
+            field.select { |_, value| contains_setting_placeholder?(value) }.map do |property_name, property_value|
+              ValidationError.new(
+                :cov2_field_setting_placeholder_not_allowed,
+                field_key: safe_value(field_identifier),
+                object_key: safe_value(object_identifier),
+                property_name:,
+                property_value:
+              )
             end
           end
 
@@ -89,6 +141,30 @@ module ZendeskAppsSupport
             end
 
             []
+          end
+
+          def validate_triggers_placeholder_values(object_triggers)
+            object_triggers = extract_hash_entries(object_triggers)
+            object_triggers.flat_map do |trigger|
+              validate_trigger_placeholder_values(trigger, trigger[KEY], trigger[OBJECT_KEY])
+            end
+          end
+
+          def validate_trigger_placeholder_values(trigger, trigger_identifier, object_identifier)
+            keys_to_check = %w[key object_key title]
+
+            keys_to_check.filter_map do |key|
+              value = trigger[key]
+              next unless value.is_a?(String) && contains_setting_placeholder?(value)
+
+              ValidationError.new(
+                :cov2_trigger_setting_placeholder_not_allowed,
+                trigger_key: safe_value(trigger_identifier),
+                object_key: safe_value(object_identifier),
+                property_name: key,
+                property_value: value
+              )
+            end
           end
 
           def validate_actions_schema(actions, object_key, trigger_key)

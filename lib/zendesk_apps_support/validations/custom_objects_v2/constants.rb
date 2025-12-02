@@ -52,6 +52,8 @@ module ZendeskAppsSupport
           SCHEMA_KEYS[:object_fields] => { identifier: KEY, error: :invalid_cov2_object_reference_in_fields_v2 },
           SCHEMA_KEYS[:object_triggers] => { identifier: KEY, error: :invalid_cov2_object_reference_in_triggers_v2 }
         }.freeze
+
+        SETTING_PLACEHOLDER_REGEXP = /\{\{\s*setting\.([\w.-]+)\s*\}\}/
       end
     end
   end
