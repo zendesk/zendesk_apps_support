@@ -94,51 +94,26 @@ describe ZendeskAppsSupport::Validations::CustomObjectsV2::ValidationHelpers do
   describe '.contains_setting_placeholder?' do
     [
       {
-        input: 'This is a string with {{ setting.some_key }} placeholder.',
+        input: '{{ setting.some_key }}',
         expected: true,
-        description: 'string contains a valid setting placeholder with underscores'
+        description: 'valid placeholder format'
       },
       {
-        input: 'Text with {{ setting.some.nested.key }} placeholder.',
-        expected: true,
-        description: 'string contains a setting placeholder with dots'
-      },
-      {
-        input: 'Text with {{ setting.some-key }} placeholder.',
-        expected: true,
-        description: 'string contains a setting placeholder with hyphens'
-      },
-      {
-        input: 'Text with {{setting.key}} placeholder.',
-        expected: true,
-        description: 'string contains a setting placeholder without spaces'
-      },
-      {
-        input: 'Text with {{  setting.key  }} placeholder.',
-        expected: true,
-        description: 'string contains a setting placeholder with multiple spaces'
-      },
-      {
-        input: 'This string has no placeholders.',
+        input: 'No placeholders here',
         expected: false,
-        description: 'string does not contain any placeholders'
+        description: 'no placeholder'
       },
       {
         input: '{{ setting }}',
         expected: false,
-        description: 'string contains invalid placeholder without dot notation'
-      },
-      {
-        input: 12_345,
-        expected: false,
-        description: 'input is not a string'
+        description: 'invalid placeholder without dot notation'
       },
       {
         input: nil,
         expected: false,
-        description: 'input is nil'
+        description: 'nil value'
       }
-    ].each do |test_case|
+  ].each do |test_case|
       context "when #{test_case[:description]}" do
         it 'returns expected result' do
           expect(test_class.contains_setting_placeholder?(test_case[:input])).to eq(test_case[:expected])

@@ -171,9 +171,9 @@ module ZendeskAppsSupport
           end
 
           def validate_trigger_placeholder_values(trigger, trigger_identifier, object_identifier)
-            keys_to_check = %w[key object_key title]
+            placeholder_restricted_keys = %w[key object_key title]
 
-            keys_to_check.filter_map do |key|
+            placeholder_restricted_keys.filter_map do |key|
               value = trigger[key]
               next unless value.is_a?(String) && contains_setting_placeholder?(value)
 
