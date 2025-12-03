@@ -175,6 +175,19 @@ en:
             invalid_cov2_trigger_conditions_structure_v2: The requirements.json file
               contains an invalid custom object trigger conditions structure. Conditions
               must be a hash with all and any arrays for trigger %{trigger_key}.
+            cov2_object_setting_placeholder_not_allowed: The requirements.json file
+              contains a placeholder in the objects array. The %{property_name} property
+              of object %{object_key} contains a placeholder %{property_value}. Placeholders
+              are not allowed in object definitions.
+            cov2_field_setting_placeholder_not_allowed: 'The requirements.json file
+              contains a placeholder in the object_fields array. The %{property_name}
+              property of field %{field_key} (object: %{object_key}) contains a placeholder
+              %{property_value}. Placeholders are not allowed in field definitions.'
+            cov2_trigger_setting_placeholder_not_allowed: 'The requirements.json file
+              contains a placeholder in the object_triggers array. The %{property_name}
+              property of trigger %{trigger_key} (object: %{object_key}) contains
+              a placeholder %{property_value}. Placeholders are not allowed in trigger
+              definitions.'
             missing_required_fields: 'Missing required fields in requirements.json:
               "%{field}" is required in "%{identifier}"'
             duplicate_requirements:
