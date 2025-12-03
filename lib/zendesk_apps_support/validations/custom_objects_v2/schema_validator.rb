@@ -134,14 +134,8 @@ module ZendeskAppsSupport
           end
 
           def validate_object_placeholder_values(object, object_identifier)
-            object.select { |_, value| contains_setting_placeholder?(value) }.map do |property_name, property_value|
-              ValidationError.new(
-                :cov2_object_setting_placeholder_not_allowed,
-                object_key: safe_value(object_identifier),
-                property_name:,
-                property_value:
-              )
-            end
+            context_info = { type: :object, object_key: safe_value(object_identifier) }
+            scan_for_placeholders(object, context_info)
           end
 
           def validate_fields_placeholder_values(object_fields)
@@ -152,15 +146,12 @@ module ZendeskAppsSupport
           end
 
           def validate_field_placeholder_values(field, field_identifier, object_identifier)
-            field.select { |_, value| contains_setting_placeholder?(value) }.map do |property_name, property_value|
-              ValidationError.new(
-                :cov2_field_setting_placeholder_not_allowed,
-                field_key: safe_value(field_identifier),
-                object_key: safe_value(object_identifier),
-                property_name:,
-                property_value:
-              )
-            end
+            context_info = {
+              type: :object_field,
+              field_key: safe_value(field_identifier),
+              object_key: safe_value(object_identifier)
+            }
+            scan_for_placeholders(field, context_info)
           end
 
           def validate_triggers_placeholder_values(object_triggers)
@@ -171,20 +162,54 @@ module ZendeskAppsSupport
           end
 
           def validate_trigger_placeholder_values(trigger, trigger_identifier, object_identifier)
-            placeholder_restricted_keys = %w[key object_key title]
+            context_info = {
+              type: :object_trigger,
+              trigger_key: safe_value(trigger_identifier),
+              object_key: safe_value(object_identifier)
+            }
+            scan_for_placeholders(trigger, context_info)
+          end
 
-            placeholder_restricted_keys.filter_map do |key|
-              value = trigger[key]
-              next unless value.is_a?(String) && contains_setting_placeholder?(value)
-
-              ValidationError.new(
-                :cov2_trigger_setting_placeholder_not_allowed,
-                trigger_key: safe_value(trigger_identifier),
-                object_key: safe_value(object_identifier),
-                property_name: key,
-                property_value: value
-              )
+          def scan_for_placeholders(data, context_info)
+            case data
+            when Hash
+              scan_hash_for_placeholders(data, context_info)
+            when Array
+              scan_array_for_placeholders(data, context_info)
+            else
+              []
             end
+          end
+
+          def scan_hash_for_placeholders(hash, context_info)
+            hash.flat_map do |property_name, property_value|
+              if property_value.is_a?(String) && contains_setting_placeholder?(property_value)
+                [create_placeholder_error(property_name, property_value, context_info)]
+              elsif property_value.is_a?(Hash) || property_value.is_a?(Array)
+                scan_for_placeholders(property_value, context_info)
+              else
+                []
+              end
+            end
+          end
+
+          def scan_array_for_placeholders(array, context_info)
+            array.flat_map do |item|
+              scan_for_placeholders(item, context_info)
+            end
+          end
+
+          def create_placeholder_error(property_name, property_value, context_info)
+            error_type_map = {
+              object: :cov2_object_setting_placeholder_not_allowed,
+              object_field: :cov2_field_setting_placeholder_not_allowed,
+              object_trigger: :cov2_trigger_setting_placeholder_not_allowed
+            }
+
+            error_type = error_type_map[context_info[:type]]
+
+            ValidationError.new(error_type, **context_info.except(:type), property_name: property_name,
+                                                                          property_value: property_value)
           end
         end
       end
