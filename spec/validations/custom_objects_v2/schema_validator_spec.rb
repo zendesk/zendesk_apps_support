@@ -197,7 +197,7 @@ describe ZendeskAppsSupport::Validations::CustomObjectsV2::SchemaValidator do
         },
         description: 'trigger contains setting placeholder in conditions'
       }
-].each do |test_case|
+    ].each do |test_case|
       context "when #{test_case[:description]}" do
         it "raises #{test_case[:error]} validation error" do
           errors = described_class.validate(test_case[:requirements])
