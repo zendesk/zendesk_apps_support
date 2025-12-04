@@ -5,39 +5,32 @@ require 'tmpdir'
 
 describe ZendeskAppsSupport::Validations::SecureSettings do
   def create_package(parameter_hash)
-    @manifest_hash = parameter_hash
-    @package 
-  end
-
-  let(:manifest) { ZendeskAppsSupport::Manifest.new(JSON.dump(@manifest_hash)) }
-
-  before do
-    @manifest_hash = {}
-    @dir = Dir.mktmpdir
-    @package = ZendeskAppsSupport::Package.new(@dir, false)
-    allow(@package).to receive(:manifest) { manifest }
+    dir = Dir.mktmpdir
+    package = ZendeskAppsSupport::Package.new(dir, false)
+    allow(package).to receive(:manifest).and_return(ZendeskAppsSupport::Manifest.new(parameter_hash.to_json))
+    package
   end
 
   # subject to validate_scopes_for_secure_parameter=true derived from apps_secure_setting_scopes arturo
   context 'when scopes validations are enforced' do
     context 'when default manifest parameters are not secure or hidden' do
       it 'returns no warning' do
-        @manifest_hash = {
+        manifest_hash = {
           'parameters' => [
-          {
-            'name' => 'subdomain',
-            'type' => 'text',
-            'secure' => false
-          },
-          {
-            'name' => 'subdomain2',
-            'type' => 'text',
-            'secure' => false,
-            'default' => 'mysubdomain'
-          }
-        ]
+            {
+              'name' => 'subdomain',
+              'type' => 'text',
+              'secure' => false
+            },
+            {
+              'name' => 'subdomain2',
+              'type' => 'text',
+              'secure' => false,
+              'default' => 'mysubdomain'
+            }
+          ]
         }
-        package = create_package(@manifest_hash)
+        package = create_package(manifest_hash)
         subject.call(package, validate_scopes_for_secure_parameter: true)
 
         expect(package.warnings).to be_empty
@@ -46,7 +39,7 @@ describe ZendeskAppsSupport::Validations::SecureSettings do
 
     context 'when default manifest parameters are secure' do
       it 'returns a warning' do
-        @manifest_hash = {
+        manifest_hash = {
           'parameters' => [
             {
               'name' => 'secured_default_subdomain',
@@ -56,7 +49,7 @@ describe ZendeskAppsSupport::Validations::SecureSettings do
             }
           ]
         }
-        package = create_package(@manifest_hash)
+        package = create_package(manifest_hash)
         subject.call(package, validate_scopes_for_secure_parameter: true)
         expect(package.warnings.size).to eq(2)
         expect(package.warnings[0]).to include('confirm they do not contain sensitive data')
@@ -68,7 +61,7 @@ describe ZendeskAppsSupport::Validations::SecureSettings do
 
     context 'when default manifest parameters are hidden' do
       it 'returns a warning' do
-        @manifest_hash = {
+        manifest_hash = {
           'parameters' => [
             {
               'name' => 'default_subdomain',
@@ -77,7 +70,7 @@ describe ZendeskAppsSupport::Validations::SecureSettings do
             }
           ]
         }
-        package = create_package(@manifest_hash)
+        package = create_package(manifest_hash)
         subject.call(package, validate_scopes_for_secure_parameter: true)
 
         expect(package.warnings.size).to eq(1)
@@ -87,7 +80,7 @@ describe ZendeskAppsSupport::Validations::SecureSettings do
 
     context 'when manifest parameters do not contain SECURABLE_KEYWORDS' do
       it 'returns no warning' do
-        @manifest_hash = {
+        manifest_hash = {
           'parameters' => [
             {
               'name' => 'subdomain',
@@ -95,7 +88,7 @@ describe ZendeskAppsSupport::Validations::SecureSettings do
             }
           ]
         }
-        package = create_package(@manifest_hash)
+        package = create_package(manifest_hash)
         subject.call(package, validate_scopes_for_secure_parameter: true)
 
         expect(package.warnings).to be_empty
@@ -104,7 +97,7 @@ describe ZendeskAppsSupport::Validations::SecureSettings do
 
     context 'when manifest parameters contain SECURABLE_KEYWORDS' do
       it 'returns a warning if secure key is false/undefined' do
-        @manifest_hash = {
+        manifest_hash = {
           'parameters' => [
             {
               'name' => 'my_token',
@@ -116,7 +109,7 @@ describe ZendeskAppsSupport::Validations::SecureSettings do
             }
           ]
         }
-        package = create_package(@manifest_hash)
+        package = create_package(manifest_hash)
         subject.call(package, validate_scopes_for_secure_parameter: true)
 
         expect(package.warnings.size).to eq(1)
@@ -124,7 +117,7 @@ describe ZendeskAppsSupport::Validations::SecureSettings do
       end
 
       it 'returns warning for secured, insecured, default parameters' do
-        @manifest_hash = {
+        manifest_hash = {
           'parameters' => [
             {
               'name' => 'my_token',
@@ -163,7 +156,7 @@ describe ZendeskAppsSupport::Validations::SecureSettings do
             }
           ]
         }
-        package = create_package(@manifest_hash)
+        package = create_package(manifest_hash)
         subject.call(package, validate_scopes_for_secure_parameter: true)
 
         expect(package.warnings.size).to eq(3)
@@ -175,7 +168,7 @@ describe ZendeskAppsSupport::Validations::SecureSettings do
       end
 
       it 'returns no warning if all parameters pass scopes validations' do
-        @manifest_hash = {
+        manifest_hash = {
           'parameters' => [
             {
               'name' => 'token_with_scopes',
@@ -189,7 +182,7 @@ describe ZendeskAppsSupport::Validations::SecureSettings do
             }
           ]
         }
-        package = create_package(@manifest_hash)
+        package = create_package(manifest_hash)
         subject.call(package, validate_scopes_for_secure_parameter: true)
 
         expect(package.warnings).to be_empty
@@ -198,7 +191,7 @@ describe ZendeskAppsSupport::Validations::SecureSettings do
 
     context 'when scopes are falsy - [] or nil' do
       it 'returns warning for nil scopes' do
-        @manifest_hash = {
+        manifest_hash = {
           'parameters' => [
             {
               'name' => 'token_with_nil_scopes',
@@ -208,7 +201,7 @@ describe ZendeskAppsSupport::Validations::SecureSettings do
             }
           ]
         }
-        package = create_package(@manifest_hash)
+        package = create_package(manifest_hash)
         subject.call(package, validate_scopes_for_secure_parameter: true)
 
         expect(package.warnings[0]).to include(
@@ -217,7 +210,7 @@ describe ZendeskAppsSupport::Validations::SecureSettings do
       end
 
       it 'returns warning for [] scopes' do
-        @manifest_hash = {
+        manifest_hash = {
           'parameters' => [
             {
               'name' => 'token_with_empty_scopes',
@@ -227,7 +220,7 @@ describe ZendeskAppsSupport::Validations::SecureSettings do
             }
           ]
         }
-        package = create_package(@manifest_hash)
+        package = create_package(manifest_hash)
         subject.call(package, validate_scopes_for_secure_parameter: true)
 
         expect(package.warnings[0]).to include(
@@ -236,7 +229,7 @@ describe ZendeskAppsSupport::Validations::SecureSettings do
       end
 
       it 'returns warning for nil and [] scopes' do
-        @manifest_hash = {
+        manifest_hash = {
           'parameters' => [
             {
               'name' => 'token_with_nil_scopes',
@@ -252,7 +245,7 @@ describe ZendeskAppsSupport::Validations::SecureSettings do
             }
           ]
         }
-        package = create_package(@manifest_hash)
+        package = create_package(manifest_hash)
         subject.call(package, validate_scopes_for_secure_parameter: true)
 
         expect(package.warnings[0]).to include(
@@ -266,7 +259,7 @@ describe ZendeskAppsSupport::Validations::SecureSettings do
   context 'when scopes validations are skipped' do
     context 'when default manifest parameters are not secure or hidden' do
       it 'returns no warning' do
-        @manifest_hash = {
+        manifest_hash = {
           'parameters' => [
           {
             'name' => 'subdomain',
@@ -281,7 +274,7 @@ describe ZendeskAppsSupport::Validations::SecureSettings do
           }
         ]
         }
-        package = create_package(@manifest_hash)
+        package = create_package(manifest_hash)
         subject.call(package, validate_scopes_for_secure_parameter: false)
 
         expect(package.warnings).to be_empty
@@ -290,7 +283,7 @@ describe ZendeskAppsSupport::Validations::SecureSettings do
 
     context 'when default manifest parameters are secure' do
       it 'returns sensitive-data warning for secured default param' do
-        @manifest_hash = {
+        manifest_hash = {
           'parameters' => [
             {
               'name' => 'secured_default_subdomain',
@@ -300,7 +293,7 @@ describe ZendeskAppsSupport::Validations::SecureSettings do
             }
           ]
         }
-        package = create_package(@manifest_hash)
+        package = create_package(manifest_hash)
         subject.call(package, validate_scopes_for_secure_parameter: false)
 
         expect(package.warnings.size).to eq(1)
@@ -310,7 +303,7 @@ describe ZendeskAppsSupport::Validations::SecureSettings do
 
     context 'when default manifest parameters are hidden' do
       it 'returns sensitive-data warning for hidden default param' do
-        @manifest_hash = {
+        manifest_hash = {
           'parameters' => [
             {
               'name' => 'default_subdomain',
@@ -319,7 +312,7 @@ describe ZendeskAppsSupport::Validations::SecureSettings do
             }
           ]
         }
-        package = create_package(@manifest_hash)
+        package = create_package(manifest_hash)
         subject.call(package, validate_scopes_for_secure_parameter: false)
 
         expect(package.warnings.size).to eq(1)
@@ -329,7 +322,7 @@ describe ZendeskAppsSupport::Validations::SecureSettings do
 
     context 'when manifest parameters do not contain SECURABLE_KEYWORDS' do
       it 'returns no warning' do
-        @manifest_hash = {
+        manifest_hash = {
           'parameters' => [
             {
               'name' => 'subdomain',
@@ -337,7 +330,7 @@ describe ZendeskAppsSupport::Validations::SecureSettings do
             }
           ]
         }
-        package = create_package(@manifest_hash)
+        package = create_package(manifest_hash)
         subject.call(package, validate_scopes_for_secure_parameter: false)
 
         expect(package.warnings).to be_empty
@@ -346,7 +339,7 @@ describe ZendeskAppsSupport::Validations::SecureSettings do
 
     context 'when manifest parameters contain SECURABLE_KEYWORDS' do
       it 'returns a warning if secure key is false/undefined' do
-        @manifest_hash = {
+        manifest_hash = {
           'parameters' => [
             {
               'name' => 'my_token',
@@ -358,7 +351,7 @@ describe ZendeskAppsSupport::Validations::SecureSettings do
             }
           ]
         }
-        package = create_package(@manifest_hash)
+        package = create_package(manifest_hash)
         subject.call(package, validate_scopes_for_secure_parameter: false)
 
         expect(package.warnings.size).to eq(1)
@@ -366,7 +359,7 @@ describe ZendeskAppsSupport::Validations::SecureSettings do
       end
 
       it 'returns sensitive-data and insecure parameter warnings' do
-        @manifest_hash = {
+        manifest_hash = {
           'parameters' => [
             {
               'name' => 'my_token',
@@ -405,7 +398,7 @@ describe ZendeskAppsSupport::Validations::SecureSettings do
             }
           ]
         }
-        package = create_package(@manifest_hash)
+        package = create_package(manifest_hash)
         subject.call(package, validate_scopes_for_secure_parameter: false)
 
         expect(package.warnings.size).to eq(2)
