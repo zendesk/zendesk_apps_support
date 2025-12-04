@@ -48,7 +48,10 @@ module ZendeskAppsSupport
         errors << Validations::Requirements.call(self, validate_custom_objects_v2:)
 
         # only adds warnings
-        Validations::SecureSettings.call(self)
+        Validations::SecureSettings.call(
+          self,
+          validate_scopes_for_secure_parameter: validate_scopes_for_secure_parameter
+        )
         Validations::Requests.call(self)
 
         unless manifest.requirements_only? || manifest.marketing_only? || manifest.iframe_only?

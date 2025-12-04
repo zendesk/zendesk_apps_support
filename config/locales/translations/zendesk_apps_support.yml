@@ -664,3 +664,9 @@ parts:
       key: "txt.apps.admin.error.app_build.field_contains_invalid_keys"
       title: "App builder job: Error for invalid field keys. Placeholder %{field} shows parameter fields like \"parameter[name='param'].scopes\" provided in the supplied manifest file, %{keys} shows the invalid keys found within the field."
       value: "%{field} contains invalid keys: %{keys}."
+  - translation:
+      key: "txt.apps.admin.error.app_build.translation.secure_parameters_with_no_scopes_in_manifest"
+      title: "Validation message to indicate missing scopes field in manifest's secure parameter.
+        Do not translate 'scopes'. %{params} refers to secure parameters with no scopes configured.
+        Scopes in manifest refers to https://developer.zendesk.com/documentation/apps/getting-started/setting-up-new-apps/#scopes"
+      value: "The scopes property is not configured for parameter(s): %{params}. This may cause token exposure vulnerabilities. Learn about: %{link}"
