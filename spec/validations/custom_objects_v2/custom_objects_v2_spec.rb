@@ -125,6 +125,21 @@ describe ZendeskAppsSupport::Validations::CustomObjectsV2 do
           ]
         },
         description: 'requirements contain setting placeholder'
+      },
+      {
+        error: :setting_placeholders_not_allowed_in_cov2_requirements,
+        requirements: {
+          'objects' => [
+            { 'key' => 'object_1', 'title' => 'Object 1', 'title_pluralized' => 'Objects 1',
+              'include_in_list_view' => true }
+          ],
+          'object_triggers' => [
+            { 'key' => 'trigger_1', 'title' => 'Trigger 1', 'object_key' => 'object_1',
+              'conditions' => { 'all' => [{ 'field' => 'status', 'operator' => 'is', 'value' => 'open' }] },
+              'actions' => [{ 'field' => 'status', 'value' => '{{ setting.statusValue }}' }] }
+          ]
+        },
+        description: 'requirements contain setting placeholder in nested trigger action'
       }
     ].each do |test_case|
       context "when #{test_case[:description]}" do
@@ -165,6 +180,24 @@ describe ZendeskAppsSupport::Validations::CustomObjectsV2 do
           ]
         },
         description: 'requirements are valid'
+      },
+      {
+        requirements: {
+          'objects' => [
+            { 'key' => 'object_1', 'title' => '{{ settings.value }}', 'title_pluralized' => 'Objects 1',
+              'include_in_list_view' => true }
+          ]
+        },
+        description: 'requirements contain plural "settings" (should not match)'
+      },
+      {
+        requirements: {
+          'objects' => [
+            { 'key' => 'object_1', 'title' => '{{ setting }}', 'title_pluralized' => 'Objects 1',
+              'include_in_list_view' => true }
+          ]
+        },
+        description: 'requirements contain "setting" without property (should not match)'
       }
     ].each do |test_case|
       context "when #{test_case[:description]}" do
