@@ -12,15 +12,6 @@ module ZendeskAppsSupport
           include Constants
 
           def validate(requirements)
-            schema_errors = validate_schema_keys(requirements)
-            return schema_errors if schema_errors.any?
-
-            validate_setting_placeholder_values(requirements)
-          end
-
-          private
-
-          def validate_schema_keys(requirements)
             [
               validate_objects_schema(requirements[SCHEMA_KEYS[:objects]]),
               validate_fields_schema(requirements[SCHEMA_KEYS[:object_fields]]),
@@ -28,13 +19,7 @@ module ZendeskAppsSupport
             ].flatten
           end
 
-          def validate_setting_placeholder_values(requirements)
-            [
-              validate_objects_placeholder_values(requirements[SCHEMA_KEYS[:objects]]),
-              validate_fields_placeholder_values(requirements[SCHEMA_KEYS[:object_fields]]),
-              validate_triggers_placeholder_values(requirements[SCHEMA_KEYS[:object_triggers]])
-            ].flatten
-          end
+          private
 
           def validate_objects_schema(objects = [])
             valid_objects = extract_hash_entries(objects)
@@ -124,94 +109,6 @@ module ZendeskAppsSupport
             return false if (conditions.keys - CONDITION_KEYS).any?
 
             conditions.values.any? { |v| v.is_a?(Array) }
-          end
-
-          def validate_objects_placeholder_values(objects)
-            valid_objects = extract_hash_entries(objects)
-            valid_objects.flat_map do |object|
-              validate_object_placeholder_values(object, object[KEY])
-            end
-          end
-
-          def validate_object_placeholder_values(object, object_identifier)
-            context_info = { type: :object, object_key: safe_value(object_identifier) }
-            scan_for_placeholders(object, context_info)
-          end
-
-          def validate_fields_placeholder_values(object_fields)
-            valid_fields = extract_hash_entries(object_fields)
-            valid_fields.flat_map do |field|
-              validate_field_placeholder_values(field, field[KEY], field[OBJECT_KEY])
-            end
-          end
-
-          def validate_field_placeholder_values(field, field_identifier, object_identifier)
-            context_info = {
-              type: :object_field,
-              field_key: safe_value(field_identifier),
-              object_key: safe_value(object_identifier)
-            }
-            scan_for_placeholders(field, context_info)
-          end
-
-          def validate_triggers_placeholder_values(object_triggers)
-            valid_triggers = extract_hash_entries(object_triggers)
-            valid_triggers.flat_map do |trigger|
-              validate_trigger_placeholder_values(trigger, trigger[KEY], trigger[OBJECT_KEY])
-            end
-          end
-
-          def validate_trigger_placeholder_values(trigger, trigger_identifier, object_identifier)
-            context_info = {
-              type: :object_trigger,
-              trigger_key: safe_value(trigger_identifier),
-              object_key: safe_value(object_identifier)
-            }
-            scan_for_placeholders(trigger, context_info)
-          end
-
-          def scan_for_placeholders(data, context_info)
-            case data
-            when Hash
-              scan_hash_for_placeholders(data, context_info)
-            when Array
-              scan_array_for_placeholders(data, context_info)
-            else
-              []
-            end
-          end
-
-          def scan_hash_for_placeholders(hash, context_info)
-            hash.flat_map do |property_name, property_value|
-              if property_value.is_a?(String) && contains_setting_placeholder?(property_value)
-                [create_placeholder_error(property_name, property_value, context_info)]
-              elsif property_value.is_a?(Hash) || property_value.is_a?(Array)
-                scan_for_placeholders(property_value, context_info)
-              else
-                []
-              end
-            end
-          end
-
-          def scan_array_for_placeholders(array, context_info)
-            array.flat_map do |item|
-              scan_for_placeholders(item, context_info)
-            end
-          end
-
-          def create_placeholder_error(property_name, property_value, context_info)
-            error_type_map = {
-              object: :cov2_object_setting_placeholder_not_allowed,
-              object_field: :cov2_field_setting_placeholder_not_allowed,
-              object_trigger: :cov2_trigger_setting_placeholder_not_allowed
-            }
-
-            error_type = error_type_map[context_info[:type]]
-
-            ValidationError.new(error_type,
-                                **context_info.except(:type),
-                                property_name: property_name,
-                                property_value: property_value)
           end
         end
       end

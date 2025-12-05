@@ -8,7 +8,7 @@ describe ZendeskAppsSupport::Validations::CustomObjectsV2::ValidationHelpers do
       class << self
         include ZendeskAppsSupport::Validations::CustomObjectsV2::ValidationHelpers
 
-        public :extract_hash_entries, :count_conditions, :safe_value, :contains_setting_placeholder?
+        public :extract_hash_entries, :count_conditions, :safe_value
       end
     end
   end
@@ -86,37 +86,6 @@ describe ZendeskAppsSupport::Validations::CustomObjectsV2::ValidationHelpers do
       context "when #{test_case[:description]}" do
         it 'returns expected result' do
           expect(test_class.safe_value(test_case[:input])).to eq(test_case[:expected])
-        end
-      end
-    end
-  end
-
-  describe '.contains_setting_placeholder?' do
-    [
-      {
-        input: '{{ setting.some_key }}',
-        expected: true,
-        description: 'valid placeholder format'
-      },
-      {
-        input: 'No placeholders here',
-        expected: false,
-        description: 'no placeholder'
-      },
-      {
-        input: '{{ setting }}',
-        expected: false,
-        description: 'invalid placeholder without dot notation'
-      },
-      {
-        input: nil,
-        expected: false,
-        description: 'nil value'
-      }
-  ].each do |test_case|
-      context "when #{test_case[:description]}" do
-        it 'returns expected result' do
-          expect(test_class.contains_setting_placeholder?(test_case[:input])).to eq(test_case[:expected])
         end
       end
     end
