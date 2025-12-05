@@ -106,6 +106,25 @@ describe ZendeskAppsSupport::Validations::CustomObjectsV2 do
           ]
         },
         description: 'object_field references non-existent object'
+      },
+      {
+        error: :setting_placeholders_not_allowed_in_cov2_requirements,
+        requirements: {
+          'objects' => [
+            { 'key' => 'object_1', 'title' => '{{ setting.objectTitle }}', 'title_pluralized' => 'Objects 1',
+              'include_in_list_view' => true }
+          ],
+          'object_fields' => [
+            { 'key' => 'field_1', 'type' => 'text', 'title' => '{{ setting.fieldTitle }}',
+              'object_key' => 'object_1' }
+          ],
+          'object_triggers' => [
+            { 'key' => 'trigger_1', 'title' => '{{ setting.triggerTitle }}', 'object_key' => 'object_1',
+              'conditions' => { 'all' => [{ 'field' => 'status', 'operator' => 'is', 'value' => 'open' }] },
+              'actions' => [{ 'field' => 'status', 'value' => 'closed' }] }
+          ]
+        },
+        description: 'requirements contain setting placeholder'
       }
     ].each do |test_case|
       context "when #{test_case[:description]}" do
