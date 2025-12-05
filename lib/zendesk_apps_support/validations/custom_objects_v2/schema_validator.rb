@@ -208,8 +208,10 @@ module ZendeskAppsSupport
 
             error_type = error_type_map[context_info[:type]]
 
-            ValidationError.new(error_type, **context_info.except(:type), property_name: property_name,
-                                                                          property_value: property_value)
+            ValidationError.new(error_type,
+                                **context_info.except(:type),
+                                property_name: property_name,
+                                property_value: property_value)
           end
         end
       end
