@@ -315,19 +315,19 @@ parts:
       title: 'App builder job: requirements file contains placeholder in custom objects v2 object property. Placeholders are not allowed in object definitions. Leave requirements.json as is (do not translate). Do not translate "objects" as it is part of schema.'
       value: 'The requirements.json file contains a placeholder in the objects array. The %{property_name} property of object %{object_key} contains a placeholder %{property_value}. Placeholders are not allowed in object definitions.'
       screenshot: "https://drive.google.com/file/d/1UYrBruLjZ27WoQ40sWXqd07DNwtblg2W/view?usp=sharing"
-      obsolete: "2026-01-31"
+      obsolete: "2026-02-05"
   - translation:
       key: "txt.apps.admin.error.app_build.cov2_field_setting_placeholder_not_allowed"
       title: 'App builder job: requirements file contains placeholder in custom objects v2 field property. Placeholders are not allowed in field definitions. Leave requirements.json as is (do not translate). Do not translate "object_fields" as it is part of schema.'
       value: 'The requirements.json file contains a placeholder in the object_fields array. The %{property_name} property of field %{field_key} (object: %{object_key}) contains a placeholder %{property_value}. Placeholders are not allowed in field definitions.'
       screenshot: "https://drive.google.com/file/d/1Bprc1VNv8kmzgbNeQn-noU0ItSci2obm/view?usp=sharing"
-      obsolete: "2026-01-31"
+      obsolete: "2026-02-05"
   - translation:
       key: "txt.apps.admin.error.app_build.cov2_trigger_setting_placeholder_not_allowed"
       title: 'App builder job: requirements file contains placeholder in custom objects v2 trigger identifier. Placeholders are not allowed in trigger identifiers. Leave requirements.json as is (do not translate). Do not translate "object_triggers" as it is part of schema.'
       value: 'The requirements.json file contains a placeholder in the object_triggers array. The %{property_name} property of trigger %{trigger_key} (object: %{object_key}) contains a placeholder %{property_value}. Placeholders are not allowed in trigger definitions.'
       screenshot: "https://drive.google.com/file/d/1FwnzKj9srIDTxtk-WryA3xHTXGD7uS-W/view?usp=sharing"
-      obsolete: "2026-01-31"
+      obsolete: "2026-02-05"
   - translation:
       key: "txt.apps.admin.error.app_build.setting_placeholders_not_allowed_in_cov2_requirements"
       title: 'App builder job: requirements file contains placeholder in custom objects v2 requirements. Placeholders are not allowed in custom objects v2 definitions. Leave requirements.json, custom_objects_v2 as is (do not translate)'
