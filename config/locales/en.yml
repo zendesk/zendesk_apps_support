@@ -188,6 +188,9 @@ en:
               property of trigger %{trigger_key} (object: %{object_key}) contains
               a placeholder %{property_value}. Placeholders are not allowed in trigger
               definitions.'
+            setting_placeholders_not_allowed_in_cov2_requirements: The requirements.json
+              file contains a setting placeholder in the custom_objects_v2 requirements.
+              Setting placeholders are not allowed in custom_objects_v2 requirements.
             missing_required_fields: 'Missing required fields in requirements.json:
               "%{field}" is required in "%{identifier}"'
             duplicate_requirements:
@@ -265,14 +268,15 @@ en:
                 do not match products in translations (%{translation_products})
               insecure_token_parameter_in_manifest: 'Make sure to set secure to true
                 when using keys in Settings. Learn more: %{link}'
-              secure_parameters_with_no_scopes_in_manifest: 'The scopes property is not configured for parameter(s): %{params}. 
-                This may cause token exposure vulnerabilities. Learn about: %{link}'
               password_parameter_deprecated: 'Password parameter type is deprecated
                 and will not be accepted in the future. Use Basic Access Authentication
                 instead. Learn more: %{link}.'
               default_secure_or_hidden_parameter_in_manifest: Default values for secure
                 or hidden parameters are not stored securely. Be sure to review them
                 and confirm they do not contain sensitive data
+              secure_parameters_with_no_scopes_in_manifest: 'The scopes property is
+                not configured for parameter(s): %{params}. This may cause token exposure
+                vulnerabilities. Learn about: %{link}'
             stylesheet_error: 'Sass error: %{sass_error}'
             invalid_type_parameter:
               one: "%{invalid_types} is an invalid parameter type."
