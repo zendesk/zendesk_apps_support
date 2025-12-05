@@ -95,8 +95,7 @@ module ZendeskAppsSupport
             error_data = { trigger_key:, object_key: }
 
             unless actions.is_a?(Array)
-              return [ValidationError.new(:invalid_cov2_trigger_actions_structure_v2,
-                                          **error_data)]
+              return [ValidationError.new(:invalid_cov2_trigger_actions_structure_v2, **error_data)]
             end
 
             return [] unless actions.empty?
