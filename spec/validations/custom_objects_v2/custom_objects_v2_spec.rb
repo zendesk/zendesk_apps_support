@@ -106,6 +106,90 @@ describe ZendeskAppsSupport::Validations::CustomObjectsV2 do
           ]
         },
         description: 'object_field references non-existent object'
+      },
+      {
+        error: :setting_placeholders_not_allowed_in_cov2_requirements,
+        requirements: {
+          'objects' => [
+            { 'key' => 'object_1', 'title' => '{{ setting.objectTitle }}', 'title_pluralized' => 'Objects 1',
+              'include_in_list_view' => true }
+          ],
+          'object_fields' => [
+            { 'key' => 'field_1', 'type' => 'text', 'title' => '{{ setting.fieldTitle }}',
+              'object_key' => 'object_1' }
+          ],
+          'object_triggers' => [
+            { 'key' => 'trigger_1', 'title' => '{{ setting.triggerTitle }}', 'object_key' => 'object_1',
+              'conditions' => { 'all' => [{ 'field' => 'status', 'operator' => 'is', 'value' => 'open' }] },
+              'actions' => [{ 'field' => 'status', 'value' => 'closed' }] }
+          ]
+        },
+        description: 'requirements contain setting placeholder'
+      },
+      {
+        error: :setting_placeholders_not_allowed_in_cov2_requirements,
+        requirements: {
+          'objects' => [
+            { 'key' => 'object_1', 'title' => 'Object 1', 'title_pluralized' => 'Objects 1',
+              'include_in_list_view' => true }
+          ],
+          'object_triggers' => [
+            { 'key' => 'trigger_1', 'title' => 'Trigger 1', 'object_key' => 'object_1',
+              'conditions' => { 'all' => [{ 'field' => 'status', 'operator' => 'is', 'value' => 'open' }] },
+              'actions' => [{ 'field' => 'status', 'value' => '{{ setting.statusValue }}' }] }
+          ]
+        },
+        description: 'requirements contain setting placeholder in nested trigger action'
+      },
+      {
+        error: :setting_placeholders_not_allowed_in_cov2_requirements,
+        requirements: {
+          'objects' => [
+            { 'key' => 'object_1', 'title' => '{{setting.value}}', 'title_pluralized' => 'Objects 1',
+              'include_in_list_view' => true }
+          ]
+        },
+        description: 'requirements contain setting placeholder without spaces'
+      },
+      {
+        error: :setting_placeholders_not_allowed_in_cov2_requirements,
+        requirements: {
+          'objects' => [
+            { 'key' => 'object_1', 'title' => '{{  setting.value  }}', 'title_pluralized' => 'Objects 1',
+              'include_in_list_view' => true }
+          ]
+        },
+        description: 'requirements contain setting placeholder with extra whitespace'
+      },
+      {
+        error: :setting_placeholders_not_allowed_in_cov2_requirements,
+        requirements: {
+          'objects' => [
+            { 'key' => 'object_1', 'title' => '{{ setting.my-value }}', 'title_pluralized' => 'Objects 1',
+              'include_in_list_view' => true }
+          ]
+        },
+        description: 'requirements contain setting placeholder with hyphen in property name'
+      },
+      {
+        error: :setting_placeholders_not_allowed_in_cov2_requirements,
+        requirements: {
+          'objects' => [
+            { 'key' => 'object_1', 'title' => '{{ setting.my_value }}', 'title_pluralized' => 'Objects 1',
+              'include_in_list_view' => true }
+          ]
+        },
+        description: 'requirements contain setting placeholder with underscore in property name'
+      },
+      {
+        error: :setting_placeholders_not_allowed_in_cov2_requirements,
+        requirements: {
+          'objects' => [
+            { 'key' => 'object_1', 'title' => '{{ setting.nested.value }}', 'title_pluralized' => 'Objects 1',
+              'include_in_list_view' => true }
+          ]
+        },
+        description: 'requirements contain setting placeholder with dot in property name'
       }
     ].each do |test_case|
       context "when #{test_case[:description]}" do
@@ -146,6 +230,42 @@ describe ZendeskAppsSupport::Validations::CustomObjectsV2 do
           ]
         },
         description: 'requirements are valid'
+      },
+      {
+        requirements: {
+          'objects' => [
+            { 'key' => 'object_1', 'title' => '{{ settings.value }}', 'title_pluralized' => 'Objects 1',
+              'include_in_list_view' => true }
+          ]
+        },
+        description: 'requirements contain plural "settings" (should not match)'
+      },
+      {
+        requirements: {
+          'objects' => [
+            { 'key' => 'object_1', 'title' => '{{ setting }}', 'title_pluralized' => 'Objects 1',
+              'include_in_list_view' => true }
+          ]
+        },
+        description: 'requirements contain "setting" without property (should not match)'
+      },
+      {
+        requirements: {
+          'objects' => [
+            { 'key' => 'object_1', 'title' => '{{setting}}', 'title_pluralized' => 'Objects 1',
+              'include_in_list_view' => true }
+          ]
+        },
+        description: 'requirements contain "setting" without property and no spaces (should not match)'
+      },
+      {
+        requirements: {
+          'objects' => [
+            { 'key' => 'object_1', 'title' => '{{ setting. }}', 'title_pluralized' => 'Objects 1',
+              'include_in_list_view' => true }
+          ]
+        },
+        description: 'requirements contain "setting" with dot but no property name (should not match)'
       }
     ].each do |test_case|
       context "when #{test_case[:description]}" do

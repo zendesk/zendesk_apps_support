@@ -12,11 +12,15 @@ module ZendeskAppsSupport
         include Constants
         include ValidationHelpers
 
+        SETTING_PLACEHOLDER_REGEXP = /\{\{\s*setting\.([\w.-]+)\s*\}\}/
+
         def call(requirements)
           structural_errors = validate_overall_requirements_structure(requirements)
           return structural_errors if structural_errors.any?
 
-          payload_size_errors = validate_payload_size(requirements)
+          requirements_json = requirements.to_json
+
+          payload_size_errors = validate_payload_size(requirements_json)
           return payload_size_errors if payload_size_errors.any?
 
           limits_and_schema_errors = [
@@ -26,16 +30,25 @@ module ZendeskAppsSupport
 
           return limits_and_schema_errors if limits_and_schema_errors.any?
 
+          setting_placeholder_errors = validate_setting_placeholders(requirements_json)
+          return setting_placeholder_errors if setting_placeholder_errors.any?
+
           validate_object_references(requirements)
         end
 
         private
 
-        def validate_payload_size(requirements)
-          payload_size = requirements.to_json.bytesize
+        def validate_payload_size(requirements_json)
+          payload_size = requirements_json.bytesize
           return [] if payload_size <= MAX_PAYLOAD_SIZE_BYTES
 
           [ValidationError.new(:excessive_cov2_payload_size)]
+        end
+
+        def validate_setting_placeholders(requirements_json)
+          return [] unless requirements_json.match?(SETTING_PLACEHOLDER_REGEXP)
+
+          [ValidationError.new(:setting_placeholders_not_allowed_in_cov2_requirements)]
         end
 
         def validate_overall_requirements_structure(requirements)
