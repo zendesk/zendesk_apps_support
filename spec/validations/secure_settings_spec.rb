@@ -11,7 +11,6 @@ describe ZendeskAppsSupport::Validations::SecureSettings do
     package
   end
 
-  # subject to validate_scopes_for_secure_parameter=true derived from apps_secure_setting_scopes arturo
   context 'when scopes validations are enforced' do
     context 'when default manifest parameters are not secure or hidden' do
       it 'returns no warning' do
@@ -31,7 +30,7 @@ describe ZendeskAppsSupport::Validations::SecureSettings do
           ]
         }
         package = create_package(manifest_hash)
-        subject.call(package, validate_scopes_for_secure_parameter: true)
+        subject.call(package)
 
         expect(package.warnings).to be_empty
       end
@@ -50,7 +49,7 @@ describe ZendeskAppsSupport::Validations::SecureSettings do
           ]
         }
         package = create_package(manifest_hash)
-        subject.call(package, validate_scopes_for_secure_parameter: true)
+        subject.call(package)
         expect(package.warnings.size).to eq(2)
         expect(package.warnings[0]).to include('confirm they do not contain sensitive data')
         expect(package.warnings[1]).to include(
@@ -71,7 +70,7 @@ describe ZendeskAppsSupport::Validations::SecureSettings do
           ]
         }
         package = create_package(manifest_hash)
-        subject.call(package, validate_scopes_for_secure_parameter: true)
+        subject.call(package)
 
         expect(package.warnings.size).to eq(1)
         expect(package.warnings[0]).to include('confirm they do not contain sensitive data')
@@ -89,7 +88,7 @@ describe ZendeskAppsSupport::Validations::SecureSettings do
           ]
         }
         package = create_package(manifest_hash)
-        subject.call(package, validate_scopes_for_secure_parameter: true)
+        subject.call(package)
 
         expect(package.warnings).to be_empty
       end
@@ -110,7 +109,7 @@ describe ZendeskAppsSupport::Validations::SecureSettings do
           ]
         }
         package = create_package(manifest_hash)
-        subject.call(package, validate_scopes_for_secure_parameter: true)
+        subject.call(package)
 
         expect(package.warnings.size).to eq(1)
         expect(package.warnings[0]).to include('Make sure to set secure to true')
@@ -157,7 +156,7 @@ describe ZendeskAppsSupport::Validations::SecureSettings do
           ]
         }
         package = create_package(manifest_hash)
-        subject.call(package, validate_scopes_for_secure_parameter: true)
+        subject.call(package)
 
         expect(package.warnings.size).to eq(3)
         expect(package.warnings[0]).to include('Make sure to set secure to true when using keys in Settings')
@@ -183,7 +182,7 @@ describe ZendeskAppsSupport::Validations::SecureSettings do
           ]
         }
         package = create_package(manifest_hash)
-        subject.call(package, validate_scopes_for_secure_parameter: true)
+        subject.call(package)
 
         expect(package.warnings).to be_empty
       end
@@ -202,7 +201,7 @@ describe ZendeskAppsSupport::Validations::SecureSettings do
           ]
         }
         package = create_package(manifest_hash)
-        subject.call(package, validate_scopes_for_secure_parameter: true)
+        subject.call(package)
 
         expect(package.warnings[0]).to include(
           'The scopes property is not configured for parameter(s): token_with_nil_scopes. This may cause token exposure vulnerabilities. Learn about:'
@@ -221,7 +220,7 @@ describe ZendeskAppsSupport::Validations::SecureSettings do
           ]
         }
         package = create_package(manifest_hash)
-        subject.call(package, validate_scopes_for_secure_parameter: true)
+        subject.call(package)
 
         expect(package.warnings[0]).to include(
           'The scopes property is not configured for parameter(s): token_with_empty_scopes. This may cause token exposure vulnerabilities. Learn about:'
@@ -246,7 +245,7 @@ describe ZendeskAppsSupport::Validations::SecureSettings do
           ]
         }
         package = create_package(manifest_hash)
-        subject.call(package, validate_scopes_for_secure_parameter: true)
+        subject.call(package)
 
         expect(package.warnings[0]).to include(
           'The scopes property is not configured for parameter(s): token_with_nil_scopes, token_with_empty_scopes. This may cause token exposure vulnerabilities. Learn about:'
@@ -255,7 +254,6 @@ describe ZendeskAppsSupport::Validations::SecureSettings do
     end
   end
 
-  # subject to validate_scopes_for_secure_parameter=false derived from apps_secure_setting_scopes arturo
   context 'when scopes validations are skipped' do
     context 'when default manifest parameters are not secure or hidden' do
       it 'returns no warning' do
@@ -275,7 +273,7 @@ describe ZendeskAppsSupport::Validations::SecureSettings do
         ]
         }
         package = create_package(manifest_hash)
-        subject.call(package, validate_scopes_for_secure_parameter: false)
+        subject.call(package)
 
         expect(package.warnings).to be_empty
       end
@@ -289,13 +287,13 @@ describe ZendeskAppsSupport::Validations::SecureSettings do
               'name' => 'secured_default_subdomain',
               'type' => 'text',
               'secure' => true,
-              'default' => 'mysubdomain'
+              'default' => 'mysubdomain',
+              "scopes" => ["header"]
             }
           ]
         }
         package = create_package(manifest_hash)
-        subject.call(package, validate_scopes_for_secure_parameter: false)
-
+        subject.call(package)
         expect(package.warnings.size).to eq(1)
         expect(package.warnings[0]).to include('confirm they do not contain sensitive data')
       end
@@ -313,7 +311,7 @@ describe ZendeskAppsSupport::Validations::SecureSettings do
           ]
         }
         package = create_package(manifest_hash)
-        subject.call(package, validate_scopes_for_secure_parameter: false)
+        subject.call(package)
 
         expect(package.warnings.size).to eq(1)
         expect(package.warnings[0]).to include('confirm they do not contain sensitive data')
@@ -331,7 +329,7 @@ describe ZendeskAppsSupport::Validations::SecureSettings do
           ]
         }
         package = create_package(manifest_hash)
-        subject.call(package, validate_scopes_for_secure_parameter: false)
+        subject.call(package)
 
         expect(package.warnings).to be_empty
       end
@@ -352,7 +350,7 @@ describe ZendeskAppsSupport::Validations::SecureSettings do
           ]
         }
         package = create_package(manifest_hash)
-        subject.call(package, validate_scopes_for_secure_parameter: false)
+        subject.call(package)
 
         expect(package.warnings.size).to eq(1)
         expect(package.warnings[0]).to include('Make sure to set secure to true')
@@ -364,12 +362,14 @@ describe ZendeskAppsSupport::Validations::SecureSettings do
             {
               'name' => 'my_token',
               'secure' => true,
-              'type' => 'text'
+              'type' => 'text',
+              'scopes' => ['header']
             },
             {
               'name' => 'oauth_token',
               'secure' => true,
-              'type' => 'text'
+              'type' => 'text',
+              'scopes' => ['header']
             },
             {
               'name' => 'token_with_scopes',
@@ -394,13 +394,13 @@ describe ZendeskAppsSupport::Validations::SecureSettings do
               'name' => 'secured_default_subdomain',
               'secure' => true,
               'type' => 'text',
-              'default' => 'mysubdomain'
+              'default' => 'mysubdomain',
+              'scopes' => ['header']
             }
           ]
         }
         package = create_package(manifest_hash)
-        subject.call(package, validate_scopes_for_secure_parameter: false)
-
+        subject.call(package)
         expect(package.warnings.size).to eq(2)
         expect(package.warnings[0]).to include('Make sure to set secure to true when using keys in Settings')
         expect(package.warnings[1]).to include('Default values for secure or hidden parameters are not stored securely')

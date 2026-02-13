@@ -7,7 +7,7 @@ module ZendeskAppsSupport
       SECURABLE_KEYWORDS_REGEXP = Regexp.new(SECURABLE_KEYWORDS.join('|'), Regexp::IGNORECASE)
 
       class << self
-        def call(package, validate_scopes_for_secure_parameter: false)
+        def call(package)
           manifest_params = package.manifest.parameters
 
           insecure_params_found = manifest_params.any? { |param| insecure_param?(param) }
@@ -16,10 +16,8 @@ module ZendeskAppsSupport
           secure_or_hidden_default_param_found = manifest_params.any? { |param| secure_or_hidden_default_param?(param) }
           package.warnings << hidden_default_parameter_warning if secure_or_hidden_default_param_found
 
-          if validate_scopes_for_secure_parameter
-            unscoped_secure_param_names = manifest_params.filter_map { |param| name_if_secure_unscoped(param) }
-            package.warnings << no_scopes_warning(unscoped_secure_param_names) if unscoped_secure_param_names.any?
-          end
+          unscoped_secure_param_names = manifest_params.filter_map { |param| name_if_secure_unscoped(param) }
+          package.warnings << no_scopes_warning(unscoped_secure_param_names) if unscoped_secure_param_names.any?
         end
 
         private
