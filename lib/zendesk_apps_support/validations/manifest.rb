@@ -14,7 +14,7 @@ module ZendeskAppsSupport
       SECURE_PARAM_SCOPES = %w[header body url jwt_secret_key jwt_claim basic_auth_username basic_auth_password].freeze
 
       class << self
-        def call(package, error_on_password_parameter: false, validate_scopes_for_secure_parameter: false)
+        def call(package, error_on_password_parameter: false)
           unless package.has_file?('manifest.json')
             nested_manifest = package.files.find { |file| file =~ %r{\A[^/]+?/manifest\.json\Z} }
             if nested_manifest
@@ -25,7 +25,7 @@ module ZendeskAppsSupport
 
           package.warnings << password_parameter_warning if !error_on_password_parameter && password_param_present?(package.manifest)
 
-          collate_manifest_errors(package, error_on_password_parameter, validate_scopes_for_secure_parameter)
+          collate_manifest_errors(package, error_on_password_parameter)
         rescue JSON::ParserError => e
           return [ValidationError.new(:manifest_not_json, errors: e)]
         rescue ZendeskAppsSupport::Manifest::OverrideError => e
@@ -38,7 +38,7 @@ module ZendeskAppsSupport
           manifest.parameters.any? { |p| p.type == 'password' }
         end
 
-        def collate_manifest_errors(package, error_on_password_parameter, validate_scopes_for_secure_parameter)
+        def collate_manifest_errors(package, error_on_password_parameter)
           manifest = package.manifest
 
           errors = [
@@ -47,7 +47,7 @@ module ZendeskAppsSupport
             oauth_error(manifest),
             default_locale_error(manifest, package),
             validate_urls(manifest),
-            validate_parameters(manifest, validate_scopes_for_secure_parameter),
+            validate_parameters(manifest),
             if manifest.requirements_only? || manifest.marketing_only?
               [ ban_location(manifest),
                 ban_framework_version(manifest) ]
@@ -88,7 +88,7 @@ module ZendeskAppsSupport
           errors
         end
 
-        def validate_parameters(manifest, validate_scopes_for_secure_parameter)
+        def validate_parameters(manifest)
           if manifest.marketing_only?
             marketing_only_errors(manifest)
           else
@@ -99,7 +99,7 @@ module ZendeskAppsSupport
               too_many_oauth_parameters(manifest),
               oauth_cannot_be_secure(manifest),
               name_as_parameter_name_error(manifest),
-              *(validate_scopes_for_secure_parameter ? invalid_secure_param_scopes_errors(manifest) : invalid_scopes_key_error(manifest)),
+              invalid_secure_param_scopes_errors(manifest)
             ]
           end
         end
@@ -110,18 +110,6 @@ module ZendeskAppsSupport
               return ValidationError.new('oauth_parameter_cannot_be_secure')
             end
           end
-        end
-
-        def invalid_scopes_key_error(manifest)
-          errors = []
-          manifest.parameters.each do |parameter|
-            next if parameter.scopes.nil?
-
-            errors << ValidationError.new(:field_contains_invalid_keys,
-                                        field: "parameters[name=\"#{parameter.name}\"]",
-                                        keys: 'scopes')
-          end
-          errors
         end
 
         def invalid_secure_param_scopes_errors(manifest)

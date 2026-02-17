@@ -478,8 +478,8 @@ describe ZendeskAppsSupport::Package do
       end
 
       it 'passes manifest validation options correctly' do
-        package.validate!(marketplace: true, error_on_password_parameter: true, validate_scopes_for_secure_parameter: true)
-        expect(ZendeskAppsSupport::Validations::Manifest).to have_received(:call).with(package, {:error_on_password_parameter => true, :validate_scopes_for_secure_parameter => true})
+        package.validate!(marketplace: true, error_on_password_parameter: true)
+        expect(ZendeskAppsSupport::Validations::Manifest).to have_received(:call).with(package, {:error_on_password_parameter => true})
       end
 
       it 'uses default values when called with empty options' do
@@ -487,7 +487,7 @@ describe ZendeskAppsSupport::Package do
 
         expect(ZendeskAppsSupport::Validations::Manifest).to have_received(:call).with(
           package,
-          { error_on_password_parameter: false, validate_scopes_for_secure_parameter: false }
+          { error_on_password_parameter: false}
         )
         expect(ZendeskAppsSupport::Validations::Marketplace).to have_received(:call).with(package)
         expect(ZendeskAppsSupport::Validations::Translations).to have_received(:call).with(
