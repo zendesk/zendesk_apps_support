@@ -5,8 +5,8 @@ module ZendeskAppsSupport
     module CustomObjectsV2
       module Constants
         MAX_OBJECTS = 50
-        MAX_FIELDS_PER_OBJECT = 10
-        MAX_TRIGGERS_PER_OBJECT = 20
+        MAX_FIELDS_PER_OBJECT = 20
+        MAX_TRIGGERS_PER_OBJECT = 10
         MAX_CONDITIONS_PER_TRIGGER = 50
         MAX_ACTIONS_PER_TRIGGER = 25
         MAX_CONDITIONS_IN_RELATIONSHIP_FILTER_PER_OBJECT = 20
