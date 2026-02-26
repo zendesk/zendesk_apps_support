@@ -18,7 +18,7 @@ describe ZendeskAppsSupport::Validations::CustomObjectsV2::LimitsValidator do
         error: :excessive_custom_objects_v2_fields,
         requirements: {
           'objects' => [{ 'key' => 'object_1', 'title' => 'Object 1' }],
-          'object_fields' => Array.new(11) do |i|
+          'object_fields' => Array.new(21) do |i|
             { 'key' => "field_#{i}", 'type' => 'text', 'object_key' => 'object_1' }
           end,
           'object_triggers' => []
@@ -71,7 +71,7 @@ describe ZendeskAppsSupport::Validations::CustomObjectsV2::LimitsValidator do
         requirements: {
           'objects' => [{ 'key' => 'object_1', 'title' => 'Object 1' }],
           'object_fields' => [],
-          'object_triggers' => Array.new(21) do |i|
+          'object_triggers' => Array.new(11) do |i|
             { 'key' => "trigger_#{i}", 'title' => "Trigger #{i}", 'object_key' => 'object_1',
               'conditions' => { 'all' => [] }, 'actions' => [] }
           end
@@ -145,7 +145,9 @@ describe ZendeskAppsSupport::Validations::CustomObjectsV2::LimitsValidator do
               'title' => 'Order Processing Trigger',
               'object_key' => 'order_object',
               'conditions' => {
-                'all' => Array.new(50) { |i| { 'field' => "condition_field_#{i}", 'operator' => 'is', 'value' => "value_#{i}" } }
+                'all' => Array.new(50) do |i|
+                  { 'field' => "condition_field_#{i}", 'operator' => 'is', 'value' => "value_#{i}" }
+                end
               },
               'actions' => Array.new(25) { |i| { 'field' => "action_field_#{i}", 'value' => "action_value_#{i}" } }
             }
