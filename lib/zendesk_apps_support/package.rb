@@ -35,7 +35,6 @@ module ZendeskAppsSupport
       marketplace = options.fetch(:marketplace, true)
       skip_marketplace_translations = options.fetch(:skip_marketplace_translations, false)
       error_on_password_parameter = options.fetch(:error_on_password_parameter, false)
-      validate_custom_objects_v2 = options.fetch(:validate_custom_objects_v2, false)
 
       errors = []
       errors << Validations::Manifest.call(self, error_on_password_parameter: error_on_password_parameter)
@@ -44,7 +43,7 @@ module ZendeskAppsSupport
         errors << Validations::Marketplace.call(self) if marketplace
         errors << Validations::Source.call(self)
         errors << Validations::Translations.call(self, skip_marketplace_translations: skip_marketplace_translations)
-        errors << Validations::Requirements.call(self, validate_custom_objects_v2:)
+        errors << Validations::Requirements.call(self)
 
         # only adds warnings
         Validations::SecureSettings.call(self)
