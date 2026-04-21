@@ -390,66 +390,30 @@ describe ZendeskAppsSupport::Validations::Requirements do
       )
     end
 
-    context 'when validate_custom_objects_v2 is false (default)' do
-      context 'with no custom_objects_v2 requirements' do
-        let(:requirements_string) { non_cov2_requirements }
+    context 'with no custom_objects_v2 requirements' do
+      let(:requirements_string) { non_cov2_requirements }
 
-        it 'calls validate_custom_objects_v2_requirements but returns early due to flag' do
-          expect(ZendeskAppsSupport::Validations::Requirements)
-            .to receive(:validate_custom_objects_v2_requirements).and_call_original
-          expect(ZendeskAppsSupport::Validations::CustomObjectsV2).not_to receive(:call)
-          expect(errors).to be_empty
-        end
-      end
-
-      context 'with excessive custom_objects_v2 requirements' do
-        let(:requirements_string) { excessive_objects_requirements }
-
-        it 'calls validate_custom_objects_v2_requirements but returns early due to flag' do
-          expect(ZendeskAppsSupport::Validations::Requirements)
-            .to receive(:validate_custom_objects_v2_requirements).and_call_original
-          expect(ZendeskAppsSupport::Validations::CustomObjectsV2).not_to receive(:call)
-          expect(errors).to be_empty
-        end
+      it 'does not invoke CustomObjectsV2 validator' do
+        expect(ZendeskAppsSupport::Validations::CustomObjectsV2).not_to receive(:call)
+        expect(errors).to be_empty
       end
     end
 
-    context 'when validate_custom_objects_v2 is true' do
-      let(:errors) do
-        ZendeskAppsSupport::Validations::Requirements.call(package, validate_custom_objects_v2: true)
+    context 'with excessive custom_objects_v2 requirements' do
+      let(:requirements_string) { excessive_objects_requirements }
+
+      it 'validates max custom object limits' do
+        expect(errors.first.key).to eq(:excessive_custom_objects_v2_requirements)
+        expect(errors.first.data).to eq(max: 50, count: 51)
       end
+    end
 
-      context 'with no custom_objects_v2 requirements' do
-        let(:requirements_string) { non_cov2_requirements }
+    context 'with valid custom_objects_v2 requirements' do
+      let(:requirements_string) { valid_objects_requirements }
 
-        it 'calls validate_custom_objects_v2_requirements but not CustomObjectsV2 module' do
-          expect(ZendeskAppsSupport::Validations::Requirements)
-            .to receive(:validate_custom_objects_v2_requirements).and_call_original
-          expect(ZendeskAppsSupport::Validations::CustomObjectsV2).not_to receive(:call)
-          expect(errors).to be_empty
-        end
-      end
-
-      context 'with excessive custom_objects_v2 requirements' do
-        let(:requirements_string) { excessive_objects_requirements }
-
-        it 'validates max custom object limits' do
-          expect(ZendeskAppsSupport::Validations::Requirements)
-            .to receive(:validate_custom_objects_v2_requirements).and_call_original
-          expect(errors.first.key).to eq(:excessive_custom_objects_v2_requirements)
-          expect(errors.first.data).to eq(max: 50, count: 51)
-        end
-      end
-
-      context 'with valid custom_objects_v2 requirements' do
-        let(:requirements_string) { valid_objects_requirements }
-
-        it 'calls validate_custom_objects_v2_requirements and validates successfully' do
-          expect(ZendeskAppsSupport::Validations::Requirements)
-            .to receive(:validate_custom_objects_v2_requirements).and_call_original
-          expect(ZendeskAppsSupport::Validations::CustomObjectsV2).to receive(:call).and_return([])
-          expect(errors).to be_empty
-        end
+      it 'validates successfully' do
+        expect(ZendeskAppsSupport::Validations::CustomObjectsV2).to receive(:call).and_call_original
+        expect(errors).to be_empty
       end
     end
   end
