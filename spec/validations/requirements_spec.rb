@@ -412,7 +412,7 @@ describe ZendeskAppsSupport::Validations::Requirements do
       let(:requirements_string) { valid_objects_requirements }
 
       it 'validates successfully' do
-        expect(ZendeskAppsSupport::Validations::CustomObjectsV2).to receive(:call).and_return([])
+        expect(ZendeskAppsSupport::Validations::CustomObjectsV2).to receive(:call).and_call_original
         expect(errors).to be_empty
       end
     end
