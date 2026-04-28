@@ -14,7 +14,7 @@ module ZendeskAppsSupport
       SECURE_PARAM_SCOPES = %w[header body url jwt_secret_key jwt_claim basic_auth_username basic_auth_password].freeze
 
       class << self
-        def call(package, error_on_password_parameter: false)
+        def call(package)
           unless package.has_file?('manifest.json')
             nested_manifest = package.files.find { |file| file =~ %r{\A[^/]+?/manifest\.json\Z} }
             if nested_manifest
@@ -22,10 +22,7 @@ module ZendeskAppsSupport
             end
             return [ValidationError.new(:missing_manifest)]
           end
-
-          package.warnings << password_parameter_warning if !error_on_password_parameter && password_param_present?(package.manifest)
-
-          collate_manifest_errors(package, error_on_password_parameter)
+          collate_manifest_errors(package)
         rescue JSON::ParserError => e
           return [ValidationError.new(:manifest_not_json, errors: e)]
         rescue ZendeskAppsSupport::Manifest::OverrideError => e
@@ -34,11 +31,7 @@ module ZendeskAppsSupport
 
         private
 
-        def password_param_present?(manifest)
-          manifest.parameters.any? { |p| p.type == 'password' }
-        end
-
-        def collate_manifest_errors(package, error_on_password_parameter)
+        def collate_manifest_errors(package)
           manifest = package.manifest
 
           errors = [
@@ -56,10 +49,7 @@ module ZendeskAppsSupport
                 missing_framework_version(manifest),
                 invalid_version_error(manifest) ]
             end,
-            ban_no_template(manifest),
-            if error_on_password_parameter
-             [ deprecate_password_parameter_type(manifest) ]
-            end
+            ban_no_template(manifest)
           ]
           errors.flatten.compact
         end
@@ -250,13 +240,6 @@ module ZendeskAppsSupport
 
         def ban_framework_version(manifest)
           ValidationError.new(:no_framework_version_required) unless manifest.framework_version.nil?
-        end
-
-        def deprecate_password_parameter_type(manifest)
-          secure_settings_link = 'https://developer.zendesk.com/documentation/apps/app-developer-guide/making-api-requests-from-a-zendesk-app/#using-secure-settings'
-          if password_param_present?(manifest)
-            ValidationError.new(:password_parameter_type_deprecated, link: secure_settings_link)
-          end
         end
 
         def private_marketing_app_error(manifest)
