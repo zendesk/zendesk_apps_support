@@ -27,11 +27,11 @@ module ZendeskAppsSupport
         end
 
         def insecure_param?(parameter)
-          parameter.name =~ SECURABLE_KEYWORDS_REGEXP && type_password_or_text?(parameter.type) && !parameter.secure
+          parameter.name =~ SECURABLE_KEYWORDS_REGEXP && type_text?(parameter.type) && !parameter.secure
         end
 
-        def type_password_or_text?(parameter_type)
-          parameter_type == 'text' || parameter_type == 'password'
+        def type_text?(parameter_type)
+          parameter_type == 'text'
         end
 
         def hidden_default_parameter_warning

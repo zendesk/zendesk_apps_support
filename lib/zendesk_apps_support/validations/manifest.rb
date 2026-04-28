@@ -474,13 +474,6 @@ module ZendeskAppsSupport
         rescue URI::InvalidURIError
           false
         end
-
-        def password_parameter_warning
-          I18n.t(
-            'txt.apps.admin.error.app_build.translation.password_parameter_deprecated',
-            link: 'https://developer.zendesk.com/documentation/apps/app-developer-guide/making-api-requests-from-a-zendesk-app/#using-basic-access-authentication'
-          )
-        end
       end
     end
   end
