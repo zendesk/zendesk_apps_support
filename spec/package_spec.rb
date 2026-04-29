@@ -464,6 +464,17 @@ describe ZendeskAppsSupport::Package do
         allow(ZendeskAppsSupport::Validations::Requirements).to receive(:call)
       end
 
+      it 'uses default values when called with empty options' do
+        package.validate!
+
+        expect(ZendeskAppsSupport::Validations::Marketplace).to have_received(:call).with(package)
+        expect(ZendeskAppsSupport::Validations::Translations).to have_received(:call).with(
+          package,
+          { skip_marketplace_translations: false }
+        )
+        expect(ZendeskAppsSupport::Validations::Requirements).to have_received(:call).with(package)
+      end
+
       it 'ignores unknown options without raising error' do
         expect do
           package.validate!(
