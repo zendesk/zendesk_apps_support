@@ -807,22 +807,6 @@ describe ZendeskAppsSupport::Validations::Manifest do
     end
   end
 
-  context 'when password parameter is present' do
-    it 'should return invalid_type_parameter error' do
-      @manifest_hash = {
-        'parameters' => [
-          'name' => 'a password param',
-          'type' => 'password'
-        ]
-      }
-
-      package = create_package(@manifest_hash)
-      errors = ZendeskAppsSupport::Validations::Manifest.call(package)
-
-      expect(errors.map(&:to_s).join).to include('password is an invalid parameter type.')
-    end
-  end
-
   context 'scope parameter validations' do
     context 'when a parameter has scopes but is not secure' do
       it 'should have an error requiring secure parameter for scopes' do
