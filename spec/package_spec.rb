@@ -464,18 +464,9 @@ describe ZendeskAppsSupport::Package do
         allow(ZendeskAppsSupport::Validations::Requirements).to receive(:call)
       end
 
-      it 'passes manifest validation options correctly' do
-        package.validate!(marketplace: true, error_on_password_parameter: true)
-        expect(ZendeskAppsSupport::Validations::Manifest).to have_received(:call).with(package, {:error_on_password_parameter => true})
-      end
-
       it 'uses default values when called with empty options' do
         package.validate!
 
-        expect(ZendeskAppsSupport::Validations::Manifest).to have_received(:call).with(
-          package,
-          { error_on_password_parameter: false}
-        )
         expect(ZendeskAppsSupport::Validations::Marketplace).to have_received(:call).with(package)
         expect(ZendeskAppsSupport::Validations::Translations).to have_received(:call).with(
           package,

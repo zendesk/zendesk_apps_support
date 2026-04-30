@@ -34,10 +34,9 @@ module ZendeskAppsSupport
     def validate(options = {})
       marketplace = options.fetch(:marketplace, true)
       skip_marketplace_translations = options.fetch(:skip_marketplace_translations, false)
-      error_on_password_parameter = options.fetch(:error_on_password_parameter, false)
 
       errors = []
-      errors << Validations::Manifest.call(self, error_on_password_parameter: error_on_password_parameter)
+      errors << Validations::Manifest.call(self)
 
       if has_valid_manifest?(errors)
         errors << Validations::Marketplace.call(self) if marketplace

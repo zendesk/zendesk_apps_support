@@ -268,9 +268,6 @@ en:
                 do not match products in translations (%{translation_products})
               insecure_token_parameter_in_manifest: 'Make sure to set secure to true
                 when using keys in Settings. Learn more: %{link}'
-              password_parameter_deprecated: 'Password parameter type is deprecated
-                and will not be accepted in the future. Use Basic Access Authentication
-                instead. Learn more: %{link}.'
               default_secure_or_hidden_parameter_in_manifest: Default values for secure
                 or hidden parameters are not stored securely. Be sure to review them
                 and confirm they do not contain sensitive data
@@ -298,8 +295,6 @@ en:
             oauth_parameter_cannot_be_secure: oauth parameter cannot be set to be
               secure.
             invalid_url: '%{field} must be a valid URL, got "%{value}".'
-            password_parameter_type_deprecated: 'Password parameter type can no longer
-              be used. Use Secure settings instead. Learn more: %{link}.'
             field_requires_secure_parameter: "%{field} cannot be defined in a non-secure
               parameter."
             field_cannot_be_empty: "%{field} cannot be empty."
