@@ -657,7 +657,7 @@ parts:
       key: "txt.apps.admin.error.app_build.password_parameter_type_deprecated"
       title: "App builder job: Password parameter type is deprecated"
       value: "Password parameter type can no longer be used. Use Secure settings instead. Learn more: %{link}."
-      obesolete: "2026-08-31"
+      obsolete: "2026-08-31"
   - translation:
       key: "txt.apps.admin.error.app_build.field_requires_secure_parameter"
       title: "App builder job: Error when parameter field requires secure setting set to true. Placeholder %{field} shows parameter field along with parameter name like \"parameter[name='param'].scopes\" found in the supplied manifest file."
