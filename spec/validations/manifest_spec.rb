@@ -249,6 +249,22 @@ describe ZendeskAppsSupport::Validations::Manifest do
     end
   end
 
+  context 'location references custom_object_v2_sidebar with a valid URI' do
+    before do
+      @manifest_hash = {
+        'location' => {
+          'zendesk' => {
+            'custom_object_v2_sidebar' => 'https://mysite.com/custom_object_sidebar'
+          }
+        }
+      }
+    end
+
+    it 'should not have a location error' do
+      expect(@package).not_to have_error(/invalid location/)
+    end
+  end
+
   context 'location references an invalid flexible parameter' do
     before do
       @manifest_hash = {
@@ -479,6 +495,19 @@ describe ZendeskAppsSupport::Validations::Manifest do
     before do
       @manifest_hash = {
         'location' => 'ticket_editor',
+        'frameworkVersion' => '1.0'
+      }
+    end
+
+    it 'should have an error' do
+      expect(@package).to have_error(:invalid_v1_location)
+    end
+  end
+
+  context 'a v1 app targeting custom_object_v2_sidebar location' do
+    before do
+      @manifest_hash = {
+        'location' => 'custom_object_v2_sidebar',
         'frameworkVersion' => '1.0'
       }
     end
