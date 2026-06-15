@@ -807,6 +807,52 @@ describe ZendeskAppsSupport::Validations::Manifest do
     end
   end
 
+  context 'object_types validations' do
+    let(:location_name) { ZendeskAppsSupport::Manifest::LocationOptions::OBJECT_TYPES_LOCATION }
+    let(:location_url) { 'https://example.com/app' }
+    let(:location_opts) { { 'url' => location_url, 'object_types' => object_types } }
+    let(:object_types) { %w[car truck] }
+
+    before do
+      @manifest_hash = {
+        'location' => {
+          'support' => {
+            location_name => location_opts
+          }
+        }
+      }
+    end
+
+    context 'when object_types is used with cov2_records_sidebar' do
+      it 'should not have an error with valid object_types' do
+        expect(create_package(@manifest_hash)).not_to have_error
+      end
+
+      it 'should have an error when object_types is empty' do
+        @manifest_hash['location']['support'][location_name]['object_types'] = []
+        expect(create_package(@manifest_hash)).to have_error(:object_types_empty)
+      end
+
+      it 'should have an error when object_types is not an array' do
+        @manifest_hash['location']['support'][location_name]['object_types'] = 'car'
+        expect(create_package(@manifest_hash)).to have_error(:object_types_must_be_array)
+      end
+
+      it 'should have an error when object_types contains non-string values' do
+        @manifest_hash['location']['support'][location_name]['object_types'] = ['car', 123, '']
+        expect(create_package(@manifest_hash)).to have_error(:object_types_invalid_entries)
+      end
+    end
+
+    context 'when object_types is used with a non-cov2_records_sidebar location' do
+      let(:location_name) { 'ticket_sidebar' }
+
+      it 'should silently ignore object_types' do
+        expect(create_package(@manifest_hash)).not_to have_error(:object_types_not_supported)
+      end
+    end
+  end
+
   context 'scope parameter validations' do
     context 'when a parameter has scopes but is not secure' do
       it 'should have an error requiring secure parameter for scopes' do

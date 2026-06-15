@@ -10,8 +10,11 @@ module ZendeskAppsSupport
         flexible: 'flexible',
         signed: 'signed',
         url: 'url',
-        size: 'size'
+        size: 'size',
+        object_types: 'object_types'
       }.freeze
+
+      OBJECT_TYPES_LOCATION = 'cov2_records_sidebar'
 
       attr_reader :location
       attr_reader(*RUBY_TO_JSON.keys)
@@ -31,6 +34,7 @@ module ZendeskAppsSupport
         @auto_load = options.fetch('autoLoad', true)
         @auto_hide ||= false
         @signed ||= false
+        @object_types = nil unless @location&.name == OBJECT_TYPES_LOCATION
       end
     end
   end

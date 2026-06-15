@@ -60,7 +60,8 @@ module ZendeskAppsSupport
             missing_location_error(package),
             invalid_location_error(package),
             invalid_v1_location(package),
-            location_framework_mismatch(manifest)
+            location_framework_mismatch(manifest),
+            validate_object_types(manifest)
           ]
         end
 
@@ -377,6 +378,42 @@ module ZendeskAppsSupport
           flexible_flag = location_options.flexible
           validation_error = ValidationError.new(:invalid_location_flexible_type, flexible: flexible_flag)
           validation_error
+        end
+
+        def validate_object_types(manifest)
+          errors = []
+          manifest.location_options.each do |location_options|
+            object_types = location_options.object_types
+            next if object_types.nil?
+            next if location_options.location.nil?
+
+            location_name = location_options.location.name
+            if location_name != ZendeskAppsSupport::Manifest::LocationOptions::OBJECT_TYPES_LOCATION
+              errors << ValidationError.new(:object_types_not_supported,
+                                            location: location_name)
+              next
+            end
+
+            unless object_types.is_a?(Array)
+              errors << ValidationError.new(:object_types_must_be_array,
+                                            location: location_name,
+                                            value: object_types.class.to_s)
+              next
+            end
+
+            if object_types.empty?
+              errors << ValidationError.new(:object_types_empty,
+                                            location: location_name)
+              next
+            end
+
+            non_strings = object_types.reject { |t| t.is_a?(String) && !t.strip.empty? }
+            if non_strings.any?
+              errors << ValidationError.new(:object_types_invalid_entries,
+                                            location: location_name)
+            end
+          end
+          errors
         end
 
         def valid_absolute_uri?(uri)
