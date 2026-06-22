@@ -810,7 +810,7 @@ describe ZendeskAppsSupport::Validations::Manifest do
   context 'object_types validations' do
     let(:location_name) { ZendeskAppsSupport::Manifest::LocationOptions::OBJECT_TYPES_LOCATION }
     let(:location_url) { 'https://example.com/app' }
-    let(:location_opts) { { 'url' => location_url, 'object_types' => object_types } }
+    let(:location_opts) { { 'url' => location_url, 'objectTypes' => object_types } }
     let(:object_types) { %w[car truck] }
 
     before do
@@ -829,17 +829,17 @@ describe ZendeskAppsSupport::Validations::Manifest do
       end
 
       it 'should have an error when object_types is empty' do
-        @manifest_hash['location']['support'][location_name]['object_types'] = []
+        @manifest_hash['location']['support'][location_name]['objectTypes'] = []
         expect(create_package(@manifest_hash)).to have_error(:object_types_empty)
       end
 
       it 'should have an error when object_types is not an array' do
-        @manifest_hash['location']['support'][location_name]['object_types'] = 'car'
+        @manifest_hash['location']['support'][location_name]['objectTypes'] = 'car'
         expect(create_package(@manifest_hash)).to have_error(:object_types_must_be_array)
       end
 
       it 'should have an error when object_types contains non-string values' do
-        @manifest_hash['location']['support'][location_name]['object_types'] = ['car', 123, '']
+        @manifest_hash['location']['support'][location_name]['objectTypes'] = ['car', 123, '']
         expect(create_package(@manifest_hash)).to have_error(:object_types_invalid_entries)
       end
     end

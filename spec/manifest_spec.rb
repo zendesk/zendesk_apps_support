@@ -163,7 +163,7 @@ describe ZendeskAppsSupport::Manifest do
       manifest_hash[:location] = {
         support: {
           ZendeskAppsSupport::Manifest::LocationOptions::OBJECT_TYPES_LOCATION.to_sym => {
-            object_types: object_types
+            objectTypes: object_types
           }
         }
       }

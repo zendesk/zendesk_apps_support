@@ -405,6 +405,7 @@ module ZendeskAppsSupport
                                          location: location_name)
             end
           end
+          nil
         end
 
         def valid_absolute_uri?(uri)

@@ -48,7 +48,7 @@ describe ZendeskAppsSupport::Manifest::LocationOptions do
     end
     let(:options) do
       {
-        'object_types' => %w[car truck]
+        'objectTypes' => %w[car truck]
       }
     end
 
@@ -60,7 +60,7 @@ describe ZendeskAppsSupport::Manifest::LocationOptions do
   context 'with object_types on a non-cov2_records_sidebar location' do
     let(:options) do
       {
-        'object_types' => %w[car truck]
+        'objectTypes' => %w[car truck]
       }
     end
 
