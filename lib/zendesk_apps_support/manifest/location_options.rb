@@ -11,7 +11,7 @@ module ZendeskAppsSupport
         signed: 'signed',
         url: 'url',
         size: 'size',
-        object_types: 'object_types'
+        object_types: 'objectTypes'
       }.freeze
 
       OBJECT_TYPES_LOCATION = 'cov2_records_sidebar'

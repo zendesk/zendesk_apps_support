@@ -157,7 +157,7 @@ describe ZendeskAppsSupport::Manifest do
   end
 
   describe '#location_options with object_types' do
-    let(:object_types) { Array.new(2) { Faker::Lorem.word } }
+    let(:object_types) { %w[car truck] }
 
     before do
       manifest_hash[:location] = {

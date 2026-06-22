@@ -848,7 +848,7 @@ describe ZendeskAppsSupport::Validations::Manifest do
       let(:location_name) { 'ticket_sidebar' }
 
       it 'should silently ignore object_types' do
-        expect(create_package(@manifest_hash)).not_to have_error(:object_types_not_supported)
+        expect(create_package(@manifest_hash)).not_to have_error
       end
     end
   end
