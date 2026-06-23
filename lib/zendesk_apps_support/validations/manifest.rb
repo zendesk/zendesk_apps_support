@@ -14,7 +14,7 @@ module ZendeskAppsSupport
       SECURE_PARAM_SCOPES = %w[header body url jwt_secret_key jwt_claim basic_auth_username basic_auth_password].freeze
 
       class << self
-        def call(package)
+        def call(package, opts = {})
           unless package.has_file?('manifest.json')
             nested_manifest = package.files.find { |file| file =~ %r{\A[^/]+?/manifest\.json\Z} }
             if nested_manifest
@@ -22,7 +22,7 @@ module ZendeskAppsSupport
             end
             return [ValidationError.new(:missing_manifest)]
           end
-          collate_manifest_errors(package)
+          collate_manifest_errors(package, opts)
         rescue JSON::ParserError => e
           return [ValidationError.new(:manifest_not_json, errors: e)]
         rescue ZendeskAppsSupport::Manifest::OverrideError => e
@@ -31,7 +31,7 @@ module ZendeskAppsSupport
 
         private
 
-        def collate_manifest_errors(package)
+        def collate_manifest_errors(package, opts = {})
           manifest = package.manifest
 
           errors = [
@@ -45,7 +45,7 @@ module ZendeskAppsSupport
               [ ban_location(manifest),
                 ban_framework_version(manifest) ]
             else
-              [ validate_location(package),
+              [ validate_location(package, opts),
                 missing_framework_version(manifest),
                 invalid_version_error(manifest) ]
             end,
@@ -54,14 +54,14 @@ module ZendeskAppsSupport
           errors.flatten.compact
         end
 
-        def validate_location(package)
+        def validate_location(package, opts = {})
           manifest = package.manifest
           [
             missing_location_error(package),
-            invalid_location_error(package),
+            invalid_location_error(package, opts),
             invalid_v1_location(package),
             location_framework_mismatch(manifest),
-            validate_object_types(manifest)
+            validate_object_types(manifest, opts)
           ]
         end
 
@@ -314,8 +314,11 @@ module ZendeskAppsSupport
           missing_keys_validation_error(['location']) if package.manifest.location_options.empty?
         end
 
-        def invalid_location_error(package)
+        def invalid_location_error(package, opts = {})
           errors = []
+          is_cov2_sidebar_app_enabled = opts.fetch(:is_cov2_sidebar_app_enabled, false)
+          cov2_location = ZendeskAppsSupport::Manifest::LocationOptions::OBJECT_TYPES_LOCATION
+
           package.manifest.location_options.each do |location_options|
             if location_options.url.is_a?(String) && !location_options.url.empty?
               errors << invalid_location_uri_error(package, location_options)
@@ -330,6 +333,12 @@ module ZendeskAppsSupport
 
           Product::PRODUCTS_AVAILABLE.each do |product|
             invalid_locations = package.manifest.unknown_locations(product.name)
+            unless is_cov2_sidebar_app_enabled
+              requested_locations = package.manifest.locations_for_product(product.name)
+              if requested_locations.include?(cov2_location)
+                invalid_locations << cov2_location
+              end
+            end
             next if invalid_locations.empty?
             errors << ValidationError.new(:invalid_location,
                                           invalid_locations: invalid_locations.join(', '),
@@ -380,13 +389,21 @@ module ZendeskAppsSupport
           validation_error
         end
 
-        def validate_object_types(manifest)
+        def validate_object_types(manifest, opts = {})
+          is_cov2_sidebar_app_enabled = opts.fetch(:is_cov2_sidebar_app_enabled, false)
+          cov2_location = ZendeskAppsSupport::Manifest::LocationOptions::OBJECT_TYPES_LOCATION
+
           manifest.location_options.each do |location_options|
             object_types = location_options.object_types
             next if object_types.nil?
             next if location_options.location.nil?
 
             location_name = location_options.location.name
+
+            if location_name == cov2_location && !is_cov2_sidebar_app_enabled
+              return ValidationError.new(:object_types_not_supported,
+                                         location: location_name)
+            end
 
             unless object_types.is_a?(Array)
               return ValidationError.new(:object_types_must_be_array,

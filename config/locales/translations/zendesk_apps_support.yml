@@ -687,6 +687,10 @@ parts:
       title: "App builder job: object_types must contain only non-empty strings for the given location. Do not translate 'object_types' as it is a manifest property."
       value: "object_types must contain only non-empty strings for the %{location} location."
   - translation:
+      key: "txt.apps.admin.error.app_build.object_types_not_supported"
+      title: "App builder job: object_types is not supported for the given location. Do not translate 'object_types' as it is a manifest property."
+      value: "object_types is not supported for the %{location} location."
+  - translation:
       key: "txt.apps.admin.error.app_build.translation.secure_parameters_with_no_scopes_in_manifest"
       title: "Validation message to indicate missing scopes field in manifest's secure parameter.
         Do not translate 'scopes'. %{params} refers to secure parameters with no scopes configured.

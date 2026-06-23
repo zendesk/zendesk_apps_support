@@ -824,23 +824,51 @@ describe ZendeskAppsSupport::Validations::Manifest do
     end
 
     context 'when object_types is used with cov2_records_sidebar' do
-      it 'should not have an error with valid object_types' do
-        expect(create_package(@manifest_hash)).not_to have_error
+      context 'when is_cov2_sidebar_app_enabled is true' do
+        def validate_with_cov2_enabled(package)
+          ZendeskAppsSupport::Validations::Manifest.call(package, is_cov2_sidebar_app_enabled: true)
+        end
+
+        it 'should not have an error with valid object_types' do
+          create_package(@manifest_hash)
+          errors = validate_with_cov2_enabled(@package)
+          expect(errors).to be_empty
+        end
+
+        it 'should have an error when object_types is empty' do
+          @manifest_hash['location']['support'][location_name]['objectTypes'] = []
+          create_package(@manifest_hash)
+          errors = validate_with_cov2_enabled(@package)
+          expect(errors.find { |e| e.key == :object_types_empty }).not_to be_nil
+        end
+
+        it 'should have an error when object_types is not an array' do
+          @manifest_hash['location']['support'][location_name]['objectTypes'] = 'car'
+          create_package(@manifest_hash)
+          errors = validate_with_cov2_enabled(@package)
+          expect(errors.find { |e| e.key == :object_types_must_be_array }).not_to be_nil
+        end
+
+        it 'should have an error when object_types contains non-string values' do
+          @manifest_hash['location']['support'][location_name]['objectTypes'] = ['car', 123, '']
+          create_package(@manifest_hash)
+          errors = validate_with_cov2_enabled(@package)
+          expect(errors.find { |e| e.key == :object_types_invalid_entries }).not_to be_nil
+        end
       end
 
-      it 'should have an error when object_types is empty' do
-        @manifest_hash['location']['support'][location_name]['objectTypes'] = []
-        expect(create_package(@manifest_hash)).to have_error(:object_types_empty)
-      end
+      context 'when is_cov2_sidebar_app_enabled is false' do
+        it 'should have an error for cov2_records_sidebar location' do
+          create_package(@manifest_hash)
+          errors = ZendeskAppsSupport::Validations::Manifest.call(@package, is_cov2_sidebar_app_enabled: false)
+          expect(errors.find { |e| e.key == :invalid_location }).not_to be_nil
+        end
 
-      it 'should have an error when object_types is not an array' do
-        @manifest_hash['location']['support'][location_name]['objectTypes'] = 'car'
-        expect(create_package(@manifest_hash)).to have_error(:object_types_must_be_array)
-      end
-
-      it 'should have an error when object_types contains non-string values' do
-        @manifest_hash['location']['support'][location_name]['objectTypes'] = ['car', 123, '']
-        expect(create_package(@manifest_hash)).to have_error(:object_types_invalid_entries)
+        it 'should have an error for object_types not supported' do
+          create_package(@manifest_hash)
+          errors = ZendeskAppsSupport::Validations::Manifest.call(@package, is_cov2_sidebar_app_enabled: false)
+          expect(errors.find { |e| e.key == :object_types_not_supported }).not_to be_nil
+        end
       end
     end
 

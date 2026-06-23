@@ -268,6 +268,9 @@ en:
                 do not match products in translations (%{translation_products})
               insecure_token_parameter_in_manifest: 'Make sure to set secure to true
                 when using keys in Settings. Learn more: %{link}'
+              password_parameter_deprecated: 'Password parameter type is deprecated
+                and will not be accepted in the future. Use Basic Access Authentication
+                instead. Learn more: %{link}.'
               default_secure_or_hidden_parameter_in_manifest: Default values for secure
                 or hidden parameters are not stored securely. Be sure to review them
                 and confirm they do not contain sensitive data
@@ -295,11 +298,21 @@ en:
             oauth_parameter_cannot_be_secure: oauth parameter cannot be set to be
               secure.
             invalid_url: '%{field} must be a valid URL, got "%{value}".'
+            password_parameter_type_deprecated: 'Password parameter type can no longer
+              be used. Use Secure settings instead. Learn more: %{link}.'
             field_requires_secure_parameter: "%{field} cannot be defined in a non-secure
               parameter."
             field_cannot_be_empty: "%{field} cannot be empty."
             field_contains_invalid_values: "%{field} contains invalid values: %{values}."
             field_contains_invalid_keys: "%{field} contains invalid keys: %{keys}."
+            object_types_must_be_array: object_types must be an array of strings for
+              the %{location} location, but it was %{value}.
+            object_types_empty: object_types cannot be empty for the %{location} location.
+              Specify at least one object type.
+            object_types_invalid_entries: object_types must contain only non-empty
+              strings for the %{location} location.
+            object_types_not_supported: object_types is not supported for the %{location}
+              location.
         warning:
           app_build:
             deprecated_version: You are targeting a deprecated version of the framework.
