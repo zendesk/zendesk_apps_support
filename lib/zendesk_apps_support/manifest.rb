@@ -98,7 +98,7 @@ module ZendeskAppsSupport
     end
 
     def locations_for_product(host)
-      locations.key?(host) ? locations[host].keys : []
+      locations.key?(host) ? locations[host].keys.map(&:to_s) : []
     end
 
     def unknown_hosts
