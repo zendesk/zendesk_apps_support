@@ -162,7 +162,7 @@ describe ZendeskAppsSupport::Manifest do
     before do
       manifest_hash[:location] = {
         support: {
-          ZendeskAppsSupport::Manifest::LocationOptions::OBJECT_TYPES_LOCATION.to_sym => {
+          ZendeskAppsSupport::Location::OBJECT_TYPES_LOCATION.to_sym => {
             objectTypes: object_types
           }
         }
@@ -171,7 +171,7 @@ describe ZendeskAppsSupport::Manifest do
 
     it 'parses object_types from location options' do
       lo = manifest.location_options.find do |l|
-        l.location&.name == ZendeskAppsSupport::Manifest::LocationOptions::OBJECT_TYPES_LOCATION
+        l.location&.name == ZendeskAppsSupport::Location::OBJECT_TYPES_LOCATION
       end
       expect(lo.object_types).to eq(object_types)
     end

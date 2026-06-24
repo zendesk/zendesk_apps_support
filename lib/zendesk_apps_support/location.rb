@@ -25,6 +25,8 @@ module ZendeskAppsSupport
       Product.find_by(code: product_code)
     end
 
+    OBJECT_TYPES_LOCATION = 'cov2_records_sidebar'
+
     def self.all
       LOCATIONS_AVAILABLE
     end
@@ -66,7 +68,8 @@ module ZendeskAppsSupport
       Location.new(id: 24, name: 'email_editor', product_code: Product::SELL.code, visible: true),
       Location.new(id: 25, name: 'top_bar', product_code: Product::SELL.code, visible: true),
       Location.new(id: 26, name: 'visit_editor', product_code: Product::SELL.code, visible: true),
-      Location.new(id: 27, name: 'cov2_records_sidebar', product_code: Product::SUPPORT.code, visible: true)
+      Location.new(id: 27, orderable: true, collapsible: true, name: 'cov2_records_sidebar',
+                   product_code: Product::SUPPORT.code, visible: true)
     ].freeze
   end
 end

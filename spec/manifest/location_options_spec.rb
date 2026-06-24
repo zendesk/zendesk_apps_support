@@ -43,7 +43,7 @@ describe ZendeskAppsSupport::Manifest::LocationOptions do
   context 'with object_types' do
     let(:location) do
       ZendeskAppsSupport::Location::LOCATIONS_AVAILABLE.find do |l|
-        l.name == described_class::OBJECT_TYPES_LOCATION
+        l.name == ZendeskAppsSupport::Location::OBJECT_TYPES_LOCATION
       end
     end
     let(:options) do
@@ -64,8 +64,8 @@ describe ZendeskAppsSupport::Manifest::LocationOptions do
       }
     end
 
-    it 'ignores object_types' do
-      expect(location_options.object_types).to be_nil
+    it 'preserves object_types for validation' do
+      expect(location_options.object_types).to eq(%w[car truck])
     end
   end
 end

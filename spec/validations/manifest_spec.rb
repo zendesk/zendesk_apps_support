@@ -808,7 +808,7 @@ describe ZendeskAppsSupport::Validations::Manifest do
   end
 
   context 'object_types validations' do
-    let(:location_name) { ZendeskAppsSupport::Manifest::LocationOptions::OBJECT_TYPES_LOCATION }
+    let(:location_name) { ZendeskAppsSupport::Location::OBJECT_TYPES_LOCATION }
     let(:location_url) { 'https://example.com/app' }
     let(:location_opts) { { 'url' => location_url, 'objectTypes' => object_types } }
     let(:object_types) { %w[car truck] }
@@ -875,8 +875,16 @@ describe ZendeskAppsSupport::Validations::Manifest do
     context 'when object_types is used with a non-cov2_records_sidebar location' do
       let(:location_name) { 'ticket_sidebar' }
 
-      it 'should silently ignore object_types' do
-        expect(create_package(@manifest_hash)).not_to have_error
+      it 'should have an error that object_types is not supported' do
+        create_package(@manifest_hash)
+        errors = ZendeskAppsSupport::Validations::Manifest.call(@package)
+        expect(errors.find { |e| e.key == :object_types_not_supported }).not_to be_nil
+      end
+
+      it 'should have an error even when is_cov2_sidebar_app_enabled is true' do
+        create_package(@manifest_hash)
+        errors = ZendeskAppsSupport::Validations::Manifest.call(@package, is_cov2_sidebar_app_enabled: true)
+        expect(errors.find { |e| e.key == :object_types_not_supported }).not_to be_nil
       end
     end
 
@@ -925,7 +933,7 @@ describe ZendeskAppsSupport::Validations::Manifest do
 
     context 'full opts passthrough with cov2 enabled' do
       it 'should have no errors when cov2 is enabled with valid object_types and all required fields' do
-        @manifest_hash = default_required_params(
+        create_package(
           'location' => {
             'support' => {
               location_name => {

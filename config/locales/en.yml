@@ -305,13 +305,13 @@ en:
             field_cannot_be_empty: "%{field} cannot be empty."
             field_contains_invalid_values: "%{field} contains invalid values: %{values}."
             field_contains_invalid_keys: "%{field} contains invalid keys: %{keys}."
-            object_types_must_be_array: object_types must be an array of strings for
+            object_types_must_be_array: objectTypes must be an array of strings for
               the %{location} location, but it was %{value}.
-            object_types_empty: object_types cannot be empty for the %{location} location.
+            object_types_empty: objectTypes cannot be empty for the %{location} location.
               Specify at least one object type.
-            object_types_invalid_entries: object_types must contain only non-empty
+            object_types_invalid_entries: objectTypes must contain only non-empty
               strings for the %{location} location.
-            object_types_not_supported: object_types is not supported for the %{location}
+            object_types_not_supported: objectTypes is not supported for the %{location}
               location.
         warning:
           app_build:

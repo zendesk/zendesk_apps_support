@@ -317,7 +317,7 @@ module ZendeskAppsSupport
         def invalid_location_error(package, opts = {})
           errors = []
           is_cov2_sidebar_app_enabled = opts.fetch(:is_cov2_sidebar_app_enabled, false)
-          cov2_location = ZendeskAppsSupport::Manifest::LocationOptions::OBJECT_TYPES_LOCATION
+          cov2_location = ZendeskAppsSupport::Location::OBJECT_TYPES_LOCATION
 
           package.manifest.location_options.each do |location_options|
             if location_options.url.is_a?(String) && !location_options.url.empty?
@@ -391,7 +391,7 @@ module ZendeskAppsSupport
 
         def validate_object_types(manifest, opts = {})
           is_cov2_sidebar_app_enabled = opts.fetch(:is_cov2_sidebar_app_enabled, false)
-          cov2_location = ZendeskAppsSupport::Manifest::LocationOptions::OBJECT_TYPES_LOCATION
+          cov2_location = ZendeskAppsSupport::Location::OBJECT_TYPES_LOCATION
 
           manifest.location_options.each do |location_options|
             object_types = location_options.object_types
@@ -399,6 +399,11 @@ module ZendeskAppsSupport
             next if location_options.location.nil?
 
             location_name = location_options.location.name
+
+            if location_name != cov2_location
+              return ValidationError.new(:object_types_not_supported,
+                                         location: location_name)
+            end
 
             if location_name == cov2_location && !is_cov2_sidebar_app_enabled
               return ValidationError.new(:object_types_not_supported,
