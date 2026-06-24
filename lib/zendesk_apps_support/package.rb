@@ -34,10 +34,11 @@ module ZendeskAppsSupport
     def validate(options = {})
       marketplace = options.fetch(:marketplace, true)
       skip_marketplace_translations = options.fetch(:skip_marketplace_translations, false)
-      is_cov2_sidebar_app_enabled = options.fetch(:is_cov2_sidebar_app_enabled, false)
+      validate_custom_object_sidebar = options.fetch(:validate_custom_object_record_sidebar_location, false)
 
       errors = []
-      errors << Validations::Manifest.call(self, is_cov2_sidebar_app_enabled:)
+      manifest_opts = { validate_custom_object_record_sidebar_location: validate_custom_object_sidebar }
+      errors << Validations::Manifest.call(self, manifest_opts)
 
       if has_valid_manifest?(errors)
         errors << Validations::Marketplace.call(self) if marketplace

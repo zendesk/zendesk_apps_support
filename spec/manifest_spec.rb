@@ -162,7 +162,7 @@ describe ZendeskAppsSupport::Manifest do
     before do
       manifest_hash[:location] = {
         support: {
-          ZendeskAppsSupport::Location::OBJECT_TYPES_LOCATION.to_sym => {
+          ZendeskAppsSupport::Location::CUSTOM_OBJECT_RECORD_SIDEBAR_LOCATION.to_sym => {
             objectTypes: object_types
           }
         }
@@ -171,7 +171,7 @@ describe ZendeskAppsSupport::Manifest do
 
     it 'parses object_types from location options' do
       lo = manifest.location_options.find do |l|
-        l.location&.name == ZendeskAppsSupport::Location::OBJECT_TYPES_LOCATION
+        l.location&.name == ZendeskAppsSupport::Location::CUSTOM_OBJECT_RECORD_SIDEBAR_LOCATION
       end
       expect(lo.object_types).to eq(object_types)
     end
@@ -402,38 +402,6 @@ describe ZendeskAppsSupport::Manifest do
     it 'raises an error for duplicate locations' do
       manifest_hash[:location] = %w[background background]
       expect { manifest.send(:locations) }.to raise_error(/Duplicate reference in manifest: "background"/)
-    end
-  end
-
-  describe '#locations_for_product' do
-    it 'returns location names as strings for a known product' do
-      manifest_hash[:location] = {
-        support: {
-          ticket_sidebar: { url: 'https://example.com' },
-          top_bar: { url: 'https://example.com' }
-        }
-      }
-      expect(manifest.locations_for_product('support')).to match_array(%w[ticket_sidebar top_bar])
-    end
-
-    it 'returns an empty array for a product not in the manifest' do
-      manifest_hash[:location] = {
-        support: { ticket_sidebar: { url: 'https://example.com' } }
-      }
-      expect(manifest.locations_for_product('chat')).to eq([])
-    end
-
-    it 'returns an empty array when locations is nil' do
-      manifest_hash.delete(:location)
-      expect(manifest.locations_for_product('chat')).to eq([])
-    end
-
-    it 'returns string keys even when the original keys are symbols' do
-      manifest_hash[:location] = {
-        support: { ticket_sidebar: 'https://example.com' }
-      }
-      result = manifest.locations_for_product('support')
-      expect(result).to all(be_a(String))
     end
   end
 

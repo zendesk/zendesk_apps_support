@@ -97,10 +97,6 @@ module ZendeskAppsSupport
       end
     end
 
-    def locations_for_product(host)
-      locations.key?(host) ? locations[host].keys.map(&:to_s) : []
-    end
-
     def unknown_hosts
       @unknown_hosts ||=
         @used_hosts - Product::PRODUCTS_AVAILABLE.flat_map { |p| [p.name, p.legacy_name] }

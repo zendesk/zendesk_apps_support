@@ -43,7 +43,7 @@ describe ZendeskAppsSupport::Manifest::LocationOptions do
   context 'with object_types' do
     let(:location) do
       ZendeskAppsSupport::Location::LOCATIONS_AVAILABLE.find do |l|
-        l.name == ZendeskAppsSupport::Location::OBJECT_TYPES_LOCATION
+        l.name == ZendeskAppsSupport::Location::CUSTOM_OBJECT_RECORD_SIDEBAR_LOCATION
       end
     end
     let(:options) do
@@ -57,7 +57,7 @@ describe ZendeskAppsSupport::Manifest::LocationOptions do
     end
   end
 
-  context 'with object_types on a non-cov2_records_sidebar location' do
+  context 'with object_types on a non-custom_object_record_sidebar location' do
     let(:options) do
       {
         'objectTypes' => %w[car truck]

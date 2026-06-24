@@ -313,6 +313,7 @@ en:
               strings for the %{location} location.
             object_types_not_supported: objectTypes is not supported for the %{location}
               location.
+            object_types_required: objectTypes is required for the %{location} location.
         warning:
           app_build:
             deprecated_version: You are targeting a deprecated version of the framework.

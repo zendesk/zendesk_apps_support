@@ -316,8 +316,8 @@ module ZendeskAppsSupport
 
         def invalid_location_error(package, opts = {})
           errors = []
-          is_cov2_sidebar_app_enabled = opts.fetch(:is_cov2_sidebar_app_enabled, false)
-          cov2_location = ZendeskAppsSupport::Location::OBJECT_TYPES_LOCATION
+          validate_custom_object_record_sidebar = opts.fetch(:validate_custom_object_record_sidebar_location, false)
+          custom_object_record_sidebar = ZendeskAppsSupport::Location::CUSTOM_OBJECT_RECORD_SIDEBAR_LOCATION
 
           package.manifest.location_options.each do |location_options|
             if location_options.url.is_a?(String) && !location_options.url.empty?
@@ -333,12 +333,16 @@ module ZendeskAppsSupport
 
           Product::PRODUCTS_AVAILABLE.each do |product|
             invalid_locations = package.manifest.unknown_locations(product.name)
-            unless is_cov2_sidebar_app_enabled
-              requested_locations = package.manifest.locations_for_product(product.name)
-              if requested_locations.include?(cov2_location)
-                invalid_locations << cov2_location
+
+            unless validate_custom_object_record_sidebar
+              requested_locations = package.manifest.location_options
+                                           .select { |lo| lo.location&.product_code == product.code }
+                                           .map { |lo| lo.location&.name }
+              if requested_locations.include?(custom_object_record_sidebar)
+                invalid_locations << custom_object_record_sidebar
               end
             end
+
             next if invalid_locations.empty?
             errors << ValidationError.new(:invalid_location,
                                           invalid_locations: invalid_locations.join(', '),
@@ -390,22 +394,24 @@ module ZendeskAppsSupport
         end
 
         def validate_object_types(manifest, opts = {})
-          is_cov2_sidebar_app_enabled = opts.fetch(:is_cov2_sidebar_app_enabled, false)
-          cov2_location = ZendeskAppsSupport::Location::OBJECT_TYPES_LOCATION
+          return nil unless opts.fetch(:validate_custom_object_record_sidebar_location, false)
 
+          custom_object_record_sidebar = ZendeskAppsSupport::Location::CUSTOM_OBJECT_RECORD_SIDEBAR_LOCATION
           manifest.location_options.each do |location_options|
             object_types = location_options.object_types
-            next if object_types.nil?
             next if location_options.location.nil?
 
             location_name = location_options.location.name
 
-            if location_name != cov2_location
-              return ValidationError.new(:object_types_not_supported,
-                                         location: location_name)
+            if object_types.nil?
+              if location_name == custom_object_record_sidebar
+                return ValidationError.new(:object_types_required,
+                                           location: location_name)
+              end
+              next
             end
 
-            if location_name == cov2_location && !is_cov2_sidebar_app_enabled
+            if location_name != custom_object_record_sidebar
               return ValidationError.new(:object_types_not_supported,
                                          location: location_name)
             end
