@@ -12,9 +12,9 @@ module ZendeskAppsSupport
     MANIFEST_FILENAME = 'manifest.json'
     REQUIREMENTS_FILENAME = 'requirements.json'
 
-    DEFAULT_LAYOUT = Erubis::Eruby.new(File.read(File.expand_path('assets/default_template.html.erb', __dir__)))
-    DEFAULT_SCSS   = File.read(File.expand_path('assets/default_styles.scss', __dir__))
-    SRC_TEMPLATE   = Erubis::Eruby.new(File.read(File.expand_path('assets/src.js.erb', __dir__)))
+    DEFAULT_LAYOUT = Erubis::Eruby.new(File.read(File.expand_path('../assets/default_template.html.erb', __FILE__)))
+    DEFAULT_SCSS   = File.read(File.expand_path('../assets/default_styles.scss', __FILE__))
+    SRC_TEMPLATE   = Erubis::Eruby.new(File.read(File.expand_path('../assets/src.js.erb', __FILE__)))
 
     LOCATIONS_WITH_ICONS_PER_PRODUCT = {
       Product::SUPPORT => %w[top_bar nav_bar system_top_bar ticket_editor].freeze,

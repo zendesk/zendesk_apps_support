@@ -417,7 +417,7 @@ module ZendeskAppsSupport
             end
 
             non_strings = object_types.reject { |t| t.is_a?(String) && !t.strip.empty? }
-            if non_strings.any?
+            unless non_strings.empty?
               return ValidationError.new(:object_types_invalid_entries,
                                          location: location_name)
             end

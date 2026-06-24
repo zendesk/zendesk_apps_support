@@ -879,6 +879,66 @@ describe ZendeskAppsSupport::Validations::Manifest do
         expect(create_package(@manifest_hash)).not_to have_error
       end
     end
+
+    context 'edge cases for object_types entries' do
+      def validate_with_cov2_enabled(package)
+        ZendeskAppsSupport::Validations::Manifest.call(package, is_cov2_sidebar_app_enabled: true)
+      end
+
+      it 'should have an error when object_types contains whitespace-only strings' do
+        @manifest_hash['location']['support'][location_name]['objectTypes'] = ['car', '   ']
+        create_package(@manifest_hash)
+        errors = validate_with_cov2_enabled(@package)
+        expect(errors.find { |e| e.key == :object_types_invalid_entries }).not_to be_nil
+      end
+
+      it 'should have an error when object_types contains nil values' do
+        @manifest_hash['location']['support'][location_name]['objectTypes'] = ['car', nil]
+        create_package(@manifest_hash)
+        errors = validate_with_cov2_enabled(@package)
+        expect(errors.find { |e| e.key == :object_types_invalid_entries }).not_to be_nil
+      end
+
+      it 'should have an error when object_types contains numeric values' do
+        @manifest_hash['location']['support'][location_name]['objectTypes'] = [42]
+        create_package(@manifest_hash)
+        errors = validate_with_cov2_enabled(@package)
+        expect(errors.find { |e| e.key == :object_types_invalid_entries }).not_to be_nil
+      end
+
+      it 'should not have an error with a single valid object_type' do
+        @manifest_hash['location']['support'][location_name]['objectTypes'] = ['car']
+        create_package(@manifest_hash)
+        errors = validate_with_cov2_enabled(@package)
+        expect(errors).to be_empty
+      end
+    end
+
+    context 'cov2_records_sidebar reported as invalid_location when flag is false' do
+      it 'should include cov2_records_sidebar in invalid locations' do
+        create_package(@manifest_hash)
+        errors = ZendeskAppsSupport::Validations::Manifest.call(@package, is_cov2_sidebar_app_enabled: false)
+        invalid_loc_error = errors.find { |e| e.key == :invalid_location }
+        expect(invalid_loc_error).not_to be_nil
+      end
+    end
+
+    context 'full opts passthrough with cov2 enabled' do
+      it 'should have no errors when cov2 is enabled with valid object_types and all required fields' do
+        @manifest_hash = default_required_params(
+          'location' => {
+            'support' => {
+              location_name => {
+                'url' => 'https://example.com/app',
+                'objectTypes' => %w[car truck]
+              }
+            }
+          }
+        )
+        errors = ZendeskAppsSupport::Validations::Manifest.call(@package, is_cov2_sidebar_app_enabled: true)
+        expect(errors).to be_empty
+      end
+    end
   end
 
   context 'scope parameter validations' do

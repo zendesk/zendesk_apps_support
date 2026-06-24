@@ -405,6 +405,38 @@ describe ZendeskAppsSupport::Manifest do
     end
   end
 
+  describe '#locations_for_product' do
+    it 'returns location names as strings for a known product' do
+      manifest_hash[:location] = {
+        support: {
+          ticket_sidebar: { url: 'https://example.com' },
+          top_bar: { url: 'https://example.com' }
+        }
+      }
+      expect(manifest.locations_for_product('support')).to match_array(%w[ticket_sidebar top_bar])
+    end
+
+    it 'returns an empty array for a product not in the manifest' do
+      manifest_hash[:location] = {
+        support: { ticket_sidebar: { url: 'https://example.com' } }
+      }
+      expect(manifest.locations_for_product('chat')).to eq([])
+    end
+
+    it 'returns an empty array when locations is nil' do
+      manifest_hash.delete(:location)
+      expect(manifest.locations_for_product('chat')).to eq([])
+    end
+
+    it 'returns string keys even when the original keys are symbols' do
+      manifest_hash[:location] = {
+        support: { ticket_sidebar: 'https://example.com' }
+      }
+      result = manifest.locations_for_product('support')
+      expect(result).to all(be_a(String))
+    end
+  end
+
   describe '#iframe_only?' do
     it 'returns false for an app that has a nil framework version' do
       manifest_hash[:frameworkVersion] = nil
