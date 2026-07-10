@@ -68,7 +68,7 @@ module ZendeskAppsSupport
       Location.new(id: 24, name: 'email_editor', product_code: Product::SELL.code, visible: true),
       Location.new(id: 25, name: 'top_bar', product_code: Product::SELL.code, visible: true),
       Location.new(id: 26, name: 'visit_editor', product_code: Product::SELL.code, visible: true),
-      Location.new(id: 27, orderable: true, collapsible: true, name: 'custom_object_record_sidebar',
+      Location.new(id: 27, orderable: true, collapsible: true, name: CUSTOM_OBJECT_RECORD_SIDEBAR_LOCATION,
                    product_code: Product::SUPPORT.code, visible: true)
     ].freeze
   end

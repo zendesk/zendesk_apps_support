@@ -14,7 +14,7 @@ module ZendeskAppsSupport
       SECURE_PARAM_SCOPES = %w[header body url jwt_secret_key jwt_claim basic_auth_username basic_auth_password].freeze
 
       class << self
-        def call(package, opts = {})
+        def call(package, validate_custom_object_record_sidebar_location: false)
           unless package.has_file?('manifest.json')
             nested_manifest = package.files.find { |file| file =~ %r{\A[^/]+?/manifest\.json\Z} }
             if nested_manifest
@@ -22,7 +22,8 @@ module ZendeskAppsSupport
             end
             return [ValidationError.new(:missing_manifest)]
           end
-          collate_manifest_errors(package, opts)
+          collate_manifest_errors(package,
+                                  validate_custom_object_record_sidebar_location: validate_custom_object_record_sidebar_location)
         rescue JSON::ParserError => e
           return [ValidationError.new(:manifest_not_json, errors: e)]
         rescue ZendeskAppsSupport::Manifest::OverrideError => e
@@ -31,7 +32,7 @@ module ZendeskAppsSupport
 
         private
 
-        def collate_manifest_errors(package, opts = {})
+        def collate_manifest_errors(package, validate_custom_object_record_sidebar_location: false)
           manifest = package.manifest
 
           errors = [
@@ -45,7 +46,8 @@ module ZendeskAppsSupport
               [ ban_location(manifest),
                 ban_framework_version(manifest) ]
             else
-              [ validate_location(package, opts),
+              [ validate_location(package,
+                                  validate_custom_object_record_sidebar_location: validate_custom_object_record_sidebar_location),
                 missing_framework_version(manifest),
                 invalid_version_error(manifest) ]
             end,
@@ -54,14 +56,15 @@ module ZendeskAppsSupport
           errors.flatten.compact
         end
 
-        def validate_location(package, opts = {})
+        def validate_location(package, validate_custom_object_record_sidebar_location: false)
           manifest = package.manifest
           [
             missing_location_error(package),
-            invalid_location_error(package, opts),
+            invalid_location_error(package,
+                                   validate_custom_object_record_sidebar_location: validate_custom_object_record_sidebar_location),
             invalid_v1_location(package),
             location_framework_mismatch(manifest),
-            validate_object_types(manifest, opts)
+            (validate_object_types(manifest) if validate_custom_object_record_sidebar_location)
           ]
         end
 
@@ -314,9 +317,8 @@ module ZendeskAppsSupport
           missing_keys_validation_error(['location']) if package.manifest.location_options.empty?
         end
 
-        def invalid_location_error(package, opts = {})
+        def invalid_location_error(package, validate_custom_object_record_sidebar_location: false)
           errors = []
-          validate_custom_object_record_sidebar = opts.fetch(:validate_custom_object_record_sidebar_location, false)
           custom_object_record_sidebar = ZendeskAppsSupport::Location::CUSTOM_OBJECT_RECORD_SIDEBAR_LOCATION
 
           package.manifest.location_options.each do |location_options|
@@ -334,7 +336,7 @@ module ZendeskAppsSupport
           Product::PRODUCTS_AVAILABLE.each do |product|
             invalid_locations = package.manifest.unknown_locations(product.name)
 
-            unless validate_custom_object_record_sidebar
+            unless validate_custom_object_record_sidebar_location
               requested_locations = package.manifest.location_options
                                            .select { |lo| lo.location&.product_code == product.code }
                                            .map { |lo| lo.location&.name }
@@ -393,9 +395,7 @@ module ZendeskAppsSupport
           validation_error
         end
 
-        def validate_object_types(manifest, opts = {})
-          return nil unless opts.fetch(:validate_custom_object_record_sidebar_location, false)
-
+        def validate_object_types(manifest)
           custom_object_record_sidebar = ZendeskAppsSupport::Location::CUSTOM_OBJECT_RECORD_SIDEBAR_LOCATION
           manifest.location_options.each do |location_options|
             object_types = location_options.object_types

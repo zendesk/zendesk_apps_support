@@ -812,9 +812,6 @@ describe ZendeskAppsSupport::Validations::Manifest do
     let(:location_url) { 'https://example.com/app' }
     let(:location_opts) { { 'url' => location_url, 'objectTypes' => object_types } }
     let(:object_types) { %w[car truck] }
-    let(:enabled_opts) { { validate_custom_object_record_sidebar_location: true } }
-    let(:disabled_opts) { { validate_custom_object_record_sidebar_location: false } }
-
     before do
       @manifest_hash = {
         'location' => {
@@ -825,9 +822,9 @@ describe ZendeskAppsSupport::Validations::Manifest do
       }
     end
 
-    context 'when flag is enabled' do
+    context 'when validate_custom_object_record_sidebar_location is true' do
       def validate(package)
-        ZendeskAppsSupport::Validations::Manifest.call(package, enabled_opts)
+        ZendeskAppsSupport::Validations::Manifest.call(package, validate_custom_object_record_sidebar_location: true)
       end
 
       context 'with custom_object_record_sidebar location' do
@@ -923,9 +920,9 @@ describe ZendeskAppsSupport::Validations::Manifest do
       end
     end
 
-    context 'when flag is disabled' do
+    context 'when validate_custom_object_record_sidebar_location is false' do
       def validate(package)
-        ZendeskAppsSupport::Validations::Manifest.call(package, disabled_opts)
+        ZendeskAppsSupport::Validations::Manifest.call(package, validate_custom_object_record_sidebar_location: false)
       end
 
       context 'with custom_object_record_sidebar location' do
