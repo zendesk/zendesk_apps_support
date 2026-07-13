@@ -863,7 +863,7 @@ describe ZendeskAppsSupport::Validations::Manifest do
         end
       end
 
-      context 'with supported location' do
+      context 'with non-custom_object_record_sidebar location' do
         let(:location_name) { 'ticket_sidebar' }
 
         it 'has an error that object_types is not supported' do
@@ -940,7 +940,7 @@ describe ZendeskAppsSupport::Validations::Manifest do
         end
       end
 
-      context 'with supported location' do
+      context 'with  non-custom_object_record_sidebar location' do
         let(:location_name) { 'ticket_sidebar' }
 
         it 'skips object_types validation' do
