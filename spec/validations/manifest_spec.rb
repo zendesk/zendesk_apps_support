@@ -807,6 +807,207 @@ describe ZendeskAppsSupport::Validations::Manifest do
     end
   end
 
+  context 'object_types validations' do
+    let(:location_name) { ZendeskAppsSupport::Location::CUSTOM_OBJECT_RECORD_SIDEBAR_LOCATION }
+    let(:location_url) { 'https://example.com/app' }
+    let(:location_opts) { { 'url' => location_url, 'objectTypes' => object_types } }
+    let(:object_types) { %w[car truck] }
+    before do
+      @manifest_hash = {
+        'location' => {
+          'support' => {
+            location_name => location_opts
+          }
+        }
+      }
+    end
+
+    context 'when validate_custom_object_record_sidebar_location is true' do
+      def validate(package)
+        ZendeskAppsSupport::Validations::Manifest.call(package, validate_custom_object_record_sidebar_location: true)
+      end
+
+      context 'with custom_object_record_sidebar location' do
+        it 'has no error with valid object_types' do
+          create_package(@manifest_hash)
+          errors = validate(@package)
+          expect(errors).to be_empty
+        end
+
+        it 'has an error when object_types is empty' do
+          @manifest_hash['location']['support'][location_name]['objectTypes'] = []
+          create_package(@manifest_hash)
+          errors = validate(@package)
+          expect(errors.find { |e| e.key == :object_types_empty }).not_to be_nil
+        end
+
+        it 'has an error when object_types is not an array' do
+          @manifest_hash['location']['support'][location_name]['objectTypes'] = 'car'
+          create_package(@manifest_hash)
+          errors = validate(@package)
+          expect(errors.find { |e| e.key == :object_types_must_be_array }).not_to be_nil
+        end
+
+        it 'has an error when object_types contains non-string values' do
+          @manifest_hash['location']['support'][location_name]['objectTypes'] = ['car', 123, '']
+          create_package(@manifest_hash)
+          errors = validate(@package)
+          expect(errors.find { |e| e.key == :object_types_invalid_entries }).not_to be_nil
+        end
+
+        it 'has an error when objectTypes is missing' do
+          @manifest_hash['location']['support'][location_name] = { 'url' => location_url }
+          create_package(@manifest_hash)
+          errors = validate(@package)
+          expect(errors.find { |e| e.key == :object_types_required }).not_to be_nil
+        end
+      end
+
+      context 'with non-custom_object_record_sidebar location' do
+        let(:location_name) { 'ticket_sidebar' }
+
+        it 'has an error that object_types is not supported' do
+          create_package(@manifest_hash)
+          errors = validate(@package)
+          expect(errors.find { |e| e.key == :object_types_not_supported }).not_to be_nil
+        end
+
+        it 'has no error when objectTypes is not specified' do
+          @manifest_hash['location']['support'][location_name] = { 'url' => location_url }
+          create_package(@manifest_hash)
+          errors = validate(@package)
+          expect(errors.find { |e| e.key.to_s.include?('object_types') }).to be_nil
+        end
+      end
+
+      context 'with multiple locations' do
+        it 'validates all locations correctly' do
+          @manifest_hash['location']['support']['ticket_sidebar'] = { 'url' => 'https://example.com/ticket' }
+          create_package(@manifest_hash)
+          errors = validate(@package)
+          expect(errors).to be_empty
+        end
+      end
+
+      context 'object_types entry edge cases' do
+        it 'has an error when object_types contains whitespace-only strings' do
+          @manifest_hash['location']['support'][location_name]['objectTypes'] = ['car', '   ']
+          create_package(@manifest_hash)
+          errors = validate(@package)
+          expect(errors.find { |e| e.key == :object_types_invalid_entries }).not_to be_nil
+        end
+
+        it 'has an error when object_types contains nil values' do
+          @manifest_hash['location']['support'][location_name]['objectTypes'] = ['car', nil]
+          create_package(@manifest_hash)
+          errors = validate(@package)
+          expect(errors.find { |e| e.key == :object_types_invalid_entries }).not_to be_nil
+        end
+
+        it 'has an error when object_types contains numeric values' do
+          @manifest_hash['location']['support'][location_name]['objectTypes'] = [42]
+          create_package(@manifest_hash)
+          errors = validate(@package)
+          expect(errors.find { |e| e.key == :object_types_invalid_entries }).not_to be_nil
+        end
+
+        it 'has no error with a single valid object_type' do
+          @manifest_hash['location']['support'][location_name]['objectTypes'] = ['car']
+          create_package(@manifest_hash)
+          errors = validate(@package)
+          expect(errors).to be_empty
+        end
+      end
+    end
+
+    context 'when validate_custom_object_record_sidebar_location is false' do
+      def validate(package)
+        ZendeskAppsSupport::Validations::Manifest.call(package, validate_custom_object_record_sidebar_location: false)
+      end
+
+      context 'with custom_object_record_sidebar location' do
+        it 'reports custom_object_record_sidebar as invalid location' do
+          create_package(@manifest_hash)
+          errors = validate(@package)
+          expect(errors.find { |e| e.key == :invalid_location }).not_to be_nil
+        end
+
+        it 'does not validate objectTypes when missing' do
+          @manifest_hash['location']['support'][location_name] = { 'url' => location_url }
+          create_package(@manifest_hash)
+          errors = validate(@package)
+          expect(errors.find { |e| e.key == :object_types_required }).to be_nil
+        end
+      end
+
+      context 'with  non-custom_object_record_sidebar location' do
+        let(:location_name) { 'ticket_sidebar' }
+
+        it 'skips object_types validation' do
+          create_package(@manifest_hash)
+          errors = validate(@package)
+          expect(errors.find { |e| e.key == :object_types_not_supported }).to be_nil
+        end
+      end
+
+      context 'with multiple locations' do
+        it 'reports custom_object_record_sidebar as invalid' do
+          @manifest_hash['location']['support']['ticket_sidebar'] = { 'url' => 'https://example.com/ticket' }
+          create_package(@manifest_hash)
+          errors = validate(@package)
+          invalid_loc_error = errors.find { |e| e.key == :invalid_location }
+          expect(invalid_loc_error).not_to be_nil
+          expect(invalid_loc_error.data[:invalid_locations]).to include('custom_object_record_sidebar')
+        end
+      end
+
+      context 'with supported locations only' do
+        it 'has no errors' do
+          @manifest_hash = {
+            'location' => {
+              'support' => {
+                'ticket_sidebar' => { 'url' => 'https://example.com/app' }
+              }
+            }
+          }
+          create_package(@manifest_hash)
+          errors = validate(@package)
+          expect(errors).to be_empty
+        end
+      end
+    end
+
+    context 'when no flag is passed' do
+      def validate(package)
+        ZendeskAppsSupport::Validations::Manifest.call(package)
+      end
+
+      context 'with custom_object_record_sidebar location' do
+        it 'treats custom_object_record_sidebar as invalid location' do
+          create_package(@manifest_hash)
+          errors = validate(@package)
+          invalid_loc_error = errors.find { |e| e.key == :invalid_location }
+          expect(invalid_loc_error).not_to be_nil
+        end
+      end
+
+      context 'with supported location without objectTypes' do
+        it 'has no object_types errors' do
+          @manifest_hash = {
+            'location' => {
+              'support' => {
+                'ticket_sidebar' => { 'url' => 'https://example.com/app' }
+              }
+            }
+          }
+          create_package(@manifest_hash)
+          errors = validate(@package)
+          expect(errors.find { |e| e.key.to_s.include?('object_types') }).to be_nil
+        end
+      end
+    end
+  end
+
   context 'scope parameter validations' do
     context 'when a parameter has scopes but is not secure' do
       it 'should have an error requiring secure parameter for scopes' do

@@ -14,7 +14,7 @@ module ZendeskAppsSupport
       SECURE_PARAM_SCOPES = %w[header body url jwt_secret_key jwt_claim basic_auth_username basic_auth_password].freeze
 
       class << self
-        def call(package)
+        def call(package, validate_custom_object_record_sidebar_location: false)
           unless package.has_file?('manifest.json')
             nested_manifest = package.files.find { |file| file =~ %r{\A[^/]+?/manifest\.json\Z} }
             if nested_manifest
@@ -22,7 +22,8 @@ module ZendeskAppsSupport
             end
             return [ValidationError.new(:missing_manifest)]
           end
-          collate_manifest_errors(package)
+          collate_manifest_errors(package,
+                                  validate_custom_object_record_sidebar_location: validate_custom_object_record_sidebar_location)
         rescue JSON::ParserError => e
           return [ValidationError.new(:manifest_not_json, errors: e)]
         rescue ZendeskAppsSupport::Manifest::OverrideError => e
@@ -31,7 +32,7 @@ module ZendeskAppsSupport
 
         private
 
-        def collate_manifest_errors(package)
+        def collate_manifest_errors(package, validate_custom_object_record_sidebar_location: false)
           manifest = package.manifest
 
           errors = [
@@ -45,7 +46,8 @@ module ZendeskAppsSupport
               [ ban_location(manifest),
                 ban_framework_version(manifest) ]
             else
-              [ validate_location(package),
+              [ validate_location(package,
+                                  validate_custom_object_record_sidebar_location: validate_custom_object_record_sidebar_location),
                 missing_framework_version(manifest),
                 invalid_version_error(manifest) ]
             end,
@@ -54,13 +56,15 @@ module ZendeskAppsSupport
           errors.flatten.compact
         end
 
-        def validate_location(package)
+        def validate_location(package, validate_custom_object_record_sidebar_location: false)
           manifest = package.manifest
           [
             missing_location_error(package),
-            invalid_location_error(package),
+            invalid_location_error(package,
+                                   validate_custom_object_record_sidebar_location: validate_custom_object_record_sidebar_location),
             invalid_v1_location(package),
-            location_framework_mismatch(manifest)
+            location_framework_mismatch(manifest),
+            (validate_object_types(manifest) if validate_custom_object_record_sidebar_location)
           ]
         end
 
@@ -313,8 +317,10 @@ module ZendeskAppsSupport
           missing_keys_validation_error(['location']) if package.manifest.location_options.empty?
         end
 
-        def invalid_location_error(package)
+        def invalid_location_error(package, validate_custom_object_record_sidebar_location: false)
           errors = []
+          custom_object_record_sidebar = ZendeskAppsSupport::Location::CUSTOM_OBJECT_RECORD_SIDEBAR_LOCATION
+
           package.manifest.location_options.each do |location_options|
             if location_options.url.is_a?(String) && !location_options.url.empty?
               errors << invalid_location_uri_error(package, location_options)
@@ -329,6 +335,16 @@ module ZendeskAppsSupport
 
           Product::PRODUCTS_AVAILABLE.each do |product|
             invalid_locations = package.manifest.unknown_locations(product.name)
+
+            unless validate_custom_object_record_sidebar_location
+              requested_locations = package.manifest.location_options
+                                           .select { |lo| lo.location&.product_code == product.code }
+                                           .map { |lo| lo.location&.name }
+              if requested_locations.include?(custom_object_record_sidebar)
+                invalid_locations << custom_object_record_sidebar
+              end
+            end
+
             next if invalid_locations.empty?
             errors << ValidationError.new(:invalid_location,
                                           invalid_locations: invalid_locations.join(', '),
@@ -377,6 +393,47 @@ module ZendeskAppsSupport
           flexible_flag = location_options.flexible
           validation_error = ValidationError.new(:invalid_location_flexible_type, flexible: flexible_flag)
           validation_error
+        end
+
+        def validate_object_types(manifest)
+          custom_object_record_sidebar = ZendeskAppsSupport::Location::CUSTOM_OBJECT_RECORD_SIDEBAR_LOCATION
+          manifest.location_options.each do |location_options|
+            object_types = location_options.object_types
+            next if location_options.location.nil?
+
+            location_name = location_options.location.name
+
+            if object_types.nil?
+              if location_name == custom_object_record_sidebar
+                return ValidationError.new(:object_types_required,
+                                           location: location_name)
+              end
+              next
+            end
+
+            if location_name != custom_object_record_sidebar
+              return ValidationError.new(:object_types_not_supported,
+                                         location: location_name)
+            end
+
+            unless object_types.is_a?(Array)
+              return ValidationError.new(:object_types_must_be_array,
+                                         location: location_name,
+                                         value: object_types.class.to_s)
+            end
+
+            if object_types.empty?
+              return ValidationError.new(:object_types_empty,
+                                         location: location_name)
+            end
+
+            non_strings = object_types.reject { |t| t.is_a?(String) && !t.strip.empty? }
+            unless non_strings.empty?
+              return ValidationError.new(:object_types_invalid_entries,
+                                         location: location_name)
+            end
+          end
+          nil
         end
 
         def valid_absolute_uri?(uri)

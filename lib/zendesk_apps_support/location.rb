@@ -5,6 +5,8 @@ module ZendeskAppsSupport
     extend ZendeskAppsSupport::Finders
     attr_reader :id, :name, :orderable, :collapsible, :visible, :product_code, :v2_only
 
+    CUSTOM_OBJECT_RECORD_SIDEBAR_LOCATION = 'custom_object_record_sidebar'
+
     def self.unique_ids
       @ids ||= Set.new
     end
@@ -65,7 +67,9 @@ module ZendeskAppsSupport
       Location.new(id: 23, name: 'call_log_editor', product_code: Product::SELL.code, visible: true),
       Location.new(id: 24, name: 'email_editor', product_code: Product::SELL.code, visible: true),
       Location.new(id: 25, name: 'top_bar', product_code: Product::SELL.code, visible: true),
-      Location.new(id: 26, name: 'visit_editor', product_code: Product::SELL.code, visible: true)
+      Location.new(id: 26, name: 'visit_editor', product_code: Product::SELL.code, visible: true),
+      Location.new(id: 27, orderable: true, collapsible: true, name: CUSTOM_OBJECT_RECORD_SIDEBAR_LOCATION,
+                   product_code: Product::SUPPORT.code, visible: true)
     ].freeze
   end
 end

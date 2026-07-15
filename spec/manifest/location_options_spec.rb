@@ -36,6 +36,36 @@ describe ZendeskAppsSupport::Manifest::LocationOptions do
       expect(location_options.auto_hide).to be false
       expect(location_options.signed).to be false
       expect(location_options.legacy).to be false
+      expect(location_options.object_types).to be_nil
+    end
+  end
+
+  context 'with object_types' do
+    let(:location) do
+      ZendeskAppsSupport::Location::LOCATIONS_AVAILABLE.find do |l|
+        l.name == ZendeskAppsSupport::Location::CUSTOM_OBJECT_RECORD_SIDEBAR_LOCATION
+      end
+    end
+    let(:options) do
+      {
+        'objectTypes' => %w[car truck]
+      }
+    end
+
+    it 'reads object_types correctly' do
+      expect(location_options.object_types).to eq(%w[car truck])
+    end
+  end
+
+  context 'with object_types on a non-custom_object_record_sidebar location' do
+    let(:options) do
+      {
+        'objectTypes' => %w[car truck]
+      }
+    end
+
+    it 'preserves object_types for validation' do
+      expect(location_options.object_types).to eq(%w[car truck])
     end
   end
 end

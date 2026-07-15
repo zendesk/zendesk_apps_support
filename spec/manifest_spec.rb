@@ -156,6 +156,27 @@ describe ZendeskAppsSupport::Manifest do
     end
   end
 
+  describe '#location_options with object_types' do
+    let(:object_types) { %w[car truck] }
+
+    before do
+      manifest_hash[:location] = {
+        support: {
+          ZendeskAppsSupport::Location::CUSTOM_OBJECT_RECORD_SIDEBAR_LOCATION.to_sym => {
+            objectTypes: object_types
+          }
+        }
+      }
+    end
+
+    it 'parses object_types from location options' do
+      lo = manifest.location_options.find do |l|
+        l.location&.name == ZendeskAppsSupport::Location::CUSTOM_OBJECT_RECORD_SIDEBAR_LOCATION
+      end
+      expect(lo.object_types).to eq(object_types)
+    end
+  end
+
   describe '#no_template?' do
     context 'when noTemplate is a boolean in the manifest' do
       it 'returns true when noTemplate is true' do

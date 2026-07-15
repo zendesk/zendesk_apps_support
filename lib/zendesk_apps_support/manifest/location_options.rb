@@ -10,7 +10,8 @@ module ZendeskAppsSupport
         flexible: 'flexible',
         signed: 'signed',
         url: 'url',
-        size: 'size'
+        size: 'size',
+        object_types: 'objectTypes'
       }.freeze
 
       attr_reader :location
