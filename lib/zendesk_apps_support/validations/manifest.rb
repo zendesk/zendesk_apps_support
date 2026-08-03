@@ -97,7 +97,7 @@ module ZendeskAppsSupport
               name_as_parameter_name_error(manifest),
               invalid_secure_param_scopes_errors(manifest),
               (mtls_cannot_have_certain_settings(manifest) if validate_mtls_param),
-              (mtls_cannot_exceed_three_parameters(manifest) if validate_mtls_param)
+              (too_many_mtls_parameters(manifest) if validate_mtls_param)
             ]
           end
         end
@@ -113,7 +113,7 @@ module ZendeskAppsSupport
         def mtls_cannot_have_certain_settings(manifest)
           manifest.parameters.map do |parameter|
             if parameter.type == 'mtls' && invalid_mtls_settings?(parameter)
-              return ValidationError.new('mtls_parameter_cannot_have_certain_settings')
+              return ValidationError.new(:mtls_parameter_cannot_have_certain_settings)
             end
           end
         end
@@ -122,9 +122,9 @@ module ZendeskAppsSupport
           parameter.secure || parameter.default? || !parameter.scopes.nil?
         end
 
-        def mtls_cannot_exceed_three_parameters(manifest)
+        def too_many_mtls_parameters(manifest)
           mtls_parameters = manifest.parameters.select { |parameter| parameter.type == 'mtls' }
-          ValidationError.new('mtls_parameter_cannot_exceed_three_parameters') if mtls_parameters.count > 3
+          ValidationError.new(:too_many_mtls_parameters) if mtls_parameters.count > 3
         end
 
         def invalid_secure_param_scopes_errors(manifest)

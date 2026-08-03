@@ -756,14 +756,14 @@ describe ZendeskAppsSupport::Validations::Manifest do
           parameter_hash = { 'parameters' => mtls_parameters(3) }
           create_package(parameter_hash)
           errors = ZendeskAppsSupport::Validations::Manifest.call(@package, validate_mtls_param: true)
-          expect(errors.map(&:to_s)).not_to include('You can only have up to three mtls parameters.')
+          expect(errors.map(&:to_s)).not_to include("Too many parameters with type 'mtls': three permitted")
         end
 
         it 'has an error when there are more than three mtls parameters' do
           parameter_hash = { 'parameters' => mtls_parameters(4) }
           create_package(parameter_hash)
           errors = ZendeskAppsSupport::Validations::Manifest.call(@package, validate_mtls_param: true)
-          expect(errors.map(&:to_s)).to include('You can only have up to three mtls parameters.')
+          expect(errors.map(&:to_s)).to include("Too many parameters with type 'mtls': three permitted")
         end
       end
 
@@ -772,7 +772,7 @@ describe ZendeskAppsSupport::Validations::Manifest do
           parameter_hash = { 'parameters' => mtls_parameters(4) }
           create_package(parameter_hash)
           errors = ZendeskAppsSupport::Validations::Manifest.call(@package, validate_mtls_param: false)
-          expect(errors.map(&:to_s)).not_to include('You can only have up to three mtls parameters.')
+          expect(errors.map(&:to_s)).not_to include("Too many parameters with type 'mtls': three permitted")
         end
       end
     end

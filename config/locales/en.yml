@@ -316,8 +316,8 @@ en:
             object_types_required: objectTypes is required for the %{location} location.
             mtls_parameter_cannot_have_certain_settings: mtls parameter cannot have
               default, secure, or scopes settings.
-            mtls_parameter_cannot_exceed_three_parameters: You can only have up to
-              three mtls parameters.
+            too_many_mtls_parameters: 'Too many parameters with type ''mtls'': three
+              permitted'
         warning:
           app_build:
             deprecated_version: You are targeting a deprecated version of the framework.
