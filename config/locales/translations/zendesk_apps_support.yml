@@ -700,3 +700,16 @@ parts:
         Do not translate 'scopes'. %{params} refers to secure parameters with no scopes configured.
         Scopes in manifest refers to https://developer.zendesk.com/documentation/apps/getting-started/setting-up-new-apps/#scopes"
       value: "The scopes property is not configured for parameter(s): %{params}. This may cause token exposure vulnerabilities. Learn about: %{link}"
+  - translation:
+      key: "txt.apps.admin.error.app_build.mtls_parameter_cannot_have_certain_settings"
+      title: "Validation message to indicate that mtls parameter cannot have default, secure, or scopes settings.
+        Do not translate 'mtls', 'secure', 'default' and 'scopes' as they are manifest properties.
+        'secure' in manifest refers to https://developer.zendesk.com/documentation/apps/getting-started/setting-up-new-apps/#secure
+        'scopes' in manifest refers to https://developer.zendesk.com/documentation/apps/getting-started/setting-up-new-apps/#scopes
+        'default' in manifest refers to https://developer.zendesk.com/documentation/apps/getting-started/setting-up-new-apps/#default"
+      value: "mtls parameter cannot have default, secure, or scopes settings."
+  - translation:
+      key: "txt.apps.admin.error.app_build.mtls_parameter_cannot_exceed_three_parameters"
+      title: "Validation message to indicate that mtls parameter cannot exceed three parameters. Do not translate 'mtls' as it is a manifest property."
+      value: "You can only have up to three mtls parameters."
+    

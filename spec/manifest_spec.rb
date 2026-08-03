@@ -131,6 +131,22 @@ describe ZendeskAppsSupport::Manifest do
       expect(parameter.required).to eq manifest_hash[:parameters][0][:required]
       expect(parameter.secure).to eq manifest_hash[:parameters][0][:secure]
     end
+
+    context 'with an mtls parameter' do
+      before do
+        manifest_hash[:parameters] = [
+          { name: 'mtls param', type: 'mtls' }
+        ]
+      end
+
+      it 'is not filtered out and is exposed as a Parameter object' do
+        expect(manifest.parameters.length).to eq(1)
+        parameter = manifest.parameters.first
+        expect(parameter).to be_a(ZendeskAppsSupport::Manifest::Parameter)
+        expect(parameter.name).to eq 'mtls param'
+        expect(parameter.type).to eq 'mtls'
+      end
+    end
   end
 
   describe '#location_options' do

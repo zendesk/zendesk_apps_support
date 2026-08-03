@@ -35,9 +35,14 @@ module ZendeskAppsSupport
       marketplace = options.fetch(:marketplace, true)
       skip_marketplace_translations = options.fetch(:skip_marketplace_translations, false)
       validate_custom_object_record_sidebar_location = options.fetch(:validate_custom_object_record_sidebar_location, false)
+      validate_mtls_param = options.fetch(:validate_mtls_param, false)
 
       errors = []
-      errors << Validations::Manifest.call(self, validate_custom_object_record_sidebar_location: validate_custom_object_record_sidebar_location)
+      errors << Validations::Manifest.call(
+        self,
+        validate_custom_object_record_sidebar_location: validate_custom_object_record_sidebar_location,
+        validate_mtls_param: validate_mtls_param
+      )
 
       if has_valid_manifest?(errors)
         errors << Validations::Marketplace.call(self) if marketplace

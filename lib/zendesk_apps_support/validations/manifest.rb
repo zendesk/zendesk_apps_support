@@ -14,7 +14,7 @@ module ZendeskAppsSupport
       SECURE_PARAM_SCOPES = %w[header body url jwt_secret_key jwt_claim basic_auth_username basic_auth_password].freeze
 
       class << self
-        def call(package, validate_custom_object_record_sidebar_location: false)
+        def call(package, validate_custom_object_record_sidebar_location: false, validate_mtls_param: false)
           unless package.has_file?('manifest.json')
             nested_manifest = package.files.find { |file| file =~ %r{\A[^/]+?/manifest\.json\Z} }
             if nested_manifest
@@ -23,7 +23,8 @@ module ZendeskAppsSupport
             return [ValidationError.new(:missing_manifest)]
           end
           collate_manifest_errors(package,
-                                  validate_custom_object_record_sidebar_location: validate_custom_object_record_sidebar_location)
+                                  validate_custom_object_record_sidebar_location: validate_custom_object_record_sidebar_location,
+                                  validate_mtls_param: validate_mtls_param)
         rescue JSON::ParserError => e
           return [ValidationError.new(:manifest_not_json, errors: e)]
         rescue ZendeskAppsSupport::Manifest::OverrideError => e
@@ -32,7 +33,8 @@ module ZendeskAppsSupport
 
         private
 
-        def collate_manifest_errors(package, validate_custom_object_record_sidebar_location: false)
+        def collate_manifest_errors(package, validate_custom_object_record_sidebar_location: false,
+                                    validate_mtls_param: false)
           manifest = package.manifest
 
           errors = [
@@ -41,7 +43,7 @@ module ZendeskAppsSupport
             oauth_error(manifest),
             default_locale_error(manifest, package),
             validate_urls(manifest),
-            validate_parameters(manifest),
+            validate_parameters(manifest, validate_mtls_param: validate_mtls_param),
             if manifest.requirements_only? || manifest.marketing_only?
               [ ban_location(manifest),
                 ban_framework_version(manifest) ]
@@ -82,18 +84,20 @@ module ZendeskAppsSupport
           errors
         end
 
-        def validate_parameters(manifest)
+        def validate_parameters(manifest, validate_mtls_param: false)
           if manifest.marketing_only?
             marketing_only_errors(manifest)
           else
             [
               parameters_error(manifest),
               invalid_hidden_parameter_error(manifest),
-              invalid_type_error(manifest),
+              invalid_type_error(manifest, validate_mtls_param: validate_mtls_param),
               too_many_oauth_parameters(manifest),
               oauth_cannot_be_secure(manifest),
               name_as_parameter_name_error(manifest),
-              invalid_secure_param_scopes_errors(manifest)
+              invalid_secure_param_scopes_errors(manifest),
+              (mtls_cannot_have_certain_settings(manifest) if validate_mtls_param),
+              (mtls_cannot_exceed_three_parameters(manifest) if validate_mtls_param)
             ]
           end
         end
@@ -104,6 +108,23 @@ module ZendeskAppsSupport
               return ValidationError.new('oauth_parameter_cannot_be_secure')
             end
           end
+        end
+
+        def mtls_cannot_have_certain_settings(manifest)
+          manifest.parameters.map do |parameter|
+            if parameter.type == 'mtls' && invalid_mtls_settings?(parameter)
+              return ValidationError.new('mtls_parameter_cannot_have_certain_settings')
+            end
+          end
+        end
+
+        def invalid_mtls_settings?(parameter)
+          parameter.secure || parameter.default? || !parameter.scopes.nil?
+        end
+
+        def mtls_cannot_exceed_three_parameters(manifest)
+          mtls_parameters = manifest.parameters.select { |parameter| parameter.type == 'mtls' }
+          ValidationError.new('mtls_parameter_cannot_exceed_three_parameters') if mtls_parameters.count > 3
         end
 
         def invalid_secure_param_scopes_errors(manifest)
@@ -475,12 +496,14 @@ module ZendeskAppsSupport
           end
         end
 
-        def invalid_type_error(manifest)
+        def invalid_type_error(manifest, validate_mtls_param: false)
+          allowed_types = validate_mtls_param ? PARAMETER_TYPES : PARAMETER_TYPES - ['mtls']
+
           invalid_types = []
           manifest.parameters.each do |parameter|
             parameter_type = parameter.type
 
-            invalid_types << parameter_type unless PARAMETER_TYPES.include?(parameter_type)
+            invalid_types << parameter_type unless allowed_types.include?(parameter_type)
           end
 
           if invalid_types.any?

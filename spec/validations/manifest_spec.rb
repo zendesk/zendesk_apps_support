@@ -655,6 +655,128 @@ describe ZendeskAppsSupport::Validations::Manifest do
       expect(package).not_to have_error
     end
 
+    context 'mtls parameter type' do
+      let(:parameter_hash) do
+        {
+          'parameters' =>
+          [
+            {
+              'name' => 'mtls param',
+              'type' => 'mtls'
+            }
+          ]
+        }
+      end
+
+      context 'when validate_mtls_param is false or nil' do
+        it 'has an error when validate_mtls_param is false' do
+          create_package(parameter_hash)
+          errors = ZendeskAppsSupport::Validations::Manifest.call(@package, validate_mtls_param: false)
+          expect(errors.map(&:to_s)).to include('mtls is an invalid parameter type.')
+        end
+
+        it 'has an error by default when validate_mtls_param is nil' do
+          create_package(parameter_hash)
+          expect(@package).to have_error 'mtls is an invalid parameter type.'
+        end
+      end
+
+      context 'when validate_mtls_param is true' do
+        it 'has no error' do
+          create_package(parameter_hash)
+          errors = ZendeskAppsSupport::Validations::Manifest.call(@package, validate_mtls_param: true)
+          expect(errors.map(&:to_s)).not_to include('mtls is an invalid parameter type.')
+        end
+      end
+    end
+
+    context 'mtls_cannot_have_certain_settings' do
+      def errors_for(parameter_overrides)
+        parameter_hash = {
+          'parameters' =>
+          [
+            {
+              'name' => 'mtls param',
+              'type' => 'mtls'
+            }.merge(parameter_overrides)
+          ]
+        }
+        create_package(parameter_hash)
+        ZendeskAppsSupport::Validations::Manifest.call(@package, validate_mtls_param: true)
+      end
+
+      context 'when validate_mtls_param is true' do
+        it 'has no error when mtls parameter has none of default, secure or scopes set' do
+          errors = errors_for({})
+          expect(errors.map(&:to_s)).not_to include('mtls parameter cannot have default, secure, or scopes settings.')
+        end
+
+        it 'has an error when mtls parameter has secure set' do
+          errors = errors_for('secure' => true)
+          expect(errors.map(&:to_s)).to include('mtls parameter cannot have default, secure, or scopes settings.')
+        end
+
+        it 'has an error when mtls parameter has default set' do
+          errors = errors_for('default' => 'mysubdomain')
+          expect(errors.map(&:to_s)).to include('mtls parameter cannot have default, secure, or scopes settings.')
+        end
+
+        it 'has an error when mtls parameter has scopes set' do
+          errors = errors_for('scopes' => ['header'], 'secure' => true)
+          expect(errors.map(&:to_s)).to include('mtls parameter cannot have default, secure, or scopes settings.')
+        end
+      end
+
+      context 'when validate_mtls_param is false' do
+        it 'does not check mtls parameter settings' do
+          parameter_hash = {
+            'parameters' =>
+            [
+              {
+                'name' => 'mtls param',
+                'type' => 'mtls',
+                'secure' => true
+              }
+            ]
+          }
+          create_package(parameter_hash)
+          errors = ZendeskAppsSupport::Validations::Manifest.call(@package, validate_mtls_param: false)
+          expect(errors.map(&:to_s)).not_to include('mtls parameter cannot have default, secure, or scopes settings.')
+        end
+      end
+    end
+
+    context 'number of mtls parameters' do
+      def mtls_parameters(count)
+        Array.new(count) { |i| { 'name' => "mtls param #{i}", 'type' => 'mtls' } }
+      end
+
+      context 'when validate_mtls_param is true' do
+        it 'has no error when there are three or fewer mtls parameters' do
+          parameter_hash = { 'parameters' => mtls_parameters(3) }
+          create_package(parameter_hash)
+          errors = ZendeskAppsSupport::Validations::Manifest.call(@package, validate_mtls_param: true)
+          expect(errors.map(&:to_s)).not_to include('You can only have up to three mtls parameters.')
+        end
+
+        it 'has an error when there are more than three mtls parameters' do
+          parameter_hash = { 'parameters' => mtls_parameters(4) }
+          create_package(parameter_hash)
+          errors = ZendeskAppsSupport::Validations::Manifest.call(@package, validate_mtls_param: true)
+          expect(errors.map(&:to_s)).to include('You can only have up to three mtls parameters.')
+        end
+      end
+
+      context 'when validate_mtls_param is false' do
+        it 'does not check the count of mtls parameters' do
+          parameter_hash = { 'parameters' => mtls_parameters(4) }
+          create_package(parameter_hash)
+          errors = ZendeskAppsSupport::Validations::Manifest.call(@package, validate_mtls_param: false)
+          expect(errors.map(&:to_s)).not_to include('You can only have up to three mtls parameters.')
+        end
+      end
+    end
+
     it 'should have only one oauth type for parameter' do
       parameter_hash = {
         'parameters' =>
