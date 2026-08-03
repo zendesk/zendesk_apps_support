@@ -123,8 +123,8 @@ module ZendeskAppsSupport
         end
 
         def too_many_mtls_parameters(manifest)
-          mtls_parameters = manifest.parameters.select { |parameter| parameter.type == 'mtls' }
-          ValidationError.new(:too_many_mtls_parameters) if mtls_parameters.count > 3
+          mtls_parameter_count = manifest.parameters.count { |parameter| parameter.type == 'mtls' }
+          ValidationError.new(:too_many_mtls_parameters) if mtls_parameter_count > 3
         end
 
         def invalid_secure_param_scopes_errors(manifest)
