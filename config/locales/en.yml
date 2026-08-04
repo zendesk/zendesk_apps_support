@@ -318,6 +318,12 @@ en:
               default, secure, or scopes settings.
             too_many_mtls_parameters: 'Too many parameters with type ''mtls'': three
               permitted'
+            mtls_allowed_domain_contains_scheme: "%{field} must not include a protocol
+              or scheme."
+            mtls_allowed_domain_too_long: "%{field} must not exceed 253 characters."
+            mtls_allowed_domain_invalid_wildcard: "%{field} can only use a wildcard
+              as the first two characters, e.g. *.example.com."
+            mtls_allowed_domain_invalid_format: "%{field} must be a valid domain name."
         warning:
           app_build:
             deprecated_version: You are targeting a deprecated version of the framework.

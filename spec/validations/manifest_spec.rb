@@ -777,6 +777,96 @@ describe ZendeskAppsSupport::Validations::Manifest do
       end
     end
 
+    context 'mtls allowed_domain' do
+      def errors_for(allowed_domain_overrides)
+        parameter_hash = {
+          'parameters' =>
+          [
+            {
+              'name' => 'mtls param',
+              'type' => 'mtls'
+            }.merge(allowed_domain_overrides)
+          ]
+        }
+        create_package(parameter_hash)
+        ZendeskAppsSupport::Validations::Manifest.call(@package, validate_mtls_param: true)
+      end
+
+      let(:field) { 'parameters[name="mtls param"].allowed_domain' }
+
+      context 'when validate_mtls_param is true' do
+        it 'has an error when allowed_domain is missing' do
+          errors = errors_for({})
+          expect(errors.map(&:to_s)).to include("#{field} cannot be empty.")
+        end
+
+        it 'has an error when allowed_domain is empty' do
+          errors = errors_for('allowed_domain' => '')
+          expect(errors.map(&:to_s)).to include("#{field} cannot be empty.")
+        end
+
+        it 'has an error when allowed_domain is not a string' do
+          errors = errors_for('allowed_domain' => 123)
+          expect(errors.map(&:to_s)).to include(%(#{field} must be a string, got "123".))
+        end
+
+        it 'has an error when allowed_domain includes a scheme' do
+          errors = errors_for('allowed_domain' => 'https://example.com')
+          expect(errors.map(&:to_s)).to include(%(#{field} must not include a protocol or scheme.))
+        end
+
+        it 'has an error when allowed_domain exceeds 253 characters' do
+          long_domain = "#{'a' * 250}.com"
+          errors = errors_for('allowed_domain' => long_domain)
+          expect(errors.map(&:to_s)).to include(%(#{field} must not exceed 253 characters.))
+        end
+
+        it 'has an error when a subdomain label exceeds 63 characters' do
+          long_label = 'a' * 64
+          errors = errors_for('allowed_domain' => "#{long_label}.com")
+          expect(errors.map(&:to_s)).to include(%(#{field} must be a valid domain name.))
+        end
+
+        it 'has an error when the wildcard is not the first two characters' do
+          errors = errors_for('allowed_domain' => 'my-*.zendesk.com')
+          expect(errors.map(&:to_s))
+            .to include(%(#{field} can only use a wildcard as the first two characters, e.g. *.example.com.))
+        end
+
+        it 'has an error when allowed_domain is not a valid domain name' do
+          errors = errors_for('allowed_domain' => 'not_a_domain')
+          expect(errors.map(&:to_s)).to include(%(#{field} must be a valid domain name.))
+        end
+
+        it 'has no error for a valid bare domain' do
+          errors = errors_for('allowed_domain' => 'my-domain.com')
+          expect(errors.map(&:to_s)).to be_empty
+        end
+
+        it 'has no error for a valid wildcard subdomain' do
+          errors = errors_for('allowed_domain' => '*.my-domain.com')
+          expect(errors.map(&:to_s)).to be_empty
+        end
+      end
+
+      context 'when validate_mtls_param is false' do
+        it 'does not check allowed_domain' do
+          parameter_hash = {
+            'parameters' =>
+            [
+              {
+                'name' => 'mtls param',
+                'type' => 'mtls'
+              }
+            ]
+          }
+          create_package(parameter_hash)
+          errors = ZendeskAppsSupport::Validations::Manifest.call(@package, validate_mtls_param: false)
+          expect(errors.map(&:to_s)).not_to include("#{field} cannot be empty.")
+        end
+      end
+    end
+
     it 'should have only one oauth type for parameter' do
       parameter_hash = {
         'parameters' =>

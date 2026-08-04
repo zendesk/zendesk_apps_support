@@ -12,6 +12,10 @@ module ZendeskAppsSupport
       PARAMETER_TYPES = ZendeskAppsSupport::Manifest::Parameter::TYPES
       OAUTH_MANIFEST_LINK = 'https://developer.zendesk.com/apps/docs/developer-guide/manifest#oauth'
       SECURE_PARAM_SCOPES = %w[header body url jwt_secret_key jwt_claim basic_auth_username basic_auth_password].freeze
+      MTLS = 'mtls'
+      MTLS_ALLOWED_DOMAIN_MAX_LENGTH = 253
+      MTLS_ALLOWED_DOMAIN_LABEL_MAX_LENGTH = 63
+      MTLS_ALLOWED_DOMAIN_LABEL_REGEXP = /\A[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?\z/
 
       class << self
         def call(package, validate_custom_object_record_sidebar_location: false, validate_mtls_param: false)
@@ -97,7 +101,8 @@ module ZendeskAppsSupport
               name_as_parameter_name_error(manifest),
               invalid_secure_param_scopes_errors(manifest),
               (mtls_cannot_have_certain_settings(manifest) if validate_mtls_param),
-              (too_many_mtls_parameters(manifest) if validate_mtls_param)
+              (too_many_mtls_parameters(manifest) if validate_mtls_param),
+              (mtls_allowed_domain_errors(manifest) if validate_mtls_param)
             ]
           end
         end
@@ -108,23 +113,6 @@ module ZendeskAppsSupport
               return ValidationError.new('oauth_parameter_cannot_be_secure')
             end
           end
-        end
-
-        def mtls_cannot_have_certain_settings(manifest)
-          manifest.parameters.map do |parameter|
-            if parameter.type == 'mtls' && invalid_mtls_settings?(parameter)
-              return ValidationError.new(:mtls_parameter_cannot_have_certain_settings)
-            end
-          end
-        end
-
-        def invalid_mtls_settings?(parameter)
-          parameter.secure || parameter.default? || !parameter.scopes.nil?
-        end
-
-        def too_many_mtls_parameters(manifest)
-          mtls_parameter_count = manifest.parameters.count { |parameter| parameter.type == 'mtls' }
-          ValidationError.new(:too_many_mtls_parameters) if mtls_parameter_count > 3
         end
 
         def invalid_secure_param_scopes_errors(manifest)
@@ -497,7 +485,7 @@ module ZendeskAppsSupport
         end
 
         def invalid_type_error(manifest, validate_mtls_param: false)
-          allowed_types = validate_mtls_param ? PARAMETER_TYPES : PARAMETER_TYPES - ['mtls']
+          allowed_types = validate_mtls_param ? PARAMETER_TYPES : PARAMETER_TYPES - [MTLS]
 
           invalid_types = []
           manifest.parameters.each do |parameter|
@@ -553,6 +541,82 @@ module ZendeskAppsSupport
           uri.is_a?(URI::HTTP) && !host_empty
         rescue URI::InvalidURIError
           false
+        end
+
+        def mtls_cannot_have_certain_settings(manifest)
+          manifest.parameters.map do |parameter|
+            if parameter.type == MTLS && invalid_mtls_settings?(parameter)
+              return ValidationError.new(:mtls_parameter_cannot_have_certain_settings)
+            end
+          end
+        end
+
+        def invalid_mtls_settings?(parameter)
+          parameter.secure || parameter.default? || !parameter.scopes.nil?
+        end
+
+        def too_many_mtls_parameters(manifest)
+          mtls_parameter_count = manifest.parameters.count { |parameter| parameter.type == MTLS }
+          ValidationError.new(:too_many_mtls_parameters) if mtls_parameter_count > 3
+        end
+
+        def mtls_allowed_domain_errors(manifest)
+          manifest.parameters.each_with_object([]) do |parameter, errors|
+            next unless parameter.type == MTLS
+
+            errors.concat(mtls_allowed_domain_error_for(parameter))
+          end
+        end
+
+        def mtls_allowed_domain_error_for(parameter)
+          field = "parameters[name=\"#{parameter.name}\"].allowed_domain"
+          allowed_domain = parameter.allowed_domain
+
+          presence_or_type_error = mtls_allowed_domain_presence_or_type_error(allowed_domain, field)
+          return [presence_or_type_error] if presence_or_type_error
+
+          errors = mtls_allowed_domain_syntax_errors(allowed_domain, field)
+          return errors if errors.any?
+
+          errors << mtls_allowed_domain_format_error(allowed_domain, field)
+          errors.compact
+        end
+
+        def mtls_allowed_domain_presence_or_type_error(allowed_domain, field)
+          if allowed_domain.nil? || allowed_domain == ''
+            return ValidationError.new(:field_cannot_be_empty, field: field)
+          end
+
+          return if allowed_domain.is_a?(String)
+
+          ValidationError.new(:unacceptable_string, field: field, value: allowed_domain)
+        end
+
+        def mtls_allowed_domain_syntax_errors(allowed_domain, field)
+          errors = []
+          if allowed_domain.include?('://')
+            errors << ValidationError.new(:mtls_allowed_domain_contains_scheme, field: field)
+          end
+          if allowed_domain.length > MTLS_ALLOWED_DOMAIN_MAX_LENGTH
+            errors << ValidationError.new(:mtls_allowed_domain_too_long, field: field)
+          end
+          if allowed_domain.include?('*') && !allowed_domain.start_with?('*.')
+            errors << ValidationError.new(:mtls_allowed_domain_invalid_wildcard, field: field)
+          end
+          errors
+        end
+
+        def mtls_allowed_domain_format_error(allowed_domain, field)
+          hostname = allowed_domain.start_with?('*.') ? allowed_domain[2..] : allowed_domain
+          labels = hostname.split('.')
+
+          return if labels.size >= 2 && labels.all? { |label| valid_mtls_domain_label?(label) }
+
+          ValidationError.new(:mtls_allowed_domain_invalid_format, field: field)
+        end
+
+        def valid_mtls_domain_label?(label)
+          label.length <= MTLS_ALLOWED_DOMAIN_LABEL_MAX_LENGTH && label.match?(MTLS_ALLOWED_DOMAIN_LABEL_REGEXP)
         end
       end
     end
