@@ -655,6 +655,174 @@ describe ZendeskAppsSupport::Validations::Manifest do
       expect(package).not_to have_error
     end
 
+    context 'mtls parameter validations' do
+      context 'when validate_mtls_param is true' do
+        context 'mtls parameter type' do
+          let(:parameter_hash) do
+            {
+              'parameters' =>
+              [
+                {
+                  'name' => 'mtls param',
+                  'type' => 'mtls'
+                }
+              ]
+            }
+          end
+
+          it 'has no error' do
+            create_package(parameter_hash)
+            errors = ZendeskAppsSupport::Validations::Manifest.call(@package, validate_mtls_param: true)
+            expect(errors.map(&:to_s)).not_to include('mtls is an invalid parameter type.')
+          end
+        end
+
+        context 'mtls_cannot_have_certain_settings' do
+          def errors_for_mtls_settings(parameter_overrides)
+            parameter_hash = {
+              'parameters' =>
+              [
+                {
+                  'name' => 'mtls param',
+                  'type' => 'mtls'
+                }.merge(parameter_overrides)
+              ]
+            }
+            create_package(parameter_hash)
+            ZendeskAppsSupport::Validations::Manifest.call(@package, validate_mtls_param: true)
+          end
+
+          it 'has no error when mtls parameter has none of default, secure or scopes set' do
+            errors = errors_for_mtls_settings({})
+            expect(errors.map(&:to_s)).not_to include('mtls parameter cannot have default, secure, or scopes settings.')
+          end
+
+          it 'has an error when mtls parameter has secure set' do
+            errors = errors_for_mtls_settings('secure' => true)
+            expect(errors.map(&:to_s)).to include('mtls parameter cannot have default, secure, or scopes settings.')
+          end
+
+          it 'has an error when mtls parameter has default set' do
+            errors = errors_for_mtls_settings('default' => 'mysubdomain')
+            expect(errors.map(&:to_s)).to include('mtls parameter cannot have default, secure, or scopes settings.')
+          end
+
+          it 'has an error when mtls parameter has scopes set' do
+            errors = errors_for_mtls_settings('scopes' => ['header'], 'secure' => true)
+            expect(errors.map(&:to_s)).to include('mtls parameter cannot have default, secure, or scopes settings.')
+          end
+        end
+
+        context 'number of mtls parameters' do
+          def mtls_parameters(count)
+            Array.new(count) { |i| { 'name' => "mtls param #{i}", 'type' => 'mtls' } }
+          end
+
+          it 'has no error when there are three or fewer mtls parameters' do
+            parameter_hash = { 'parameters' => mtls_parameters(3) }
+            create_package(parameter_hash)
+            errors = ZendeskAppsSupport::Validations::Manifest.call(@package, validate_mtls_param: true)
+            expect(errors.map(&:to_s)).not_to include("Too many parameters with type 'mtls': three permitted")
+          end
+
+          it 'has an error when there are more than three mtls parameters' do
+            parameter_hash = { 'parameters' => mtls_parameters(4) }
+            create_package(parameter_hash)
+            errors = ZendeskAppsSupport::Validations::Manifest.call(@package, validate_mtls_param: true)
+            expect(errors.map(&:to_s)).to include("Too many parameters with type 'mtls': three permitted")
+          end
+        end
+
+        context 'mtls allowed_domain' do
+          def errors_for_mtls_allowed_domain(allowed_domain_overrides)
+            parameter_hash = {
+              'parameters' =>
+              [
+                {
+                  'name' => 'mtls param',
+                  'type' => 'mtls'
+                }.merge(allowed_domain_overrides)
+              ]
+            }
+            create_package(parameter_hash)
+            ZendeskAppsSupport::Validations::Manifest.call(@package, validate_mtls_param: true)
+          end
+
+          let(:field) { 'parameters[name="mtls param"].allowed_domain' }
+
+          it 'has an error when allowed_domain is missing' do
+            errors = errors_for_mtls_allowed_domain({})
+            expect(errors.map(&:to_s)).to include("#{field} cannot be empty.")
+          end
+
+          it 'has an error when allowed_domain is empty' do
+            errors = errors_for_mtls_allowed_domain('allowed_domain' => '')
+            expect(errors.map(&:to_s)).to include("#{field} cannot be empty.")
+          end
+
+          it 'has an error when allowed_domain is not a string' do
+            errors = errors_for_mtls_allowed_domain('allowed_domain' => 123)
+            expect(errors.map(&:to_s)).to include(%(#{field} must be a string, got "123".))
+          end
+
+          it 'has an error when allowed_domain includes a scheme' do
+            errors = errors_for_mtls_allowed_domain('allowed_domain' => 'https://example.com')
+            expect(errors.map(&:to_s)).to include(%(#{field} must not include a protocol or scheme.))
+          end
+
+          it 'has an error when allowed_domain exceeds 253 characters' do
+            long_domain = "#{'a' * 250}.com"
+            errors = errors_for_mtls_allowed_domain('allowed_domain' => long_domain)
+            expect(errors.map(&:to_s)).to include(%(#{field} must not exceed 253 characters.))
+          end
+
+          it 'has an error when a subdomain label exceeds 63 characters' do
+            long_label = 'a' * 64
+            errors = errors_for_mtls_allowed_domain('allowed_domain' => "#{long_label}.com")
+            expect(errors.map(&:to_s)).to include(%(#{field} must be a valid domain name.))
+          end
+
+          it 'has an error when the wildcard is not the first two characters' do
+            errors = errors_for_mtls_allowed_domain('allowed_domain' => 'my-*.zendesk.com')
+            expect(errors.map(&:to_s))
+              .to include(%(#{field} can only use a wildcard as the first two characters, e.g. *.example.com.))
+          end
+
+          it 'has an error when allowed_domain is not a valid domain name' do
+            errors = errors_for_mtls_allowed_domain('allowed_domain' => 'not_a_domain')
+            expect(errors.map(&:to_s)).to include(%(#{field} must be a valid domain name.))
+          end
+
+          it 'has no error for a valid bare domain' do
+            errors = errors_for_mtls_allowed_domain('allowed_domain' => 'my-domain.com')
+            expect(errors.map(&:to_s)).to be_empty
+          end
+
+          it 'has no error for a valid wildcard subdomain' do
+            errors = errors_for_mtls_allowed_domain('allowed_domain' => '*.my-domain.com')
+            expect(errors.map(&:to_s)).to be_empty
+          end
+        end
+      end
+
+      context 'when validate_mtls_param is false' do
+        it 'fails with an invalid parameter type error instead of checking mtls parameter settings' do
+          parameter_hash = {
+            'parameters' =>
+            [
+              {
+                'name' => 'mtls param',
+                'type' => 'mtls'
+              }
+            ]
+          }
+          create_package(parameter_hash)
+          errors = ZendeskAppsSupport::Validations::Manifest.call(@package, validate_mtls_param: false)
+          expect(errors.map(&:to_s)).to include('mtls is an invalid parameter type.')
+        end
+      end
+    end
+
     it 'should have only one oauth type for parameter' do
       parameter_hash = {
         'parameters' =>

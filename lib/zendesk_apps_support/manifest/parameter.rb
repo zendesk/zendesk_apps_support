@@ -3,8 +3,8 @@
 module ZendeskAppsSupport
   class Manifest
     class Parameter
-      TYPES = %w[text checkbox url number multiline hidden oauth].freeze
-      ATTRIBUTES = %i[name type required secure default scopes].freeze
+      TYPES = %w[text checkbox url number multiline hidden oauth mtls].freeze
+      ATTRIBUTES = %i[name type required secure default scopes allowed_domain].freeze
       attr_reader(*ATTRIBUTES)
       def default?
         @has_default
@@ -18,6 +18,7 @@ module ZendeskAppsSupport
         @has_default = p.key? 'default'
         @default = p['default'] if @has_default
         @scopes = p['scopes']
+        @allowed_domain = p['allowed_domain']
       end
     end
   end

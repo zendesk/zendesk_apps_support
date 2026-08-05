@@ -700,3 +700,35 @@ parts:
         Do not translate 'scopes'. %{params} refers to secure parameters with no scopes configured.
         Scopes in manifest refers to https://developer.zendesk.com/documentation/apps/getting-started/setting-up-new-apps/#scopes"
       value: "The scopes property is not configured for parameter(s): %{params}. This may cause token exposure vulnerabilities. Learn about: %{link}"
+  - translation:
+      key: "txt.apps.admin.error.app_build.mtls_parameter_cannot_have_certain_settings"
+      title: "Validation message to indicate that mtls parameter cannot have default, secure, or scopes settings.
+        Do not translate 'mtls', 'secure', 'default' and 'scopes' as they are manifest properties.
+        'secure' in manifest refers to https://developer.zendesk.com/documentation/apps/getting-started/setting-up-new-apps/#secure
+        'scopes' in manifest refers to https://developer.zendesk.com/documentation/apps/getting-started/setting-up-new-apps/#scopes
+        'default' in manifest refers to https://developer.zendesk.com/documentation/apps/getting-started/setting-up-new-apps/#default"
+      value: "mtls parameter cannot have default, secure, or scopes settings."
+  - translation:
+      key: "txt.apps.admin.error.app_build.too_many_mtls_parameters"
+      title: "Validation message to indicate that mtls parameter cannot exceed three parameters. Do not translate 'mtls' as it is a manifest property."
+      value: "Too many parameters with type 'mtls': three permitted"
+  - translation:
+      key: "txt.apps.admin.error.app_build.mtls_allowed_domain_contains_scheme"
+      title: "Validation message to indicate that the allowed_domain property of an mtls parameter must not include a protocol or scheme.
+        %{field} refers to the manifest field path."
+      value: "%{field} must not include a protocol or scheme."
+  - translation:
+      key: "txt.apps.admin.error.app_build.mtls_allowed_domain_too_long"
+      title: "Validation message to indicate that the allowed_domain property of an mtls parameter exceeds the maximum length of 253 characters.
+        %{field} refers to the manifest field path."
+      value: "%{field} must not exceed 253 characters."
+  - translation:
+      key: "txt.apps.admin.error.app_build.mtls_allowed_domain_invalid_wildcard"
+      title: "Validation message to indicate that the allowed_domain property of an mtls parameter uses a wildcard incorrectly.
+        %{field} refers to the manifest field path."
+      value: "%{field} can only use a wildcard as the first two characters, e.g. *.example.com."
+  - translation:
+      key: "txt.apps.admin.error.app_build.mtls_allowed_domain_invalid_format"
+      title: "Validation message to indicate that the allowed_domain property of an mtls parameter is not a valid domain name.
+        %{field} refers to the manifest field path."
+      value: "%{field} must be a valid domain name."
