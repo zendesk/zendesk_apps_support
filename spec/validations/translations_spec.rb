@@ -282,6 +282,129 @@ describe ZendeskAppsSupport::Validations::Translations do
     end
   end
 
+  context 'when marketplace content exceeds its maximum length' do
+    let(:app_content) do
+      {
+        'name' => 'App Name',
+        'description' => 'App description',
+        'installation_instructions' => 'How to install the app',
+        'long_description' => 'A longer version of the description'
+      }
+    end
+    let(:en_json) { JSON.generate('app' => app_content) }
+    let(:translation_files) do
+      [double('AppFile', relative_path: 'translations/en.json', read: en_json)]
+    end
+
+    context 'for a public app' do
+      let(:private_app?) { false }
+
+      context 'when the values are exactly at the limits' do
+        let(:app_content) { super().merge('long_description' => 'a' * 10_000, 'installation_instructions' => 'a' * 10_000) }
+
+        it('is valid') { expect(subject).to be_empty }
+      end
+
+      context 'when the long description is too long' do
+        let(:app_content) { super().merge('long_description' => 'a' * 10_001) }
+
+        it 'reports the error' do
+          expect(subject.map(&:to_s)).to eq(
+            ['long_description in translations/en.json is too long (maximum is 10000 characters)']
+          )
+        end
+      end
+
+      context 'when the installation instructions are too long' do
+        let(:app_content) { super().merge('installation_instructions' => 'a' * 10_001) }
+
+        it 'reports the error' do
+          expect(subject.map(&:to_s)).to eq(
+            ['installation_instructions in translations/en.json is too long (maximum is 10000 characters)']
+          )
+        end
+      end
+
+      context 'when both are too long' do
+        let(:app_content) do
+          super().merge('long_description' => 'a' * 10_001, 'installation_instructions' => 'a' * 10_001)
+        end
+
+        it 'reports both errors' do
+          expect(subject.map(&:to_s)).to contain_exactly(
+            'long_description in translations/en.json is too long (maximum is 10000 characters)',
+            'installation_instructions in translations/en.json is too long (maximum is 10000 characters)'
+          )
+        end
+      end
+
+      context 'when values use the title/value format' do
+        let(:app_content) do
+          super().merge('long_description' => { 'title' => 'Long description', 'value' => 'a' * 10_001 })
+        end
+
+        it 'reports the error' do
+          expect(subject.map(&:to_s)).to eq(
+            ['long_description in translations/en.json is too long (maximum is 10000 characters)']
+          )
+        end
+      end
+
+      context 'when skip_marketplace_translations is set' do
+        let(:opts) { { skip_marketplace_translations: true } }
+        let(:app_content) { super().merge('long_description' => 'a' * 10_001) }
+
+        it 'still reports the error' do
+          expect(subject.map(&:to_s)).to eq(
+            ['long_description in translations/en.json is too long (maximum is 10000 characters)']
+          )
+        end
+      end
+
+      context 'when multiple products are specified' do
+        let(:en_json) do
+          JSON.generate(
+            'app' => {
+              'support' => app_content,
+              'chat' => app_content.merge('installation_instructions' => 'a' * 10_001)
+            }
+          )
+        end
+
+        it 'reports the error for the offending product' do
+          expect(subject.map(&:to_s)).to eq(
+            ['installation_instructions in translations/en.json for Chat is too long (maximum is 10000 characters)']
+          )
+        end
+
+        context 'when the field is too long for several products' do
+          let(:en_json) do
+            too_long = app_content.merge('long_description' => 'a' * 10_001)
+            JSON.generate('app' => { 'support' => too_long, 'chat' => too_long })
+          end
+
+          it 'reports the error for each product' do
+            expect(subject.map(&:to_s)).to contain_exactly(
+              'long_description in translations/en.json for Support is too long (maximum is 10000 characters)',
+              'long_description in translations/en.json for Chat is too long (maximum is 10000 characters)'
+            )
+          end
+        end
+      end
+    end
+
+    context 'for a private app' do
+      let(:private_app?) { true }
+      let(:app_content) { { 'name' => 'App Name', 'long_description' => 'a' * 10_001 } }
+
+      it 'reports the error' do
+        expect(subject.map(&:to_s)).to eq(
+          ['long_description in translations/en.json is too long (maximum is 10000 characters)']
+        )
+      end
+    end
+  end
+
   context 'validate translation format when "parameters" is defined inside "app"' do
     context 'when the leaf nodes do not have a "label"' do
       let(:translation_files) do

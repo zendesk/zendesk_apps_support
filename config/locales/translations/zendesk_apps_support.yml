@@ -578,6 +578,16 @@ parts:
       title: "App builder job: required key missing from translation file for a specific product"
       value: "Missing required key from %{file} for %{product}: %{missing_key}"
   - translation:
+      key: "txt.apps.admin.error.app_build.translation.value_too_long"
+      title: "App builder job: a marketplace field in the translation file exceeds its maximum length"
+      value: "%{field} in %{file} is too long (maximum is %{max_length} characters)"
+      screenshot: "https://drive.google.com/file/d/1nKER2kvLQPWvSpX5A5mB_m6kEQijsf4k/view?usp=sharing"
+  - translation:
+      key: "txt.apps.admin.error.app_build.translation.value_too_long_for_product"
+      title: "App builder job: a marketplace field in the translation file exceeds its maximum length for a specific product"
+      value: "%{field} in %{file} for %{product} is too long (maximum is %{max_length} characters)"
+      screenshot: "https://drive.google.com/file/d/1qS48IvA8vEYABmNcgssay8D9wCOGrpJy/view?usp=sharing"
+  - translation:
       key: "txt.apps.admin.error.app_build.translation.products_do_not_match_manifest_products"
       title: "App builder job: products specified in translation file don't match products in manifest"
       value: "Products in manifest (%{manifest_products}) do not match products in translations (%{translation_products})"
