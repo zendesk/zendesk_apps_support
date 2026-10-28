@@ -1,3 +1,3 @@
 module ZendeskAppsSupport
-  VERSION = '4.52.0'
+  VERSION = '4.52.1'
 end
