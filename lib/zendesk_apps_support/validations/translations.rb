@@ -7,6 +7,10 @@ module ZendeskAppsSupport
     module Translations
       TRANSLATIONS_PATH = %r{^translations/(.*)\.json$}
       VALID_LOCALE      = /^[a-z]{2,3}(-\w{2,3})?$/
+      MAX_MARKETPLACE_CONTENT_LENGTHS = {
+        'long_description' => 10_000,
+        'installation_instructions' => 10_000
+      }.freeze
 
       class TranslationFormatError < StandardError
       end
@@ -90,7 +94,32 @@ module ZendeskAppsSupport
               skip_marketplace_strings
             )
           end
+          errors.concat(validate_marketplace_content_lengths(json, file.relative_path, present_product_keys))
           errors.compact
+        end
+
+        def validate_marketplace_content_lengths(json, file_path, present_product_keys)
+          return [] unless json['app'].is_a?(Hash)
+
+          sections = if present_product_keys.empty?
+                       [[nil, json['app']]]
+                     else
+                       present_product_keys.map { |product| [product, json['app'][product]] }
+                     end
+
+          sections.flat_map do |product, content|
+            next [] unless content.is_a?(Hash)
+
+            MAX_MARKETPLACE_CONTENT_LENGTHS.filter_map do |key, max_length|
+              value = content[key]
+              value = value['value'] if value.is_a?(Hash)
+              next unless value.is_a?(String) && value.length > max_length
+
+              error_key = product ? 'translation.value_too_long_for_product' : 'translation.value_too_long'
+              data = { file: file_path, field: key, max_length: max_length, product: product&.capitalize }.compact
+              ValidationError.new(error_key, data)
+            end
+          end
         end
 
         def validate_top_level_required_keys(json, file_path, skip_marketplace_strings)
