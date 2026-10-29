@@ -6,7 +6,7 @@ PATH
       i18n (>= 1.7.1)
       image_size (~> 2.0.2)
       ipaddress_2 (~> 0.13.0)
-      json
+      json (< 3)
       loofah (>= 2.3.1, <= 2.25.2)
       marcel
       nokogiri
