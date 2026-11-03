@@ -264,6 +264,10 @@ en:
                 leaf %{leaf} from %{file}
               missing_required_key_for_product: 'Missing required key from %{file}
                 for %{product}: %{missing_key}'
+              value_too_long: "%{field} in %{file} is too long (maximum is %{max_length}
+                characters)"
+              value_too_long_for_product: "%{field} in %{file} for %{product} is too
+                long (maximum is %{max_length} characters)"
               products_do_not_match_manifest_products: Products in manifest (%{manifest_products})
                 do not match products in translations (%{translation_products})
               insecure_token_parameter_in_manifest: 'Make sure to set secure to true
