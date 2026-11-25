@@ -29,7 +29,6 @@ var app = ZendeskApps.defineApp(<%= iframe_only ? 'null' : 'source' %>)
     },
     <% unless iframe_only %>
     translations: <%= translations.to_json %>,
-    templates: <%= templates.to_json %>,
     <% end %>
     frameworkVersion: <%= framework_version.to_json %>
   });

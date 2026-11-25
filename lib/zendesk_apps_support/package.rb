@@ -148,8 +148,6 @@ module ZendeskAppsSupport
 
       source = manifest.iframe_only? ? nil : app_js
       app_class_name = "app-#{app_id}"
-      # if no_template is an array, we still need the templates
-      templates = manifest.no_template == true ? {} : compiled_templates(app_id, asset_url_prefix)
 
       SRC_TEMPLATE.result(
         name: name,
@@ -163,7 +161,6 @@ module ZendeskAppsSupport
         author: manifest.author,
         translations: manifest.iframe_only? ? nil : runtime_translations(translations_for(locale)),
         framework_version: manifest.framework_version,
-        templates: templates,
         modules: commonjs_modules,
         iframe_only: manifest.iframe_only?
       )
@@ -195,17 +192,6 @@ module ZendeskAppsSupport
       manifest.no_template_locations
     end
     deprecate :no_template_locations, 'manifest.no_template_locations', 2016, 9
-
-    def compiled_templates(app_id, asset_url_prefix)
-      compiler = ZendeskAppsSupport::StylesheetCompiler.new(DEFAULT_SCSS + app_css, app_id, asset_url_prefix)
-      compiled_css = compiler.compile(sassc: manifest.enabled_experiments.include?('newCssCompiler'))
-
-      layout = templates['layout'] || DEFAULT_LAYOUT.result
-
-      templates.tap do |templates|
-        templates['layout'] = "<style>\n#{compiled_css}</style>\n#{layout}"
-      end
-    end
 
     def translations_for(locale)
       trans = translations
