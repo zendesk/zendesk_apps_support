@@ -3,7 +3,7 @@
 module ZendeskAppsSupport
   module Validations
     module Marketplace
-      WHITELISTED_EXPERIMENTS = %w[hashParams newCssCompiler].freeze
+      WHITELISTED_EXPERIMENTS = %w[hashParams].freeze
 
       class << self
         def call(package)
