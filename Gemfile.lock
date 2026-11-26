@@ -11,8 +11,6 @@ PATH
       marcel
       nokogiri
       rb-inotify (= 0.9.10)
-      sass
-      sassc
 
 GEM
   remote: https://rubygems.org/
@@ -50,7 +48,6 @@ GEM
     racc (1.8.1)
     rainbow (3.1.1)
     rake (13.0.6)
-    rb-fsevent (0.11.2)
     rb-inotify (0.9.10)
       ffi (>= 0.5.0, < 2)
     regexp_parser (2.10.0)
@@ -82,13 +79,6 @@ GEM
       parser (>= 3.3.7.2)
       prism (~> 1.4)
     ruby-progressbar (1.13.0)
-    sass (3.7.4)
-      sass-listen (~> 4.0.0)
-    sass-listen (4.0.0)
-      rb-fsevent (~> 0.9, >= 0.9.4)
-      rb-inotify (~> 0.9, >= 0.9.7)
-    sassc (2.4.0)
-      ffi (~> 1.9)
     unicode-display_width (3.1.4)
       unicode-emoji (~> 4.0, >= 4.0.4)
     unicode-emoji (4.0.4)
