@@ -15,7 +15,6 @@ module ZendeskAppsSupport
   autoload :Finders,                'zendesk_apps_support/finders'
   autoload :AppRequirement,         'zendesk_apps_support/app_requirement'
   autoload :AppVersion,             'zendesk_apps_support/app_version'
-  autoload :StylesheetCompiler,     'zendesk_apps_support/stylesheet_compiler'
 
   module Validations
     autoload :ValidationError,       'zendesk_apps_support/validations/validation_error'
