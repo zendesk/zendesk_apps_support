@@ -51,11 +51,6 @@ module ZendeskAppsSupport
         # only adds warnings
         Validations::SecureSettings.call(self)
         Validations::Requests.call(self)
-
-        unless manifest.requirements_only? || manifest.marketing_only? || manifest.iframe_only?
-          errors << Validations::Templates.call(self)
-          errors << Validations::Stylesheets.call(self)
-        end
       end
 
       errors << Validations::Banner.call(self) if has_banner?
