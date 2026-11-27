@@ -15,7 +15,6 @@ module ZendeskAppsSupport
   autoload :Finders,                'zendesk_apps_support/finders'
   autoload :AppRequirement,         'zendesk_apps_support/app_requirement'
   autoload :AppVersion,             'zendesk_apps_support/app_version'
-  autoload :StylesheetCompiler,     'zendesk_apps_support/stylesheet_compiler'
 
   module Validations
     autoload :ValidationError,       'zendesk_apps_support/validations/validation_error'
@@ -25,9 +24,7 @@ module ZendeskAppsSupport
     autoload :Mime,                  'zendesk_apps_support/validations/mime'
     autoload :Secrets,               'zendesk_apps_support/validations/secrets'
     autoload :Source,                'zendesk_apps_support/validations/source'
-    autoload :Templates,             'zendesk_apps_support/validations/templates'
     autoload :Translations,          'zendesk_apps_support/validations/translations'
-    autoload :Stylesheets,           'zendesk_apps_support/validations/stylesheets'
     autoload :Requirements,          'zendesk_apps_support/validations/requirements'
     autoload :Requests,              'zendesk_apps_support/validations/requests'
     autoload :Banner,                'zendesk_apps_support/validations/banner'

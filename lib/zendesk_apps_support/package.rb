@@ -12,8 +12,6 @@ module ZendeskAppsSupport
     MANIFEST_FILENAME = 'manifest.json'
     REQUIREMENTS_FILENAME = 'requirements.json'
 
-    DEFAULT_LAYOUT = Erubis::Eruby.new(File.read(File.expand_path('../assets/default_template.html.erb', __FILE__)))
-    DEFAULT_SCSS   = File.read(File.expand_path('../assets/default_styles.scss', __FILE__))
     SRC_TEMPLATE   = Erubis::Eruby.new(File.read(File.expand_path('../assets/src.js.erb', __FILE__)))
 
     LOCATIONS_WITH_ICONS_PER_PRODUCT = {
@@ -53,11 +51,6 @@ module ZendeskAppsSupport
         # only adds warnings
         Validations::SecureSettings.call(self)
         Validations::Requests.call(self)
-
-        unless manifest.requirements_only? || manifest.marketing_only? || manifest.iframe_only?
-          errors << Validations::Templates.call(self)
-          errors << Validations::Stylesheets.call(self)
-        end
       end
 
       errors << Validations::Banner.call(self) if has_banner?
@@ -148,8 +141,6 @@ module ZendeskAppsSupport
 
       source = manifest.iframe_only? ? nil : app_js
       app_class_name = "app-#{app_id}"
-      # if no_template is an array, we still need the templates
-      templates = manifest.no_template == true ? {} : compiled_templates(app_id, asset_url_prefix)
 
       SRC_TEMPLATE.result(
         name: name,
@@ -163,7 +154,6 @@ module ZendeskAppsSupport
         author: manifest.author,
         translations: manifest.iframe_only? ? nil : runtime_translations(translations_for(locale)),
         framework_version: manifest.framework_version,
-        templates: templates,
         modules: commonjs_modules,
         iframe_only: manifest.iframe_only?
       )
@@ -195,17 +185,6 @@ module ZendeskAppsSupport
       manifest.no_template_locations
     end
     deprecate :no_template_locations, 'manifest.no_template_locations', 2016, 9
-
-    def compiled_templates(app_id, asset_url_prefix)
-      compiler = ZendeskAppsSupport::StylesheetCompiler.new(DEFAULT_SCSS + app_css, app_id, asset_url_prefix)
-      compiled_css = compiler.compile(sassc: manifest.enabled_experiments.include?('newCssCompiler'))
-
-      layout = templates['layout'] || DEFAULT_LAYOUT.result
-
-      templates.tap do |templates|
-        templates['layout'] = "<style>\n#{compiled_css}</style>\n#{layout}"
-      end
-    end
 
     def translations_for(locale)
       trans = translations
@@ -253,16 +232,6 @@ module ZendeskAppsSupport
       manifest.iframe_only?
     end
     deprecate :iframe_only?, 'manifest.iframe_only?', 2016, 9
-
-    def templates
-      templates_dir = path_to('templates')
-      Dir["#{templates_dir}/*.hdbs"].each_with_object({}) do |file, memo|
-        str = File.read(file)
-        str.chomp!
-        memo[File.basename(file, File.extname(file))] = str
-        memo
-      end
-    end
 
     def translations
       return @translations if @is_cached && @translations

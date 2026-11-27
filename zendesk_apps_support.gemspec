@@ -16,8 +16,6 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = '>= 1.3.6'
 
   s.add_runtime_dependency 'i18n', '>= 1.7.1'
-  s.add_runtime_dependency 'sassc'
-  s.add_runtime_dependency 'sass' # remove explicit dependency when all compilation uses SassC
   s.add_runtime_dependency 'json', '< 3'
   s.add_runtime_dependency 'image_size', '~> 2.0.2'
   s.add_runtime_dependency 'erubis'

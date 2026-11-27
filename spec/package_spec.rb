@@ -153,23 +153,6 @@ describe ZendeskAppsSupport::Package do
   end
 
   describe 'compile' do
-    it 'should generate js ready for installation' do
-      js = @package.compile(app_name: 'ABC', app_id: 0, assets_dir: 'http://localhost:4567/0/')
-      expected = File.read('spec/fixtures/legacy_app_en.js')
-      expect(js).to eq(expected)
-
-      js = @package.compile(app_name: 'EFG', app_id: 1, assets_dir: 'http://localhost:4567/2/', locale: 'nl')
-      expected = File.read('spec/fixtures/legacy_app_nl.js')
-      expect(js).to eq(expected)
-    end
-
-    it 'should generate css with the new flag' do
-      expect(@package.manifest).to receive(:enabled_experiments).and_return(['newCssCompiler'])
-      js = @package.compile(app_name: 'ABC', app_id: 0, assets_dir: 'http://localhost:4567/0/')
-      expected = File.read('spec/fixtures/legacy_app_en_experimental_css.js')
-      expect(js).to eq(expected)
-    end
-
     it 'should generate js for iframe app installations' do
       @package = ZendeskAppsSupport::Package.new('spec/fixtures/iframe_only_app')
       js = @package.compile(app_name: 'ABC', app_id: 0, assets_dir: 'http://localhost:4567/0/')
@@ -181,13 +164,6 @@ describe ZendeskAppsSupport::Package do
       @package = ZendeskAppsSupport::Package.new('spec/fixtures/multi_product_iframe_only_app')
       js = @package.compile(app_name: 'ABC', app_id: 0, assets_dir: 'http://localhost:4567/0/')
       expected = File.read('spec/fixtures/multi_product_iframe_app.js')
-      expect(js).to eq(expected)
-    end
-
-    it 'should generate js with manifest noTemplate set to array' do
-      allow(@package.manifest).to receive(:no_template) { ['ticket_sidebar'] }
-      js = @package.compile(app_name: 'ABC', app_id: 0, assets_dir: 'http://localhost:4567/0/')
-      expected = File.read('spec/fixtures/legacy_app_no_template.js')
       expect(js).to eq(expected)
     end
   end
@@ -391,8 +367,6 @@ describe ZendeskAppsSupport::Package do
   describe '#validate' do
     before do
       allow(ZendeskAppsSupport::Validations::Marketplace).to receive(:call)
-      allow(ZendeskAppsSupport::Validations::Templates).to receive(:call)
-      allow(ZendeskAppsSupport::Validations::Stylesheets).to receive(:call)
       stub_const('ZendeskAppsSupport::AppVersion::TO_BE_SERVED', ['0.5', '2.0'])
       package.validate!(marketplace: false)
     end
@@ -401,57 +375,10 @@ describe ZendeskAppsSupport::Package do
       expect(ZendeskAppsSupport::Validations::Marketplace).not_to have_received(:call)
     end
 
-    it 'normally validates templates and stylesheets' do
-      expect(ZendeskAppsSupport::Validations::Templates).to have_received(:call)
-      expect(ZendeskAppsSupport::Validations::Stylesheets).to have_received(:call)
-    end
-
     context 'for a marketplace app' do
       it 'runs marketplace validations' do
         package.validate!(marketplace: true)
         expect(ZendeskAppsSupport::Validations::Marketplace).to have_received(:call).with(package)
-      end
-    end
-
-    context 'for a requirements-only app' do
-      let(:manifest) do
-        json = JSON.parse(File.read('spec/fixtures/marketing_only_app/manifest.json'))
-        json.merge('requirementsOnly' => true, 'marketingOnly' => false)
-      end
-      let(:source) do
-        build_app_source(
-          manifest: manifest,
-          additional_files: {
-            'requirements.json'     => read_fixture_file('requirements.json'),
-            'app.js'                => nil,
-            'app.css'               => nil,
-            'templates/layout.hdbs' => nil,
-            'templates/main.hdbs'   => nil
-          }
-        )
-      end
-
-      it 'does not validate templates or stylesheets' do
-        expect(ZendeskAppsSupport::Validations::Templates).not_to have_received(:call)
-        expect(ZendeskAppsSupport::Validations::Stylesheets).not_to have_received(:call)
-      end
-    end
-
-    context 'for a marketing-only app' do
-      let(:package) { ZendeskAppsSupport::Package.new('spec/fixtures/marketing_only_app') }
-
-      it 'does not validate templates or stylesheets' do
-        expect(ZendeskAppsSupport::Validations::Templates).not_to have_received(:call)
-        expect(ZendeskAppsSupport::Validations::Stylesheets).not_to have_received(:call)
-      end
-    end
-
-    context 'for a iframe-only app' do
-      let(:package) { ZendeskAppsSupport::Package.new('spec/fixtures/iframe_only_app') }
-
-      it 'does not validate templates or stylesheets' do
-        expect(ZendeskAppsSupport::Validations::Templates).not_to have_received(:call)
-        expect(ZendeskAppsSupport::Validations::Stylesheets).not_to have_received(:call)
       end
     end
 
